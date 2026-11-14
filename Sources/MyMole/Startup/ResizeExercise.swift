@@ -93,8 +93,13 @@ enum ResizeExercise {
                     // The panel the divider sizes: the sidebar, or the panel on the right.
                     let panel = i == 0 ? first : (split.arrangedSubviews.last ?? split.subviews.last)
                     let before = Int(panel?.frame.width ?? 0)
+                    // Leftward for both: the sidebar starts at its widest and
+                    // can only narrow, and a right-hand panel widens. The
+                    // sidebar's drag stays above its narrowest, where a drag
+                    // further would collapse it rather than resize it.
                     lines.append(await pointerDrag("\(pane.rawValue) drag-\(i == 0 ? "sidebar" : "right-panel-\(i)")", run: run, in: window,
-                                                   at: split.convert(divider, to: nil), leftward: i > 0) {
+                                                   at: split.convert(divider, to: nil), leftward: true,
+                                                   reach: i == 0 ? 100 : 150) {
                         "\(before)->\(Int(panel?.frame.width ?? 0))"
                     })
                 }
@@ -160,18 +165,19 @@ enum ResizeExercise {
     }
 
     /// A press on `point` (window coordinates), then a drag event every
-    /// 16 ms moving up to 150 points and back, then the release, all from a
-    /// main-queue timer while AppKit tracks the drag. How late each event
+    /// 16 ms moving up to `reach` points and back, then the release, all from a
+    /// run-loop timer while AppKit tracks the drag. How late each event
     /// came is the time the main thread was busy with the one before: the
     /// frame pacing a hand would see. `width` says how wide the panel ended
     /// up halfway, to show the drag moved it.
     private static func pointerDrag(_ name: String, run: SyntheticRun, in window: NSWindow, at point: NSPoint,
-                                    leftward: Bool = false, width: @escaping @MainActor () -> String) async -> String {
+                                    leftward: Bool = false, reach: CGFloat = 150,
+                                    width: @escaping @MainActor () -> String) async -> String {
         // What the last sweep put back is drawn and its stalls logged before the press.
         try? await Task.sleep(for: .milliseconds(500))
         try? name.write(toFile: run.root + "/sweeping.txt", atomically: true, encoding: .utf8)
         let started = Date().timeIntervalSince1970 * 1_000
-        let drag = PointerDrag(window: window, point: point, steps: steps, leftward: leftward, width: width)
+        let drag = PointerDrag(window: window, point: point, steps: steps, leftward: leftward, reach: reach, width: width)
         drag.start()
         // The press returns when the release has been tracked.
         while !drag.done { try? await Task.sleep(for: .milliseconds(16)) }
@@ -282,6 +288,7 @@ private final class PointerDrag: NSObject {
     let point: NSPoint
     let steps: Int
     let leftward: Bool
+    let reach: CGFloat
     let width: @MainActor () -> String
     private(set) var gaps: [Double] = []
     private(set) var halfway = "-"
@@ -290,11 +297,12 @@ private final class PointerDrag: NSObject {
     private var last = DispatchTime.now().uptimeNanoseconds
     private var timer: Timer?
 
-    init(window: NSWindow, point: NSPoint, steps: Int, leftward: Bool, width: @escaping @MainActor () -> String) {
+    init(window: NSWindow, point: NSPoint, steps: Int, leftward: Bool, reach: CGFloat, width: @escaping @MainActor () -> String) {
         self.window = window
         self.point = point
         self.steps = steps
         self.leftward = leftward
+        self.reach = reach
         self.width = width
     }
 
@@ -326,7 +334,7 @@ private final class PointerDrag: NSObject {
             return
         }
         let phase = Double(step % 60) / 60
-        let dx = (phase < 0.5 ? phase : 1 - phase) * 300 * (leftward ? -1 : 1)
+        let dx = (phase < 0.5 ? phase : 1 - phase) * 2 * reach * (leftward ? -1 : 1)
         if let drag = event(.leftMouseDragged, NSPoint(x: point.x + dx, y: point.y), step) { NSApp.postEvent(drag, atStart: false) }
     }
 }
