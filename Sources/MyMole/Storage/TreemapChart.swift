@@ -13,6 +13,29 @@ struct TreemapChart: View {
         let segment: Segment
         let level: Int
         let branch: Int
+        /// How many smaller items this block gathers, when it stands for
+        /// the ones too small to draw one by one; 0 for one item.
+        var rest = 0
+    }
+
+    /// Blocks drawn for the current folder at most, and the smallest of them
+    /// in points²; the rest share one block. Inside a block, its own contents
+    /// smaller than that are left out. A folder of tens of thousands would
+    /// otherwise be tens of thousands of blocks of a few points each.
+    static let blockLimit = 3_000, blockMinimum: CGFloat = 4
+    static let innerLimit = 400, innerMinimum: CGFloat = 36
+
+    /// The largest parts worth a block of their own in `area`, at most
+    /// `limit`, and the bytes and count of the rest. Parts are largest first.
+    static func split(_ parts: [Segment], area: CGFloat, minimum: CGFloat, limit: Int) -> (shown: [Segment], rest: Int64, count: Int) {
+        let total = Double(parts.reduce(0) { $0 + $1.size })
+        guard total > 0, area > 0 else { return ([], 0, 0) }
+        var n = 0
+        for p in parts {
+            guard n < limit, Double(p.size) / total * Double(area) >= Double(minimum) else { break }
+            n += 1
+        }
+        return (Array(parts.prefix(n)), parts.dropFirst(n).reduce(0) { $0 + $1.size }, parts.count - n)
     }
 
     var body: some View {
@@ -38,7 +61,7 @@ struct TreemapChart: View {
 
                 // Labels follow the fills so a nested name stays inside its
                 // own block. Tiny blocks borrow their parent's label strip.
-                let hovered = cells.last { $0.level > 1 && $0.segment == model.hovered }
+                let hovered = cells.last { $0.level > 1 && $0.rest == 0 && $0.segment == model.hovered }
                 let labeled = hovered.map { c in
                     ChartLabel.draw(
                         name(of: c.segment),
@@ -47,6 +70,10 @@ struct TreemapChart: View {
                 } ?? false
                 for c in cells where c.level == 1 && c.rect.height > 34 {
                     let rect = CGRect(x: c.rect.minX + 7, y: c.rect.minY + 4, width: c.rect.width - 14, height: 28)
+                    if c.rest > 0 {
+                        ChartLabel.draw(String(localized: "\(c.rest.formatted()) smaller items"), in: rect, on: fill(for: c), ctx: ctx)
+                        continue
+                    }
                     if !labeled, let hovered, hovered.branch == c.branch,
                        ChartLabel.draw(name(of: hovered.segment),
                                        detail: ByteCountFormatter.string(fromByteCount: hovered.segment.size, countStyle: .file),
@@ -64,14 +91,14 @@ struct TreemapChart: View {
             .onContinuousHover { phase in
                 switch phase {
                 case .active(let p):
-                    let seg = cells.last { $0.rect.contains(p) }?.segment
+                    let seg = cells.last { $0.rest == 0 && $0.rect.contains(p) }?.segment
                     if model.hovered != seg { model.hovered = seg }
                 case .ended:
                     if model.hovered != nil { model.hovered = nil }
                 }
             }
             .onTapGesture { p in
-                if case .folder(let f)? = cells.last(where: { $0.rect.contains(p) })?.segment { model.open(f) }
+                if case .folder(let f)? = cells.last(where: { $0.rest == 0 && $0.rect.contains(p) })?.segment { model.open(f) }
             }
             .task(id: Key(model: model, size: geo.size)) {
                 let next = layout(in: bounds)
@@ -82,12 +109,14 @@ struct TreemapChart: View {
                     self.cells = next
                     drawing = key
                 }
+                ChartLayouts.didInstall()
             }
         }
         .padding(16)
     }
 
     private func fill(for cell: Cell) -> Color {
+        if cell.rest > 0 { return Color.gray.opacity(0.35) }
         let color = ChartColors.color(for: cell.segment, branch: cell.branch, depth: cell.level, byKind: model.colorByKind)
         return model.isHighlighted(cell.segment) ? color.mix(with: .white, by: 0.3) : color
     }
@@ -116,17 +145,26 @@ struct TreemapChart: View {
     private func layout(in bounds: CGRect) -> [Cell] {
         guard let cur = model.current else { return [] }
         let ready = model.isReady
-        let parts = chartParts(of: cur, include: ready)
-        let rects = Squarify.layout(parts.map { Double($0.size) }, in: bounds)
+        let all = chartParts(of: cur, include: ready)
+        let top = Self.split(all, area: bounds.width * bounds.height, minimum: Self.blockMinimum, limit: Self.blockLimit)
+        let parts = top.shown
+        let rects = Squarify.layout(parts.map { Double($0.size) } + (top.rest > 0 ? [Double(top.rest)] : []), in: bounds)
         var out: [Cell] = []
+        if top.rest > 0, let last = rects.last, last.width >= 1, last.height >= 1 {
+            out.append(Cell(rect: last, segment: .folder(cur), level: 1, branch: parts.count, rest: top.count))
+        }
         for (i, (part, rect)) in zip(parts, rects).enumerated() where rect.width >= 1 && rect.height >= 1 {
             out.append(Cell(rect: rect, segment: part, level: 1, branch: i))
             // Second level inside blocks with room, below the label strip.
             guard case .folder(let f) = part, rect.width > 60, rect.height > 60 else { continue }
             let inner = CGRect(x: rect.minX + 4, y: rect.minY + 34, width: rect.width - 8, height: rect.height - 38)
             guard inner.width > 10, inner.height > 10 else { continue }
-            let kids = chartParts(of: f, include: ready)
-            for (k, r) in zip(kids, Squarify.layout(kids.map { Double($0.size) }, in: inner)) where r.width >= 2 && r.height >= 2 {
+            let inside = Self.split(chartParts(of: f, include: ready), area: inner.width * inner.height,
+                                    minimum: Self.innerMinimum, limit: Self.innerLimit)
+            let kids = inside.shown
+            // What's left out keeps its share of the space, undrawn.
+            let values = kids.map { Double($0.size) } + (inside.rest > 0 ? [Double(inside.rest)] : [])
+            for (k, r) in zip(kids, Squarify.layout(values, in: inner)) where r.width >= 2 && r.height >= 2 {
                 out.append(Cell(rect: r, segment: k, level: 2, branch: i))
             }
         }

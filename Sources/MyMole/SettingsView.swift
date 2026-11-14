@@ -32,7 +32,6 @@ struct SettingsView: View {
     @State private var spilledBytes: Int64?
     @State private var confirmingClear = false
     @State private var showingSelfRemoval = false
-    @State private var sectionColumns = 1
 
 
     private var diskAccessText: String {
@@ -52,21 +51,24 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        let sectionSpacing = DS.Space.section
         VStack(spacing: 0) {
             DSPaneHeader {
-                DSMetric(
-                    matches.count.formatted(),
-                    app.settingsQuery.isEmpty ? String(localized: "settings sections") : String(localized: "matching sections"))
-            } actions: {
                 DSControlField("Search settings") {
                     DSFilterField(String(localized: "Search by name or purpose"), text: $app.settingsQuery)
-                        .frame(minWidth: 180, idealWidth: 280, maxWidth: .infinity)
                         .accessibilityIdentifier("settings.search")
                 }
+                .frame(maxWidth: DS.Size.formMaxWidth, alignment: .leading)
+            } actions: {
+                EmptyView()
             } strip: {
-                DSCapsule("Changes apply as you make them", symbol: "checkmark")
-                if !app.settingsQuery.isEmpty {
+                if app.settingsQuery.isEmpty {
+                    DSStatusFact("Changes apply as you make them", symbol: "checkmark")
+                } else {
+                    if matches.count == 1 {
+                        DSCountCapsule(1, "matching section")
+                    } else {
+                        DSCountCapsule(matches.count, "matching sections")
+                    }
                     DSStripButton("Show All", symbol: "xmark") { app.settingsQuery = "" }
                 }
             }
@@ -75,16 +77,15 @@ struct SettingsView: View {
                 ContentUnavailableView.search(text: app.settingsQuery)
             } else {
                 DSPage {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: sectionSpacing, alignment: .topLeading), count: sectionColumns),
-                              alignment: .leading, spacing: sectionSpacing) {
+                    // One column of forms, as System Settings has: labels and
+                    // controls line up from section to section.
+                    LazyVStack(alignment: .leading, spacing: DS.Space.section) {
                         ForEach(matches) { section in
                             settingsSection(section)
                                 .accessibilityIdentifier("settings.section." + section.rawValue)
                         }
                     }
-                    .onGeometryChange(for: Int.self) { geometry in
-                        min(2, max(1, Int((geometry.size.width + sectionSpacing) / (480 + sectionSpacing))))
-                    } action: { sectionColumns = $0 }
+                    .frame(maxWidth: DS.Size.formMaxWidth, alignment: .leading)
                 }
             }
         }
@@ -116,80 +117,97 @@ struct SettingsView: View {
     }
 
     private var selfUninstallSection: some View {
-        DSSection("Uninstall MyMole", footer: "Remove this copy whenever you want. Review its caches and settings, turn off Open at Login and move the app to the Trash. Nothing is deleted permanently.") {
-            DSActionGroup {
-                DSText(app.selfRemoval.available ? String(localized: "MyMole can uninstall itself, including the data you choose.")
-                       : String(localized: "Self-uninstall is available when running the installed MyMole app."), .metadata)
-            } trailing: {
-                Button("Uninstall MyMole…", role: .destructive) { showingSelfRemoval = true }
-                    .fixedSize()
-                    .disabled(!app.selfRemoval.available)
+        DSSection("Uninstall MyMole", footer: "Review its caches and settings, turn off Open at Login and move the app to the Trash. Nothing is deleted permanently.", rows: false) {
+            DSFormGrid {
+                DSFormRow("This copy", help: app.selfRemoval.available
+                          ? String(localized: "MyMole can uninstall itself, including the data you choose.")
+                          : String(localized: "Self-uninstall is available when running the installed MyMole app.")) {
+                    Button("Uninstall MyMole…", role: .destructive) { showingSelfRemoval = true }
+                        .fixedSize()
+                        .disabled(!app.selfRemoval.available)
+                }
             }
         }
     }
 
     private var appearance: some View {
-        DSSection("Appearance", footer: "Themes change the surfaces and the accent; text and warning colours stay the system's. Spacious gives margins, rows and the gaps between columns more room. Compact fits the most on screen. Table lines separate the rows of every list, or its rows and columns; without them, file lists are striped.") {
-            Picker("Appearance", selection: $mode) {
-                ForEach(AppearanceMode.allCases) { Text($0.title).tag($0.rawValue) }
+        DSSection("Appearance", rows: false) {
+            DSFormGrid {
+                DSFormRow("Appearance") {
+                    Picker("Appearance", selection: $mode) {
+                        ForEach(AppearanceMode.allCases) { Text($0.title).tag($0.rawValue) }
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .fixedSize()
+                }
+                DSFormRow("Theme", help: "Changes the surfaces and the accent. Text and warning colours stay the system's.") {
+                    Picker("Theme", selection: $theme) {
+                        ForEach(ThemeFamily.allCases) { Text($0.title).tag($0.rawValue) }
+                    }
+                    .labelsHidden()
+                    .fixedSize()
+                }
+                DSFormRow("Layout", help: "Spacious gives margins, rows and the gaps between columns more room. Compact fits the most on screen.") {
+                    Picker("Layout", selection: Binding(
+                        get: { Density(rawValue: density) ?? .standard },
+                        set: { d in
+                            // Update observed metrics without recreating open panes.
+                            Density.current = d
+                            density = d.rawValue
+                        })
+                    ) {
+                        ForEach(Density.allCases) { Text($0.title).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .fixedSize()
+                }
+                DSFormRow("Table lines", help: "Lines between the rows of every list, or its rows and columns. Without them, file lists are striped.") {
+                    Picker("Table lines", selection: $lines) {
+                        ForEach(TableLines.allCases) { Text($0.title).tag($0.rawValue) }
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .fixedSize()
+                }
+                DSFormRow("Preview", help: "How lists, selection and status look with these choices.") {
+                    ThemePreview()
+                }
             }
-            .pickerStyle(.segmented)
-            .fixedSize()
-            Picker("Theme", selection: $theme) {
-                ForEach(ThemeFamily.allCases) { Text($0.title).tag($0.rawValue) }
-            }
-            .fixedSize()
-            ThemePreview()
-            Picker("Layout", selection: Binding(
-                get: { Density(rawValue: density) ?? .standard },
-                set: { d in
-                    // Update observed metrics without recreating open panes.
-                    Density.current = d
-                    density = d.rawValue
-                })
-            ) {
-                ForEach(Density.allCases) { Text($0.title).tag($0) }
-            }
-            .pickerStyle(.segmented)
-            .fixedSize()
-            Picker("Table lines", selection: $lines) {
-                ForEach(TableLines.allCases) { Text($0.title).tag($0.rawValue) }
-            }
-            .pickerStyle(.segmented)
-            .fixedSize()
         }
     }
 
     private var menuBarSection: some View {
-        DSSection("Menu Bar") {
-            Toggle(isOn: $menuBar) {
-                Text("Show MyMole in the menu bar")
-                Text("The disk, memory and what the scans found at a glance. MyMole keeps running there when its window is closed; Quit ends it.")
-            }
-            Toggle("Show free space beside the icon", isOn: $menuBarFree)
-                .disabled(!menuBar)
-            Toggle(isOn: Binding(
-                get: { loginItem == .on },
-                set: { on in
-                    loginItemProblem = LoginItem.set(on)
-                    loginItem = LoginItem.state
-                })
-            ) {
-                Text("Open MyMole at login")
-                Text(menuBar
-                    ? "It starts in the menu bar, without a window, and scans when the Mac has time to spare."
-                    : "Its window opens at login. With the menu bar item on, it starts there instead.")
-            }
-            .disabled(loginItem == .unavailable)
-            if loginItem == .needsApproval {
-                DSActionGroup {
-                    Text("macOS is waiting for you to allow MyMole in System Settings → General → Login Items.")
-                        .foregroundStyle(.secondary)
-                } trailing: {
-                    Button("Open Login Items") { SMAppService.openSystemSettingsLoginItems() }
+        DSSection("Menu Bar", rows: false) {
+            DSFormGrid {
+                DSFormRow("Menu bar", checkbox: true, help: "The disk, memory and what the scans found at a glance. MyMole keeps running there when its window is closed; Quit ends it.") {
+                    Toggle("Show MyMole in the menu bar", isOn: $menuBar)
+                }
+                DSFormRow(nil) {
+                    Toggle("Show free space beside the icon", isOn: $menuBarFree)
+                        .disabled(!menuBar)
+                }
+                DSFormRow("Login", checkbox: true, help: menuBar
+                          ? "It starts in the menu bar, without a window, and scans when the Mac has time to spare."
+                          : "Its window opens at login. With the menu bar item on, it starts there instead.") {
+                    Toggle("Open MyMole at login", isOn: Binding(
+                        get: { loginItem == .on },
+                        set: { on in
+                            loginItemProblem = LoginItem.set(on)
+                            loginItem = LoginItem.state
+                        }))
+                        .disabled(loginItem == .unavailable)
+                }
+                if loginItem == .needsApproval {
+                    DSFormRow(nil, help: "macOS is waiting for you to allow MyMole in System Settings → General → Login Items.") {
+                        Button("Open Login Items") { SMAppService.openSystemSettingsLoginItems() }
+                    }
+                }
+                if let loginItemProblem {
+                    DSFormRow(nil) { Text(loginItemProblem).foregroundStyle(.red) }
                 }
             }
-            if let loginItemProblem { Text(loginItemProblem).foregroundStyle(.red) }
         }
         .liveRefresh(every: .seconds(5), events: []) {
             let current = LoginItem.state
@@ -198,33 +216,37 @@ struct SettingsView: View {
     }
 
     private var backgroundSection: some View {
-        DSSection("In the Background") {
-            Picker(selection: $backgroundScan) {
-                ForEach(WatchSettings.Cadence.allCases) { Text($0.title).tag($0.rawValue) }
-            } label: {
-                Text("Scan in the background")
-                Text("While MyMole runs, also in the menu bar, when the Mac has time to spare. Scans only read; nothing is removed until you choose it.")
-            }
-            .onChange(of: backgroundScan) { app.watch.schedule { await app.backgroundScan() } }
-            Toggle("Notify me when the disk is nearly full", isOn: notifying($notifyDisk))
-            Toggle(isOn: notifying($notifyFinds)) {
-                Text("Notify me when a scan finds a lot to clean")
-                Text("At least \(ByteSize.format(Alerts.findsMinimum)) in one pane, at most once a week.")
-            }
-            Toggle(isOn: notifying($notifyTrashedApps)) {
-                Text("Notify me when an app in the Trash left things behind")
-                Text("An app dragged to the Trash leaves its settings, caches and data in your Library. Nothing is removed until you choose it.")
-            }
-            // The App Sandbox keeps other apps' processes from MyMole.
-            if !Edition.current.isSandboxed {
-                Toggle(isOn: notifying($notifyBusy)) {
-                    Text("Notify me when an app keeps the processor busy")
-                    Text("A whole core for \(Int(BusyProcesses.lasting / 60)) minutes, at most once a day for each app.")
+        DSSection("In the Background", rows: false) {
+            DSFormGrid {
+                DSFormRow("Background scan", help: "While MyMole runs, also in the menu bar, when the Mac has time to spare. Scans only read; nothing is removed until you choose it.") {
+                    Picker("Scan in the background", selection: $backgroundScan) {
+                        ForEach(WatchSettings.Cadence.allCases) { Text($0.title).tag($0.rawValue) }
+                    }
+                    .labelsHidden()
+                    .fixedSize()
+                    .onChange(of: backgroundScan) { app.watch.schedule { await app.backgroundScan() } }
                 }
-            }
-            if notificationsRefused {
-                Text("Notifications are turned off for MyMole in System Settings → Notifications.")
-                    .foregroundStyle(.red)
+                DSFormRow("Notify me") {
+                    Toggle("When the disk is nearly full", isOn: notifying($notifyDisk))
+                }
+                DSFormRow(nil, checkbox: true, help: "At least \(ByteSize.format(Alerts.findsMinimum)) in one pane, at most once a week.") {
+                    Toggle("When a scan finds a lot to clean", isOn: notifying($notifyFinds))
+                }
+                DSFormRow(nil, checkbox: true, help: "An app dragged to the Trash leaves its settings, caches and data in your Library. Nothing is removed until you choose it.") {
+                    Toggle("When an app in the Trash left things behind", isOn: notifying($notifyTrashedApps))
+                }
+                // The App Sandbox keeps other apps' processes from MyMole.
+                if !Edition.current.isSandboxed {
+                    DSFormRow(nil, checkbox: true, help: "A whole core for \(Int(BusyProcesses.lasting / 60)) minutes, at most once a day for each app.") {
+                        Toggle("When an app keeps the processor busy", isOn: notifying($notifyBusy))
+                    }
+                }
+                if notificationsRefused {
+                    DSFormRow(nil) {
+                        Text("Notifications are turned off for MyMole in System Settings → Notifications.")
+                            .foregroundStyle(.red)
+                    }
+                }
             }
         }
         .liveRefresh(every: .seconds(5), events: []) {
@@ -235,39 +257,50 @@ struct SettingsView: View {
     }
 
     private var performanceSection: some View {
-        DSSection("Performance", footer: "Each control has six steps, from Gentle to Hyperspeed, and starts at Maximum: well past the limits MyMole had before, which are now Balanced, step 3. Hyperspeed removes every limit and can use a lot of memory and disk. Results are always complete: every large file, match, process and item is listed at every step. If MyMole feels slow or makes this Mac sluggish, lower a control: a lower speed uses fewer threads at a lower priority, a smaller Large results step moves big lists to disk sooner and keeps fewer saved scans, and a lower responsiveness holds less in memory. Scans can always be stopped. A change applies from the next scan.") {
-            ScanSpeedControl(performance: $performance)
-            Picker(selection: Binding(
-                get: { ResultSize(saved: results) },
-                set: { results = $0.rawValue })
-            ) {
-                ForEach(ResultSize.allCases, id: \.self) { Text(stepTitle($0.title, hyperspeed: $0 == .hyperspeed)).tag($0) }
-            } label: {
-                Text("Large results")
-                Text(ResultSize(saved: results).detail)
-                Text(PerformanceSummary.results(ResultSize(saved: results)))
-                Text("Saved disk map scans take \(savedScanBytes.map { ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) } ?? "…") on disk; large lists kept on disk now take \(spilledBytes.map { ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) } ?? "…").")
+        DSSection("Performance", footer: "Each control has six steps, from Gentle to Hyperspeed, and starts at Maximum. Hyperspeed removes every limit and can use a lot of memory and disk. Results are complete at every step. If MyMole makes this Mac sluggish, lower a control. Scans can always be stopped, and a change applies from the next scan.", rows: false) {
+            DSFormGrid {
+                ScanSpeedControl(performance: $performance)
+                DSFormRow("Large results") {
+                    Picker("Large results", selection: Binding(
+                        get: { ResultSize(saved: results) },
+                        set: { results = $0.rawValue })
+                    ) {
+                        ForEach(ResultSize.allCases, id: \.self) { Text(stepTitle($0.title, hyperspeed: $0 == .hyperspeed)).tag($0) }
+                    }
+                    .labelsHidden()
+                    .fixedSize()
+                    .accessibilityIdentifier("settings.result-size")
+                } help: {
+                    VStack(alignment: .leading, spacing: DS.Space.xxs) {
+                        Text(ResultSize(saved: results).detail)
+                        Text(PerformanceSummary.results(ResultSize(saved: results)))
+                        Text("Saved disk map scans take \(savedScanBytes.map { ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) } ?? "…") on disk; large lists kept on disk now take \(spilledBytes.map { ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) } ?? "…").")
+                    }
+                }
+                DSFormRow("Responsiveness") {
+                    Picker("Responsiveness", selection: Binding(
+                        get: { Responsiveness(rawValue: responsiveness) ?? Responsiveness.byDefault },
+                        set: { level in
+                            responsiveness = level.rawValue
+                            Responsiveness.apply()
+                        })
+                    ) {
+                        ForEach(Responsiveness.allCases) { Text(stepTitle($0.title, hyperspeed: $0 == .hyperspeed)).tag($0) }
+                    }
+                    .labelsHidden()
+                    .fixedSize()
+                    .accessibilityIdentifier("settings.responsiveness")
+                } help: {
+                    VStack(alignment: .leading, spacing: DS.Space.xxs) {
+                        Text(responsivenessDetail)
+                        Text(PerformanceSummary.responsiveness(Responsiveness(rawValue: responsiveness) ?? Responsiveness.byDefault))
+                    }
+                }
+                DSFormRow("Memory", checkbox: true, help: "When macOS warns that memory is short, scans started ahead of time stop and icon and chart caches empty; when it's critical, a disk map that isn't on screen goes too. Nothing you're looking at, have chosen or can undo is touched.") {
+                    Toggle("Free memory when macOS runs low", isOn: $memoryRelief)
+                        .accessibilityIdentifier("settings.memory-relief")
+                }
             }
-            .accessibilityIdentifier("settings.result-size")
-            Picker(selection: Binding(
-                get: { Responsiveness(rawValue: responsiveness) ?? Responsiveness.byDefault },
-                set: { level in
-                    responsiveness = level.rawValue
-                    Responsiveness.apply()
-                })
-            ) {
-                ForEach(Responsiveness.allCases) { Text(stepTitle($0.title, hyperspeed: $0 == .hyperspeed)).tag($0) }
-            } label: {
-                Text("Responsiveness")
-                Text(responsivenessDetail)
-                Text(PerformanceSummary.responsiveness(Responsiveness(rawValue: responsiveness) ?? Responsiveness.byDefault))
-            }
-            .accessibilityIdentifier("settings.responsiveness")
-            Toggle(isOn: $memoryRelief) {
-                Text("Free memory when macOS runs low")
-                Text("When macOS warns that memory is short, scans started ahead of time stop and icon and chart caches empty; when it's critical, a disk map that isn't on screen goes too and maps again when you open it. Nothing you're looking at, have chosen or can undo is touched. Worth turning on, at any step, if this Mac gets sluggish.")
-            }
-            .accessibilityIdentifier("settings.memory-relief")
         }
         .task(id: results) {
             savedScanBytes = await Task.detached(priority: .utility) { SavedResults.bytes(files: []) }.value
@@ -287,60 +320,58 @@ struct SettingsView: View {
     }
 
     private var loadingSection: some View {
-        DSSection("Loading and Memory", footer: "Disk Map's saved scans stay within what Large results allows, \(ResultSize(saved: results).savedScanLimit.map(ByteSize.format) ?? String(localized: "every one at Hyperspeed")); the oldest go first, and the newest of each folder always stays.") {
-            Toggle(isOn: $prefetch) {
-                Text("Get every pane ready at launch")
-                Text("Scans run one after another in the background, at a lower priority, so each pane opens with a fresh result. Off: a pane scans when you open it.")
-            }
-            Stepper(value: Binding(
-                get: { LoadingSettings.history() },
-                set: { history = min(max($0, LoadingSettings.historyRange.lowerBound), LoadingSettings.historyRange.upperBound) }),
-                in: LoadingSettings.historyRange, step: 5
-            ) {
-                Text("Disk map history: \(LoadingSettings.history()) scans per folder")
-                Text("What Changes compares against. Fewer keep less on disk; older scans go as new ones are saved.")
-            }
-            DSActionGroup {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Saved results")
-                    Text("Each pane's last scan and the disk map's history, shown at once after a launch: \(savedBytes.map { ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) } ?? "…").")
-                        .font(.caption).foregroundStyle(.secondary)
+        DSSection("Loading and Memory", footer: "Disk Map's saved scans stay within what Large results allows, \(ResultSize(saved: results).savedScanLimit.map(ByteSize.format) ?? String(localized: "every one at Hyperspeed")); the oldest go first, and the newest of each folder always stays.", rows: false) {
+            DSFormGrid {
+                DSFormRow("At launch", checkbox: true, help: "Scans run one after another in the background, at a lower priority, so each pane opens with a fresh result. Off: a pane scans when you open it.") {
+                    Toggle("Get every pane ready", isOn: $prefetch)
                 }
-            } trailing: {
-                Button("Clear…") { confirmingClear = true }
-                    .disabled(savedBytes == 0)
-            }
-            .actionConfirmation(String(localized: "Clear the saved results?"), isPresented: $confirmingClear,
-                                action: .savedResults, button: String(localized: "Clear Saved Results"),
-                                message: String(localized: "What's on screen stays until you quit. After the next launch each pane scans afresh. Keep lists, project rules and History aren't touched.")) {
-                Task {
-                    await Task.detached(priority: .userInitiated) { SavedResults.clear() }.value
-                    await measureSaved()
+                DSFormRow("Disk map history", help: "What Changes compares against. Fewer keep less on disk; older scans go as new ones are saved.") {
+                    Stepper(value: Binding(
+                        get: { LoadingSettings.history() },
+                        set: { history = min(max($0, LoadingSettings.historyRange.lowerBound), LoadingSettings.historyRange.upperBound) }),
+                        in: LoadingSettings.historyRange, step: 5
+                    ) {
+                        Text("\(LoadingSettings.history()) scans per folder").monospacedDigit()
+                    }
+                    .fixedSize()
+                }
+                DSFormRow("Saved results", help: "Each pane's last scan and the disk map's history, shown at once after a launch: \(savedBytes.map { ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) } ?? "…").") {
+                    Button("Clear…") { confirmingClear = true }
+                        .disabled(savedBytes == 0)
+                        .actionConfirmation(String(localized: "Clear the saved results?"), isPresented: $confirmingClear,
+                                            action: .savedResults, button: String(localized: "Clear Saved Results"),
+                                            message: String(localized: "What's on screen stays until you quit. After the next launch each pane scans afresh. Keep lists, project rules and History aren't touched.")) {
+                            Task {
+                                await Task.detached(priority: .userInitiated) { SavedResults.clear() }.value
+                                await measureSaved()
+                            }
+                        }
+                }
+                DSFormRow(nil) {
+                    SavedResultsList(changed: { await measureSaved() })
                 }
             }
-            SavedResultsList(changed: { await measureSaved() })
         }
         .task { await measureSaved() }
     }
 
     private var diskAccessSection: some View {
-        DSSection("Full Disk Access") {
-            DSActionGroup {
-                Text(diskAccessText)
-                    .foregroundStyle(.secondary)
-            } trailing: {
-                Button("Open Privacy Settings") { FullDiskAccess.openSettings() }
+        DSSection("Full Disk Access", rows: false) {
+            DSFormGrid {
+                DSFormRow("Status") {
+                    Text(diskAccessText).fixedSize(horizontal: false, vertical: true)
+                }
+                DSFormRow(nil) {
+                    Button("Open Privacy Settings") { FullDiskAccess.openSettings() }
+                }
             }
         }
     }
 
     private var appManagementSection: some View {
-        DSSection("App Management") {
-            DSActionGroup {
-                Text("macOS can require App Management permission to remove other apps. Full Disk Access is a separate permission. Allow the copy of MyMole you're using in Privacy & Security → App Management; file permissions or administrator approval can also affect a move.")
-                    .foregroundStyle(.secondary)
-            } trailing: {
-                DSFlow(spacing: DS.Space.sm) {
+        DSSection("App Management", rows: false) {
+            DSFormGrid {
+                DSFormRow("Permission", help: "macOS can require App Management permission to remove other apps; Full Disk Access is a separate permission. Allow the copy of MyMole you're using in Privacy & Security → App Management. File permissions or administrator approval can also affect a move.") {
                     AppManagementButton()
                 }
             }
@@ -348,44 +379,45 @@ struct SettingsView: View {
     }
 
     private var folderAccessSection: some View {
-        DSSection("Folder Access", footer: "The App Store edition works only in the folders you choose here. Full Disk Access in System Settings also lets it into the folders macOS protects inside them.") {
-            ForEach(FolderAccess.Place.allCases) { place in
-                DSActionGroup {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(place.title)
-                        Text(place.why).font(.caption).foregroundStyle(.secondary)
-                    }
-                } trailing: {
-                    if app.access.has(place) {
-                        Button("Take Back") { Task { await app.takeBack(place) } }
-                            .disabled(app.takeBackBlocker != nil)
-                            .help(app.takeBackBlocker ?? String(localized: "Stops running scans, then closes the folder to MyMole."))
-                    } else {
-                        Button("Give Access…") {
-                            app.access.request(place)
-                            app.recheckDiskAccess()
+        DSSection("Folder Access", footer: "The App Store edition works only in the folders you choose here. Full Disk Access in System Settings also lets it into the folders macOS protects inside them.", rows: false) {
+            DSFormGrid {
+                ForEach(FolderAccess.Place.allCases) { place in
+                    DSFormRow(label: Phrase(verbatim: place.title)) {
+                        if app.access.has(place) {
+                            Button("Take Back") { Task { await app.takeBack(place) } }
+                                .disabled(app.takeBackBlocker != nil)
+                                .help(app.takeBackBlocker ?? String(localized: "Stops running scans, then closes the folder to MyMole."))
+                        } else {
+                            Button("Give Access…") {
+                                app.access.request(place)
+                                app.recheckDiskAccess()
+                            }
                         }
+                    } help: {
+                        Text(place.why)
                     }
                 }
-            }
-            if let problem = app.access.lastProblem {
-                Text(problem).foregroundStyle(.red)
+                if let problem = app.access.lastProblem {
+                    DSFormRow(nil) { Text(problem).foregroundStyle(.red) }
+                }
             }
         }
     }
 
     private var systemTasksSection: some View {
-        DSSection("System Tasks") {
-            Text("System Clean, Optimize's administrator tasks and protected app moves need administrator rights. The optional helper lets macOS approve this once. Without it, macOS asks when each task runs.")
-                .foregroundStyle(.secondary)
-            #if !APPSTORE
-            if let helper = app.privileged.helper {
-                HelperSettingsView(helper: helper)
-                    .disabled(app.privileged.busy || app.privileged.outcomeUnknown)
-            } else {
-                Text("The helper isn't available in this copy of MyMole.").foregroundStyle(.secondary)
+        DSSection("System Tasks", rows: false) {
+            DSFormGrid {
+                DSFormRow("Helper", help: "System Clean, Optimize's administrator tasks and protected app moves need administrator rights. The optional helper lets macOS approve this once. Without it, macOS asks when each task runs.") {
+                    #if !APPSTORE
+                    if let helper = app.privileged.helper {
+                        HelperSettingsView(helper: helper)
+                            .disabled(app.privileged.busy || app.privileged.outcomeUnknown)
+                    } else {
+                        Text("The helper isn't available in this copy of MyMole.").foregroundStyle(.secondary)
+                    }
+                    #endif
+                }
             }
-            #endif
         }
     }
 
@@ -399,16 +431,7 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(app.deepClean.keep.paths.sorted(), id: \.self) { path in
-                    HStack {
-                        Text((path as NSString).abbreviatingWithTildeInPath)
-                            .font(.callout.monospaced()).lineLimit(1).truncationMode(.middle)
-                            .help(path)
-                            .contextMenu { FileMenuItems(paths: [path], canOpen: false) }
-                        Spacer()
-                        Button("Stop Keeping") { app.deepClean.stopKeeping([path]) }
-                            .fixedSize()
-                            .help("Remove this protection. No files are moved.")
-                    }
+                    keptRow(path) { app.deepClean.stopKeeping([path]) }
                 }
             }
         }
@@ -424,34 +447,36 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(app.systemClean.keep.paths.sorted(), id: \.self) { path in
-                    HStack {
-                        Text((path as NSString).abbreviatingWithTildeInPath)
-                            .font(.callout.monospaced()).lineLimit(1).truncationMode(.middle)
-                            .help(path)
-                            .contextMenu { FileMenuItems(paths: [path], canOpen: false) }
-                        Spacer()
-                        Button("Stop Keeping") { app.systemClean.stopKeeping([path]) }
-                            .fixedSize()
-                            .help("Remove this protection. No files are moved.")
-                    }
+                    keptRow(path) { app.systemClean.stopKeeping([path]) }
                 }
             }
         }
     }
 
+    /// A kept path, whole and wrapping at its slashes, with the one way to undo it.
+    private func keptRow(_ path: String, stop: @escaping () -> Void) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: DS.Space.md) {
+            DSPath(path, .mono)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Button("Stop Keeping", action: stop)
+                .fixedSize()
+                .help("Remove this protection. No files are moved.")
+        }
+    }
+
     private var aboutSection: some View {
-        DSSection("About") {
-            Text("MyMole is source-available. Personal non-commercial use is permitted; business and organizational use requires a paid commercial license.")
-                .foregroundStyle(.secondary)
-            Text("MyMole is a native Mac cleaner. Everything it removes is chosen by you; your own files go to the Trash, with Undo. In the direct edition, system tasks use administrator approval or the optional approved helper.")
-                .foregroundStyle(.secondary)
-            DSFlow(spacing: DS.Space.md) {
-                Link(destination: Links.website) { Text(verbatim: "mymole.viktornyberg.com") }
-                Link("Support", destination: Links.support)
-            }
-            HStack {
-                if let url = Bundle.main.url(forResource: "MyMole-LICENSE", withExtension: "txt", subdirectory: "Licenses") {
-                    Button("MyMole License") { NSWorkspace.shared.open(url) }
+        DSSection("About", footer: "MyMole is a native Mac cleaner. Everything it removes is chosen by you; your own files go to the Trash, with Undo. In the direct edition, system tasks use administrator approval or the optional approved helper.", rows: false) {
+            DSFormGrid {
+                DSFormRow("Website") {
+                    Link(destination: Links.website) { Text(verbatim: "mymole.viktornyberg.com") }
+                }
+                DSFormRow("Help") {
+                    Link("Support", destination: Links.support)
+                }
+                DSFormRow("License", help: "MyMole is source-available. Personal non-commercial use is permitted; business and organizational use requires a paid commercial license.") {
+                    if let url = Bundle.main.url(forResource: "MyMole-LICENSE", withExtension: "txt", subdirectory: "Licenses") {
+                        Button("MyMole License") { NSWorkspace.shared.open(url) }
+                    }
                 }
             }
         }
@@ -494,34 +519,43 @@ struct SettingsView: View {
     }
 }
 
-/// A row, a selected row, a status and a button in the theme as chosen, so
-/// a theme can be judged before leaving Settings.
+/// A sample list in the theme as chosen, so a theme can be judged before
+/// leaving Settings. Nothing in it is a real result or can be clicked: the
+/// accent shows as a swatch, not as a button.
 private struct ThemePreview: View {
     @Environment(\.palette) private var palette
 
     var body: some View {
-        VStack(alignment: .leading, spacing: DS.Space.sm) {
-            row(String(localized: "Caches"), "1,2 GB", selected: false)
-            row(String(localized: "Logs"), "240 MB", selected: true)
+        VStack(alignment: .leading, spacing: DS.Space.xs) {
+            row("Sample row", selected: false)
+            row("Selected row", selected: true)
             HStack(spacing: DS.Space.sm) {
-                DSCapsule("Scanned 2 minutes ago", symbol: "clock")
-                DSCapsule("1 couldn't be read", symbol: "exclamationmark.triangle.fill", tint: palette.warning)
+                DSCapsule("Status", symbol: "clock")
+                DSCapsule("Warning", symbol: "exclamationmark.triangle.fill", tint: palette.warning)
                 Spacer(minLength: DS.Space.sm)
-                Button("Move to Trash") {}.buttonStyle(.borderedProminent).allowsHitTesting(false)
+                Text("Accent")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, DS.Space.sm)
+                    .frame(height: DS.Size.stripHeight - 6)
+                    .background(palette.accent.color, in: .capsule)
             }
         }
-        .padding(DS.Space.md)
+        .padding(DS.Space.sm)
+        .frame(maxWidth: 420, alignment: .leading)
         .background(palette.workspace.color, in: .rect(cornerRadius: DS.Radius.card))
+        .overlay(RoundedRectangle(cornerRadius: DS.Radius.card, style: .continuous).strokeBorder(palette.separator.color, lineWidth: 1))
+        .allowsHitTesting(false)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Preview of the \(palette.family.title) theme")
     }
 
-    private func row(_ name: String, _ size: String, selected: Bool) -> some View {
-        HStack {
+    private func row(_ name: LocalizedStringResource, selected: Bool) -> some View {
+        HStack(spacing: DS.Space.sm) {
             DSIcon(symbol: "folder", tint: palette.accentText.color)
             Text(name)
-            Spacer()
-            Text(size).foregroundStyle(.secondary).monospacedDigit()
+            Spacer(minLength: DS.Space.sm)
+            Text("Secondary text").font(.caption).foregroundStyle(.secondary)
         }
         .padding(.horizontal, DS.Space.sm)
         .frame(height: DS.Size.rowMinHeight)
@@ -544,34 +578,41 @@ private struct TimingsSection: View {
     @State private var summary: [Timings.Summary] = []
 
     var body: some View {
-        DSSection("Timings") {
-            Toggle(isOn: $keeping) {
-                Text("Keep timings of the interface")
-                Text("How long lists, table menus, app listings and Disk Map scans take, including the first content. Kept in memory until you quit; no file names or paths.")
-            }
-            if keeping {
-                if summary.isEmpty {
-                    Text("Nothing measured yet.").foregroundStyle(.secondary)
-                } else {
-                    ForEach(summary, id: \.step) { s in
-                        LabeledContent(s.step.title) {
-                            Text("median \(Self.ms(s.median)) · p95 \(Self.ms(s.p95)) · longest \(Self.ms(s.longest)) · \(s.count)×")
-                                .monospacedDigit()
-                                .foregroundStyle(.secondary)
+        DSSection("Timings", rows: false) {
+            DSFormGrid {
+                DSFormRow("Interface", checkbox: true, help: "How long lists, table menus, app listings and Disk Map scans take, including the first content. Kept in memory until you quit; no file names or paths.") {
+                    Toggle("Keep timings of the interface", isOn: $keeping)
+                }
+                if keeping {
+                    DSFormRow("Measured") {
+                        if summary.isEmpty {
+                            Text("Nothing measured yet.").foregroundStyle(.secondary)
+                        } else {
+                            VStack(alignment: .leading, spacing: DS.Space.xs) {
+                                ForEach(summary, id: \.step) { s in
+                                    LabeledContent(s.step.title) {
+                                        Text("median \(Self.ms(s.median)) · p95 \(Self.ms(s.p95)) · longest \(Self.ms(s.longest)) · \(s.count)×")
+                                            .monospacedDigit()
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-                HStack {
-                    Button("Copy Timings") {
-                        NSPasteboard.general.clearContents()
-                        NSPasteboard.general.setString(Timings.text(), forType: .string)
+                    DSFormRow(nil) {
+                        HStack {
+                            Button("Copy Timings") {
+                                NSPasteboard.general.clearContents()
+                                NSPasteboard.general.setString(Timings.text(), forType: .string)
+                            }
+                            .disabled(summary.isEmpty)
+                            Button("Clear") {
+                                Timings.clear()
+                                summary = []
+                            }
+                            .disabled(summary.isEmpty)
+                        }
                     }
-                    .disabled(summary.isEmpty)
-                    Button("Clear") {
-                        Timings.clear()
-                        summary = []
-                    }
-                    .disabled(summary.isEmpty)
                 }
             }
         }

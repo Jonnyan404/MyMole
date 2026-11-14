@@ -2,6 +2,7 @@ import CryptoKit
 import Darwin
 import Foundation
 import Synchronization
+import UniformTypeIdentifiers
 
 struct DuplicateVersion: Sendable, Hashable {
     let modifiedSeconds: Int
@@ -35,6 +36,11 @@ public struct DuplicateFile: Sendable, Hashable, Identifiable {
     /// doesn't say it shares any.
     public var privateBytes: Int64? = nil
     var version: DuplicateVersion? = nil
+    /// The disk's name when the copy is on one that can be disconnected:
+    /// removable, ejectable or reached over the network.
+    public var detachable: String? = nil
+    /// Its Finder tags, sorted.
+    public var tags: [String] = []
 
     public var id: String { path }
     public var name: String { (path as NSString).lastPathComponent }
@@ -96,6 +102,25 @@ public struct DuplicateGroup: Sendable, Hashable, Identifiable {
     private func familyFrees(_ family: [DuplicateFile]) -> Int64 {
         if family.count > 1 && isWhole(family) { return bytes }
         return family.reduce(0) { $0 + own($1, among: family.count) }
+    }
+
+    /// Some copies carry Finder tags the others don't.
+    public var tagsDiffer: Bool { Set(files.map(\.tags)).count > 1 }
+
+    /// Tags on the copies in `going` that no copy staying has: they'd go
+    /// with them.
+    public func tagsLost(going: Set<String>) -> [String] {
+        let staying = Set(files.filter { !going.contains($0.path) }.flatMap(\.tags))
+        return Set(files.filter { going.contains($0.path) }.flatMap(\.tags)).subtracting(staying).sorted()
+    }
+
+    /// The disk the copies staying are on, when every one of them is on a
+    /// disk that can be disconnected; nil when one stays on an internal disk
+    /// or none stays.
+    public func keptOnlyOnDetachable(going: Set<String>) -> String? {
+        let staying = files.filter { !going.contains($0.path) }
+        guard !staying.isEmpty, staying.allSatisfy({ $0.detachable != nil }) else { return nil }
+        return staying.compactMap(\.detachable).sorted().first
     }
 
     /// The other copies that share `path`'s blocks.
@@ -178,7 +203,9 @@ public struct DuplicateStep: Sendable, Equatable {
 /// packages such as apps and photo libraries, Git repositories and
 /// dependency folders (their copies are meant to be there), cloud files
 /// that aren't downloaded (reading them would fetch them), and files below
-/// the minimum size. Several names of one file (hard links) count as one.
+/// the minimum size, and other disks mounted inside a searched folder.
+/// Several names of one file (hard links) count as one, and a copy with
+/// another name outside the search frees nothing.
 public enum DuplicateFinder {
     public static let standardMinimum: Int64 = 1_048_576
     /// How much of each end is compared before a file is read whole.
@@ -190,7 +217,41 @@ public enum DuplicateFinder {
         "app", "bundle", "framework", "plugin", "kext", "xcodeproj", "xcworkspace", "playground", "xcarchive",
         "photoslibrary", "musiclibrary", "tvlibrary", "imovielibrary", "fcpbundle", "logicx", "band", "aplibrary",
         "sparsebundle", "rtfd", "pages", "numbers", "key", "lproj", "pkg", "mpkg", "download",
+        "appex", "xpc", "dsym", "prefpane", "saver", "qlgenerator", "mdimporter", "component", "vst", "vst3",
+        "systemextension", "dext", "workflow", "docarchive", "lrdata", "lrlibrary", "photolibrary",
     ]
+    /// Whether the folder at `path` is one thing: by the extensions above
+    /// first, then as macOS sees it, a type declared as a package by any
+    /// installed app or a folder with its bundle bit set.
+    public static func isPackage(_ path: String) -> Bool {
+        let ext = (path as NSString).pathExtension.lowercased()
+        if packages.contains(ext) { return true }
+        if !ext.isEmpty, packageType(ext) { return true }
+        return hasBundleBit(path)
+    }
+
+    private static let packageTypes = Mutex<[String: Bool]>([:])
+
+    /// Asked of Launch Services once per extension.
+    private static func packageType(_ ext: String) -> Bool {
+        if let known = packageTypes.withLock({ $0[ext] }) { return known }
+        let package = UTType(filenameExtension: ext, conformingTo: .directory)?.conforms(to: .package) == true
+        packageTypes.withLock { $0[ext] = package }
+        return package
+    }
+
+    /// The Finder's "has bundle" flag in a folder's Finder info, without
+    /// following a link.
+    static func hasBundleBit(_ path: String) -> Bool {
+        var request = attrlist()
+        request.bitmapcount = u_short(ATTR_BIT_MAP_COUNT)
+        request.commonattr = attrgroup_t(ATTR_CMN_FNDRINFO)
+        var buffer = [UInt8](repeating: 0, count: 4 + 32)
+        let ok = buffer.withUnsafeMutableBytes { getattrlist(path, &request, $0.baseAddress, $0.count, UInt32(FSOPT_NOFOLLOW)) == 0 }
+        // Folder info: a rectangle, then the flags, big-endian; kHasBundle is 0x2000.
+        return ok && (UInt16(buffer[12]) << 8 | UInt16(buffer[13])) & 0x2000 != 0
+    }
+
     /// Folders tools fill with copies on purpose.
     static let toolFolders: Set<String> = ["node_modules", "pods", "deriveddata", "bower_components", "__pycache__", "venv", "site-packages", "vendor"]
 
@@ -208,7 +269,15 @@ public enum DuplicateFinder {
         let inode: UInt64
         var device: Int32 = 0
         var version: DuplicateVersion? = nil
+        /// Names the file has on its volume. One name going frees nothing
+        /// while another stays, and only one of them is ever listed.
+        var links: UInt16 = 1
     }
+
+    /// The file's content is on this disk: a cloud file that isn't
+    /// downloaded (iCloud Drive, File Provider) has only its name here, and
+    /// reading it would fetch it. It is never listed, compared or counted.
+    static func holdsContent(_ st: stat) -> Bool { st.st_flags & UInt32(SF_DATALESS) == 0 }
 
     /// A file's last change with the nanoseconds the disk keeps, so a file
     /// rewritten within the same second doesn't pass for unchanged.
@@ -227,6 +296,8 @@ public enum DuplicateFinder {
         in roots: [String], minimum: Int64 = standardMinimum, progress: ScanProgress = ScanProgress(), workers: Int = 4,
         onGroup: (@Sendable (DuplicateGroup) -> Void)?, onStep: (@Sendable (DuplicateStep) -> Void)?
     ) -> DuplicateListing {
+        // An empty file holds nothing to win back, and every one would match.
+        let minimum = max(minimum, 1)
         var unreadable: [String] = []
         var excluded: [String] = []
         var seen = Set<FileID>()
@@ -253,14 +324,16 @@ public enum DuplicateFinder {
         let groups = Mutex<[DuplicateGroup]>([])
         let next = Atomic<Int>(0)
         DispatchQueue.concurrentPerform(iterations: max(1, min(workers, 8))) { _ in
-            while !progress.isCancelled {
-                let i = next.add(1, ordering: .relaxed).oldValue
-                guard i < sameLength.count else { return }
-                let made = compare(sameLength[i], progress: progress, missed: { missed.add(1, ordering: .relaxed) }, onGroup: onGroup) {
-                    let done = counter.add(1, ordering: .relaxed).newValue
-                    onStep?(DuplicateStep(phase: .comparing, done: min(done, total), total: total))
+            FileSpace.withoutDownloading {
+                while !progress.isCancelled {
+                    let i = next.add(1, ordering: .relaxed).oldValue
+                    guard i < sameLength.count else { return }
+                    let made = compare(sameLength[i], progress: progress, missed: { missed.add(1, ordering: .relaxed) }, onGroup: onGroup) {
+                        let done = counter.add(1, ordering: .relaxed).newValue
+                        onStep?(DuplicateStep(phase: .comparing, done: min(done, total), total: total))
+                    }
+                    if !made.isEmpty { groups.withLock { $0 += made } }
                 }
-                if !made.isEmpty { groups.withLock { $0 += made } }
             }
         }
         let sorted = groups.withLock { $0 }.sorted { $0.spare != $1.spare ? $0.spare > $1.spare : $0.digest < $1.digest }
@@ -272,17 +345,28 @@ public enum DuplicateFinder {
         let inode: UInt64
     }
 
+    /// Names in one folder that a disk ignoring case takes for the same
+    /// name: differing only by case or by how an accent is composed. A
+    /// case-sensitive server reached over SMB can hold one file under each,
+    /// while this Mac opens the same one by either name, so neither name
+    /// says which file's content was read.
+    static func caseTwins(_ names: [String]) -> Set<String> {
+        var byFolded: [String: [String]] = [:]
+        for name in names {
+            byFolded[name.precomposedStringWithCanonicalMapping.folding(options: .caseInsensitive, locale: nil), default: []].append(name)
+        }
+        return Set(byFolded.values.filter { $0.count > 1 }.joined())
+    }
+
     /// An explicitly chosen root must obey the same exclusions as a child.
     /// Choosing a subfolder mustn't bypass a library, dependency or repository boundary.
     private static func excludedRoot(_ path: String) -> Bool {
         let components = path.split(separator: "/").map(String.init)
-        if components.contains(where: {
-            $0.hasPrefix(".") || packages.contains(($0 as NSString).pathExtension.lowercased()) || toolFolders.contains($0.lowercased())
-        }) { return true }
+        if components.contains(where: { $0.hasPrefix(".") || toolFolders.contains($0.lowercased()) }) { return true }
         var directory = path
         while directory != "/", !directory.isEmpty {
             var st = stat()
-            if lstat(directory + "/.git", &st) == 0 { return true }
+            if lstat(directory + "/.git", &st) == 0 || isPackage(directory) { return true }
             directory = (directory as NSString).deletingLastPathComponent
         }
         return false
@@ -293,9 +377,16 @@ public enum DuplicateFinder {
     /// name of the same file is passed over.
     static func walk(
         _ root: String, minimum: Int64, progress: ScanProgress, seen: inout Set<FileID>, unreadable: inout [String],
-        _ found: (Found) -> Void
+        holdsContent: (stat) -> Bool = holdsContent, _ found: (Found) -> Void
     ) {
         var stack = [root]
+        // A disk mounted inside a root isn't searched: a copy there can go
+        // with the disk, and a network share may not keep a Trash.
+        var rootStat = stat()
+        let rootDevice: dev_t? = lstat(root, &rootStat) == 0 ? rootStat.st_dev : nil
+        // A link back up that a file server follows itself shows a folder
+        // inside itself; its files are the ones already met above.
+        let loops = FolderLoops.apply(to: root) ? FolderLoops.Seen() : nil
         while let dir = stack.popLast(), !progress.isCancelled {
             var st = stat()
             guard lstat(dir, &st) == 0 else {
@@ -316,6 +407,7 @@ public enum DuplicateFinder {
             let fd = dirfd(d)
             // A folder that's a Git repository holds copies that belong there.
             if fstatat(fd, ".git", &st, AT_SYMLINK_NOFOLLOW) == 0 { continue }
+            var names: [String] = []
             while !progress.isCancelled {
                 errno = 0
                 guard let e = readdir(d) else {
@@ -325,23 +417,35 @@ public enum DuplicateFinder {
                 let name = withUnsafePointer(to: &e.pointee.d_name) {
                     $0.withMemoryRebound(to: CChar.self, capacity: Int(MAXPATHLEN)) { String(cString: $0) }
                 }
-                guard !name.hasPrefix(".") else { continue }
+                if !name.hasPrefix(".") { names.append(name) }
+            }
+            if let loops, loops.isLoop(dir, below: root, names: names) { continue }
+            // Where this Mac ignores case, a twin's name may open the other
+            // twin, and a copy found for it would be a copy of something else.
+            let twins = fpathconf(fd, _PC_CASE_SENSITIVE) == 0 ? caseTwins(names) : []
+            for name in names where !progress.isCancelled {
+                guard !twins.contains(name) else {
+                    unreadable.append(dir + "/" + name)
+                    continue
+                }
                 guard fstatat(fd, name, &st, AT_SYMLINK_NOFOLLOW) == 0 else {
                     unreadable.append(dir + "/" + name)
                     continue
                 }
                 switch st.st_mode & S_IFMT {
                 case S_IFDIR:
-                    let ext = (name as NSString).pathExtension.lowercased()
-                    if !packages.contains(ext), !toolFolders.contains(name.lowercased()) { stack.append(dir + "/" + name) }
+                    if !toolFolders.contains(name.lowercased()), st.st_dev == rootDevice, !isPackage(dir + "/" + name) {
+                        stack.append(dir + "/" + name)
+                    }
                 case S_IFREG:
                     // Not downloaded: its content is in the cloud, and reading it would fetch it.
-                    guard st.st_size >= minimum, st.st_flags & UInt32(SF_DATALESS) == 0,
+                    guard st.st_size >= minimum, holdsContent(st),
                         seen.insert(FileID(device: st.st_dev, inode: UInt64(st.st_ino))).inserted
                     else { continue }
                     found(Found(
                         path: dir + "/" + name, length: Int64(st.st_size), bytes: Int64(st.st_blocks) * 512,
-                        modified: changed(st), inode: UInt64(st.st_ino), device: st.st_dev, version: DuplicateVersion(st)))
+                        modified: changed(st), inode: UInt64(st.st_ino), device: st.st_dev, version: DuplicateVersion(st),
+                        links: st.st_nlink))
                 default: continue
                 }
             }
@@ -403,7 +507,8 @@ public enum DuplicateFinder {
                         let sharing = FileSpace.sharing($0.path)
                         return DuplicateFile(path: $0.path, modified: $0.modified, inode: $0.inode, device: $0.device,
                                              cloneID: sharing?.cloneID, cloneCount: sharing?.cloneCount,
-                                             privateBytes: sharing?.privateBytes, version: $0.version)
+                                             privateBytes: $0.links > 1 ? 0 : sharing?.privateBytes, version: $0.version,
+                                             detachable: Volumes.detachableName(of: $0.path), tags: FileSpace.tags($0.path))
                     })
                 out.append(group)
                 onGroup?(group)
@@ -438,7 +543,7 @@ public enum DuplicateFinder {
     private static func matches(_ st: stat, _ f: Found) -> Bool {
         st.st_mode & S_IFMT == S_IFREG && Int64(st.st_size) == f.length
             && UInt64(st.st_ino) == f.inode && st.st_dev == f.device && changed(st) == f.modified
-            && st.st_flags & UInt32(SF_DATALESS) == 0 && (f.version == nil || f.version == DuplicateVersion(st))
+            && holdsContent(st) && (f.version == nil || f.version == DuplicateVersion(st))
     }
 
     private static func isCurrent(_ f: Found) -> Bool {
@@ -540,10 +645,14 @@ public enum DuplicateFinder {
     /// Whether the file at `path` is still the one that was compared: the
     /// same plain file, of that length, last changed when it was.
     public static func isUnchanged(_ file: DuplicateFile, length: Int64) -> Bool {
+        isUnchanged(file, length: length, holdsContent: holdsContent)
+    }
+
+    static func isUnchanged(_ file: DuplicateFile, length: Int64, holdsContent: (stat) -> Bool) -> Bool {
         var st = stat()
         return lstat(file.path, &st) == 0 && st.st_mode & S_IFMT == S_IFREG && Int64(st.st_size) == length
             && UInt64(st.st_ino) == file.inode && (file.device == 0 || st.st_dev == file.device) && changed(st) == file.modified
-            && st.st_flags & UInt32(SF_DATALESS) == 0 && (file.version == nil || file.version == DuplicateVersion(st))
+            && holdsContent(st) && (file.version == nil || file.version == DuplicateVersion(st))
     }
 
     /// Checked again right before a copy goes to the Trash: it's unchanged,
@@ -560,13 +669,13 @@ public enum DuplicateFinder {
             Found(path: file.path, length: group.length, bytes: group.bytes, modified: file.modified,
                   inode: file.inode, device: file.device, version: file.version)
         }
-        return group.files.contains { keeper in
+        return FileSpace.withoutDownloading { group.files.contains { keeper in
             !going.contains(keeper.path) && (file.device != keeper.device || file.inode != keeper.inode)
                 && isUnchanged(keeper, length: group.length)
                 && (!keeper.path.hasPrefix(home + "/") || Trasher.noLinksBetween(home, and: keeper.path))
                 && identical(found(file), found(keeper), digest: group.digest, stop: stop)
                 && Trasher.noLinksBetween(home, and: path)
                 && (!keeper.path.hasPrefix(home + "/") || Trasher.noLinksBetween(home, and: keeper.path))
-        }
+        } }
     }
 }

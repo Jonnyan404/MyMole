@@ -111,7 +111,7 @@ import Testing
         cell.setChoosingEnabled(true)
         checkbox.performClick(nil)
         #expect(!checkbox.isEnabled && checkbox.state == .on && calls == 0)
-        #expect(checkbox.toolTip == "Required in this review")
+        #expect(checkbox.hoverHelp == "Required in this review")
 
         row.canChoose = true
         row.size = nil

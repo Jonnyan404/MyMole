@@ -56,10 +56,36 @@ public enum Segment: Sendable, Hashable {
 /// The pieces of one folder worth drawing, largest first. Sizes are summed
 /// from the parts rather than read from `size`, so a folder whose subtrees
 /// are still streaming in charts what's known so far.
+///
+/// A finished folder keeps its contents largest first (`Folder.finish()`),
+/// so the parts are taken in that order and sorted only when they aren't:
+/// a folder of tens of thousands is charted on every step into it.
 public func chartParts(of folder: Folder, include: (Folder) -> Bool = { _ in true }) -> [Segment] {
-    var parts = folder.subfolders.filter { include($0) && $0.size > 0 }.map(Segment.folder)
-    if folder.looseBytes > 0 { parts.append(.files(folder)) }
-    return parts.sorted { $0.size > $1.size }
+    var parts: [Segment] = []
+    parts.reserveCapacity(folder.subfolders.count + 1)
+    var ordered = true
+    var previous = Int64.max
+    for f in folder.subfolders where include(f) {
+        let size = f.size
+        guard size > 0 else { continue }
+        if size > previous { ordered = false }
+        previous = size
+        parts.append(.folder(f))
+    }
+    let loose = folder.looseBytes
+    if loose > 0 {
+        if ordered {
+            var low = 0, high = parts.count
+            while low < high {
+                let mid = (low + high) / 2
+                if parts[mid].size >= loose { low = mid + 1 } else { high = mid }
+            }
+            parts.insert(.files(folder), at: low)
+        } else {
+            parts.append(.files(folder))
+        }
+    }
+    return ordered ? parts : parts.sorted { $0.size > $1.size }
 }
 
 // MARK: - Treemap
@@ -148,24 +174,55 @@ public enum Sunburst {
     /// Rings for `folder` out to `rings` levels. Segments narrower than
     /// `minAngle` are dropped (they'd be sub-pixel) — their space stays empty
     /// rather than being reassigned, so angles stay true to size.
+    ///
+    /// `include` hides folders, such as those a running scan hasn't
+    /// measured yet; without it, a finished folder is read in the order it
+    /// keeps and only up to its first part too thin to draw, so the cost is
+    /// what is drawn, not what the folders hold.
     public static func layout(
-        _ folder: Folder, rings: Int = 4, minAngle: Double = 0.004, include: (Folder) -> Bool = { _ in true }
+        _ folder: Folder, rings: Int = 4, minAngle: Double = 0.004, include: ((Folder) -> Bool)? = nil
     ) -> [Arc] {
         var arcs: [Arc] = []
         func walk(_ f: Folder, depth: Int, start: Double, span: Double, branch: Int?) {
-            let parts = chartParts(of: f, include: include)
-            let total = Double(parts.reduce(0) { $0 + $1.size })
-            guard total > 0 else { return }
-            var a = start
-            for (i, p) in parts.enumerated() {
+            var a = start, i = 0
+            /// Draws `p` if wide enough; false once parts are too thin.
+            func place(_ p: Segment, of total: Double) -> Bool {
                 let s = span * Double(p.size) / total
-                defer { a += s }
-                guard s >= minAngle else { continue }
+                // Largest first: every part after a too-thin one is thinner still.
+                guard s >= minAngle else { return false }
                 let b = branch ?? i
                 arcs.append(Arc(segment: p, depth: depth, start: a, end: a + s, branch: b))
                 if case .folder(let child) = p, depth < rings {
                     walk(child, depth: depth + 1, start: a, span: s, branch: b)
                 }
+                a += s
+                i += 1
+                return true
+            }
+            if include == nil, f.isFinished {
+                // Its size is its files and folders together, its folders
+                // largest first; the files go before the first smaller folder.
+                let total = Double(f.size)
+                guard total > 0 else { return }
+                let loose = f.looseBytes
+                var filesPlaced = loose <= 0
+                for child in f.subfolders {
+                    let size = child.size
+                    guard size > 0 else { break }
+                    if !filesPlaced, size < loose {
+                        filesPlaced = true
+                        guard place(.files(f), of: total) else { return }
+                    }
+                    guard place(.folder(child), of: total) else { return }
+                }
+                if !filesPlaced { _ = place(.files(f), of: total) }
+                return
+            }
+            let parts = chartParts(of: f, include: include ?? { _ in true })
+            let total = Double(parts.reduce(0) { $0 + $1.size })
+            guard total > 0 else { return }
+            for p in parts {
+                guard place(p, of: total) else { return }
             }
         }
         walk(folder, depth: 1, start: 0, span: 2 * .pi, branch: nil)

@@ -327,6 +327,12 @@ struct RootView: View {
         }
         // The window's appearance, which its AppKit tables follow too.
         .preferredColorScheme((AppearanceMode(rawValue: mode) ?? .system).colorScheme)
+        // The main window is AppKit's, so the scheme above doesn't reach it:
+        // the app's appearance carries the choice to it, its sheets and panels.
+        .onChange(of: mode, initial: true) { _, value in
+            let appearance = (AppearanceMode(rawValue: value) ?? .system).nsAppearance
+            if NSApp.appearance != appearance { NSApp.appearance = appearance }
+        }
         // The window's toolbar is AppKit's own (`MainToolbar`); each pane
         // hands it its title and tools (see `paneToolbar`).
         .background(MainToolbarHost(app: app, back: app.command(.back), forward: app.command(.forward), toggleSidebar: toggleSidebar))

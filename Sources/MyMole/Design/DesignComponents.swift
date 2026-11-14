@@ -134,6 +134,18 @@ enum DS {
         static var appTileMinimum: CGFloat { Density.pick(128, 172) }
         static var appTileIcon: CGFloat { Density.pick(44, 64) }
         static var appTilePadding: CGFloat { Density.pick(10, 20) }
+        /// A settings form's label column, the narrowest its control column
+        /// gets before the label goes above it, and every control line's height.
+        static var formLabel: CGFloat { Density.pick(160, 180) }
+        static let formControlMinimum: CGFloat = 240
+        static let formControlHeight: CGFloat = 28
+        /// Help under a control, and section footers: a readable line.
+        static let formHelpWidth: CGFloat = 520
+        static let proseWidth: CGFloat = 640
+        /// A form column, so controls and help stay near their labels in a wide window.
+        static let formMaxWidth: CGFloat = 860
+        /// From a checkbox's box to its title, where its help starts.
+        static let checkboxIndent: CGFloat = 20
     }
 }
 

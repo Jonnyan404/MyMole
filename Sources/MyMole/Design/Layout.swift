@@ -83,7 +83,9 @@ struct DSSection<Content: View, Accessory: View>: View {
             .frame(maxHeight: fills ? .infinity : nil, alignment: .top)
             .dsCard()
             if let footer {
-                DSText(phrase: footer, .metadata).padding(.horizontal, DS.Space.xs)
+                DSText(phrase: footer, .metadata)
+                    .frame(maxWidth: DS.Size.proseWidth, alignment: .leading)
+                    .padding(.horizontal, DS.Space.xs)
             }
         }
     }

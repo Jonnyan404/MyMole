@@ -43,35 +43,57 @@ enum StatusGrid {
 
 }
 
-/// The scrollable height and each card's frame use the same measured width.
-/// Native frame/position modifiers keep drawing and hit testing in agreement.
+/// The cards at their frames for the width the grid is offered. The frames
+/// come from the width alone, so a resize only moves and sizes the cards:
+/// nothing is stored, no card's contents are made again, and no card is
+/// measured to place it.
 struct StatusGridView<Content: View>: View {
     let cards: [StatusLayout.Card]
     var compactDensity = false
     var editing = false
     let spacing: CGFloat
     @ViewBuilder var content: (StatusLayout.Card) -> Content
-    @State private var width: CGFloat = 900
 
     var body: some View {
-        let measured = StatusGrid.frames(cards: cards, width: width, spacing: spacing,
-                                         compactDensity: compactDensity, editing: editing)
-        GeometryReader { geometry in
-            let frames = StatusGrid.frames(cards: cards, width: geometry.size.width, spacing: spacing,
-                                           compactDensity: compactDensity, editing: editing)
-            ZStack(alignment: .topLeading) {
-                ForEach(Array(cards.enumerated()), id: \.element.id) { index, card in
-                    content(card)
-                        .frame(width: frames[index].width, height: frames[index].height, alignment: .topLeading)
-                        .contentShape(.rect)
-                        .position(x: frames[index].midX, y: frames[index].midY)
-                }
+        StatusGridLayout(cards: cards, spacing: spacing, compactDensity: compactDensity, editing: editing) {
+            ForEach(cards, id: \.id) { card in
+                content(card)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .contentShape(.rect)
             }
-            .frame(width: geometry.size.width, height: frames.map(\.maxY).max() ?? 0, alignment: .topLeading)
-            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = max(1, $0) }
         }
-        .frame(height: measured.map(\.maxY).max() ?? 0)
     }
+}
+
+/// Places one card per subview at `StatusGrid.frames`; as tall as its rows.
+private struct StatusGridLayout: Layout {
+    let cards: [StatusLayout.Card]
+    let spacing: CGFloat
+    let compactDensity: Bool
+    let editing: Bool
+
+    private func frames(_ width: CGFloat) -> [CGRect] {
+        StatusGrid.frames(cards: cards, width: width, spacing: spacing, compactDensity: compactDensity, editing: editing)
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let width = proposal.width.flatMap { $0.isFinite ? max(1, $0) : nil } ?? 900
+        return CGSize(width: width, height: frames(width).map(\.maxY).max() ?? 0)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        for (frame, subview) in zip(frames(bounds.width), subviews) {
+            subview.place(at: CGPoint(x: bounds.minX + frame.minX, y: bounds.minY + frame.minY), anchor: .topLeading,
+                          proposal: ProposedViewSize(frame.size))
+        }
+    }
+
+    // No alignment guides: the default asks every card for its own.
+    func explicitAlignment(of guide: HorizontalAlignment, in bounds: CGRect, proposal: ProposedViewSize,
+                           subviews: Subviews, cache: inout ()) -> CGFloat? { nil }
+
+    func explicitAlignment(of guide: VerticalAlignment, in bounds: CGRect, proposal: ProposedViewSize,
+                           subviews: Subviews, cache: inout ()) -> CGFloat? { nil }
 }
 
 struct StatusCard<Content: View, Actions: View>: View {

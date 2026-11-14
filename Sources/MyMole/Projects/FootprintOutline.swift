@@ -34,6 +34,7 @@ struct FootprintOutline: NSViewRepresentable {
 
     func makeNSView(context: Context) -> NSScrollView {
         let outline = FootprintOutlineView()
+        HoverHelpTracker.install(on: outline)
         outline.coordinator = context.coordinator
         outline.style = DS.Table.style
         outline.configureRows(height: DS.Table.compactRow)
@@ -345,10 +346,12 @@ struct FootprintOutline: NSViewRepresentable {
             }
         }
 
+        /// As the scan saw it. The outline is built on the main thread, which
+        /// never reads the disk: a share that stops answering would hold up
+        /// the window. An entry that doesn't say, from results saved before
+        /// entries did, opens once the next scan has said.
         private static func isFolder(_ entry: FootprintEntry) -> Bool {
-            if let known = entry.isDirectory { return known }
-            var st = stat()
-            return lstat(entry.path, &st) == 0 && st.st_mode & S_IFMT == S_IFDIR
+            entry.isDirectory ?? false
         }
 
         private func children(of n: Node) -> [Node] {
@@ -786,6 +789,8 @@ extension NSMenu {
 
 /// The outline itself: Space ticks the selected rows.
 final class FootprintOutlineView: NSOutlineView, LinedTable, UserColumnTable {
+    var lineGeometry: LineGeometry?
+
     var defaultHiddenColumns = Set<String>()
     var columnViewport: ColumnViewport?
     weak var coordinator: FootprintOutline.Coordinator?
@@ -852,6 +857,9 @@ final class FootprintOutlineView: NSOutlineView, LinedTable, UserColumnTable {
 // MARK: - Cells (laid out by hand, like the file table's)
 
 private final class TreeNameCell: NSTableCellView, ColumnWidthProviding {
+    /// Loaded once for every cell, not by each new one.
+    private static let lock = NSImage(systemSymbolName: "lock.fill", accessibilityDescription: String(localized: "Never removed from here"))
+
     private let check = NSButton(checkboxWithTitle: "", target: nil, action: nil)
     private let lock = NSImageView()
     private let icon = NSImageView()
@@ -878,7 +886,7 @@ private final class TreeNameCell: NSTableCellView, ColumnWidthProviding {
         check.target = self
         check.action = #selector(toggled)
         check.allowsMixedState = true
-        lock.image = NSImage(systemSymbolName: "lock.fill", accessibilityDescription: String(localized: "Never removed from here"))
+        lock.image = Self.lock
         lock.contentTintColor = .tertiaryLabelColor
         icon.imageScaling = .scaleProportionallyDown
         dot.wantsLayer = true
@@ -900,7 +908,7 @@ private final class TreeNameCell: NSTableCellView, ColumnWidthProviding {
 
     func setChoosingEnabled(_ enabled: Bool) {
         check.isEnabled = enabled && choiceIsEditable
-        check.toolTip = enabled ? nil : String(localized: "Refreshing folder contents…")
+        check.hoverHelp = enabled ? nil : String(localized: "Refreshing folder contents…")
     }
 
     func configure(_ n: FootprintOutline.Node, look: (check: NSControl.StateValue?, locked: Bool, whitelisted: Bool), onToggle: @escaping () -> Void) {
@@ -914,20 +922,20 @@ private final class TreeNameCell: NSTableCellView, ColumnWidthProviding {
         lock.isHidden = !look.locked
         normalLockTint = look.whitelisted ? .systemGreen : .secondaryLabelColor
         updateLockTint()
-        lock.toolTip = look.whitelisted ? String(localized: "Whitelisted — this folder and its contents stay during cleanup.") : nil
+        lock.hoverHelp = look.whitelisted ? String(localized: "Whitelisted — this folder and its contents stay during cleanup.") : nil
         dot.isHidden = true
         icon.isHidden = false
         detail.isHidden = true
         title.font = .systemFont(ofSize: 13)
         title.textColor = .labelColor
-        toolTip = nil
+        hoverHelp = nil
         switch n.kind {
         case .section(let text, let help):
             isSection = true
             icon.isHidden = true
             title.stringValue = text
             title.font = .systemFont(ofSize: 13, weight: .semibold)
-            toolTip = help
+            hoverHelp = help
         case .item(let item):
             isItem = true
             icon.isHidden = true
@@ -937,38 +945,38 @@ private final class TreeNameCell: NSTableCellView, ColumnWidthProviding {
             title.font = .systemFont(ofSize: 13, weight: .medium)
             detail.isHidden = false
             detail.stringValue = Self.summary(item)
-            toolTip = item.attribution == .inside
+            hoverHelp = item.attribution == .inside
                 ? item.category.note : "\(item.category.note)\n\(item.location)\n\(Self.tie(item.attribution))"
         case .entry(let item, let e):
             title.stringValue = e.path == item.location && item.attribution == .inside
                 ? String(localized: "Files directly in the project folder")
                 : item.attribution == .inside ? String(e.path.dropFirst(item.location.count + 1)) : Self.short(e.path)
             icon.image = Self.symbol(for: e.path, folder: n.opens != nil)
-            toolTip = e.path
+            hoverHelp = e.path
         case .folder(_, let f):
             title.stringValue = f.name
             icon.image = Self.symbol(for: f.path, folder: true)
-            toolTip = f.path
+            hoverHelp = f.path
         case .file(_, let p, _, _):
             title.stringValue = (p as NSString).lastPathComponent
             icon.image = Self.symbol(for: p, folder: false)
-            toolTip = p
+            hoverHelp = p
         case .smallFiles(_, _, let count, _):
             choiceIsEditable = false
             title.stringValue = String(localized: "\(count.formatted()) smaller file\(count == 1 ? "" : "s")")
             title.textColor = .secondaryLabelColor
-            icon.image = NSImage(systemSymbolName: "doc.on.doc", accessibilityDescription: nil)
+            icon.image = FileCellResources.symbol("doc.on.doc")
             check.isEnabled = false
-            toolTip = String(localized: "Files under 1 MB, counted together; they go with their folder.")
+            hoverHelp = String(localized: "Files under 1 MB, counted together; they go with their folder.")
         case .loading:
             check.isHidden = true
             title.stringValue = String(localized: "Measuring…")
             title.textColor = .tertiaryLabelColor
-            icon.image = NSImage(systemSymbolName: "hourglass", accessibilityDescription: nil)
+            icon.image = FileCellResources.symbol("hourglass")
         }
-        title.toolTip = title.stringValue
-        detail.toolTip = detail.isHidden ? nil : detail.stringValue
-        toolTip = [title.stringValue, detail.isHidden ? nil : detail.stringValue, toolTip].compactMap { $0 }.joined(separator: "\n")
+        title.hoverHelp = title.stringValue
+        detail.hoverHelp = detail.isHidden ? nil : detail.stringValue
+        hoverHelp = [title.stringValue, detail.isHidden ? nil : detail.stringValue, hoverHelp].compactMap { $0 }.joined(separator: "\n")
         icon.contentTintColor = .secondaryLabelColor
         needsLayout = true
     }
@@ -1007,8 +1015,10 @@ private final class TreeNameCell: NSTableCellView, ColumnWidthProviding {
         return p.hasPrefix(home + "/") ? "~" + p.dropFirst(home.count) : p
     }
 
+    /// Symbols come from the shared cache: a row is configured on every
+    /// reload and scroll, and a symbol lookup each time slowed both.
     private static func symbol(for path: String, folder: Bool) -> NSImage? {
-        NSImage(systemSymbolName: folder ? "folder" : "doc", accessibilityDescription: nil)
+        FileCellResources.symbol(folder ? "folder" : "doc")
     }
 
     @objc private func toggled() { onToggle() }
@@ -1076,8 +1086,8 @@ private final class TreeValueCell: NSTableCellView, ColumnWidthProviding {
         } else {
             label.stringValue = date.flatMap { $0 > .distantPast ? $0.listText : nil } ?? ""
         }
-        label.toolTip = label.stringValue.isEmpty ? nil : (size ? label.stringValue : date.map { $0.formatted(date: .complete, time: .shortened) })
-        toolTip = label.toolTip
+        label.hoverHelp = label.stringValue.isEmpty ? nil : (size ? label.stringValue : date.map { $0.formatted(date: .complete, time: .shortened) })
+        hoverHelp = label.hoverHelp
         needsLayout = true
     }
 

@@ -56,13 +56,14 @@ struct SunburstChart: View {
             if let map, let kept = ChartLayouts.sunburst.value(key, map: map) {
                 next = kept
             } else {
-                next = model.current.map { Sunburst.layout($0, rings: Self.rings, include: model.isReady) } ?? []
+                next = model.current.map { Sunburst.layout($0, rings: Self.rings, include: model.hiding) } ?? []
                 if let map { ChartLayouts.sunburst.keep(next, for: key, map: map) }
             }
             withAnimation(model.showingLive ? nil : Motion.content) {
                 arcs = next
                 drawing = LayoutKey(model)
             }
+            ChartLayouts.didInstall()
         }
         .padding(16)
     }

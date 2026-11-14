@@ -146,9 +146,11 @@ struct ProjectsView: View {
             Button {
                 model.selection = Set(model.footprints.filter { Heat($0.lastActivity) == h }.map(\.id))
             } label: {
-                DSCountChip(n, h.title, h.color)
+                // An empty group is a fact, not a signal: no colour to compete with the ones that have projects.
+                DSCountChip(n, h.title, n == 0 ? .secondary : h.color)
             }
             .buttonStyle(.plain)
+            .disabled(n == 0)
             .help(h == .dormant
                 ? String(localized: "Select the projects untouched for a month or more")
                 : String(localized: "Select the projects \(h.title.lowercased())"))

@@ -55,32 +55,25 @@ public struct TrashBackend: Sendable {
         #if SMOKE
         return (nil, "System Trash is disabled in synthetic test builds.")
         #else
-        var result: NSURL?
-        do {
-            try FileManager.default.trashItem(at: URL(fileURLWithPath: path), resultingItemURL: &result)
-            return (result as URL?, result == nil ? "The Trash didn't say where it went." : nil)
-        } catch {
-            return (nil, error.localizedDescription)
+        switch SystemTrash.live.move(URL(fileURLWithPath: path)) {
+        case .success(let trashed): return (trashed, nil)
+        case .failure(let failure): return (nil, failure.reason)
         }
         #endif
     }
 
     /// The coordinator supplies a checked URL, retaining any Powerbox grant.
     /// This backend uses ordinary permissions and never deletes permanently.
-    public static func systemOutcome(for source: URL, area: ErrorCode.Area) -> TrashOutcome {
+    public static func systemOutcome(for source: URL, area: ErrorCode.Area, trash: SystemTrash = .live) -> TrashOutcome {
         #if SMOKE
         return TrashOutcome(moved: [], failed: [(source.path, "System Trash is disabled in synthetic test builds.")])
         #else
-        var result: NSURL?
-        do {
-            try FileManager.default.trashItem(at: source, resultingItemURL: &result)
-            guard let result else {
-                return TrashOutcome(moved: [], failed: [(source.path, "The Trash didn't say where it went.")])
-            }
-            return TrashOutcome(moved: [TrashRecord(original: source, trashed: result as URL)], failed: [])
-        } catch {
-            return TrashOutcome(moved: [], failed: [(source.path, error.localizedDescription)],
-                                failureInfo: [source.path: .init(error, area: area)])
+        switch trash.move(source) {
+        case .success(let trashed):
+            return TrashOutcome(moved: [TrashRecord(original: source, trashed: trashed)], failed: [])
+        case .failure(let failure):
+            return TrashOutcome(moved: [], failed: [(source.path, failure.reason)],
+                                failureInfo: failure.error.map { [source.path: .init($0, area: area)] } ?? [:])
         }
         #endif
     }
@@ -119,6 +112,52 @@ public struct TrashBackend: Sendable {
             let to = dir + "/" + UUID().uuidString + "-" + (path as NSString).lastPathComponent
             guard renamex_np(path, to, UInt32(RENAME_EXCL)) == 0 else { return (nil, String(cString: strerror(errno))) }
             return (URL(fileURLWithPath: to), nil)
+        }
+    }
+}
+
+/// The system's Trash as a move uses it: `FileManager.trashItem`, which
+/// puts an item in its own disk's Trash or fails, and whether the disk is
+/// local. A disk without a Trash (a network share, some removable disks)
+/// keeps the item where it is; nothing is ever deleted in its place.
+public struct SystemTrash: Sendable {
+    public struct Failure: Error, Sendable {
+        public let reason: String
+        public let error: (any Error)?
+    }
+
+    public var trashItem: @Sendable (URL) throws -> URL?
+    /// nil when the disk doesn't say.
+    public var isLocal: @Sendable (URL) -> Bool?
+
+    public init(trashItem: @escaping @Sendable (URL) throws -> URL?, isLocal: @escaping @Sendable (URL) -> Bool?) {
+        self.trashItem = trashItem
+        self.isLocal = isLocal
+    }
+
+    public static let live = SystemTrash(
+        trashItem: { url in
+            var result: NSURL?
+            try FileManager.default.trashItem(at: url, resultingItemURL: &result)
+            return result as URL?
+        },
+        isLocal: { url in
+            (try? url.deletingLastPathComponent().resourceValues(forKeys: [.volumeIsLocalKey]))?.volumeIsLocal
+        })
+
+    public static let noTrash = "This location has no Trash; MyMole doesn't delete permanently."
+
+    /// One move, tried once: a failure is reported, never retried another way.
+    public func move(_ url: URL) -> Result<URL, Failure> {
+        do {
+            guard let trashed = try trashItem(url) else {
+                return .failure(Failure(reason: "The Trash didn't say where it went.", error: nil))
+            }
+            return .success(trashed)
+        } catch {
+            let ns = error as NSError
+            let unsupported = ns.domain == NSCocoaErrorDomain && ns.code == NSFeatureUnsupportedError
+            return .failure(Failure(reason: unsupported || isLocal(url) == false ? Self.noTrash : error.localizedDescription, error: error))
         }
     }
 }
@@ -198,7 +237,9 @@ public enum Trasher {
     /// Paths that are never touched, however they were selected: the
     /// volume, system locations, the home folder and its top-level folders,
     /// anywhere inside keychains, SSH and GPG keys, the privacy database
-    /// and Time Machine backups, and any folder holding one of those.
+    /// and Time Machine backups, and any folder holding one of those; the
+    /// folders every disk keeps for the system (Spotlight, file events,
+    /// versions, its Trash) and other users' home folders.
     public static func isProtected(_ path: String, home: String = Home.path) -> Bool {
         let p = lexical(path)
         let sealed = [
@@ -208,12 +249,20 @@ public enum Trasher {
         // Sealed itself, inside, or holding one: moving a parent folder
         // would take the sealed one with it.
         if sealed.contains(where: { p == $0 || p.hasPrefix($0 + "/") || $0.hasPrefix(p + "/") }) { return true }
-        if ["/Backups.backupdb", ".backupbundle", "/.MobileBackups"].contains(where: { p.contains($0 + "/") || p.hasSuffix($0) }) {
+        if ["/Backups.backupdb", ".backupbundle", "/.MobileBackups", "/.timemachine", "/com.apple.TimeMachine.localsnapshots",
+            "/.Spotlight-V100", "/.fseventsd", "/.DocumentRevisions-V100", "/.Trashes"]
+            .contains(where: { p.contains($0 + "/") || p.hasSuffix($0) }) {
+            return true
+        }
+        // Someone else's home folder: only theirs to clean.
+        let parts = p.split(separator: "/", maxSplits: 2)
+        if parts.count >= 2, parts[0] == "Users", parts[1] != "Shared", !(p == home || p.hasPrefix(home + "/")),
+           "/Users/" + parts[1] != home {
             return true
         }
         let fixed: Set<String> = [
             "/", "/System", "/Library", "/Applications", "/Users", "/private", "/usr", "/bin", "/sbin",
-            "/opt", "/Volumes", home, home + "/Library", home + "/Desktop", home + "/Documents",
+            "/opt", "/Volumes", "/Users/Shared", home, home + "/Library", home + "/Desktop", home + "/Documents",
             home + "/Downloads", home + "/Pictures", home + "/Movies", home + "/Music",
             home + "/Library/Mobile Documents", home + "/Library/CloudStorage",
         ]
@@ -227,9 +276,36 @@ public enum Trasher {
     /// folder on the way doesn't resolve.
     public static func resolvingParent(_ path: String) -> String? {
         let p = lexical(path)
-        let name = (p as NSString).lastPathComponent
         guard let parent = realPath((p as NSString).deletingLastPathComponent) else { return nil }
+        // On a disk that ignores case, "library" names Library: the name as
+        // the disk keeps it is the one checked.
+        let written = (p as NSString).lastPathComponent
+        // A disk's root answers with the disk's name, which can differ from
+        // the folder it's mounted on; only a difference of case is taken.
+        let stored = storedName(parent == "/" ? "/" + written : parent + "/" + written)
+        let name = stored.flatMap { $0.caseInsensitiveCompare(written) == .orderedSame ? $0 : nil } ?? written
         return parent == "/" ? "/" + name : parent + "/" + name
+    }
+
+    /// The item's name as its folder keeps it, without following a link;
+    /// nil when there's nothing there.
+    static func storedName(_ path: String) -> String? {
+        var request = attrlist()
+        request.bitmapcount = u_short(ATTR_BIT_MAP_COUNT)
+        request.commonattr = attrgroup_t(ATTR_CMN_NAME)
+        var buffer = [UInt8](repeating: 0, count: 4 + MemoryLayout<attrreference_t>.size + Int(NAME_MAX) * 3 + 1)
+        let ok = buffer.withUnsafeMutableBytes { raw in
+            getattrlist(path, &request, raw.baseAddress, raw.count, UInt32(FSOPT_NOFOLLOW)) == 0
+        }
+        guard ok else { return nil }
+        return buffer.withUnsafeBytes { raw -> String? in
+            let ref = raw.loadUnaligned(fromByteOffset: 4, as: attrreference_t.self)
+            let start = 4 + Int(ref.attr_dataoffset)
+            guard ref.attr_length > 1, start + Int(ref.attr_length) <= raw.count else { return nil }
+            let bytes = raw[start..<(start + Int(ref.attr_length) - 1)]
+            let name = String(decoding: bytes, as: UTF8.self)
+            return name.isEmpty || name.contains("/") ? nil : name
+        }
     }
 
     /// Whether `path` is `base` or lies under it with no link on the way, so
@@ -256,7 +332,24 @@ public enum Trasher {
     static func isProtectedResolved(_ path: String, home: String = Home.path) -> Bool {
         if isProtected(path, home: home) { return true }
         guard let real = resolvingParent(path) else { return true }
-        return isProtected(real, home: realPath(home) ?? home)
+        return isProtected(real, home: realPath(home) ?? home) || volumeRefuses(real)
+    }
+
+    /// The disk holding `real` (folders above it resolved) can't take the
+    /// move: it's the disk's own root, or the disk is read-only, as a
+    /// mounted disk image, a snapshot or a backup is. A link is judged by
+    /// the folder holding it, never by where it points.
+    static func volumeRefuses(_ real: String) -> Bool {
+        func mount(_ path: String) -> (on: String, flags: UInt32)? {
+            var fs = statfs()
+            guard statfs(path, &fs) == 0 else { return nil }
+            let on = withUnsafeBytes(of: fs.f_mntonname) { String(cString: $0.bindMemory(to: CChar.self).baseAddress!) }
+            return (on, fs.f_flags)
+        }
+        var st = stat()
+        if lstat(real, &st) == 0, st.st_mode & S_IFMT == S_IFDIR, let own = mount(real), own.on == real { return true }
+        guard let holder = mount((real as NSString).deletingLastPathComponent) else { return true }
+        return holder.flags & UInt32(MNT_RDONLY) != 0 || holder.flags & UInt32(MNT_SNAPSHOT) != 0
     }
 
     /// `paths` without any that sit inside another one in the list. Moving
@@ -289,6 +382,11 @@ public enum Trasher {
         for path in paths {
             if !isPlainPath(path) {
                 refused.append((path, "Not a plain full path"))
+            } else if isProtected(path) {
+                refused.append((path, "Protected location"))
+            } else if identity(of: path) == nil {
+                // Gone, or its disk was disconnected.
+                refused.append((path, "No longer there"))
             } else if isProtectedResolved(path) {
                 refused.append((path, "Protected location"))
             } else if keeps(path) {
@@ -370,7 +468,30 @@ public enum Trasher {
         let name = (original as NSString).lastPathComponent
         guard let dir = openFolder((original as NSString).deletingLastPathComponent, creating: true) else { return false }
         defer { close(dir) }
-        return renameatx_np(AT_FDCWD, r.trashed.path, dir, name, UInt32(RENAME_EXCL)) == 0
+        if renameatx_np(AT_FDCWD, r.trashed.path, dir, name, UInt32(RENAME_EXCL)) == 0 { return true }
+        // exFAT has no exclusive rename.
+        guard errno == ENOTSUP || errno == EINVAL else { return false }
+        return renameClaimingName(r.trashed.path, into: dir, name)
+    }
+
+    /// Moves `source` to `name` in `dir` on a disk without exclusive
+    /// renames: the name is claimed first with an empty placeholder of the
+    /// same kind, which only this move replaces, so nothing that appears
+    /// there meanwhile is overwritten. The placeholder goes if the move fails.
+    static func renameClaimingName(_ source: String, into dir: Int32, _ name: String) -> Bool {
+        var st = stat()
+        guard lstat(source, &st) == 0 else { return false }
+        let isFolder = st.st_mode & S_IFMT == S_IFDIR
+        if isFolder {
+            guard mkdirat(dir, name, 0o700) == 0 else { return false }
+        } else {
+            let fd = openat(dir, name, O_CREAT | O_EXCL | O_WRONLY | O_NOFOLLOW | O_CLOEXEC, 0o600)
+            guard fd >= 0 else { return false }
+            close(fd)
+        }
+        if renameat(AT_FDCWD, source, dir, name) == 0 { return true }
+        _ = unlinkat(dir, name, isFolder ? AT_REMOVEDIR : 0)
+        return false
     }
 
     /// The links macOS itself puts at the top: /var, /tmp and /etc lead

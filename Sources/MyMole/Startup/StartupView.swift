@@ -78,23 +78,18 @@ struct StartupView: View {
                 DSCapsule("Reading", live: true)
                 DSStripButton("Stop", symbol: "stop.fill") { model.stop() }
             } else if let at = model.loadedAt {
-                DSCapsule("Read \(at.formatted(.relative(presentation: .named)))", symbol: "checkmark", tint: .green)
+                DSCapsule("Read \(at.formatted(.relative(presentation: .named)))", symbol: "clock")
             }
             if model.leftovers > 0 {
                 DSCountCapsule(model.leftovers, "leftover\(model.leftovers == 1 ? "" : "s"): the program is gone", tint: .orange)
             }
             if show == .jobs {
-                DSCapsule("Apps' own login items are in System Settings", symbol: "gearshape")
+                // Where the rest is, and what the Running column means: standing facts, kept quiet.
+                DSStatusFact("Apps' own login items are in System Settings", symbol: "gearshape")
                     .help(
-                        "Jobs an app registers from inside itself aren't files, so they aren't listed here. Turn those off in System Settings → General → Login Items & Extensions."
+                        "Jobs an app registers from inside itself aren't files, so they aren't listed here. Turn those off in System Settings → General → Login Items & Extensions. What each file says (starts at login, turned off) is what should happen; \"running now\" and \"not loaded now\" are what launchd has for your session."
                     )
                 DSStripButton("Open Login Items", symbol: "arrow.up.forward.app") { SMAppService.openSystemSettingsLoginItems() }
-                if model.live != nil {
-                    DSCapsule("Running or not: as launchd says now", symbol: "bolt.horizontal")
-                        .help(
-                            "What each file says (starts at login, turned off) is what should happen; \"running now\" and \"not loaded now\" are what launchd has for your session. Jobs for every user and the system aren't seen from here."
-                        )
-                }
             }
             if !model.broken.isEmpty {
                 DSCapsule(

@@ -187,28 +187,34 @@ final class StorageModel {
             }
             showNotice(Notice(text: String(localized: "\(url.lastPathComponent) couldn't be opened: \(why)"), canUndo: false))
         case .success(let (export, tree, index, large)):
-            guard !trashing else { return }
-            progress?.cancel()
-            epoch += 1
-            refreshing = false
-            scanning = false
-            marked.removeAll()
-            allContentsChoice = nil
-            denied = []
-            skipped = []
-            history = []
-            compare(from: nil, to: nil)
-            diskSpace = nil
-            rootPath = export.rootPath
-            root = tree
-            current = tree
-            self.index = index
-            installLargeFiles(large, spill: nil)
-            liveFiles = tree.fileCount
-            liveBytes = tree.size
-            opened = (url.lastPathComponent, export.date)
-            revision += 1
+            present(tree, rootPath: export.rootPath, index: index, large: large, opened: (url.lastPathComponent, export.date))
         }
+    }
+
+    /// Shows a finished map that didn't come from a scan here: a saved scan
+    /// being opened (`opened`), to look at.
+    func present(_ tree: Folder, rootPath: String, index: ScanIndex, large: [LargeFile], opened: (file: String, date: Date)?) {
+        guard !trashing else { return }
+        progress?.cancel()
+        epoch += 1
+        refreshing = false
+        scanning = false
+        marked.removeAll()
+        allContentsChoice = nil
+        denied = []
+        skipped = []
+        history = []
+        compare(from: nil, to: nil)
+        diskSpace = nil
+        self.rootPath = rootPath
+        root = tree
+        current = tree
+        self.index = index
+        installLargeFiles(large, spill: nil)
+        liveFiles = tree.fileCount
+        liveBytes = tree.size
+        self.opened = opened
+        revision += 1
     }
 
     /// Leaves `path` out of every scan from now on, and maps again without it.
@@ -293,8 +299,24 @@ final class StorageModel {
     /// Top-level subtrees finished so far in a running scan.
     private var completed = Set<ObjectIdentifier>()
 
-    var chart: Chart = Chart(rawValue: UserDefaults.standard.string(forKey: "diskMap.chart") ?? "") ?? .rings {
-        didSet { UserDefaults.standard.set(chart.rawValue, forKey: "diskMap.chart") }
+    static let chartKey = "diskMap.chart"
+    /// Where the chart choice is kept; tests give their own.
+    @ObservationIgnored var settings: UserDefaults = .standard
+    @ObservationIgnored private var chartSave: Task<Void, Never>?
+    /// Saved only when it changes, and a moment after: a write to the
+    /// defaults draws every view that reads a setting again, and the switch
+    /// itself is drawn first. Quick switches are saved once.
+    var chart: Chart = Chart(rawValue: UserDefaults.standard.string(forKey: StorageModel.chartKey) ?? "") ?? .rings {
+        didSet {
+            guard chart != oldValue else { return }
+            chartSave?.cancel()
+            let value = chart.rawValue, settings = settings
+            chartSave = Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(300))
+                guard !Task.isCancelled else { return }
+                settings.set(value, forKey: StorageModel.chartKey)
+            }
+        }
     }
     var colorByKind = false
     var tab: Tab = .browse
@@ -1018,6 +1040,11 @@ final class StorageModel {
             return false
         }
     }
+
+    /// What the charts leave out: while scanning, the subtrees not yet
+    /// finished; otherwise nothing with bytes, so the charts can follow the
+    /// map's own order (folders not scanned are empty).
+    var hiding: ((Folder) -> Bool)? { showingLive ? isReady : nil }
 
     func isPending(_ f: Folder) -> Bool { !isReady(f) }
 

@@ -31,12 +31,28 @@ struct DashboardView: View {
         return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening"
     }
 
+    /// Below this the Trash isn't worth a word on the Dashboard.
+    static let trashNoteMinimum: Int64 = 50 * 1_048_576
+
+    /// What moved to the Trash still takes its room on the disk: disk use
+    /// stays the same until the Trash is emptied, and the Dashboard says so.
+    static func trashNote(frees: Int64?) -> String? {
+        guard let frees, frees >= trashNoteMinimum else { return nil }
+        return String(localized: "\(ByteSize.format(frees)) is in the Trash. Disk use goes down once it's emptied.")
+    }
+
     /// The width at which the four metric tiles fit on one row beside the disk.
     @MainActor static var wideWidth: CGFloat { diskWidth + 4 * (statBesideDisk + Theme.gap) }
 
     var body: some View {
         DSPage(width: .full) {
             if !app.canScan { accessNotice }
+            if let note = Self.trashNote(frees: app.trash.frees) {
+                DSNotice(.info, note) {
+                    Button("Empty Trash…") { Task { await app.trash.askToEmpty() } }
+                        .disabled(!app.trash.canEmpty)
+                }
+            }
             // Wide: the tiles and Smart Scan beside the disk, all one height.
             // Narrower: Smart Scan beside the disk, the tiles on a row of their own.
             ViewThatFits(in: .horizontal) {
@@ -68,6 +84,9 @@ struct DashboardView: View {
         .paneToolbar(greeting, subtitle: "Here's how your Mac is doing")
         .task {
             await app.refreshHistory()
+            // Read afresh on arrival: files trashed in another pane a moment
+            // ago are in the note at once, not after the Trash's next reading.
+            if app.fullDiskAccess { await app.trash.refresh(force: true) }
             while !Task.isCancelled {
                 await app.refreshStatus()
                 try? await Task.sleep(for: AppModel.paced(Self.interval))

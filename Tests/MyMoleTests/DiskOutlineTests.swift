@@ -71,6 +71,33 @@ import Testing
         return root
     }
 
+    /// A folder of very many comes in parts, so no single turn adds them
+    /// all; in the end every row is listed, largest first, and counted.
+    @Test func aFolderOfVeryManyIsListedWholeInParts() async throws {
+        let h = Harness(root(count: 3))
+        defer { h.stop() }
+        // In a viewport, as in the pane: only the rows in view get cells.
+        let scroll = NSScrollView(frame: NSRect(x: 0, y: 0, width: 800, height: 400))
+        scroll.documentView = h.outline
+        h.start()
+        await h.coordinator.job?.value
+        let many = root("many", count: DiskOutline.Coordinator.partRows * 5 + 17)
+        h.root = many
+        h.revision += 1
+        h.refresh()
+        var parts: Set<Int> = []
+        for _ in 0..<10_000 where h.coordinator.job != nil {
+            parts.insert(h.outline.numberOfRows)
+            await Task.yield()
+        }
+        await h.coordinator.job?.value
+        #expect(parts.contains { $0 > 0 && $0 < many.subfolders.count }, "Rows arrived in parts: \(parts.sorted())")
+        #expect(h.outline.numberOfRows == many.subfolders.count)
+        let sizes = (0..<h.outline.numberOfRows).compactMap { (h.outline.item(atRow: $0) as? DiskOutline.Node)?.entry?.size }
+        #expect(sizes == sizes.sorted(by: >))
+        #expect(h.state.visible.count == many.subfolders.count && h.state.readyCount == many.subfolders.count)
+    }
+
     @Test func switchingFoldersKeepsThePreviousRowsUntilTheNewBranchIsReady() async throws {
         let h = Harness(root(count: 2))
         defer { h.stop() }
@@ -306,7 +333,7 @@ import Testing
         let cell = try #require(h.coordinator.outlineView(h.outline, viewFor: h.outline.outlineTableColumn, item: child) as? FileNameCell)
         let check = try #require(cell.subviews.compactMap { $0 as? NSButton }.first)
         #expect(check.state == .on && !check.isEnabled)
-        #expect(check.toolTip?.contains("Unchoose") == true)
+        #expect(check.hoverHelp?.contains("Unchoose") == true)
         h.selection = [child.path]
         h.coordinator.select(force: true)
         h.coordinator.mark()

@@ -67,6 +67,7 @@ struct SliceChart: View {
                 slices = next
                 drawing = SunburstChart.LayoutKey(model)
             }
+            ChartLayouts.didInstall()
         }
         .padding(DS.Space.lg)
     }

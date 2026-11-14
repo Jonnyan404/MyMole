@@ -52,11 +52,12 @@ struct ColumnsChart: View {
                 if case .folder(let f)? = hit(p, colWidth: colWidth, height: h)?.segment { model.open(f) }
             }
             .task(id: Key(base: SunburstChart.LayoutKey(model), height: Int(h))) {
-                let next = model.current.flatMap { cur in h > 0 ? Sunburst.layout(cur, rings: Self.levels, minAngle: 2 * .pi / Double(h), include: model.isReady) : nil } ?? []
+                let next = model.current.flatMap { cur in h > 0 ? Sunburst.layout(cur, rings: Self.levels, minAngle: 2 * .pi / Double(h), include: model.hiding) : nil } ?? []
                 withAnimation(model.showingLive ? nil : Motion.content) {
                     self.arcs = next
                     drawing = SunburstChart.LayoutKey(model)
                 }
+                ChartLayouts.didInstall()
             }
         }
         .padding(DS.Space.lg)

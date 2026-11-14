@@ -60,6 +60,9 @@ public enum ProjectFinder {
         var found: [DevProject] = []
         var unreadable: [String] = []
         var seen = Set<String>()
+        // Each root is searched on its own volume: a disk mounted inside it
+        // isn't part of it.
+        var rootDevice: dev_t = 0
         func walk(_ path: String, depth: Int) {
             guard let names = DirectoryListing.names(path) else {
                 unreadable.append(path)
@@ -84,11 +87,16 @@ public enum ProjectFinder {
                 let child = path + "/" + n
                 var st = stat()
                 // Real folders only: symlinks could loop or leave the volume.
-                guard lstat(child, &st) == 0, st.st_mode & S_IFMT == S_IFDIR else { continue }
+                guard lstat(child, &st) == 0, st.st_mode & S_IFMT == S_IFDIR, st.st_dev == rootDevice else { continue }
                 walk(child, depth: depth + 1)
             }
         }
-        for root in roots { walk((root as NSString).standardizingPath, depth: 0) }
+        for root in roots {
+            let path = (root as NSString).standardizingPath
+            var st = stat()
+            rootDevice = lstat(path, &st) == 0 ? st.st_dev : 0
+            walk(path, depth: 0)
+        }
         return (found, unreadable)
     }
 

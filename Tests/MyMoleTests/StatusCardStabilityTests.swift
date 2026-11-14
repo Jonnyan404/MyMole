@@ -16,6 +16,33 @@ import Testing
         }
     }
 
+    /// A wider or narrower window moves and sizes the cards; it doesn't make
+    /// their contents again or measure each card more than once.
+    @Test func resizingTheGridLaysEachCardOutOnceAndMakesNothingAgain() async throws {
+        let counts = GridCounts()
+        let host = NSHostingView(rootView: CountingPanel(counts: counts))
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 900, height: 600), styleMask: [.borderless], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.contentView = host
+        defer { window.close() }
+        func settle() async throws {
+            for _ in 0..<4 { host.layoutSubtreeIfNeeded(); try await Task.sleep(for: .milliseconds(10)) }
+        }
+        try await settle()
+        let cards = StatusLayout().visible.count
+        counts.made = 0
+        counts.measured = 0
+        var steps = 0
+        // Across one, two and three columns.
+        for width in stride(from: CGFloat(1_100), through: 520, by: -20) {
+            window.setContentSize(NSSize(width: width, height: 600))
+            host.layoutSubtreeIfNeeded()
+            steps += 1
+        }
+        #expect(counts.made == 0, "card contents made again \(counts.made) times in \(steps) steps")
+        #expect(counts.measured <= steps * cards, "cards measured \(counts.measured) times in \(steps) steps of \(cards) cards")
+    }
+
     @Test func aResizedScrollableGridReportsAndReachesItsLastCard() async throws {
         let host = NSHostingView(rootView: ScrollPanel())
         let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 720, height: 400), styleMask: [.borderless], backing: .buffered, defer: false)
@@ -83,6 +110,42 @@ import Testing
             remaining += view.subviews
         }
         return result
+    }
+}
+
+@MainActor private final class GridCounts {
+    var made = 0
+    var measured = 0
+}
+
+/// Counts how often its content is measured.
+private struct MeasureCount: Layout {
+    let counts: GridCounts
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        MainActor.assumeIsolated { counts.measured += 1 }
+        return subviews.first?.sizeThatFits(proposal) ?? .zero
+    }
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        for subview in subviews { subview.place(at: bounds.origin, proposal: ProposedViewSize(bounds.size)) }
+    }
+}
+
+private struct CountingPanel: View {
+    let counts: GridCounts
+    private let cards = StatusLayout().visible
+    var body: some View {
+        DSPage {
+            StatusGridView(cards: cards, spacing: 15) { card in
+                let _ = MainActor.assumeIsolated { counts.made += 1 }
+                MeasureCount(counts: counts) {
+                    StatusCard(card: card.id) {
+                        Text("Synthetic reading for \(card.id.title)")
+                    } actions: {
+                        Button("Example action") {}
+                    }
+                }
+            }
+        }
     }
 }
 

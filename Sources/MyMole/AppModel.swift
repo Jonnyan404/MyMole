@@ -269,6 +269,7 @@ final class AppModel {
         Responsiveness.apply()
         #if SMOKE
         ResizeExercise.runIfAsked(self)
+        ShotExercise.runIfAsked(self)
         #endif
         // Automatic follows Low Power Mode as it turns on and off.
         powerObserver = NotificationCenter.default.addObserver(

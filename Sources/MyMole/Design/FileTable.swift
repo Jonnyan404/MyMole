@@ -127,6 +127,7 @@ struct FileTable: NSViewRepresentable {
 
     func makeNSView(context: Context) -> NSScrollView {
         let table = FileTableView()
+        HoverHelpTracker.install(on: table)
         table.coordinator = context.coordinator
         context.coordinator.enabled = context.environment.isEnabled
         table.style = DS.Table.style
@@ -652,6 +653,8 @@ struct FileTable: NSViewRepresentable {
 
 /// The table view itself: keys, hover, Quick Look.
 final class FileTableView: NSTableView, LinedTable, UserColumnTable {
+    var lineGeometry: LineGeometry?
+
     var defaultHiddenColumns = Set<String>()
     var columnViewport: ColumnViewport?
     weak var coordinator: FileTable.Coordinator?
@@ -760,6 +763,9 @@ extension FileTableView: @preconcurrency QLPreviewPanelDataSource {
         cache.countLimit = 512
         return cache
     }()
+    /// The padlock of a folder that couldn't be read, loaded once for every
+    /// cell: a symbol looked up for each new cell slowed a list's first rows.
+    static let lock = NSImage(systemSymbolName: "lock.fill", accessibilityDescription: String(localized: "Unreadable"))
     private static let symbols: NSCache<NSString, NSImage> = {
         let cache = NSCache<NSString, NSImage>()
         cache.countLimit = 64
@@ -832,7 +838,7 @@ final class FileNameCell: NSTableCellView, ColumnWidthProviding {
         badge.wantsLayer = true
         badge.layer?.cornerRadius = 4
         badge.layer?.backgroundColor = NSColor.systemGreen.withAlphaComponent(0.15).cgColor
-        lock.image = NSImage(systemSymbolName: "lock.fill", accessibilityDescription: String(localized: "Unreadable"))
+        lock.image = FileCellResources.lock
         lock.contentTintColor = .systemOrange
         sub.font = .systemFont(ofSize: 11)
         sub.textColor = .secondaryLabelColor
@@ -854,9 +860,9 @@ final class FileNameCell: NSTableCellView, ColumnWidthProviding {
         check.isEnabled = choiceIsEditable
         if marked != nil {
             check.setAccessibilityLabel(String(localized: "Choose \(r.name) for removal"))
-            check.toolTip = r.choiceHelp ?? String(localized: "Choose for removal. ⌫ chooses or unchooses the selected rows.")
+            check.hoverHelp = r.choiceHelp ?? String(localized: "Choose for removal. ⌫ chooses or unchooses the selected rows.")
         } else {
-            check.toolTip = nil
+            check.hoverHelp = nil
         }
         self.onToggle = onToggle
         icon.image = FileCellResources.symbol(r.symbol)
@@ -872,21 +878,21 @@ final class FileNameCell: NSTableCellView, ColumnWidthProviding {
         }
         sub.stringValue = r.subtitle ?? ""
         subtitleWidth = (sub.stringValue as NSString).size(withAttributes: [.font: sub.font as Any]).width
-        sub.toolTip = r.subtitle
-        toolTip = [r.name, r.subtitle].compactMap { $0 }.joined(separator: "\n")
+        sub.hoverHelp = r.subtitle
+        hoverHelp = [r.name, r.subtitle].compactMap { $0 }.joined(separator: "\n")
         sub.isHidden = r.subtitle == nil
         setNameWrapping(sub.isHidden && (wrapsName ?? true))
         measuredTextSize = nil
         label.textColor = dimUnmeasured && r.size == nil ? .secondaryLabelColor : .labelColor
-        label.toolTip = r.name
+        label.hoverHelp = r.name
         badge.isHidden = r.badge == nil
         badge.stringValue = r.badge ?? ""
         badgeWidth = badge.intrinsicContentSize.width
         normalBadgeTint = r.badgeTint ?? .systemGreen
         updateBadgeColors()
-        badge.toolTip = r.badgeHelp ?? r.badge
+        badge.hoverHelp = r.badgeHelp ?? r.badge
         lock.isHidden = !r.locked
-        lock.toolTip = r.locked ? String(localized: "MyMole couldn't read inside this folder") : nil
+        lock.hoverHelp = r.locked ? String(localized: "MyMole couldn't read inside this folder") : nil
         needsLayout = true
     }
 
@@ -921,7 +927,7 @@ final class FileNameCell: NSTableCellView, ColumnWidthProviding {
         }
         if visible {
             check.setAccessibilityLabel(String(localized: "Choose \(name) for removal"))
-            check.toolTip = choiceHelp ?? String(localized: "Choose for removal. ⌫ chooses or unchooses the selected rows.")
+            check.hoverHelp = choiceHelp ?? String(localized: "Choose for removal. ⌫ chooses or unchooses the selected rows.")
         }
         let state: NSControl.StateValue = marked == true ? .on : .off
         markedState = state
@@ -930,7 +936,7 @@ final class FileNameCell: NSTableCellView, ColumnWidthProviding {
 
     func setChoosingEnabled(_ enabled: Bool, help: String? = nil) {
         check.isEnabled = enabled && choiceIsEditable
-        if let help { check.toolTip = help }
+        if let help { check.hoverHelp = help }
     }
 
     override func layout() {
@@ -1014,7 +1020,7 @@ final class FileTextCell: NSTableCellView, ColumnWidthProviding {
         label.font = column == .size || column == .freeable || column == .change ? .monospacedDigitSystemFont(ofSize: 12, weight: .regular)
             : column == .items ? .monospacedDigitSystemFont(ofSize: 11, weight: .regular)
             : .systemFont(ofSize: column == .location ? 11 : 12)
-        label.toolTip = nil
+        label.hoverHelp = nil
         switch column {
         case .size:
             label.stringValue = r.size.map { FileCellResources.byteCount.string(fromByteCount: $0) } ?? r.sizePlaceholder ?? String(localized: "Scanning…")
@@ -1024,7 +1030,7 @@ final class FileTextCell: NSTableCellView, ColumnWidthProviding {
             label.textColor = (r.freeable ?? 0) > 0 ? .systemGreen : .tertiaryLabelColor
         case .modified:
             label.stringValue = r.modified?.listText ?? "—"
-            label.toolTip = r.modified.map { $0.formatted(date: .complete, time: .shortened) }
+            label.hoverHelp = r.modified.map { $0.formatted(date: .complete, time: .shortened) }
         case .change:
             if let c = r.change, c != 0 {
                 label.stringValue = (c > 0 ? "+" : "−") + FileCellResources.byteCount.string(fromByteCount: abs(c))
@@ -1032,16 +1038,16 @@ final class FileTextCell: NSTableCellView, ColumnWidthProviding {
             } else {
                 label.stringValue = ""
             }
-            label.toolTip = r.changeHelp
+            label.hoverHelp = r.changeHelp
         case .kind: label.stringValue = r.kind ?? ""
         case .items: label.stringValue = r.items?.formatted() ?? ""
         case .location:
             label.stringValue = r.location.map(Breakable.path) ?? ""
-            label.toolTip = r.location
+            label.hoverHelp = r.location
         case .name: break
         }
-        if label.toolTip == nil, !label.stringValue.isEmpty { label.toolTip = label.stringValue }
-        toolTip = label.toolTip
+        if label.hoverHelp == nil, !label.stringValue.isEmpty { label.hoverHelp = label.stringValue }
+        hoverHelp = label.hoverHelp
         measuredTextSize = nil
         needsLayout = true
     }

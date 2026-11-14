@@ -81,23 +81,64 @@ enum ResizeExercise {
                 // own tracking: a drag event every frame, as a hand gives them.
                 if pane == .diskMap, let handle = views(HorizontalDragHandleView.self, in: window.contentView)
                     .first(where: { $0.accessibilityIdentifier() == "storage.list-width" }) {
+                    let before = handle.superview.map { Int($0.bounds.width - handle.frame.maxX) } ?? 0
                     lines.append(await pointerDrag("diskMap drag-folder-list", run: run, in: window,
-                                                   at: handle.convert(NSPoint(x: handle.bounds.midX, y: handle.bounds.midY), to: nil)) {
-                        handle.superview.map { "\(Int($0.bounds.width - handle.frame.maxX))" } ?? "-"
+                                                   at: handle.convert(NSPoint(x: handle.bounds.midX, y: handle.bounds.midY), to: nil), leftward: true) {
+                        "\(before)->" + (handle.superview.map { "\(Int($0.bounds.width - handle.frame.maxX))" } ?? "-")
                     })
                 }
                 for (i, split) in allSplits(in: window.contentView).enumerated() {
                     guard let first = split.arrangedSubviews.first ?? split.subviews.first else { continue }
                     let divider = NSPoint(x: first.frame.maxX + split.dividerThickness / 2, y: split.bounds.midY)
+                    // The panel the divider sizes: the sidebar, or the panel on the right.
+                    let panel = i == 0 ? first : (split.arrangedSubviews.last ?? split.subviews.last)
+                    let before = Int(panel?.frame.width ?? 0)
                     lines.append(await pointerDrag("\(pane.rawValue) drag-\(i == 0 ? "sidebar" : "right-panel-\(i)")", run: run, in: window,
                                                    at: split.convert(divider, to: nil), leftward: i > 0) {
-                        "\(Int((split.arrangedSubviews.last ?? split.subviews.last)?.frame.width ?? 0))"
+                        "\(before)->\(Int(panel?.frame.width ?? 0))"
                     })
                 }
             }
+            if environment["MYMOLE_SMOKE_NAVIGATE"] == "1" { lines += await navigate(app, run: run) }
             lines.append("resize done")
             NSApp.terminate(nil)
         }
+    }
+
+    /// Disk Map moved around in, every chart: into the largest folder four
+    /// levels down, Back as far, and to the top, with the stalls `HitchLog`
+    /// saw while each chart was used.
+    private static func navigate(_ app: AppModel, run: SyntheticRun) async -> [String] {
+        app.pane = .diskMap
+        let model = app.storage
+        for _ in 0..<600 where model.scanning || model.root == nil { try? await Task.sleep(for: .milliseconds(100)) }
+        guard let root = model.root else { return ["navigate no-map"] }
+        try? await Task.sleep(for: .seconds(2))
+        var out: [String] = []
+        func largest(_ f: Folder) -> Folder? { chartParts(of: f).lazy.compactMap { if case .folder(let c) = $0 { c } else { nil } }.first }
+        for chart in StorageModel.Chart.allCases {
+            try? "navigate \(chart.rawValue)".write(toFile: run.root + "/sweeping.txt", atomically: true, encoding: .utf8)
+            let started = Date().timeIntervalSince1970 * 1_000
+            var inputs: [Double] = []
+            func act(_ work: () -> Void) async {
+                let t0 = DispatchTime.now().uptimeNanoseconds
+                work()
+                mainWindow()?.contentView?.layoutSubtreeIfNeeded()
+                mainWindow()?.displayIfNeeded()
+                inputs.append(Double(DispatchTime.now().uptimeNanoseconds - t0) / 1_000_000)
+                try? await Task.sleep(for: .milliseconds(400))
+            }
+            await act { model.chart = chart }
+            for _ in 0..<4 { if let next = model.current.flatMap(largest) { await act { model.open(next) } } }
+            for _ in 0..<4 { await act { model.back() } }
+            await act { model.open(root) }
+            let ended = Date().timeIntervalSince1970 * 1_000
+            try? await Task.sleep(for: .milliseconds(300))
+            let stalls = hitches(run: run, from: started, to: ended + 250)
+            out.append(String(format: "navigate %@ actions=%d input_max=%.1fms stalls_over_33ms=%d worst_stall=%.1fms",
+                              chart.rawValue, inputs.count, inputs.max() ?? 0, stalls.filter { $0 > 33 }.count, stalls.max() ?? 0))
+        }
+        return out
     }
 
     private static func mainWindow() -> NSWindow? {
@@ -126,6 +167,8 @@ enum ResizeExercise {
     /// up halfway, to show the drag moved it.
     private static func pointerDrag(_ name: String, run: SyntheticRun, in window: NSWindow, at point: NSPoint,
                                     leftward: Bool = false, width: @escaping @MainActor () -> String) async -> String {
+        // What the last sweep put back is drawn and its stalls logged before the press.
+        try? await Task.sleep(for: .milliseconds(500))
         try? name.write(toFile: run.root + "/sweeping.txt", atomically: true, encoding: .utf8)
         let started = Date().timeIntervalSince1970 * 1_000
         let drag = PointerDrag(window: window, point: point, steps: steps, leftward: leftward, width: width)
@@ -135,15 +178,28 @@ enum ResizeExercise {
         let ended = Date().timeIntervalSince1970 * 1_000
         try? await Task.sleep(for: .milliseconds(300))
         let stalls = hitches(run: run, from: started, to: ended + 250)
+        // When each stall over a frame came, in ms from the press: a steady
+        // period points at a timer, not at the drag.
+        let at = stallTimes(run: run, from: started, to: ended + 250).filter { $0.1 > 16.7 }
+            .map { "\(Int($0.0 - started)):\(Int($0.1))" }.joined(separator: ",")
         let sorted = drag.gaps.sorted()
         func pct(_ f: Double) -> Double { sorted.isEmpty ? 0 : sorted[min(sorted.count - 1, Int(Double(sorted.count) * f))] }
-        return String(format: "resize %@ events=%d gap_p50=%.1fms gap_p95=%.1fms gap_max=%.1fms stalls_over_16ms=%d worst_stall=%.1fms panel_width_halfway=%@",
-                      name, sorted.count, pct(0.5), pct(0.95), sorted.last ?? 0, stalls.filter { $0 > 16.7 }.count, stalls.max() ?? 0, drag.halfway)
+        return String(format: "resize %@ events=%d gap_p50=%.1fms gap_p95=%.1fms gap_max=%.1fms stalls_over_16ms=%d worst_stall=%.1fms panel_width_halfway=%@ stalls_at=%@",
+                      name, sorted.count, pct(0.5), pct(0.95), sorted.last ?? 0, stalls.filter { $0 > 16.7 }.count, stalls.max() ?? 0, drag.halfway,
+                      at.isEmpty ? "-" : at)
     }
 
     /// One step a frame: the change, then the layout and drawing it needs
     /// now, timed; the stalls in between come from `HitchLog`.
     private static func sweep(_ name: String, run: SyntheticRun, _ apply: (Int) -> Void) async -> String {
+        // The sweep starts from its first step, reached untimed: the jump
+        // there from where the last sweep put things back is no frame of a
+        // resize, and without a turn of the main queue between them its
+        // stall would count as the sweep's own.
+        apply(0)
+        mainWindow()?.contentView?.layoutSubtreeIfNeeded()
+        mainWindow()?.displayIfNeeded()
+        try? await Task.sleep(for: .milliseconds(500))
         var samples: [Double] = []
         let before = UserDefaults.standard.dictionaryRepresentation()
         nonisolated(unsafe) var notes = 0
@@ -159,7 +215,7 @@ enum ResizeExercise {
         var cpu: [Double] = []
         var mismatches = 0
         func threadCPU() -> Double { Double(clock_gettime_nsec_np(CLOCK_THREAD_CPUTIME_ID)) / 1_000_000 }
-        for step in 0..<steps {
+        for step in 1...steps {
             let t0 = DispatchTime.now().uptimeNanoseconds
             let c0 = threadCPU()
             apply(step)
@@ -275,3 +331,4 @@ private final class PointerDrag: NSObject {
     }
 }
 #endif
+

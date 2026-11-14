@@ -273,6 +273,68 @@ import Testing
         #expect(second.autosaveName == name && !second.autosaveTableColumns)
     }
 
+    /// A list's cells carry no tooltip of their own: each would be a
+    /// tracking rect redone on every frame of a resize. The view under the
+    /// pointer shows its help; VoiceOver reads it on every cell.
+    @Test func onlyTheViewUnderThePointerShowsItsHelp() throws {
+        let row = FileRow(id: "/synthetic/a", name: "Synthetic name", size: 1, kind: "Archive", location: "/synthetic")
+        let name = FileNameCell(identifier: .init("name"))
+        name.configure(row, marked: nil) {}
+        let value = FileTextCell(identifier: .init("kind"))
+        value.configure(row, column: .kind)
+        #expect(name.toolTip == nil && value.toolTip == nil)
+        #expect(name.subviews.allSatisfy { $0.toolTip == nil })
+        #expect(name.hoverHelp == "Synthetic name" && value.hoverHelp == "Archive")
+        #expect(value.accessibilityHelp() == "Archive")
+        let host = NSView(frame: NSRect(x: 0, y: 0, width: 400, height: 40))
+        name.frame = NSRect(x: 0, y: 0, width: 200, height: 40)
+        value.frame = NSRect(x: 200, y: 0, width: 200, height: 40)
+        host.addSubview(name)
+        host.addSubview(value)
+        let window = NSWindow(contentRect: host.frame, styleMask: [.titled], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        defer { window.close() }
+        window.contentView = host
+        let tracker = HoverHelpTracker.install(on: host)
+        func move(to x: CGFloat) throws {
+            let event = try #require(NSEvent.mouseEvent(with: .mouseMoved, location: host.convert(NSPoint(x: x, y: 20), to: nil), modifierFlags: [],
+                                                        timestamp: 0, windowNumber: window.windowNumber, context: nil, eventNumber: 0, clickCount: 0, pressure: 0))
+            tracker.mouseMoved(with: event)
+        }
+        try move(to: 300)
+        #expect(value.toolTip == "Archive" && name.toolTip == nil)
+        try move(to: 100)
+        #expect(value.toolTip == nil && (name.toolTip ?? name.subviews.compactMap(\.toolTip).first) != nil)
+    }
+
+    /// Rows draw the lines from geometry the table keeps while its columns
+    /// stay put; every change to the columns works it out again.
+    @Test(arguments: [0, 1, 2]) func linesFollowEveryColumnChange(kind: Int) throws {
+        let table: NSTableView = kind == 0 ? FileTableView() : kind == 1 ? DiskOutlineView() : FootprintOutlineView()
+        let lined = try #require(table as? any LinedTable)
+        table.columnAutoresizingStyle = .noColumnAutoresizing
+        for (id, width) in [("name", 200.0), ("size", 100.0), ("kind", 120.0)] {
+            let column = NSTableColumn(identifier: .init(id))
+            column.width = width
+            table.addTableColumn(column)
+        }
+        let scroll = NSScrollView(frame: NSRect(x: 0, y: 0, width: 900, height: 200))
+        scroll.documentView = table
+        lined.lines = .grid
+        func expected() -> LineGeometry {
+            let shown = table.tableColumns.indices.filter { !table.tableColumns[$0].isHidden }
+            return LineGeometry(key: (0..<table.numberOfColumns).map { table.rect(ofColumn: $0).maxX }, left: table.rect(ofColumn: shown.first!).minX, right: table.rect(ofColumn: shown.last!).maxX,
+                                columns: shown.dropLast().map { table.rect(ofColumn: $0).maxX.rounded(.down) - 1 })
+        }
+        #expect(lined.currentLineGeometry == expected())
+        table.tableColumns[0].width = 260
+        #expect(lined.currentLineGeometry == expected())
+        table.tableColumns[1].isHidden = true
+        #expect(lined.currentLineGeometry == expected())
+        table.moveColumn(2, toColumn: 0)
+        #expect(lined.currentLineGeometry == expected())
+    }
+
     @Test func clippedCellsExposeFullTextAndClearItWhenReused() throws {
         let title = "com.example.Editor.background.extension.with.a.long.name"
         let subtitle = "Found by an identity carried by the removed app"
@@ -283,18 +345,18 @@ import Testing
         name.frame.size = NSSize(width: 120, height: 46)
         name.configure(row, marked: false, onToggle: {})
         name.layoutSubtreeIfNeeded()
-        #expect(name.toolTip == title + "\n" + subtitle)
-        #expect(name.subviews.compactMap { $0 as? NSTextField }.contains { $0.toolTip == subtitle })
+        #expect(name.hoverHelp == title + "\n" + subtitle)
+        #expect(name.subviews.compactMap { $0 as? NSTextField }.contains { $0.hoverHelp == subtitle })
         #expect(name.preferredColumnWidth > name.frame.width)
         let value = FileTextCell(identifier: .init("kind"))
         value.configure(row, column: .kind)
-        #expect(value.toolTip == kind)
+        #expect(value.hoverHelp == kind)
         value.configure(row, column: .location)
-        #expect(value.toolTip == path)
+        #expect(value.hoverHelp == path)
         value.configure(FileRow(id: "empty", name: "Empty"), column: .kind)
-        #expect(value.toolTip == nil)
+        #expect(value.hoverHelp == nil)
         name.configure(FileRow(id: "next", name: "Next"), marked: nil, onToggle: {})
-        #expect(name.toolTip == "Next")
-        #expect(!name.subviews.compactMap { $0 as? NSTextField }.contains { $0.toolTip == subtitle })
+        #expect(name.hoverHelp == "Next")
+        #expect(!name.subviews.compactMap { $0 as? NSTextField }.contains { $0.hoverHelp == subtitle })
     }
 }

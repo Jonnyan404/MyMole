@@ -175,7 +175,6 @@ struct UninstallView: View {
                 DSStatusFact("Sizes measured \(measured.formatted(.relative(presentation: .named)))", symbol: "clock")
                     .help("Sizes come from the last scan. Running status updates live; Reload measures sizes again.")
             }
-            DSStatusFact("Apps and their leftovers go to the Trash", symbol: "trash")
             if hiddenMacOS > 0 {
                 DSStatusFact("\(hiddenMacOS) apps of macOS hidden", symbol: "eye.slash")
             }
@@ -210,7 +209,7 @@ struct UninstallView: View {
         .contextualControls(
             "Find an app",
             detail:
-                "Click an app to review it. ⌘-click starts a batch choice; further clicks add or remove apps. Review leftovers before uninstalling."
+                "Click an app to review it. ⌘-click starts a batch choice; further clicks add or remove apps. Apps and the leftovers you review go to the Trash."
         )
     }
 

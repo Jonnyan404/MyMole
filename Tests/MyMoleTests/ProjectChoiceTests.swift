@@ -53,6 +53,30 @@ import Testing
         // Its size is measured off the main thread and arrives.
         for _ in 0..<100 where (m.chosenEntries.first?.entry.bytes ?? 0) == 0 { try await Task.sleep(for: .milliseconds(20)) }
         #expect(m.chosenBytes == 8192)
+        #expect(m.chosenEntries.first?.entry.isDirectory == true)
+    }
+
+    /// A file part is read off the main thread too, where a share that
+    /// stops answering can't hold up the window; it counts nothing until then.
+    @Test func aFilePartChosenInsideAnEntryIsMeasuredInTheBackground() async throws {
+        let box = try Box()
+        let (m, _, _) = model(box)
+        let c = box.project + "/.local/c.txt"
+        m.toggle(path: c)
+        #expect(m.chosen == [c])
+        for _ in 0..<100 where (m.chosenEntries.first?.entry.bytes ?? 0) == 0 { try await Task.sleep(for: .milliseconds(20)) }
+        let picked = try #require(m.chosenEntries.first)
+        #expect(picked.part && picked.entry.path == c && picked.entry.isDirectory == false)
+        #expect(m.chosenBytes == 4096)
+    }
+
+    @Test func aPartThatIsGoneCountsNothing() async throws {
+        let box = try Box()
+        let (m, _, _) = model(box)
+        let gone = box.project + "/.local/missing.txt"
+        m.toggle(path: gone)
+        try await Task.sleep(for: .milliseconds(200))
+        #expect(m.chosenBytes == 0)
     }
 
     @Test func bulkChoiceResolvesPartialItemsWithoutChangingOtherProjectItems() throws {
@@ -66,7 +90,7 @@ import Testing
         #expect(m.check(local) == .off && m.check(build) == .on)
     }
 
-    @Test func unchoosingInsideAChosenEntryKeepsTheRestChosen() throws {
+    @Test func unchoosingInsideAChosenEntryKeepsTheRestChosen() async throws {
         let box = try Box()
         let (m, local, _) = model(box)
         m.toggle(local)
@@ -80,7 +104,9 @@ import Testing
         #expect(m.state(of: l + "/a/two.log") == .on && m.state(of: l + "/b") == .on)
         #expect(m.state(of: l + "/a") == .mixed)
         #expect(m.check(local) == .mixed)
-        // The whole entry goes, without what's left out of it.
+        // The whole entry goes, without what's left out of it, once the
+        // left-out file is measured off the main thread.
+        for _ in 0..<100 where m.chosenEntries.first?.part != true { try await Task.sleep(for: .milliseconds(20)) }
         let picked = try #require(m.chosenEntries.first)
         #expect(m.chosenEntries.count == 1 && picked.entry.path == l && picked.part)
         #expect(picked.entry.bytes == 16384 - 4096)

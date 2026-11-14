@@ -100,6 +100,9 @@ public struct ScanResult: Sendable {
     public let deniedPaths: [String]
     public let duration: TimeInterval
     public let cancelled: Bool
+    /// Folders a file server showed inside themselves, through a link it
+    /// followed: listed, but neither walked nor counted again (first 500).
+    public var loops: [String] = []
 }
 
 /// Parallel directory walk into a `Folder` tree.
@@ -134,7 +137,8 @@ public enum StorageScanner {
     ) -> ScanResult {
         let start = Date()
         let root = Folder(name: (path as NSString).lastPathComponent, parent: nil, rootPath: path, inheritedKind: inheritedKind)
-        let walk = Walk(rootDevice: DirectoryReader.device(of: path) ?? 0, progress: progress, skip: skip)
+        let walk = Walk(rootDevice: DirectoryReader.device(of: path) ?? 0, progress: progress, skip: skip,
+                        loops: FolderLoops.apply(to: path) ? FolderLoops.Seen() : nil)
 
         // The root goes first, on this thread, so its top-level folders exist
         // (and can be shown as placeholders) before the parallel walk starts.
@@ -165,7 +169,7 @@ public enum StorageScanner {
         if onRoot == nil { root.finish() }
         return ScanResult(
             root: root, deniedPaths: walk.denied.withLock { $0 }, duration: Date().timeIntervalSince(start),
-            cancelled: progress.isCancelled)
+            cancelled: progress.isCancelled, loops: walk.loops?.found ?? [])
     }
 
     /// What the item at `path` takes on disk: a folder's whole tree, walked
@@ -194,10 +198,15 @@ private final class Walk: @unchecked Sendable {
     /// Folders the user asked not to scan, by full path: not walked, not counted.
     let skip: Set<String>
 
-    init(rootDevice: Int32, progress: ScanProgress, skip: Set<String> = []) {
+    /// On a network disk, the folders read so far, to tell a link back up
+    /// that the server follows itself; nil on a local disk.
+    let loops: FolderLoops.Seen?
+
+    init(rootDevice: Int32, progress: ScanProgress, skip: Set<String> = [], loops: FolderLoops.Seen? = nil) {
         self.rootDevice = rootDevice
         self.progress = progress
         self.skip = skip
+        self.loops = loops
     }
 
     /// Reads one folder: tallies its files, creates (and returns) its subfolders.
@@ -212,6 +221,12 @@ private final class Walk: @unchecked Sendable {
             progress.deniedCounter.add(1, ordering: .relaxed)
             denied.withLock { if $0.count < 500 { $0.append(path) } }
         }
+        // The same folder again, through a link the server followed: what's
+        // in it is counted where it really is.
+        if outcome == .ok, let loops, loops.isLoop(folder, path: path, names: entries.map(\.name)) {
+            folder.riskListed = false
+            return []
+        }
 
         let siblings = Set(entries.lazy.map(\.name))
         var subs: [Folder] = []
@@ -225,7 +240,7 @@ private final class Walk: @unchecked Sendable {
             switch e.kind {
             case .folder:
                 // Stay on one volume: mount points and other disks are skipped.
-                guard e.device == rootDevice else { folder.riskListed = false; continue }
+                guard e.device == rootDevice, !e.isMountPoint else { folder.riskListed = false; continue }
                 if !skip.isEmpty, skip.contains(path == "/" ? "/" + e.name : path + "/" + e.name) { folder.riskListed = false; continue }
                 subs.append(
                     Folder(

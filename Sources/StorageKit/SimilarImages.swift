@@ -91,7 +91,7 @@ public enum SimilarImages {
                 let key = FingerprintCache.key(device: f.device, inode: f.inode, length: f.length, modified: f.modified)
                 let known = cache?.cache.withLock { $0.look(key) }
                 // Worked out again only when the file isn't the one the cache knows.
-                let worked = known ?? fingerprint(f.path)
+                let worked = known ?? FileSpace.withoutDownloading { fingerprint(f.path) }
                 if known == nil, let (print, w, h) = worked { cache?.cache.withLock { $0.store(key, print: print, width: w, height: h) } }
                 if let (print, w, h) = worked {
                     let image = SimilarImage(

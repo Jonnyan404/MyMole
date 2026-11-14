@@ -273,6 +273,13 @@ final class MainToolbar: NSObject, NSToolbarDelegate, NSMenuDelegate {
         stack.spacing = 1
         stack.edgeInsets = NSEdgeInsets(top: 0, left: 6, bottom: 0, right: 6)
         stack.widthAnchor.constraint(lessThanOrEqualToConstant: 420).isActive = true
+        // The toolbar can lay an item out at its smallest size after a
+        // resize; the title then must not shrink to a letter. The subtitle
+        // gives way first, and keeps a few words.
+        titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        let readable = stack.widthAnchor.constraint(greaterThanOrEqualToConstant: 180)
+        readable.priority = .defaultHigh - 1
+        readable.isActive = true
         return stack
     }()
 

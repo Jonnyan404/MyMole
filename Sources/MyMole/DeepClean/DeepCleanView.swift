@@ -111,7 +111,7 @@ struct DeepCleanView: View {
                 DSCapsule("From an earlier scan\(ago.map { ", \($0)" } ?? "")", symbol: "clock", tint: .orange)
                 DSStripButton("Scan Again", symbol: "arrow.clockwise") { model.scan() }
             } else if let ago {
-                DSCapsule("Scanned \(ago)", symbol: "checkmark", tint: .green)
+                DSCapsule("Scanned \(ago)", symbol: "clock")
             }
             let runningCount = model.candidates.filter(model.isRunning).count
             if runningCount > 0 {

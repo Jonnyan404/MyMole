@@ -111,11 +111,12 @@ public enum InstallerFinder {
     }
 
     /// An "Install macOS …" app: Apple's installer of the whole system,
-    /// 13 GB or more, left in Applications after an upgrade.
+    /// 13 GB or more, left in Applications after an upgrade. One in a cloud
+    /// folder that isn't on this Mac isn't read, which would download it.
     static func isMacOSInstaller(_ path: String) -> Bool {
         let name = (path as NSString).lastPathComponent
         guard name.hasPrefix("Install macOS "), name.hasSuffix(".app"),
-            let info = NSDictionary(contentsOfFile: path + "/Contents/Info.plist"),
+            let info = FileSpace.withoutDownloading({ NSDictionary(contentsOfFile: path + "/Contents/Info.plist") }),
             let id = info["CFBundleIdentifier"] as? String
         else { return false }
         return id.hasPrefix("com.apple.InstallAssistant.")

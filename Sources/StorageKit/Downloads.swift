@@ -39,7 +39,7 @@ public enum DownloadsReview {
                 case S_IFREG:
                     out.append(Item(path: path, bytes: Int64(st.st_blocks) * 512, modified: modified, kind: Classifier.kind(ofFile: name), isFolder: false))
                 case S_IFDIR:
-                    if DuplicateFinder.packages.contains((name as NSString).pathExtension.lowercased()) {
+                    if DuplicateFinder.isPackage(path) {
                         out.append(Item(path: path, bytes: AppLeftovers.measure(path) ?? 0, modified: modified, kind: Classifier.kind(ofFile: name), isFolder: true))
                     } else if level + 1 < depth {
                         stack.append((path, level + 1))

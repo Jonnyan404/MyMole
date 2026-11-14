@@ -31,9 +31,28 @@ struct DiskOutline: NSViewRepresentable {
     @MainActor @Observable final class State {
         var rootID: ObjectIdentifier?
         var revision = -1
-        var visible: [DiskEntry] = []
-        var byPath: [String: DiskEntry] = [:]
+        /// The rows shown, as the outline reported them; their entries are
+        /// read out when first asked for, in the turn that draws the list.
+        var shown: [Node] = [] { didSet { entries = nil; pathIndex = nil } }
         var readyCount = 0
+        @ObservationIgnored private var entries: [DiskEntry]?
+        @ObservationIgnored private var pathIndex: [String: DiskEntry]?
+
+        var visible: [DiskEntry] {
+            if let entries { return entries }
+            let made = shown.compactMap(\.entry)
+            entries = made
+            return made
+        }
+
+        /// The visible rows by path, made when first looked up: only a
+        /// selection needs it, and a folder may hold tens of thousands.
+        var byPath: [String: DiskEntry] {
+            if let pathIndex { return pathIndex }
+            let index = Dictionary(visible.map { ($0.path, $0) }, uniquingKeysWith: { a, _ in a })
+            pathIndex = index
+            return index
+        }
     }
 
     final class Node {
@@ -44,6 +63,9 @@ struct DiskOutline: NSViewRepresentable {
         let smallFiles: Bool
         var children: [Node]?
         var generation = -1
+        /// The row's identity across reloads, made when first needed: a step
+        /// into another folder makes tens of thousands of rows and needs none.
+        lazy var key: String = (smallFiles ? "small:" : "row:") + path
 
         init(entry: DiskEntry?, folder: Folder?, path: String, summary: FileRow? = nil, smallFiles: Bool = false) {
             self.entry = entry
@@ -54,6 +76,15 @@ struct DiskOutline: NSViewRepresentable {
         }
     }
 
+    /// Rows and their entries let go of away from the main thread: tens of
+    /// thousands of them take a while to free. A row holds nothing tied to
+    /// the main actor.
+    struct Released: @unchecked Sendable {
+        var nodes: [Node]? = nil
+        var entries: [DiskEntry] = []
+        var keys: [FileRow] = []
+    }
+
     func makeCoordinator() -> Coordinator { Coordinator(self) }
 
     func sizeThatFits(_ proposal: ProposedViewSize, nsView: NSScrollView, context: Context) -> CGSize? {
@@ -62,6 +93,7 @@ struct DiskOutline: NSViewRepresentable {
 
     func makeNSView(context: Context) -> NSScrollView {
         let outline = DiskOutlineView()
+        HoverHelpTracker.install(on: outline)
         let c = context.coordinator
         outline.coordinator = c
         outline.style = DS.Table.style
@@ -146,7 +178,17 @@ struct DiskOutline: NSViewRepresentable {
         private var stopped = false
         private var sort: FileColumn = .size
         private var ascending = false
-        private var known: [String: Node] = [:]
+        /// The shown rows in order; `known` maps them by path when first asked.
+        private var rows: [Node] = [] { didSet { knownIndex = nil } }
+        private var knownIndex: [String: Node]?
+        private var known: [String: Node] {
+            if let knownIndex { return knownIndex }
+            var index: [String: Node] = [:]
+            index.reserveCapacity(rows.count)
+            for node in rows where index[node.path] == nil { index[node.path] = node }
+            knownIndex = index
+            return index
+        }
         private var lastSelection: Set<String>?
         private var closing: (path: String, expanded: Set<String>)?
         private var lastMarks: Set<String>?
@@ -168,7 +210,7 @@ struct DiskOutline: NSViewRepresentable {
             restore(anchor)
         }
 
-        private static func key(_ node: Node) -> String { (node.smallFiles ? "small:" : "row:") + node.path }
+        private static func key(_ node: Node) -> String { node.key }
 
         private func restore(_ anchor: TableScrollAnchor) {
             guard let outline else { return }
@@ -200,7 +242,7 @@ struct DiskOutline: NSViewRepresentable {
             // anything in the newly requested folder.
             if rootNode == nil {
                 rootNode = node
-                known = [:]
+                rows = []
                 syncing = true
                 outline?.reloadData()
                 syncing = false
@@ -253,6 +295,11 @@ struct DiskOutline: NSViewRepresentable {
             let base = node.path == "/" ? "" : node.path
             var entries: [DiskEntry] = []
             var keys: [FileRow] = []
+            // However the load ends, its working copies are freed elsewhere.
+            defer { RetiredValue(Released(entries: entries, keys: keys)).releaseLater() }
+            // Looked up once, not for each of maybe tens of thousands of rows.
+            let folderTitle = String(localized: "Folder")
+            let ready = parent.ready
             entries.reserveCapacity(folders.count + files.count)
             keys.reserveCapacity(folders.count + files.count)
             for i in 0..<(folders.count + files.count) {
@@ -260,11 +307,11 @@ struct DiskOutline: NSViewRepresentable {
                 let entry: DiskEntry
                 if i < folders.count {
                     let f = folders[i]
-                    let pending = !parent.ready(f)
+                    let pending = !ready(f)
                     let kind = pending ? (f.inheritedKind ?? .other) : (f.inheritedKind ?? ChartColors.dominantKind(.folder(f)))
                     entry = DiskEntry(path: base + "/" + f.name, name: f.name, size: pending ? 0 : f.size,
                                       modified: pending ? .distantPast : f.latestChange, kind: kind,
-                                      kindTitle: String(localized: "Folder"), items: pending ? 0 : f.fileCount, folder: f, pending: pending)
+                                      kindTitle: folderTitle, items: pending ? 0 : f.fileCount, folder: f, pending: pending)
                 } else {
                     let f = files[i - folders.count]
                     entry = DiskEntry(path: base + "/" + f.name, name: f.name, size: f.size, modified: f.modified,
@@ -277,38 +324,95 @@ struct DiskOutline: NSViewRepresentable {
             }
             let (column, asc) = (sort, ascending)
             let sortRows = parent.sortRows
-            let sorted: [FileRow]
+            // The rows' order as positions in `entries`, worked out with the
+            // sort and away from the main actor for a large folder.
+            @Sendable func order(_ keys: [FileRow]) -> [Int] {
+                var position: [String: Int] = [:]
+                position.reserveCapacity(keys.count)
+                for (i, key) in keys.enumerated() where position[key.id] == nil { position[key.id] = i }
+                return sortRows(keys, column, asc).compactMap { position[$0.id] }
+            }
+            let sorted: [Int]
             if keys.count > 512 {
                 sorted = await Task.detached(priority: .userInitiated) { [keys] in
-                    Timings.measure(.sort, rows: keys.count) { sortRows(keys, column, asc) }
+                    Timings.measure(.sort, rows: keys.count) { order(keys) }
                 }.value
-            } else { sorted = sortRows(keys, column, asc) }
+            } else { sorted = order(keys) }
             guard run == generation, !stopped, node === requestedRoot || outline?.isItemExpanded(node) == true else { return }
-            let byID = Dictionary(entries.map { ($0.path, $0) }, uniquingKeysWith: { a, _ in a })
-            var nodes = sorted.compactMap { key -> Node? in
-                guard let entry = byID[key.id] else { return nil }
-                return Node(entry: entry, folder: entry.folder, path: entry.path)
-            }
-            if small.0 > 0 {
-                let key = "small:" + node.path
-                nodes.append(Node(entry: nil, folder: nil, path: node.path,
-                                  summary: FileRow(id: key, name: String(localized: "\(small.0.formatted()) smaller files"), size: small.1,
-                                                   symbol: "doc.on.doc", subtitle: String(localized: "Under 1 MB each · open to list")), smallFiles: true))
+            // Leaving a folder of very many: its rows go a part per turn while
+            // it's still shown, so no one turn takes them all out.
+            if node === requestedRoot, let shown = rootNode, shown.path != node.path, let outline,
+               let listed = shown.children, listed.count > Self.partRows * 4 {
+                var count = listed.count
+                while count > Self.partRows {
+                    let start = max(Self.partRows, count - Self.partRows * 8)
+                    shown.children = Array(listed.prefix(start))
+                    syncing = true
+                    outline.withoutRowAnimation {
+                        outline.beginUpdates()
+                        outline.removeItems(at: IndexSet(integersIn: start..<count), inParent: nil, withAnimation: [])
+                        outline.endUpdates()
+                    }
+                    syncing = false
+                    count = start
+                    await Task.yield()
+                    guard run == generation, !stopped, rootNode === shown else { return }
+                }
+                RetiredValue(Released(nodes: listed)).releaseLater()
             }
             guard let outline else { return }
             let folderChanged = node === requestedRoot && rootNode?.path != node.path
+            // Rows are made as they go in: a folder of very many comes in parts.
+            let large = folderChanged && sorted.count > Self.partRows * 2
+            func make(_ i: Int) -> Node {
+                let made = Node(entry: entries[i], folder: entries[i].folder, path: entries[i].path)
+                made.generation = run
+                return made
+            }
+            var nodes = (large ? Array(sorted.prefix(Self.partRows)) : sorted).map(make)
+            let summary: Node? = small.0 > 0
+                ? Node(entry: nil, folder: nil, path: node.path,
+                       summary: FileRow(id: "small:" + node.path, name: String(localized: "\(small.0.formatted()) smaller files"), size: small.1,
+                                        symbol: "doc.on.doc", subtitle: String(localized: "Under 1 MB each · open to list")), smallFiles: true)
+                : nil
+            if !large, let summary { nodes.append(summary) }
             let anchor = TableScrollAnchor(outline) { (outline.item(atRow: $0) as? Node).map(Self.key) }
             let old = node === requestedRoot ? rootNode?.children ?? [] : node.children ?? []
-            let byKey = Dictionary(old.map { (Self.key($0), $0) }, uniquingKeysWith: { a, _ in a })
-            nodes = nodes.map { candidate in
-                let retained = byKey[Self.key(candidate)] ?? candidate
-                retained.entry = candidate.entry
-                retained.folder = candidate.folder
-                retained.summary = candidate.summary
-                retained.generation = run
-                return retained
+            // The same rows in the same order, as when the folder is opened
+            // again: the rows stay as they are and only learn what changed.
+            var sameRows = false
+            if folderChanged {
+                // Another folder's rows: nothing of the old ones to keep.
+                summary?.generation = run
+            } else if old.count == nodes.count, !old.isEmpty,
+                      zip(old, nodes).allSatisfy({ $0.smallFiles == $1.smallFiles && $0.path == $1.path }) {
+                for (kept, fresh) in zip(old, nodes) {
+                    kept.entry = fresh.entry
+                    kept.folder = fresh.folder
+                    kept.summary = fresh.summary
+                    kept.generation = run
+                }
+                nodes = old
+                sameRows = true
+            } else {
+                // The same folder again: open rows keep their identity, and with it their state.
+                let byKey = Dictionary(old.map { (Self.key($0), $0) }, uniquingKeysWith: { a, _ in a })
+                nodes = nodes.map { candidate in
+                    let retained = byKey[Self.key(candidate)] ?? candidate
+                    retained.entry = candidate.entry
+                    retained.folder = candidate.folder
+                    retained.summary = candidate.summary
+                    retained.generation = run
+                    return retained
+                }
             }
+            // Another folder with very many rows comes in parts: the first
+            // ones now, which fill the window, and the rest a part per turn,
+            // so the main thread is never held up by all of them at once.
+            let first = nodes.count
+            let previous = node.children
             node.children = nodes
+            RetiredValue(Released(nodes: previous)).releaseLater()
             syncing = true
             if node === requestedRoot {
                 rootNode = node
@@ -316,14 +420,23 @@ struct DiskOutline: NSViewRepresentable {
             }
             let parentItem: Node? = node === requestedRoot ? nil : node
             outline.withoutRowAnimation {
-                if let changes = TableRowChanges.between(old.map(Self.key), nodes.map(Self.key)) {
+                if sameRows {
+                    // Nothing to put in or take out.
+                } else if folderChanged {
+                    // Every row out and every new one in, which keeps the row
+                    // views for reuse; a reload would make them all again.
+                    outline.beginUpdates()
+                    if !old.isEmpty { outline.removeItems(at: IndexSet(integersIn: 0..<old.count), inParent: parentItem, withAnimation: []) }
+                    if first > 0 { outline.insertItems(at: IndexSet(integersIn: 0..<first), inParent: parentItem, withAnimation: []) }
+                    outline.endUpdates()
+                } else if let changes = TableRowChanges.between(old.map(Self.key), nodes.map(Self.key)) {
                     outline.beginUpdates()
                     outline.removeItems(at: changes.removed, inParent: parentItem, withAnimation: [])
                     outline.insertItems(at: changes.inserted, inParent: parentItem, withAnimation: [])
                     outline.endUpdates()
                 } else if let parentItem { outline.reloadItem(parentItem, reloadChildren: true) }
                 else { outline.reloadData() }
-                for child in nodes where child.folder != nil && parent.expanded.contains(child.path) && child.entry?.pending == false {
+                for child in node.children ?? [] where child.folder != nil && parent.expanded.contains(child.path) && child.entry?.pending == false {
                     outline.expandItem(child)
                     if child.children != nil { schedule(child) }
                 }
@@ -331,21 +444,70 @@ struct DiskOutline: NSViewRepresentable {
                 select(force: true)
                 refreshVisible(appearance: true)
                 if folderChanged, outline.numberOfRows > 0 { outline.scrollRowToVisible(0) }
-                else { restore(anchor) }
+                else if !sameRows { restore(anchor) }
+            }
+            syncing = false
+            guard large else { return }
+            let total = sorted.count + (summary == nil ? 0 : 1)
+            var done = first
+            while done < total {
+                await Task.yield()
+                guard run == generation, !stopped, node.children?.count == done, let outline = self.outline else { return }
+                let end = min(total, done + Self.partRows * 4)
+                var part = sorted[done..<min(end, sorted.count)].map(make)
+                if end == total, let summary { part.append(summary) }
+                node.children?.append(contentsOf: part)
+                syncing = true
+                outline.withoutRowAnimation {
+                    outline.beginUpdates()
+                    outline.insertItems(at: IndexSet(integersIn: done..<end), inParent: parentItem, withAnimation: [])
+                    outline.endUpdates()
+                }
+                syncing = false
+                done = end
+            }
+            syncing = true
+            outline.withoutRowAnimation {
+                reportVisible()
+                select(force: true)
             }
             syncing = false
         }
 
+        /// Rows put in at once when a folder holds very many.
+        static let partRows = 500
+
         func reportVisible() {
             guard isCurrent, let outline else { return }
-            parent.state.rootID = parent.root.id
-            parent.state.revision = parent.revision
-            let nodes = (0..<outline.numberOfRows).compactMap { outline.item(atRow: $0) as? Node }
-            known = Dictionary(nodes.filter { $0.entry != nil }.map { ($0.path, $0) }, uniquingKeysWith: { a, _ in a })
-            let entries = nodes.filter { $0.generation == generation }.compactMap(\.entry)
-            parent.state.visible = entries
-            parent.state.byPath = Dictionary(entries.map { ($0.path, $0) }, uniquingKeysWith: { a, _ in a })
-            parent.state.readyCount = entries.filter { !$0.pending }.count
+            // The rows in the order the outline shows them, walked from the
+            // nodes in one pass rather than asked of the outline row by row:
+            // a folder may hold tens of thousands.
+            var shown: [Node] = []
+            var current: [Node] = []
+            var ready = 0
+            let count = rootNode?.children?.count ?? 0
+            shown.reserveCapacity(count)
+            current.reserveCapacity(count)
+            func walk(_ nodes: [Node]) {
+                for node in nodes {
+                    if node.entry != nil {
+                        shown.append(node)
+                        if node.generation == generation {
+                            current.append(node)
+                            if node.entry?.pending == false { ready += 1 }
+                        }
+                    }
+                    if let children = node.children, outline.isItemExpanded(node) { walk(children) }
+                }
+            }
+            walk(rootNode?.children ?? [])
+            rows = shown
+            let state = parent.state
+            let rootID = parent.root.id, revision = parent.revision
+            if state.rootID != rootID { state.rootID = rootID }
+            if state.revision != revision { state.revision = revision }
+            state.shown = current
+            if state.readyCount != ready { state.readyCount = ready }
             refreshChoiceHeader()
         }
 
@@ -357,13 +519,21 @@ struct DiskOutline: NSViewRepresentable {
         private func refreshChoiceHeader() {
             guard let header = outline?.headerView as? TableChoiceHeader else { return }
             let marks = parent.marks ?? []
-            let entries = listedChoices
-            let included = marks.contains(parent.root.path) || Marked.parent(of: parent.root.path, in: marks) != nil
-            let all = !entries.isEmpty && entries.allSatisfy { marks.contains($0.path) }
-            let parts = marks.contains { $0.hasPrefix(parent.root.path + "/") }
+            let rootPath = parent.root.path
+            let included = marks.contains(rootPath) || Marked.parent(of: rootPath, in: marks) != nil
+            // In one pass over the listed rows, without copying them.
+            var listed = false, every = true
+            for child in rootNode?.children ?? [] {
+                guard let entry = child.entry, !entry.pending else { continue }
+                listed = true
+                if !marks.contains(entry.path) { every = false; break }
+            }
+            let all = listed && every
+            let prefix = rootPath + "/"
+            let parts = marks.contains { $0.hasPrefix(prefix) }
             let state: ListedChoices.State = included || all ? .on : parts ? .mixed : .off
             header.update(state: state, visible: parent.marks != nil && parent.onSetMarks != nil,
-                          enabled: isCurrent && !entries.isEmpty && !included,
+                          enabled: isCurrent && listed && !included,
                           help: included ? String(localized: "Included with a chosen folder. Unchoose the containing folder before changing these items.") : nil) { [weak self] in self?.setListedMarks() }
         }
 
@@ -534,7 +704,7 @@ struct DiskOutline: NSViewRepresentable {
                 parent.onToggle(entry)
             }
             cell.setChoosingEnabled(isCurrent && node.generation == generation && included == nil && node.entry?.pending == false, help: help)
-            cell.toolTip = node.entry?.path
+            cell.hoverHelp = node.entry?.path
         }
 
         func outlineView(_ outlineView: NSOutlineView, rowViewForItem item: Any) -> NSTableRowView? { LinedRowView.make(in: outlineView) }
@@ -596,6 +766,8 @@ struct DiskOutline: NSViewRepresentable {
 /// Native disclosure triangles and arrow-key navigation, with the same
 /// selection, Quick Look, hover and removal keys as the file table.
 final class DiskOutlineView: NSOutlineView, LinedTable, UserColumnTable {
+    var lineGeometry: LineGeometry?
+
     var defaultHiddenColumns = Set<String>()
     var columnViewport: ColumnViewport?
     weak var coordinator: DiskOutline.Coordinator?

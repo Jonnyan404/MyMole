@@ -242,6 +242,156 @@ struct UIResponsivenessBenchmarkTests {
         report("disk.large.\(chart.rawValue).resize-step", Array(frames.services.dropFirst(60)), budget: 16.7)
     }
 
+    /// A list resized three ways, a frame at a time: the window edge, the
+    /// divider beside it, and one of its own column dividers. Each step's
+    /// whole main-thread cost, layout and drawing included, for every kind
+    /// of lines and density, and at many rows in memory and on disk.
+    @Test(arguments: UITableResizeCase.all)
+    func tableResizeAcrossLinesAndDensity(_ setting: UITableResizeCase) async throws {
+        let root = try uiFixtureDirectory()
+        let rows = uiTableRows(setting.rows)
+        let spill = setting.paged ? try SpillTable(writing: rows.map {
+            SpillTable.Row(path: $0.id, size: $0.size ?? 0, modified: $0.modified ?? .distantPast, kind: .other)
+        }, in: root) : nil
+        defer { spill?.remove() }
+        let preferences = UISplitPreferences()
+        preferences.width = 360
+        let ui = UIInteractionWindow(UITableResizeView(rows: setting.paged ? [] : rows, spill: spill, lines: setting.lines,
+                                                       density: setting.density, preferences: preferences), width: 1_300, height: 760)
+        defer { ui.close() }
+        try await ui.settle()
+        for _ in 0..<40 {
+            ui.host.layoutSubtreeIfNeeded()
+            // Shown even where the screen is locked or covered, as the table fixture does.
+            descendants(of: FileTableView.self, in: ui.host).first?.coordinator?.setPresentationActive(true)
+            if (descendants(of: NSTableView.self, in: ui.host).first?.numberOfRows ?? 0) > 0 { break }
+            try await Task.sleep(for: .milliseconds(50))
+        }
+        let table = try #require(descendants(of: NSTableView.self, in: ui.host).first)
+        try #require(table.numberOfRows > 0)
+        let column = try #require(table.tableColumn(withIdentifier: .init(FileColumn.kind.rawValue)))
+        // The divider is dragged through its handle, as the pointer does: no SwiftUI update on the way.
+        let handle = try #require(descendants(of: HorizontalDragHandleView.self, in: ui.host).first { $0.accessibilityIdentifier() == "storage.list-width" })
+        let perPhase = 160, warm = 20
+        let frames = FrameSamples(limit: perPhase * 3)
+        frames.work = { step in
+            let i = step % perPhase
+            switch step / perPhase {
+            case 0: ui.window.setContentSize(NSSize(width: 1_000 + CGFloat(i % 60) * 8, height: 760))
+            case 1: handle.onChange(CGSize(width: -Double(i % 60) * 5, height: 0))
+            default: column.width = 110 + CGFloat(i % 60) * 3
+            }
+            ui.host.layoutSubtreeIfNeeded()
+            ui.host.display()
+        }
+        let link = ui.host.displayLink(target: frames, selector: #selector(FrameSamples.tick(_:)))
+        link.preferredFrameRateRange = CAFrameRateRange(minimum: 60, maximum: 60, preferred: 60)
+        link.add(to: .main, forMode: .common)
+        defer { link.invalidate() }
+        let deadline = ContinuousClock.now + .seconds(90)
+        while frames.services.count < perPhase * 3, ContinuousClock.now < deadline { try await Task.sleep(for: .milliseconds(10)) }
+        link.invalidate()
+        try #require(frames.services.count == perPhase * 3)
+        for (phase, what) in ["window", "pane", "column"].enumerated() {
+            let steps = Array(frames.services[(phase * perPhase + warm)..<((phase + 1) * perPhase)])
+            report("table.\(setting.name).\(what).resize-step", steps, budget: 8)
+        }
+        report("table.\(setting.name).frame-delivery", Array(frames.intervals.dropFirst(warm)), budget: 25)
+    }
+
+    /// Moving around Disk Map, every chart, on a home-sized map and on the
+    /// hardest shapes: stepping into folders, Back, a breadcrumb jump, Show
+    /// in Disk Map from another pane, switching chart and hovering. For each
+    /// action, the main-thread time to handle it, the time until the new
+    /// layout is drawn, and the longest the main thread was held up while
+    /// it went on.
+    @Test(arguments: UIDiskMapKind.chosen)
+    func diskMapNavigation(_ map: UIDiskMapKind) async throws {
+        let root = try uiFixtureDirectory()
+        let model = syntheticNavigationModel(map, in: root)
+        let preferences = UISplitPreferences()
+        let ui = UIInteractionWindow(UIDiskNavigationView(model: model, preferences: preferences), width: 1_400, height: 860)
+        defer { ui.close() }
+        try await ui.settle()
+        let tree = try #require(model.root)
+        // The map's first showing, the list's first rows included, is done
+        // before moving around in it is measured.
+        for _ in 0..<100 { try await Task.sleep(for: .milliseconds(10)); ui.host.layoutSubtreeIfNeeded(); ui.host.display() }
+        // The longest stretch the main queue went without a turn.
+        let worst = UIGapWatch()
+        func draw() { ui.host.layoutSubtreeIfNeeded(); ui.host.display() }
+        func act(_ chart: StorageModel.Chart, _ work: () -> Void) async -> (input: UISample, visible: Double, stall: Double) {
+            let before = ChartLayouts.installed
+            let shown = (model.current.map(ObjectIdentifier.init), model.chart)
+            worst.reset()
+            let start = UIWorkStamp()
+            work()
+            draw()
+            let input = start.sample()
+            // Bars are drawn with the view; the others put their layout in
+            // place after it, when there is a new one to draw.
+            let changed = shown != (model.current.map(ObjectIdentifier.init), model.chart)
+            if chart != .bars, changed {
+                let deadline = ContinuousClock.now + .seconds(5)
+                while ChartLayouts.installed == before, ContinuousClock.now < deadline {
+                    try? await Task.sleep(for: .milliseconds(1))
+                    draw()
+                }
+                draw()
+            }
+            let visible = start.sample().wall
+            // Let the change finish before the next one.
+            for _ in 0..<12 { try? await Task.sleep(for: .milliseconds(10)); draw() }
+            return (input, visible, worst.value)
+        }
+        func largestChild(_ f: Folder) -> Folder? { chartParts(of: f).lazy.compactMap { if case .folder(let c) = $0 { c } else { nil } }.first }
+        let deepest: Folder = {
+            var f = tree
+            while let next = largestChild(f), f.lineage.count < 8 { f = next }
+            return f
+        }()
+        // One round, not timed, as a running app has made its first rows,
+        // symbols and formatters already.
+        if let first = largestChild(tree) {
+            _ = await act(model.chart) { model.open(first) }
+            _ = await act(model.chart) { model.back() }
+        }
+        for chart in StorageModel.Chart.allCases {
+            var inputs: [UISample] = [], visible: [Double] = [], stalls: [Double] = []
+            func record(_ r: (input: UISample, visible: Double, stall: Double), _ action: String) {
+                inputs.append(r.input)
+                visible.append(r.visible)
+                stalls.append(r.stall)
+                print(String(format: "ui-nav %@ %@ %@ input=%.2fms visible=%.2fms stall=%.2fms",
+                             map.rawValue, chart.rawValue, action, r.input.wall, r.visible, r.stall))
+            }
+            record(await act(chart) { model.chart = chart }, "switch")
+            for _ in 0..<6 {
+                guard let next = model.current.flatMap(largestChild) else { break }
+                record(await act(chart) { model.open(next) }, "open")
+            }
+            for _ in 0..<3 { record(await act(chart) { model.back() }, "back") }
+            record(await act(chart) { model.open(tree) }, "breadcrumb")
+            record(await act(chart) { model.show(folder: deepest.path) }, "show-in-disk-map")
+            record(await act(chart) { model.open(tree) }, "breadcrumb")
+            // Hover across the segments in turn, as the pointer does.
+            let segments = Array(chartParts(of: tree).prefix(30))
+            var hovers: [UISample] = []
+            for i in 0..<60 {
+                let start = UIWorkStamp()
+                model.hovered = segments[i % segments.count]
+                draw()
+                hovers.append(start.sample())
+            }
+            model.hovered = nil
+            let name = "disk.nav.\(map.rawValue).\(chart.rawValue)"
+            report("\(name).input", inputs, budget: 16.7)
+            report("\(name).visible", visible, budget: 100)
+            report("\(name).stall", stalls, budget: 33)
+            report("\(name).hover", Array(hovers.dropFirst(5)), budget: 4)
+        }
+    }
+
     @Test func nativeStatusAndStorageResizeInput() async throws {
         let root = try uiFixtureDirectory()
         let state = UIStatusPreferences(defaults: testDefaults(in: root))
@@ -826,6 +976,33 @@ private struct BenchmarkStatusPanel: View {
             }
         }
     }
+}
+
+/// The longest the main queue went between turns since `reset()`.
+@MainActor private final class UIGapWatch {
+    private let timer = DispatchSource.makeTimerSource(queue: .main)
+    private var last = DispatchTime.now().uptimeNanoseconds
+    private(set) var value = 0.0
+
+    init() {
+        timer.schedule(deadline: .now(), repeating: .milliseconds(1), leeway: .microseconds(100))
+        timer.setEventHandler { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                let now = DispatchTime.now().uptimeNanoseconds
+                self.value = max(self.value, Double(now - self.last) / 1_000_000)
+                self.last = now
+            }
+        }
+        timer.resume()
+    }
+
+    func reset() {
+        last = DispatchTime.now().uptimeNanoseconds
+        value = 0
+    }
+
+    deinit { timer.cancel() }
 }
 
 @MainActor private final class FrameSamples: NSObject {

@@ -146,7 +146,7 @@ struct SimilarView: View {
                 if let s = model.step, s.total > 0 { DSScanProgress(fraction: Double(s.done) / Double(s.total)) }
                 DSStripButton("Stop", symbol: "stop.fill") { model.stop() }
             } else if let at = model.scannedAt {
-                DSCapsule("Searched \(at.formatted(.relative(presentation: .named)))", symbol: "checkmark", tint: .green)
+                DSCapsule("Searched \(at.formatted(.relative(presentation: .named)))", symbol: "clock")
             }
             DSCapsule("Pictures in Pictures, Desktop, Documents and Downloads", symbol: "photo")
                 .help(

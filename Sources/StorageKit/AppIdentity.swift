@@ -252,7 +252,14 @@ public struct AppIdentity: Sendable, Equatable {
         return info
     }
 
+    /// An app kept in a cloud folder may be there in name only: reading its
+    /// plist would download it, so a plist that isn't on this Mac reads as
+    /// invalid instead.
     private static func readPlist(_ path: String, within root: String) -> Plist {
+        FileSpace.withoutDownloading { readPlistHere(path, within: root) }
+    }
+
+    private static func readPlistHere(_ path: String, within root: String) -> Plist {
         let fd = open(path, O_RDONLY | O_NOFOLLOW | O_CLOEXEC | O_NONBLOCK)
         guard fd >= 0 else { return errno == ENOENT ? .missing : .invalid }
         defer { close(fd) }

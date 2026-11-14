@@ -123,30 +123,38 @@ extension ProjectsModel {
     private func note(_ p: String, in entry: String) {
         guard p != entry, partInfo[p] == nil else { return }
         if let f = contents[entry]?.find(path: p) {
-            partInfo[p] = FootprintEntry(path: p, bytes: f.size, modified: f.latestChange, reclaim: f.reclaim)
+            partInfo[p] = FootprintEntry(path: p, bytes: f.size, modified: f.latestChange, isDirectory: true, reclaim: f.reclaim)
             return
         }
-        var st = stat()
-        guard lstat(p, &st) == 0 else { return }
-        let modified = Date(timeIntervalSince1970: TimeInterval(st.st_mtimespec.tv_sec))
-        if st.st_mode & S_IFMT == S_IFDIR {
-            // Its entry wasn't opened: measured off the main thread, and the
-            // totals catch up when it's done.
-            partInfo[p] = FootprintEntry(path: p, bytes: 0, modified: modified)
-            Task.detached(priority: .userInitiated) { [weak self] in
-                let f = StorageScanner.scan(path: p, workers: 2).root
-                await self?.measuredPart(FootprintEntry(path: p, bytes: f.size, modified: f.latestChange, reclaim: f.reclaim))
+        let name = (p as NSString).lastPathComponent
+        let listed = contents[entry]?.find(path: (p as NSString).deletingLastPathComponent)?.listedFiles.first { $0.name == name }
+        let listedSize = listed?.size
+        let listedReclaim = listed?.reclaim
+        // Its entry wasn't opened: read and measured off the main thread,
+        // where a disk that stops answering can't hold up the window, and
+        // the totals catch up when it's done. Until then it counts nothing.
+        partInfo[p] = FootprintEntry(path: p, bytes: 0, modified: .distantPast)
+        Task.detached(priority: .userInitiated) { [weak self] in
+            var st = stat()
+            guard lstat(p, &st) == 0 else {
+                await self?.measuredPart(p, nil)
+                return
             }
-        } else {
-            let name = (p as NSString).lastPathComponent
-            let listed = contents[entry]?.find(path: (p as NSString).deletingLastPathComponent)?.listedFiles.first { $0.name == name }
-            partInfo[p] = FootprintEntry(path: p, bytes: listed?.size ?? Int64(st.st_blocks) * 512, modified: modified,
-                                         reclaim: listed?.reclaim ?? Reclaim.file(at: p))
+            let measured: FootprintEntry
+            if st.st_mode & S_IFMT == S_IFDIR {
+                let f = StorageScanner.scan(path: p, workers: 2).root
+                measured = FootprintEntry(path: p, bytes: f.size, modified: f.latestChange, isDirectory: true, reclaim: f.reclaim)
+            } else {
+                measured = FootprintEntry(path: p, bytes: listedSize ?? Int64(st.st_blocks) * 512,
+                                          modified: Date(timeIntervalSince1970: TimeInterval(st.st_mtimespec.tv_sec)),
+                                          isDirectory: false, reclaim: listedReclaim ?? Reclaim.file(at: p))
+            }
+            await self?.measuredPart(p, measured)
         }
     }
 
-    private func measuredPart(_ e: FootprintEntry) {
-        partInfo[e.path] = e
+    private func measuredPart(_ path: String, _ e: FootprintEntry?) {
+        partInfo[path] = e
         choiceIndex = nil
         partSizes += 1
     }

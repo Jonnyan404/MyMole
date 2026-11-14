@@ -12,10 +12,6 @@ struct HistoryView: View {
         app.cleanups.filter { $0.freedSomething && $0.source != TrashModel.source }.reduce(0) { $0 + $1.freedBytes }
     }
 
-    private var movedToTrash: Bool {
-        app.cleanups.contains { $0.items > $0.restored && $0.source != "Optimize" && $0.source != "System Clean" }
-    }
-
     var body: some View {
         Group {
             if !loaded {
@@ -33,10 +29,6 @@ struct HistoryView: View {
                         if let last = app.cleanups.first?.date {
                             DSCapsule("Last run \(last.formatted(.relative(presentation: .named)))", symbol: "clock")
                         }
-                        DSStatusFact("Undo: the last \(UndoLimit.runs) moves of each pane, until you quit", symbol: "arrow.uturn.backward")
-                            .help(
-                                "MyMole keeps what it needs to put things back for the last moves of each pane while it runs. After that, or after quitting, Finder's Put Back still works for whatever is in the Trash. This history keeps only counts and sizes, never names."
-                            )
                         ForEach(app.trash.otherTrashes, id: \.volume) { t in
                             DSCapsule(
                                 "Trash on \(t.name): \(t.partial ? "at least " : "")\(ByteSize.format(t.bytes))", symbol: "externaldrive"
@@ -45,23 +37,16 @@ struct HistoryView: View {
                                 "\(t.count) item\(t.count == 1 ? "" : "s") you moved to the Trash from \(t.name). MyMole only shows it; Finder's Empty Trash empties it with the rest."
                             )
                         }
-                        if movedToTrash {
-                            DSStatusFact("Trash space returns once it's emptied", symbol: "trash")
-                                .help(
-                                    "Items moved to the Trash still take space until you empty it. Items deleted for good are counted separately on each run."
-                                )
-                        }
                         if app.trash.canEmpty, let bytes = app.trash.frees {
                             DSStripButton("Empty Trash (\(ByteSize.format(bytes)))…", symbol: "trash") {
                                 Task { await app.trash.askToEmpty() }
                             }
                             .help("Delete what's in the Trash for good, after a confirmation")
                         }
-                        DSStatusFact("Counts and sizes only, no file names", symbol: "lock")
                     }
                     Divider()
                     DSPage {
-                        DSSection("Runs") {
+                        DSSection("Runs", footer: "Undo puts back the last \(UndoLimit.runs) moves of each pane until you quit; after that, Finder's Put Back still works for what is in the Trash. Items moved to the Trash take space until it's emptied. History keeps only counts and sizes, never file names.") {
                             ForEach(app.cleanups) { row($0) }
                         }
                     }

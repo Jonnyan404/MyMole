@@ -43,7 +43,8 @@ public enum FileSpace {
             let count = raw.loadUnaligned(fromByteOffset: 24, as: UInt32.self)
             let mayShare = has(ATTR_CMNEXT_EXT_FLAGS) && flags & UInt64(EF_MAY_SHARE_BLOCKS) != 0
             return Sharing(
-                cloneID: has(ATTR_CMNEXT_CLONEID) ? cloneID : nil,
+                // HFS+ answers 0 for every file: no family at all.
+                cloneID: has(ATTR_CMNEXT_CLONEID) && cloneID != 0 ? cloneID : nil,
                 cloneCount: has(ATTR_CMNEXT_CLONE_REFCNT) ? count : nil,
                 privateBytes: mayShare && has(ATTR_CMNEXT_PRIVATESIZE) ? max(privateSize, 0) : nil,
                 sharesAllBlocks: mayShare && flags & UInt64(EF_SHARES_ALL_BLOCKS) != 0)
@@ -81,5 +82,23 @@ public enum FileSpace {
             let returned = raw.loadUnaligned(fromByteOffset: offset, as: attribute_set_t.self)
             return Sharing.unpack(raw.baseAddress! + offset + MemoryLayout<attribute_set_t>.size, returned: returned.forkattr)
         }
+    }
+
+    /// Runs `body` on this thread with reads of cloud files that aren't
+    /// downloaded failing instead of fetching them, then restores the
+    /// thread's policy. A file listed as downloaded can be evicted before
+    /// it's read; comparing it must never bring it back.
+    public static func withoutDownloading<T>(_ body: () throws -> T) rethrows -> T {
+        let type = IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES
+        let before = getiopolicy_np(type, IOPOL_SCOPE_THREAD)
+        let changed = setiopolicy_np(type, IOPOL_SCOPE_THREAD, IOPOL_MATERIALIZE_DATALESS_FILES_OFF) == 0
+        defer { if changed, before >= 0 { setiopolicy_np(type, IOPOL_SCOPE_THREAD, before) } }
+        return try body()
+    }
+
+    /// The file's Finder tags, sorted; empty when it has none or they can't be read.
+    public static func tags(_ path: String) -> [String] {
+        let url = URL(fileURLWithPath: path)
+        return ((try? url.resourceValues(forKeys: [.tagNamesKey]))?.tagNames ?? []).sorted()
     }
 }

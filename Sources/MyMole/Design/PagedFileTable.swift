@@ -34,6 +34,7 @@ struct PagedFileTable: NSViewRepresentable {
 
     func makeNSView(context: Context) -> NSScrollView {
         let view = NSTableView()
+        HoverHelpTracker.install(on: view)
         view.style = DS.Table.style
         view.configureRows(height: DS.Table.row)
         view.apply(context.environment.palette, lines: context.environment.tableLines, stripes: true)

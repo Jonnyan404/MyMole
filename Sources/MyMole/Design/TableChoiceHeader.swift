@@ -46,18 +46,27 @@ final class TableChoiceHeader: NSTableHeaderView {
     }
 
     func update(state: ListedChoices.State, visible: Bool, enabled: Bool, help: String?, action: @escaping () -> Void) {
-        check.isHidden = !visible
-        check.isEnabled = enabled
-        check.state = switch state { case .off: .off; case .mixed: .mixed; case .on: .on }
-        displayedState = check.state
-        check.setAccessibilityLabel(state == .on ? String(localized: "Uncheck All Listed") : String(localized: "Check All Listed"))
-        check.toolTip = help ?? String(localized: "Check or uncheck eligible items in this list, including rows below the screen. Filters limit this choice. Highlighting rows is separate; nothing is removed here.")
         onChange = action
-        if let cell = tableView?.tableColumns.first(where: { $0.identifier.rawValue == FileColumn.name.rawValue })?.headerCell as? ChoiceNameHeaderCell {
+        let value: NSControl.StateValue = switch state { case .off: .off; case .mixed: .mixed; case .on: .on }
+        let label = state == .on ? String(localized: "Uncheck All Listed") : String(localized: "Check All Listed")
+        let tip = help ?? String(localized: "Check or uncheck eligible items in this list, including rows below the screen. Filters limit this choice. Highlighting rows is separate; nothing is removed here.")
+        // Only what changed: each change lays the header out and draws it again.
+        var changed = false
+        if check.isHidden != !visible { check.isHidden = !visible; changed = true }
+        if check.isEnabled != enabled { check.isEnabled = enabled }
+        if check.state != value { check.state = value }
+        displayedState = value
+        if check.accessibilityLabel() != label { check.setAccessibilityLabel(label) }
+        if check.toolTip != tip { check.toolTip = tip }
+        if let cell = tableView?.tableColumns.first(where: { $0.identifier.rawValue == FileColumn.name.rawValue })?.headerCell as? ChoiceNameHeaderCell,
+           cell.showsCheck != visible {
             cell.showsCheck = visible
+            changed = true
         }
-        needsLayout = true
-        needsDisplay = true
+        if changed {
+            needsLayout = true
+            needsDisplay = true
+        }
     }
 
     override func layout() {
@@ -87,9 +96,15 @@ final class TableChoiceHeader: NSTableHeaderView {
     private func positionCheck() {
         guard let tableView else { return }
         let column = tableView.column(withIdentifier: .init(FileColumn.name.rawValue))
-        guard column >= 0, !tableView.tableColumns[column].isHidden else { check.frame = .zero; return }
-        let rect = headerRect(ofColumn: column)
-        check.frame = NSRect(x: rect.minX + DS.Table.cellInset, y: rect.midY - 9, width: 18, height: 18)
+        let frame: NSRect
+        if column >= 0, !tableView.tableColumns[column].isHidden {
+            let rect = headerRect(ofColumn: column)
+            frame = NSRect(x: rect.minX + DS.Table.cellInset, y: rect.midY - 9, width: 18, height: 18)
+        } else {
+            frame = .zero
+        }
+        // Drawing follows a column drag; an unchanged frame isn't set again.
+        if check.frame != frame { check.frame = frame }
     }
 
     @objc private func toggled() {

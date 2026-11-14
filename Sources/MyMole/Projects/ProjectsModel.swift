@@ -544,7 +544,7 @@ final class ProjectsModel {
             // What's left out may free less than it takes, so the rest is
             // counted to free at least the difference.
             let reclaim = left == 0 ? base.reclaim : base.reclaim.map { Reclaim(bytes: $0.bytes - left) }
-            let entry = FootprintEntry(path: p, bytes: max(0, base.bytes - left), modified: base.modified, reclaim: reclaim)
+            let entry = FootprintEntry(path: p, bytes: max(0, base.bytes - left), modified: base.modified, isDirectory: base.isDirectory, reclaim: reclaim)
             return Chosen(project: o.project, item: o.item, entry: entry, part: true)
         }
     }

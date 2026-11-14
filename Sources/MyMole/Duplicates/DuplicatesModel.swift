@@ -300,7 +300,7 @@ final class DuplicatesModel {
         if !checked { chosen.subtract(listed); return }
         var next = chosen
         for group in groups where group.files.contains(where: { listed.contains($0.path) }) {
-            guard let retained = group.files.last else { continue }
+            guard let retained = Self.preferredKeeper(group.files, newest: true) else { continue }
             next.remove(retained.path)
             next.formUnion(group.files.filter { listed.contains($0.path) && $0.path != retained.path && !keep.protects($0.path) }.map(\.path))
         }
@@ -308,15 +308,21 @@ final class DuplicatesModel {
     }
 
     /// In the selected groups, or in all when none is selected: every copy but the newest or the oldest.
+    /// A copy whose tags differ from the others' is left for the user to
+    /// choose, so no tag goes unnoticed.
     func chooseAll(keeping keep: Keep) {
         guard !scanning else { return }
         var without = 0
+        var tagged = 0
         for g in selection.isEmpty ? groups : shownGroups {
-            // Files are oldest first.
+            if g.tagsDiffer {
+                tagged += 1
+                continue
+            }
             let stays: DuplicateFile?
             switch keep {
-            case .oldest: stays = g.files.first
-            case .newest: stays = g.files.last
+            case .oldest: stays = Self.preferredKeeper(g.files, newest: false)
+            case .newest: stays = Self.preferredKeeper(g.files, newest: true)
             case .inFolder(let folder):
                 stays = g.files.first { $0.path.hasPrefix(folder + "/") }
                 if stays == nil { without += 1 }
@@ -327,7 +333,29 @@ final class DuplicatesModel {
         }
         if without > 0 {
             show(Notice(text: String(localized: "\(without) file\(without == 1 ? " has" : "s have") no copy in that folder, so nothing of \(without == 1 ? "it" : "them") is chosen."), canUndo: false))
+        } else if tagged > 0 {
+            show(Notice(text: String(localized: "The copies of \(tagged) file\(tagged == 1 ? "" : "s") have different tags, so they're left for you to choose."), canUndo: false))
         }
+    }
+
+    /// The copy that stays by default: the newest or the oldest of those on
+    /// an internal disk, and only when none is, of all. Files are oldest first.
+    nonisolated static func preferredKeeper(_ files: [DuplicateFile], newest: Bool) -> DuplicateFile? {
+        let onInternal = files.filter { $0.detachable == nil }
+        let pool = onInternal.isEmpty ? files : onInternal
+        return newest ? pool.last : pool.first
+    }
+
+    /// The disks the copies staying are only on, when they can be disconnected.
+    var keptOnDetachable: [String] {
+        Set(groups.compactMap { g in
+            g.files.contains { chosen.contains($0.path) } ? g.keptOnlyOnDetachable(going: chosen) : nil
+        }).sorted()
+    }
+
+    /// Tags only the chosen copies carry: they'd go with them.
+    var tagsGoing: [String] {
+        Set(groups.flatMap { $0.tagsLost(going: chosen) }).sorted()
     }
 
     // MARK: Keep

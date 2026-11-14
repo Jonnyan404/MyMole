@@ -16,7 +16,7 @@ import Testing
         let node = try #require(h.outline.item(atRow: 1) as? FootprintOutline.Node)
         let cell = try #require(h.coordinator.outlineView(h.outline, viewFor: h.outline.outlineTableColumn, item: node) as? NSTableCellView)
         let lock = try #require(cell.subviews.compactMap { $0 as? NSImageView }.first {
-            $0.toolTip == String(localized: "Whitelisted — this folder and its contents stay during cleanup.")
+            $0.hoverHelp == String(localized: "Whitelisted — this folder and its contents stay during cleanup.")
         })
         #expect(!lock.isHidden && lock.contentTintColor == .systemGreen)
         cell.backgroundStyle = .emphasized
@@ -47,7 +47,7 @@ import Testing
             let path = base.appending(path: "Sample/.build")
             try FileManager.default.createDirectory(at: path, withIntermediateDirectories: true)
             let item = FootprintItem(id: "build", category: .build, title: ".build", location: path.deletingLastPathComponent().path,
-                                     attribution: .inside, entries: [FootprintEntry(path: path.path, bytes: 400_000_000, modified: .distantPast)])
+                                     attribution: .inside, entries: [FootprintEntry(path: path.path, bytes: 400_000_000, modified: .distantPast, isDirectory: true)])
             footprint = ProjectFootprint(project: DevProject(path: path.deletingLastPathComponent().path, markers: ["Package.swift"]), items: [item])
             let store = base.appending(path: "store")
             model = ProjectsModel(footprints: [footprint], base: store, defaults: testDefaults(in: store),
@@ -315,7 +315,7 @@ import Testing
         #expect(h.model.chosen.isEmpty)
         let cell = try #require(h.coordinator.outlineView(h.outline, viewFor: h.outline.outlineTableColumn, item: target))
         let check = try #require(cell.subviews.compactMap { $0 as? NSButton }.first)
-        #expect(!check.isEnabled && check.toolTip == "Refreshing folder contents…")
+        #expect(!check.isEnabled && check.hoverHelp == "Refreshing folder contents…")
         gate.signal()
         for _ in 0..<200 where h.model.loadingContents[h.entry] != nil { try await Task.sleep(for: .milliseconds(5)) }
         h.coordinator.parent = h.view

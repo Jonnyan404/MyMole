@@ -33,6 +33,16 @@ public enum Volumes {
         #endif
     }
 
+    /// The name of the disk `path` is on when it can be disconnected:
+    /// removable, ejectable or reached over the network. nil for the startup
+    /// disk and other internal disks, and when the disk doesn't say.
+    public static func detachableName(of path: String) -> String? {
+        let keys: Set<URLResourceKey> = [.volumeNameKey, .volumeIsRemovableKey, .volumeIsEjectableKey, .volumeIsLocalKey, .volumeIsInternalKey]
+        guard let v = try? URL(fileURLWithPath: path).resourceValues(forKeys: keys) else { return nil }
+        let detachable = v.volumeIsRemovable == true || v.volumeIsEjectable == true || v.volumeIsLocal == false || v.volumeIsInternal == false
+        return detachable ? (v.volumeName ?? "another disk") : nil
+    }
+
     /// The key a scan of `path` keeps its history under: the path on the
     /// startup disk, the path and the disk's own identity elsewhere. A disk
     /// that doesn't say who it is gets a key no other disk shares.

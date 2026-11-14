@@ -65,19 +65,19 @@ struct OptimizeView: View {
                 DSRunningCapsule(text: "Running \(model.current?.title ?? "")", since: nil)
             case .idle:
                 if let at = model.lastRun {
-                    DSCapsule("Ran \(at.formatted(.relative(presentation: .named)))", symbol: "checkmark", tint: .green)
+                    DSCapsule("Ran \(at.formatted(.relative(presentation: .named)))", symbol: "clock")
                 } else if let at = model.checkedAt {
-                    DSCapsule("Checked \(at.formatted(.relative(presentation: .named)))", symbol: "checkmark")
+                    DSCapsule("Checked \(at.formatted(.relative(presentation: .named)))", symbol: "clock")
                 }
             }
             if model.privileged.isAvailable {
                 if model.privileged.usesApprovedHelper {
-                    DSCapsule("Helper enabled for administrator tasks", symbol: "checkmark.shield")
+                    DSStatusFact("Helper enabled for administrator tasks", symbol: "checkmark.shield")
                 } else {
-                    DSCapsule("macOS approval when administrator access is needed", symbol: "lock.shield")
+                    DSStatusFact("macOS approval when administrator access is needed", symbol: "lock.shield")
                 }
             } else {
-                DSCapsule("App Store edition: tasks on your own files", symbol: "lock.shield")
+                DSStatusFact("App Store edition: tasks on your own files", symbol: "lock.shield")
             }
             Spacer(minLength: 0)
         }
@@ -120,7 +120,9 @@ struct OptimizeView: View {
             case .unavailable: String(localized: "Not available")
             case .needsHelper: String(localized: "Needs administrator rights")
             }
-        return r.detail.isEmpty ? base : "\(base) · \(r.detail)"
+        // A detail that already says the state ("Not available on this version of macOS") stands alone.
+        if r.detail.isEmpty { return base }
+        return r.detail.localizedCaseInsensitiveContains(base) ? r.detail : "\(base) · \(r.detail)"
     }
 
     private func statusSymbol(_ s: TaskReport.Status) -> String {

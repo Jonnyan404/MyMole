@@ -149,16 +149,22 @@ struct ConfirmationsSection: View {
     }
 
     var body: some View {
-        DSSection("Confirmations", footer: "Turning a question off applies only to that action. Your choices, Keep rules and all file checks still apply. Manually chosen unverified matches, permanent deletion, emptying the Trash, system maintenance, startup changes, similar-photo removal and uninstalling MyMole always ask.") {
-            ForEach(ConfirmationAction.allCases) { action in
-                Toggle(isOn: Binding(get: { owner(action).asks(action) }, set: { owner(action).setAsking($0, for: action) })) {
-                    Text(action.title)
-                    Text(owner(action).asks(action) ? "Ask before making this change" : "Question turned off; turn this on to ask again")
-                        .foregroundStyle(.secondary)
+        DSSection("Confirmations", footer: "Turning a question off applies only to that action. Your choices, Keep rules and all file checks still apply. Manually chosen unverified matches, permanent deletion, emptying the Trash, system maintenance, startup changes, similar-photo removal and uninstalling MyMole always ask.", rows: false) {
+            DSFormGrid {
+                ForEach(Array(ConfirmationAction.allCases.enumerated()), id: \.element) { index, action in
+                    DSFormRow(index == 0 ? "Ask before" : nil, checkbox: true) {
+                        Toggle(action.title, isOn: Binding(get: { owner(action).asks(action) }, set: { owner(action).setAsking($0, for: action) }))
+                    } help: {
+                        if !owner(action).asks(action) {
+                            Text("Question turned off; turn this on to ask again")
+                        }
+                    }
+                }
+                DSFormRow(nil) {
+                    Button("Restore All Confirmations") { settings.restore(); projectRules?.restore() }
+                        .disabled(settings.skipped.isEmpty && (projectRules?.skipped.isEmpty ?? true))
                 }
             }
-            Button("Restore All Confirmations") { settings.restore(); projectRules?.restore() }
-                .disabled(settings.skipped.isEmpty && (projectRules?.skipped.isEmpty ?? true))
         }
     }
 }

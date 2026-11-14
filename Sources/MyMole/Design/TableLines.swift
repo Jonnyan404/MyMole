@@ -36,6 +36,19 @@ extension EnvironmentValues {
 @MainActor protocol LinedTable: NSTableView {
     var lines: TableLines { get set }
     var lineColor: NSColor { get set }
+    /// Where the lines run, kept while the columns stay where they are.
+    var lineGeometry: LineGeometry? { get set }
+}
+
+/// Where a table's lines run, in its own coordinates: from the first shown
+/// column's start to the last one's end, and a grid's column lines. `key`
+/// is where every column ends; a column resized, moved or hidden moves an
+/// end, and the geometry is worked out again.
+struct LineGeometry: Equatable {
+    var key: [CGFloat] = []
+    let left: CGFloat
+    let right: CGFloat
+    let columns: [CGFloat]
 }
 
 /// A row that draws its table's lines: a hairline under it and, in a grid,
@@ -59,27 +72,42 @@ final class LinedRowView: NSTableRowView {
 
     override func drawBackground(in dirtyRect: NSRect) {
         super.drawBackground(in: dirtyRect)
-        guard let table = superview as? LinedTable, table.lines != .none, !isSelected else { return }
-        let shown = table.tableColumns.indices.filter { !table.tableColumns[$0].isHidden }
-        guard let first = shown.first, let last = shown.last else { return }
-        let left = table.rect(ofColumn: first).minX - frame.minX
-        let right = table.rect(ofColumn: last).maxX - frame.minX
+        guard let table = superview as? LinedTable, table.lines != .none, !isSelected,
+              let lines = table.currentLineGeometry else { return }
+        // Worked out once per column layout, not by every row on every frame.
+        let left = lines.left - frame.minX
+        let right = lines.right - frame.minX
         table.lineColor.setFill()
         if !isNextRowSelected {
             NSRect(x: left, y: isFlipped ? bounds.maxY - 1 : bounds.minY, width: right - left, height: 1).fill(using: .sourceOver)
         }
         // A heading spans the row: no column crosses it.
         guard table.lines == .grid, !isGroupRowStyle else { return }
-        for x in table.columnLines { NSRect(x: x - frame.minX, y: bounds.minY, width: 1, height: bounds.height).fill(using: .sourceOver) }
+        for x in lines.columns { NSRect(x: x - frame.minX, y: bounds.minY, width: 1, height: bounds.height).fill(using: .sourceOver) }
     }
 }
 
 extension LinedTable {
-    /// Where a grid's column lines run: the last point of every shown column
-    /// but the last, which is where the header draws its own dividers.
-    var columnLines: [CGFloat] {
-        tableColumns.indices.filter { !tableColumns[$0].isHidden }.dropLast().map { rect(ofColumn: $0).maxX.rounded(.down) - 1 }
+    /// The lines' geometry, worked out again only when a column moved. A grid's column lines run along the last
+    /// point of every shown column but the last, where the header draws
+    /// its own dividers.
+    var currentLineGeometry: LineGeometry? {
+        let count = numberOfColumns
+        var key: [CGFloat] = []
+        key.reserveCapacity(count)
+        for i in 0..<count { key.append(rect(ofColumn: i).maxX) }
+        if let lineGeometry, lineGeometry.key == key { return lineGeometry }
+        let columns = tableColumns
+        let shown = columns.indices.filter { !columns[$0].isHidden }
+        guard let first = shown.first, let last = shown.last else { return nil }
+        var geometry = LineGeometry(left: rect(ofColumn: first).minX, right: rect(ofColumn: last).maxX,
+                                    columns: shown.dropLast().map { rect(ofColumn: $0).maxX.rounded(.down) - 1 })
+        geometry.key = key
+        lineGeometry = geometry
+        return geometry
     }
+
+    var columnLines: [CGFloat] { currentLineGeometry?.columns ?? [] }
 
     /// A grid's column lines across the margin an inset table leaves above
     /// its first row, so they reach the header.

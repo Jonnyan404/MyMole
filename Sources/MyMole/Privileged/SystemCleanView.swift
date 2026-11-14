@@ -52,7 +52,7 @@ struct SystemCleanView: View {
             } else if model.removing {
                 DSRunningCapsule(text: "Removing", since: nil)
             } else if let at = model.scannedAt {
-                DSCapsule("Scanned \(at.formatted(.relative(presentation: .named)))", symbol: "checkmark", tint: .green)
+                DSCapsule("Scanned \(at.formatted(.relative(presentation: .named)))", symbol: "clock")
             }
             if let r = model.lastResult { DSCapsule(r, symbol: "trash") }
             if !model.leftStaging.isEmpty {

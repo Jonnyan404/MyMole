@@ -173,6 +173,11 @@ final class LayoutMemo<Key: Hashable, Value> {
 /// The chart layouts the disk map's views keep.
 @MainActor
 enum ChartLayouts {
+    /// Layouts the charts have put in place, counted, so a measurement can
+    /// tell when a newly opened folder is drawn.
+    @MainActor private(set) static var installed = 0
+    @MainActor static func didInstall() { installed &+= 1 }
+
     static let sunburst = LayoutMemo<SunburstChart.LayoutKey, [Arc]>(limit: Responsiveness.balanced.chartLayoutLimit)
 
     static var limit: Int {

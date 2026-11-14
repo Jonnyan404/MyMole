@@ -8,13 +8,20 @@ struct Entry {
     let kind: Kind
     /// Bytes actually allocated on disk (not the logical length), so sparse
     /// and compressed files count what they really cost.
-    let allocated: Int64
+    var allocated: Int64
     let linkCount: UInt32
     let fileID: UInt64
     let device: Int32
     let modified: TimeInterval
     /// How a file shares its blocks; nil where it shares none or the volume doesn't say.
     var sharing: FileSpace.Sharing? = nil
+    /// Another volume is mounted on this folder. `getattrlistbulk` reports
+    /// a mount point with the device of the folder holding it, so its
+    /// device alone can't tell.
+    var isMountPoint = false
+    /// A file with content whose allocated size came back as 0, which the
+    /// FAT driver reports for every file: its blocks are read on their own.
+    var needsBlocks = false
 
     /// What removing this file alone frees.
     var reclaim: Reclaim { .file(allocated: allocated, device: device, sharing: sharing) }
@@ -36,8 +43,11 @@ enum DirectoryReader {
     private static let cmnModTime: UInt32 = 0x0000_0400
     private static let cmnFileID: UInt32 = 0x0200_0000
     private static let cmnError: UInt32 = 0x2000_0000
+    private static let dirMountStatus: UInt32 = 0x0000_0004
+    private static let dirIsMountPoint: UInt32 = 0x0000_0001
     private static let fileLinkCount: UInt32 = 0x0000_0001
     private static let fileAllocSize: UInt32 = 0x0000_0004
+    private static let fileDataLength: UInt32 = 0x0000_0200
     /// FSOPT_PACK_INVAL_ATTRS: every requested attribute gets its slot even
     /// when invalid, so each record has a fixed layout to walk.
     private static let packInvalid: UInt64 = 0x0000_0008
@@ -58,7 +68,8 @@ enum DirectoryReader {
         var list = attrlist()
         list.bitmapcount = u_short(ATTR_BIT_MAP_COUNT)
         list.commonattr = cmnReturned | cmnName | cmnDevID | cmnObjType | cmnModTime | cmnFileID | cmnError
-        list.fileattr = fileLinkCount | fileAllocSize
+        list.dirattr = dirMountStatus
+        list.fileattr = fileLinkCount | fileAllocSize | fileDataLength
         list.forkattr = cmnExtFlags
 
         let buffer = UnsafeMutableRawPointer.allocate(byteCount: bufferSize, alignment: 8)
@@ -84,6 +95,7 @@ enum DirectoryReader {
                 let length = Int(record.loadUnaligned(as: UInt32.self))
                 if var e = parse(record + 4, flags: list.forkattr != 0) {
                     if e.sharing != nil { e.sharing = FileSpace.sharing(at: fd, e.name) }
+                    if e.needsBlocks, let blocks = blocks(at: fd, e.name) { e.allocated = blocks }
                     body(e)
                 } else {
                     outcome = .failed
@@ -96,9 +108,10 @@ enum DirectoryReader {
     /// Walks one record. With PACK_INVAL every requested attribute is present.
     /// Order: the returned-set, then the error code (getattrlistbulk(2) puts
     /// it right after the returned-set, not in bit order), then the rest in
-    /// attr.h bit order: name, devid, objtype, modtime, fileid, and finally
-    /// the file attributes, then the extended flags. A file flagged as
-    /// maybe sharing blocks comes back with an empty `sharing`, to be read.
+    /// attr.h bit order: name, devid, objtype, modtime, fileid, then a
+    /// folder's mount status or a file's attributes and extended flags.
+    /// Neither kind gets slots for the other's attributes. A file flagged
+    /// as maybe sharing blocks comes back with an empty `sharing`, to be read.
     private static func parse(_ start: UnsafeMutableRawPointer, flags requested: Bool) -> Entry? {
         var p = start
         let returned = p.loadUnaligned(as: attribute_set_t.self)
@@ -119,9 +132,18 @@ enum DirectoryReader {
         p += MemoryLayout<timespec>.size
         let fileID = p.loadUnaligned(as: UInt64.self)
         p += 8
+        if objType == 2 {
+            let mounted = returned.dirattr & dirMountStatus != 0 && p.loadUnaligned(as: UInt32.self) & dirIsMountPoint != 0
+            guard !name.isEmpty else { return nil }
+            return Entry(
+                name: name, kind: .folder, allocated: 0, linkCount: 1, fileID: fileID, device: device,
+                modified: TimeInterval(mod.tv_sec) + TimeInterval(mod.tv_nsec) / 1e9, isMountPoint: mounted)
+        }
         let links = p.loadUnaligned(as: UInt32.self)
         p += 4
         let alloc = p.loadUnaligned(as: Int64.self)
+        p += 8
+        let length = p.loadUnaligned(as: Int64.self)
         p += 8
         let flags = requested && returned.forkattr & cmnExtFlags != 0 ? p.loadUnaligned(as: UInt64.self) : 0
         let sharing = objType == 1 && flags & UInt64(EF_MAY_SHARE_BLOCKS) != 0 ? FileSpace.Sharing() : nil
@@ -135,12 +157,25 @@ enum DirectoryReader {
             default: .other
             }
         let hasAlloc = returned.fileattr & fileAllocSize != 0
+        let hasLength = returned.fileattr & fileDataLength != 0
         return Entry(
             name: name, kind: kind, allocated: hasAlloc ? alloc : 0,
             linkCount: returned.fileattr & fileLinkCount != 0 ? links : 1,
             fileID: fileID, device: device,
             modified: TimeInterval(mod.tv_sec) + TimeInterval(mod.tv_nsec) / 1e9,
-            sharing: sharing)
+            sharing: sharing, needsBlocks: kind == .file && (!hasAlloc || alloc == 0) && (!hasLength || length > 0))
+    }
+
+    /// What `name` in the open folder `dir` has allocated, as `stat` says.
+    private static func blocks(at dir: Int32, _ name: String) -> Int64? {
+        var st = stat()
+        guard fstatat(dir, name, &st, AT_SYMLINK_NOFOLLOW) == 0, st.st_mode & S_IFMT == S_IFREG else { return nil }
+        return allocated(st)
+    }
+
+    /// What a file takes here: nothing for a cloud file that isn't downloaded.
+    static func allocated(_ st: stat) -> Int64 {
+        DuplicateFinder.holdsContent(st) ? Int64(st.st_blocks) * 512 : 0
     }
 
     static func readFallback(fd: Int32, isCancelled: () -> Bool = { false }, _ body: (Entry) -> Void) -> ReadOutcome {
@@ -172,7 +207,7 @@ enum DirectoryReader {
                 type == S_IFREG ? .file : type == S_IFDIR ? .folder : type == S_IFLNK ? .symlink : .other
             body(
                 Entry(
-                    name: name, kind: kind, allocated: Int64(st.st_blocks) * 512,
+                    name: name, kind: kind, allocated: allocated(st),
                     linkCount: UInt32(st.st_nlink), fileID: UInt64(st.st_ino), device: st.st_dev,
                     modified: TimeInterval(st.st_mtimespec.tv_sec)))
         }

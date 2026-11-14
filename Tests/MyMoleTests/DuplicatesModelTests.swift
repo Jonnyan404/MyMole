@@ -328,4 +328,51 @@ import Testing
         for _ in 0..<200 where model.chosen.contains(copy) { try await Task.sleep(for: .milliseconds(10)) }
         #expect(!model.chosen.contains(copy) && model.keep.protects(copy))
     }
+
+    /// The live search, with the copies `mark` names given a disk or tags of their own.
+    private func marking(_ mark: @escaping @Sendable (inout DuplicateFile) -> Void) -> DuplicatesModel.Search {
+        { roots, minimum, progress, workers, step, group in
+            var found = DuplicatesModel.liveSearch(roots, minimum, progress, workers, step, group)
+            for g in found.groups.indices { for f in found.groups[g].files.indices { mark(&found.groups[g].files[f]) } }
+            return found
+        }
+    }
+
+    @Test func aCopyOnAnInternalDiskStaysByDefaultAndADisconnectableKeeperIsNamed() async throws {
+        let box = Box()
+        try box.file("Documents/report.bin", fill: 1)
+        try box.file("Downloads/report.bin", fill: 1)
+        try box.file("Downloads/report copy.bin", fill: 1)
+        let model = box.model(search: marking { f in if f.folder.hasSuffix("/Downloads") { f.detachable = "Synthetic Disk" } })
+        model.scan()
+        await model.scanJob?.value
+        let group = try #require(model.groups.first)
+        let internalCopy = try #require(group.files.first { $0.detachable == nil })
+        // The newest copies are on the disk that can go; the internal one stays.
+        model.chooseAll(keeping: .newest)
+        #expect(!model.chosen.contains(internalCopy.path) && model.chosen.count == 2)
+        #expect(model.keptOnDetachable.isEmpty)
+        model.chosen = Set(group.files.filter { $0.detachable == nil || $0.name == "report.bin" }.map(\.path))
+        #expect(model.keptOnDetachable == ["Synthetic Disk"])
+    }
+
+    @Test func copiesWithDifferentTagsAreLeftForTheUserAndTheirTagsAreNamed() async throws {
+        let box = Box()
+        try box.file("Documents/report.bin", fill: 1)
+        try box.file("Downloads/report.bin", fill: 1)
+        let model = box.model(search: marking { f in if f.folder.hasSuffix("/Documents") { f.tags = ["Synthetic Red"] } })
+        model.scan()
+        await model.scanJob?.value
+        let group = try #require(model.groups.first)
+        #expect(group.tagsDiffer)
+        model.chooseAll(keeping: .newest)
+        #expect(model.chosen.isEmpty)
+        #expect(model.notice?.text.contains("different tags") == true)
+        let tagged = try #require(group.files.first { !$0.tags.isEmpty })
+        model.toggle(tagged.path)
+        #expect(model.tagsGoing == ["Synthetic Red"])
+        model.toggle(tagged.path)
+        model.toggle(try #require(group.files.first { $0.tags.isEmpty }).path)
+        #expect(model.tagsGoing.isEmpty)
+    }
 }

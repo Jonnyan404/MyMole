@@ -175,6 +175,28 @@ import Testing
         #expect(try String(contentsOfFile: f.trash, encoding: .utf8) == "kept")
     }
 
+    /// A disk without exclusive renames (exFAT) answers ENOTSUP. The helper
+    /// never falls back to a rename that could replace something: the app
+    /// stays, or is put back from staging.
+    @Test(arguments: [0, 1]) func aDiskWithoutExclusiveRenameNeverLosesOrReplacesTheApp(_ failingStep: Int) throws {
+        let f = try Fixture()
+        var context = f.context
+        final class Steps { var count = 0 }
+        let steps = Steps()
+        context.rename = { from, name, to, target in
+            defer { steps.count += 1 }
+            if steps.count == failingStep {
+                errno = ENOTSUP
+                return -1
+            }
+            return renameatx_np(from, name, to, target, UInt32(RENAME_EXCL))
+        }
+        #expect(throws: (any Error).self) { try ApplicationTrash.move(f.request, context: context) }
+        #expect(f.exists && Trasher.identity(of: f.app) == f.request.identity)
+        #expect(!FileManager.default.fileExists(atPath: f.trash))
+        #expect(try FileManager.default.contentsOfDirectory(atPath: f.staging).isEmpty)
+    }
+
     @Test func aFailedRollbackPreservesTheAppAndItsRecoveryRecord() throws {
         let f = try Fixture()
         var context = f.context

@@ -49,6 +49,8 @@ public final class Folder: Identifiable, @unchecked Sendable {
     /// was published. Its contents are unknown, rather than an empty directory.
     public internal(set) var wasNotScanned = false
 
+    /// Largest first once the folder is finished, and kept so through
+    /// removals, undo and branches measured again.
     public internal(set) var subfolders: [Folder] = []
     public internal(set) var listedFiles: [FileItem] = []
     public internal(set) var smallFileCount = 0
@@ -90,6 +92,24 @@ public final class Folder: Identifiable, @unchecked Sendable {
         self.rebuildable = rebuildable
         self.inheritedKind = Classifier.kind(ofFolder: name) ?? inheritedKind ?? parent?.inheritedKind
     }
+
+    /// A folder let go of hands its contents to `Folder.releases` to be
+    /// freed there: whoever drops a map frees only its top folder, so a map
+    /// of hundreds of thousands of folders replaced by a rescan, or dropped
+    /// with a chart's layouts, never holds up the thread that drops it.
+    deinit {
+        guard !subfolders.isEmpty || listedFiles.count > 64 else { return }
+        let contents = Contents(subfolders: subfolders, files: listedFiles)
+        Self.releases.async { withExtendedLifetime(contents) {} }
+    }
+
+    private struct Contents: @unchecked Sendable {
+        let subfolders: [Folder]
+        let files: [FileItem]
+    }
+
+    /// Where let-go contents are freed, one after another, out of the way.
+    static let releases = DispatchQueue(label: "mymole.folder-release", qos: .utility)
 
     public var path: String {
         if let rootPath { return rootPath }
@@ -228,7 +248,8 @@ public final class Folder: Identifiable, @unchecked Sendable {
             copy.isFinished = source.isFinished
             if original.path == target { changed = copy }
             if let parent { parent.subfolders.append(copy) } else { result = copy }
-            pending.append(contentsOf: source.subfolders.map { ($0, copy) })
+            // Taken first child first, so every copy keeps its folders' order.
+            pending.append(contentsOf: source.subfolders.reversed().map { ($0, copy) })
         }
         guard !stop() else { return nil }
         var ancestor = changed?.parent
@@ -329,6 +350,14 @@ public final class Folder: Identifiable, @unchecked Sendable {
         propagate(adding: bytes, shared: file.shared, clones: clones, files: 1)
     }
 
+    /// Moves the folder to where its size now puts it among its parent's
+    /// folders, which stay largest first.
+    private func keepPlaceAmongSiblings() {
+        guard let parent, var i = parent.subfolders.firstIndex(where: { $0 === self }) else { return }
+        while i > 0, parent.subfolders[i - 1].size < size { parent.subfolders.swapAt(i, i - 1); i -= 1 }
+        while i + 1 < parent.subfolders.count, parent.subfolders[i + 1].size > size { parent.subfolders.swapAt(i, i + 1); i += 1 }
+    }
+
     /// A pruned item still holds its blocks in the Trash, so a clone family
     /// it completed is open again in every folder that held it.
     private func propagate(removing bytes: KindBytes, shared: Int64, clones: [CloneFamily: CloneMembers], files: Int) {
@@ -340,6 +369,7 @@ public final class Folder: Identifiable, @unchecked Sendable {
             Self.count(clones, by: -1, in: &c.openClones, shared: &c.sharedBytes)
             c.sharedBytes = min(c.size, c.sharedBytes)
             c.fileCount = max(0, c.fileCount - files)
+            c.keepPlaceAmongSiblings()
             cur = c.parent
         }
     }
@@ -353,6 +383,7 @@ public final class Folder: Identifiable, @unchecked Sendable {
             Self.count(clones, by: 1, in: &c.openClones, shared: &c.sharedBytes)
             c.sharedBytes = min(c.size, c.sharedBytes)
             c.fileCount += files
+            c.keepPlaceAmongSiblings()
             cur = c.parent
         }
     }

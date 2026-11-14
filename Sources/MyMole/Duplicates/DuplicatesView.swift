@@ -51,11 +51,24 @@ struct DuplicatesView: View {
         .actionConfirmation(
             String(localized: "Move \(model.chosen.count.formatted()) cop\(model.chosen.count == 1 ? "y" : "ies") to the Trash?"),
             isPresented: $confirming, action: .duplicates,
-            message: String(
-                localized:
-                    "\(fmt(model.chosenBytes)). One copy of each file stays where it is. You can undo right after, or put them back from the Trash later."
-            )
+            message: confirmationMessage
         ) { model.trashChosen() }
+    }
+
+    private var confirmationMessage: String {
+        var text = String(
+            localized:
+                "\(fmt(model.chosenBytes)). One copy of each file stays where it is. You can undo right after, or put them back from the Trash later."
+        )
+        let disks = model.keptOnDetachable
+        if !disks.isEmpty {
+            text += "\n\n" + String(localized: "The copy you keep is on \(disks.formatted(.list(type: .and))), which can be disconnected.")
+        }
+        let tags = model.tagsGoing
+        if !tags.isEmpty {
+            text += "\n\n" + String(localized: "Tags only the chosen copies have go with them: \(tags.formatted(.list(type: .and))).")
+        }
+        return text
     }
 
     @PaneToolsBuilder private var tools: [PaneTool] {
@@ -105,7 +118,7 @@ struct DuplicatesView: View {
                     DSCapsule("Results so far · choosing is available when the search finishes", symbol: "eye")
                 }
             } else if let at = model.scannedAt {
-                DSCapsule("Searched \(at.formatted(.relative(presentation: .named)))", symbol: "checkmark", tint: .green)
+                DSCapsule("Searched \(at.formatted(.relative(presentation: .named)))", symbol: "clock")
             }
             Menu {
                 Section("Searched folders") {
@@ -245,7 +258,13 @@ struct DuplicatesView: View {
                 g.files.map { f in
                     var r = FileRow(id: f.path, name: f.name, size: g.bytes, modified: f.modified, location: f.folder, symbol: "doc")
                     let clones = g.clones(of: f.path)
-                    if let frees = g.sharedOutside(f.path) {
+                    if g.tagsDiffer {
+                        r.badge = String(localized: "Tags differ")
+                        r.badgeTint = .systemOrange
+                        r.badgeHelp = f.tags.isEmpty
+                            ? String(localized: "This copy has no tags; other copies do. Choose which one stays.")
+                            : String(localized: "Tagged \(f.tags.formatted(.list(type: .and))); other copies are tagged differently. Choose which one stays.")
+                    } else if let frees = g.sharedOutside(f.path) {
                         r.badge = String(localized: "Shared")
                         r.badgeTint = .systemGray
                         r.badgeHelp = String(localized: "Shares its space with a file outside this list: moving it frees about \(fmt(frees)).")
