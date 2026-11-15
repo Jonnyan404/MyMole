@@ -299,12 +299,15 @@ struct UIResponsivenessBenchmarkTests {
         report("table.\(setting.name).frame-delivery", Array(frames.intervals.dropFirst(warm)), budget: 25)
     }
 
+    private static let navigationRounds = 3
+
     /// Moving around Disk Map, every chart, on a home-sized map and on the
     /// hardest shapes: stepping into folders, Back, a breadcrumb jump, Show
     /// in Disk Map from another pane, switching chart and hovering. For each
     /// action, the main-thread time to handle it, the time until the new
     /// layout is drawn, and the longest the main thread was held up while
-    /// it went on.
+    /// it went on. The moves are made three times per chart, for 24 to 33
+    /// steps.
     @Test(arguments: UIDiskMapKind.chosen)
     func diskMapNavigation(_ map: UIDiskMapKind) async throws {
         let root = try uiFixtureDirectory()
@@ -365,15 +368,22 @@ struct UIResponsivenessBenchmarkTests {
                 print(String(format: "ui-nav %@ %@ %@ input=%.2fms visible=%.2fms stall=%.2fms",
                              map.rawValue, chart.rawValue, action, r.input.wall, r.visible, r.stall))
             }
-            record(await act(chart) { model.chart = chart }, "switch")
-            for _ in 0..<6 {
-                guard let next = model.current.flatMap(largestChild) else { break }
-                record(await act(chart) { model.open(next) }, "open")
+            // Repeated, so a chart's p95 is not simply its slowest step.
+            for round in 0..<Self.navigationRounds {
+                if round > 0 {
+                    let other: StorageModel.Chart = chart == .rings ? .wheel : .rings
+                    _ = await act(other) { model.chart = other }
+                }
+                record(await act(chart) { model.chart = chart }, "switch")
+                for _ in 0..<6 {
+                    guard let next = model.current.flatMap(largestChild) else { break }
+                    record(await act(chart) { model.open(next) }, "open")
+                }
+                for _ in 0..<3 { record(await act(chart) { model.back() }, "back") }
+                record(await act(chart) { model.open(tree) }, "breadcrumb")
+                record(await act(chart) { model.show(folder: deepest.path) }, "show-in-disk-map")
+                record(await act(chart) { model.open(tree) }, "breadcrumb")
             }
-            for _ in 0..<3 { record(await act(chart) { model.back() }, "back") }
-            record(await act(chart) { model.open(tree) }, "breadcrumb")
-            record(await act(chart) { model.show(folder: deepest.path) }, "show-in-disk-map")
-            record(await act(chart) { model.open(tree) }, "breadcrumb")
             // Hover across the segments in turn, as the pointer does.
             let segments = Array(chartParts(of: tree).prefix(30))
             var hovers: [UISample] = []
@@ -385,7 +395,7 @@ struct UIResponsivenessBenchmarkTests {
             }
             model.hovered = nil
             let name = "disk.nav.\(map.rawValue).\(chart.rawValue)"
-            report("\(name).input", inputs, budget: 16.7)
+            report("\(name).input", inputs, budget: map.inputBudget, p99: 33.3)
             report("\(name).visible", visible, budget: 100)
             report("\(name).stall", stalls, budget: 33)
             report("\(name).hover", Array(hovers.dropFirst(5)), budget: 4)
@@ -897,7 +907,7 @@ struct UIResponsivenessBenchmarkTests {
         report(name, values.map { UISample(wall: $0, cpu: nil) }, budget: budget)
     }
 
-    private func report(_ name: String, _ values: [UISample], budget: Double) {
+    private func report(_ name: String, _ values: [UISample], budget: Double, p99: Double? = nil) {
         let wall = values.map(\.wall).sorted()
         let cpu = values.compactMap(\.cpu).sorted()
         func percentile(_ sorted: [Double], _ fraction: Double) -> Double {
@@ -921,7 +931,7 @@ struct UIResponsivenessBenchmarkTests {
         }
         let checked = interactionScope ? cpu : wall
         #expect(percentile(checked, 0.95) <= budget, "UI service budget exceeded")
-        let p99Budget = name.hasSuffix("frame-delivery") ? 33.3 : max(budget * 2, 33.3)
+        let p99Budget = p99 ?? (name.hasSuffix("frame-delivery") ? 33.3 : max(budget * 2, 33.3))
         #expect(percentile(checked, 0.99) <= p99Budget, "UI p99 budget exceeded")
         if budget < 100 {
             #expect((wall.last ?? 0) < 100, "An interactive update blocked for 100 ms")

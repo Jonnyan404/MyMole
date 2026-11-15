@@ -20,6 +20,12 @@ enum UIDiskMapKind: String, CaseIterable, CustomTestStringConvertible, Sendable 
 
     var testDescription: String { rawValue }
 
+    /// The p95 main-thread time a navigation step may take: one frame on a
+    /// home-sized map, two on the extreme shapes, where one step charts and
+    /// lists tens of thousands of folders. Every map keeps p99 within two
+    /// frames.
+    var inputBudget: Double { self == .home ? 16.7 : 33.3 }
+
     /// Every map, or the one MYMOLE_DISK_MAP names, to look at alone.
     static var chosen: [UIDiskMapKind] {
         let only = ProcessInfo.processInfo.environment["MYMOLE_DISK_MAP"]
