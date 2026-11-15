@@ -143,7 +143,9 @@ public enum VendorRules {
             Part("/Users/Shared/Adobe", .show, .data, note: sharedFolderNote),
             Part("~/Library/Application Support/Adobe/CoreSync", .show, .data,
                  note: "Creative Cloud's sync state. Let Creative Cloud sign out and finish syncing first."),
-        ], uninstallers: [
+        ]),
+        // Adobe's other apps are removed from Creative Cloud itself.
+        Rule("Adobe Creative Cloud", apps: ["com.adobe.acc.AdobeCreativeCloud"], uninstallers: [
             "/Applications/Utilities/Adobe Creative Cloud/Utils/Creative Cloud Uninstaller.app",
             "/Applications/Utilities/Adobe Installers/Uninstall Adobe Creative Cloud.app",
         ]),

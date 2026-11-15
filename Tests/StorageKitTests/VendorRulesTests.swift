@@ -227,3 +227,58 @@ enum ReceiptFixture {
         #expect(!AppLeftovers.isAppsVendorEntry("IntelliJIdea2024.3", vendor: "JetBrains", of: idea, installed: [idea, copy]))
     }
 }
+
+/// What is only shown for an app: parts macOS protects or every user shares,
+/// with what to do instead. Never part of a removal.
+@Suite struct ShownComponentsTests {
+    private func plist(_ dict: [String: Any], at path: String) throws {
+        try FileManager.default.createDirectory(atPath: (path as NSString).deletingLastPathComponent, withIntermediateDirectories: true)
+        try PropertyListSerialization.data(fromPropertyList: dict, format: .xml, options: 0).write(to: URL(fileURLWithPath: path))
+    }
+
+    private func app(_ box: Sandbox, _ name: String, _ id: String) -> AppBundle {
+        AppBundle(path: box.path + "/Applications/\(name).app", name: name, bundleID: id, version: nil, bytes: 1, fromAppStore: false)
+    }
+
+    static let extensions = """
+    2 extension(s)
+    --- com.apple.system_extension.network_extension
+    enabled\tactive\tteamID\tbundleID (version)\tname\t[state]
+    *\t*\tTEAM000001\tcom.vendor.Editor.Filter (1.0/1)\tEditor Filter\t[activated enabled]
+    *\t*\tTEAM000002\tcom.other.Filter (2.0/2)\tOther Filter\t[activated enabled]
+    """
+
+    @Test func protectedAndSharedPartsAreShownWithWhatToDo() throws {
+        let box = try Sandbox()
+        try plist(["CFBundleIdentifier": "com.vendor.Editor.Kext"], at: box.path + "/Library/Extensions/EditorDriver.kext/Contents/Info.plist")
+        try plist(["CFBundleIdentifier": "com.other.Kext"], at: box.path + "/Library/Extensions/Other.kext/Contents/Info.plist")
+        let runner = CommandRunner(run: { exe, args in
+            exe == RelatedComponents.systemExtensionsTool && args == ["list"] ? (0, Self.extensions) : (1, "")
+        }, exists: { _ in true })
+        let editor = app(box, "Editor", "com.vendor.Editor")
+        let shown = RelatedComponents.shown(for: editor, home: box.path, systemBase: box.path, runner: runner)
+        #expect(shown.map(\.name) == ["EditorDriver.kext", "Editor Filter"])
+        #expect(shown.allSatisfy { !$0.note.isEmpty })
+        #expect(shown.first?.path == box.path + "/Library/Extensions/EditorDriver.kext")
+        #expect(shown.last?.path == nil)
+
+        try box.file("Users/Shared/Epic Games/Game/data.pak", bytes: 9_000)
+        let launcher = app(box, "Epic Games Launcher", "com.epicgames.EpicGamesLauncher")
+        let games = RelatedComponents.shown(for: launcher, home: box.path, systemBase: box.path, runner: runner)
+        #expect(games.map(\.name) == ["Epic Games"])
+        #expect((games.first?.bytes ?? 0) > 0)
+        // A tool that can't run lists nothing more; it's no error.
+        let failing = CommandRunner(run: { _, _ in (1, "") }, exists: { _ in false })
+        #expect(RelatedComponents.shown(for: editor, home: box.path, systemBase: box.path, runner: failing).map(\.name) == ["EditorDriver.kext"])
+    }
+
+    @Test func aVendorsUninstallerIsPointedToForItsOwnAppOnly() throws {
+        let box = try Sandbox()
+        try box.folder("Applications/Utilities/Adobe Creative Cloud/Utils/Creative Cloud Uninstaller.app/Contents")
+        let cc = app(box, "Creative Cloud", "com.adobe.acc.AdobeCreativeCloud")
+        let photoshop = app(box, "Adobe Photoshop 2025", "com.adobe.Photoshop")
+        #expect(AppFinder.ownUninstaller(of: cc, folders: [box.path + "/Applications"], vendorRoots: (home: box.path, base: box.path))
+            == box.path + "/Applications/Utilities/Adobe Creative Cloud/Utils/Creative Cloud Uninstaller.app")
+        #expect(AppFinder.ownUninstaller(of: photoshop, folders: [box.path + "/Applications"], vendorRoots: (home: box.path, base: box.path)) == nil)
+    }
+}

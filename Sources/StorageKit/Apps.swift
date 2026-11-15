@@ -326,7 +326,8 @@ public enum AppFinder {
     /// one of `supportFolders` (Application Support in the home and system
     /// Library). Such apps install parts outside the Library that only their
     /// uninstaller knows.
-    public static func ownUninstaller(of app: AppBundle, folders: [String], supportFolders: [String] = []) -> String? {
+    public static func ownUninstaller(of app: AppBundle, folders: [String], supportFolders: [String] = [],
+                                      vendorRoots: (home: String, base: String)? = nil) -> String? {
         let inside = ["Contents", "Contents/Resources", "Contents/SharedSupport", "Contents/Helpers", "Contents/Library"]
             .map { app.path + "/" + $0 }
         let parent = (app.path as NSString).deletingLastPathComponent
@@ -350,6 +351,10 @@ public enum AppFinder {
                     if let found = uninstaller(in: sub, besides: app.path, naming: mustName) { return found }
                 }
             }
+        }
+        // Where the vendor puts the uninstaller for this very app.
+        if let roots = vendorRoots, let id = app.bundleID {
+            return VendorRules.uninstallers(for: id, home: roots.home, base: roots.base).first
         }
         return nil
     }
