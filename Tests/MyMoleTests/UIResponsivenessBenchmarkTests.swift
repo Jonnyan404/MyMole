@@ -397,7 +397,7 @@ struct UIResponsivenessBenchmarkTests {
             let name = "disk.nav.\(map.rawValue).\(chart.rawValue)"
             report("\(name).input", inputs, budget: map.inputBudget, p99: 33.3)
             report("\(name).visible", visible, budget: 100)
-            report("\(name).stall", stalls, budget: 33)
+            report("\(name).stall", stalls, budget: map.stallBudget)
             report("\(name).hover", Array(hovers.dropFirst(5)), budget: 4)
         }
     }

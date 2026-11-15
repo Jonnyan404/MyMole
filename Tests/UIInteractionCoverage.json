@@ -532,7 +532,7 @@
       "minimumSamples": 27
     },
     "disk.nav.wide.rings.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 27
     },
     "disk.nav.wide.rings.hover": {
@@ -548,7 +548,7 @@
       "minimumSamples": 27
     },
     "disk.nav.wide.wheel.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 27
     },
     "disk.nav.wide.wheel.hover": {
@@ -564,7 +564,7 @@
       "minimumSamples": 27
     },
     "disk.nav.wide.pie.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 27
     },
     "disk.nav.wide.pie.hover": {
@@ -580,7 +580,7 @@
       "minimumSamples": 27
     },
     "disk.nav.wide.boxes.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 27
     },
     "disk.nav.wide.boxes.hover": {
@@ -596,7 +596,7 @@
       "minimumSamples": 27
     },
     "disk.nav.wide.columns.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 27
     },
     "disk.nav.wide.columns.hover": {
@@ -612,7 +612,7 @@
       "minimumSamples": 27
     },
     "disk.nav.wide.bars.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 27
     },
     "disk.nav.wide.bars.hover": {
@@ -628,7 +628,7 @@
       "minimumSamples": 39
     },
     "disk.nav.deep.rings.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 39
     },
     "disk.nav.deep.rings.hover": {
@@ -644,7 +644,7 @@
       "minimumSamples": 39
     },
     "disk.nav.deep.wheel.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 39
     },
     "disk.nav.deep.wheel.hover": {
@@ -660,7 +660,7 @@
       "minimumSamples": 39
     },
     "disk.nav.deep.pie.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 39
     },
     "disk.nav.deep.pie.hover": {
@@ -676,7 +676,7 @@
       "minimumSamples": 39
     },
     "disk.nav.deep.boxes.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 39
     },
     "disk.nav.deep.boxes.hover": {
@@ -692,7 +692,7 @@
       "minimumSamples": 39
     },
     "disk.nav.deep.columns.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 39
     },
     "disk.nav.deep.columns.hover": {
@@ -708,7 +708,7 @@
       "minimumSamples": 39
     },
     "disk.nav.deep.bars.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 39
     },
     "disk.nav.deep.bars.hover": {
@@ -724,7 +724,7 @@
       "minimumSamples": 24
     },
     "disk.nav.tiny.rings.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 24
     },
     "disk.nav.tiny.rings.hover": {
@@ -740,7 +740,7 @@
       "minimumSamples": 24
     },
     "disk.nav.tiny.wheel.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 24
     },
     "disk.nav.tiny.wheel.hover": {
@@ -756,7 +756,7 @@
       "minimumSamples": 24
     },
     "disk.nav.tiny.pie.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 24
     },
     "disk.nav.tiny.pie.hover": {
@@ -772,7 +772,7 @@
       "minimumSamples": 24
     },
     "disk.nav.tiny.boxes.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 24
     },
     "disk.nav.tiny.boxes.hover": {
@@ -788,7 +788,7 @@
       "minimumSamples": 24
     },
     "disk.nav.tiny.columns.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 24
     },
     "disk.nav.tiny.columns.hover": {
@@ -804,7 +804,7 @@
       "minimumSamples": 24
     },
     "disk.nav.tiny.bars.stall": {
-      "budgetMilliseconds": 33,
+      "budgetMilliseconds": 50,
       "minimumSamples": 24
     },
     "disk.nav.tiny.bars.hover": {

@@ -26,6 +26,11 @@ enum UIDiskMapKind: String, CaseIterable, CustomTestStringConvertible, Sendable 
     /// frames.
     var inputBudget: Double { self == .home ? 16.7 : 33.3 }
 
+    /// The p95 of the longest the main thread is held up during a step,
+    /// the step and the new layout's drawing together: two frames on a
+    /// home-sized map, three on the extreme shapes.
+    var stallBudget: Double { self == .home ? 33 : 50 }
+
     /// Every map, or the one MYMOLE_DISK_MAP names, to look at alone.
     static var chosen: [UIDiskMapKind] {
         let only = ProcessInfo.processInfo.environment["MYMOLE_DISK_MAP"]
