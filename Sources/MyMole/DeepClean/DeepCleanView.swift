@@ -9,6 +9,7 @@ struct DeepCleanView: View {
     @Bindable var model: DeepCleanModel
     var openSystemClean: () -> Void = {}
     @State private var confirming = false
+    @State private var showDevTools = false
     @State private var explaining: CleanCandidate?
     /// Kept while you go to other panes and back, as the window's own state.
     @SceneStorage("deepClean.filter") private var query = ""
@@ -45,6 +46,7 @@ struct DeepCleanView: View {
         .onAppear { model.scanIfNeeded() }
         .liveRefresh(every: .seconds(5)) { await model.refreshActivity() }
         .onChange(of: model.chosen) { _, _ in confirming = false }
+        .sheet(isPresented: $showDevTools) { DevToolsSheet() }
     }
 
     private var confirmationText: String {
@@ -59,6 +61,8 @@ struct DeepCleanView: View {
             PaneTool.button("deep-clean.system", "System Items", symbol: "lock.shield",
                             help: "System-wide caches need administrator rights; System Clean handles them") { openSystemClean() }
         }
+        PaneTool.button("deep-clean.devtools", "Developer Tools…", symbol: "hammer",
+                        help: "Docker, simulator runtimes, Android devices and virtual machines, as each tool lists them") { showDevTools = true }
         if model.scanning {
             PaneTool.button("deep-clean.scan", "Stop", symbol: "stop.fill", help: "Stop scanning; the last complete result stays") { model.stop() }
         } else {
@@ -316,6 +320,7 @@ extension CleanCategory {
         case .developerCaches: "hammer"
         case .downloads: "paperclip"
         case .devices: "iphone"
+        case .archives: "archivebox.fill"
         }
     }
 }

@@ -97,6 +97,27 @@ import Testing
         #expect(!CleanScanner.isStillCandidate(quick.path, home: box.path))
     }
 
+    @Test func xcodeArchivesAreOfferedButNeverChosen() throws {
+        let box = try Sandbox()
+        let day = "Library/Developer/Xcode/Archives/2026-11-15"
+        let archive = box.path + "/\(day)/Sample 15.11.2026, 10.00.xcarchive"
+        try box.file("\(day)/Sample 15.11.2026, 10.00.xcarchive/dSYMs/Sample.app.dSYM/x", bytes: 40_000)
+        try PropertyListSerialization.data(fromPropertyList: [
+            "Name": "Sample", "ApplicationProperties": ["CFBundleShortVersionString": "1.2"],
+        ], format: .xml, options: 0).write(to: URL(fileURLWithPath: archive + "/Info.plist"))
+        try box.file("\(day)/notes.txt", bytes: 2_000)
+
+        let found = candidates(box)
+        let one = try #require(found[archive])
+        #expect(one.category == .archives && one.safety == .review && !one.contentsOnly)
+        #expect(one.name == "Sample 1.2 · 2026-11-15")
+        #expect(!found.keys.contains { $0.hasSuffix("notes.txt") })
+        #expect(CleanScanner.isStillCandidate(archive, home: box.path))
+        #expect(!CleanScanner.isStillCandidate(box.path + "/\(day)/notes.txt", home: box.path))
+        #expect(CleanRules.inUse(archive, home: box.path, running: ["Xcode"]))
+        #expect(!CleanCategory.archives.note.isEmpty)
+    }
+
     @Test func noNewDeveloperItemStartsChosen() throws {
         let box = try Sandbox()
         try box.file("Library/Developer/Xcode/watchOS DeviceSupport/Watch1,1 1.0 (1A1)/x", bytes: 20_000)

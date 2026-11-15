@@ -10,7 +10,7 @@ import Synchronization
 
 /// What a cleanup candidate is.
 public enum CleanCategory: String, Sendable, Codable, CaseIterable, Comparable {
-    case appCaches, containerCaches, logs, developerCaches, downloads, devices
+    case appCaches, containerCaches, logs, developerCaches, downloads, devices, archives
 
     public static func < (a: Self, b: Self) -> Bool {
         allCases.firstIndex(of: a)! < allCases.firstIndex(of: b)!
@@ -24,6 +24,7 @@ public enum CleanCategory: String, Sendable, Codable, CaseIterable, Comparable {
         case .developerCaches: "Developer Caches"
         case .downloads: "Downloaded Attachments"
         case .devices: "Simulators & Device Backups"
+        case .archives: "Xcode Archives"
         }
     }
 
@@ -35,6 +36,7 @@ public enum CleanCategory: String, Sendable, Codable, CaseIterable, Comparable {
         case .developerCaches: "Package managers' download caches and simulator caches. The next install is slower once."
         case .downloads: "Mail attachments you opened. The messages keep them."
         case .devices: "Simulators with what's installed in them, Android emulators' saved states, and iPhone and iPad backups. They hold data, so none is ever chosen for you."
+        case .archives: "Builds you archived in Xcode, with the symbols that make their crash reports readable. None is ever chosen for you."
         }
     }
 }
@@ -56,6 +58,8 @@ extension CleanCandidate {
             "The messages keep their attachments; Mail fetches one again when it's opened."
         case (.devices, _):
             "Holds data: a simulator's apps and content, an emulator's saved state, or a device backup. It's gone for good once the Trash is emptied."
+        case (.archives, _):
+            "Crash reports from that build can't be read without it, and it can't be uploaded again. It's gone for good once the Trash is emptied."
         }
     }
 }
@@ -140,6 +144,8 @@ public enum CleanRules {
         case backups
         /// One Android emulator's saved states: a folder per snapshot.
         case emulatorSnapshots
+        /// One day's Xcode archives: an `.xcarchive` per build.
+        case archives
     }
 
     /// Caches macOS uses for iCloud and accounts: rebuilt, but at the cost
@@ -195,7 +201,7 @@ public enum CleanRules {
             Target(path: lib + "/Application Support/MobileSync/Backup", mode: .children, category: .devices, safety: .review,
                    reason: "A backup of an iPhone or iPad. It's gone for good unless the device is backed up again.",
                    holds: .backups),
-        ] + condaCaches(home: home) + appDataCaches(home: home) + emulatorSnapshots(home: home)
+        ] + condaCaches(home: home) + appDataCaches(home: home) + emulatorSnapshots(home: home) + archives(lib: lib)
     }
 
     /// Xcode keeps debug symbols per platform, one folder per device OS version.
@@ -206,6 +212,25 @@ public enum CleanRules {
             Target(path: lib + "/Developer/Xcode/\($0) DeviceSupport", mode: .children, category: .developerCaches,
                    safety: .review, reason: "Debug symbols for one device's OS version. Copied again when that device connects.")
         }
+    }
+
+    static func archiveFolder(lib: String) -> String { lib + "/Developer/Xcode/Archives" }
+
+    /// Each day's folder of archives. An archive is never chosen for you.
+    static func archives(lib: String) -> [Target] {
+        let base = archiveFolder(lib: lib)
+        return (DirectoryListing.names(base) ?? []).filter { !$0.hasPrefix(".") }.sorted().map {
+            Target(path: base + "/" + $0, mode: .children, category: .archives, safety: .review,
+                   reason: "An archived build with its debug symbols. Keep it for every version you shipped.", holds: .archives)
+        }.filter { CleanScanner.isRealFolder($0.path) }
+    }
+
+    /// "Sample 1.2 · 2026-11-15": the archived app and version, then the day.
+    static func archiveTitle(_ path: String) -> String? {
+        guard let info = plist(path + "/Info.plist"), let name = info["Name"] as? String else { return nil }
+        let version = (info["ApplicationProperties"] as? [String: Any])?["CFBundleShortVersionString"] as? String
+        let day = ((path as NSString).deletingLastPathComponent as NSString).lastPathComponent
+        return [name, version].compactMap { $0 }.joined(separator: " ") + " · " + day
     }
 
     /// Where the Android emulator keeps its virtual devices by default.
@@ -344,6 +369,7 @@ public enum CleanRules {
         case .simulators: simulator(path)?.title
         case .backups: backup(path).map { "Backup of " + $0 }
         case .emulatorSnapshots: emulatorSnapshotTitle(path)
+        case .archives: archiveTitle(path)
         }
     }
 
@@ -384,6 +410,7 @@ public enum CleanRules {
             case lib + "/Developer/CoreSimulator/Devices": return ["Simulator", "simctl"]
             case home + "/.gradle/wrapper/dists": return ["gradle", "GradleDaemon", "GradleWrapperMain"]
             case let parent where isEmulatorSnapshots(parent, home: home): return emulatorTools
+            case let parent where (parent as NSString).deletingLastPathComponent == archiveFolder(lib: lib): return ["Xcode"]
             default: return appDataTools(path, home: home) ?? []
             }
         }
@@ -441,6 +468,7 @@ public enum CleanRules {
         case .simulators: return simulator(path)?.shutDown == true
         case .backups: return isFolder(path)
         case .emulatorSnapshots: return isFolder(path) && !emulatorRunning((path as NSString).deletingLastPathComponent)
+        case .archives: return isFolder(path) && path.hasSuffix(".xcarchive")
         }
     }
 
@@ -765,7 +793,8 @@ public enum CleanScanner {
 public enum CleanStore {
     /// 2: candidates say when part of them couldn't be read.
     /// 3: developer tools' downloads in more places, and emulator snapshots.
-    static let formatVersion = 3
+    /// 4: Xcode archives.
+    static let formatVersion = 4
 
     public struct Saved: Sendable, Codable {
         public let version: Int
