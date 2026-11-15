@@ -24,7 +24,7 @@ struct Entry {
     var needsBlocks = false
 
     /// What removing this file alone frees.
-    var reclaim: Reclaim { .file(allocated: allocated, device: device, sharing: sharing) }
+    var reclaim: Reclaim { .file(allocated: allocated, device: device, sharing: sharing, inode: fileID, links: linkCount) }
 }
 
 enum ReadOutcome { case ok, denied, failed, cancelled }

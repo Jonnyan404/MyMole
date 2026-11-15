@@ -166,6 +166,7 @@ public enum StorageScanner {
         // A cancelled walk leaves some subtrees unfinished. Nobody reads
         // their totals until the result is in, so they're finished here.
         for t in tops where !t.isFinished { t.finish() }
+        if !progress.isCancelled { walk.clones.record(scanOf: path, stop: { progress.isCancelled }) }
         if onRoot == nil { root.finish() }
         return ScanResult(
             root: root, deniedPaths: walk.denied.withLock { $0 }, duration: Date().timeIntervalSince(start),
@@ -191,6 +192,7 @@ private final class Walk: @unchecked Sendable {
     let queue = WorkQueue()
     let tracker = SubtreeCounter()
     let hardLinks = Mutex(Set<UInt64>())
+    let clones = CloneSightings()
     let denied = Mutex([String]())
     /// Written once on the starting thread before workers exist; read-only after.
     var topIndex: [ObjectIdentifier: Int] = [:]
@@ -247,12 +249,17 @@ private final class Walk: @unchecked Sendable {
                         name: e.name, parent: folder,
                         rebuildable: Classifier.rebuildable(folder: e.name, siblings: siblings)))
             case .file:
-                // A hard-linked file costs its blocks once, like `du`.
-                if e.linkCount > 1 && !hardLinks.withLock({ $0.insert(e.fileID).inserted }) { continue }
+                // A hard-linked file costs its blocks once, like `du`, and
+                // frees them with the last of its names.
+                if e.linkCount > 1 && !hardLinks.withLock({ $0.insert(e.fileID).inserted }) {
+                    reclaim.add(e.reclaim)
+                    continue
+                }
                 let kind = folder.inheritedKind ?? Classifier.kind(ofFile: e.name)
                 folder.ownBytes[kind] += e.allocated
                 let own = e.reclaim
                 reclaim.add(own)
+                if let sharing = e.sharing, e.linkCount <= 1 { clones.note(sharing, allocated: e.allocated, device: e.device, path: path == "/" ? "/" + e.name : path + "/" + e.name) }
                 let modified = Date(timeIntervalSince1970: e.modified)
                 folder.latestChange = max(folder.latestChange, modified)
                 folder.ownLatestChange = folder.latestChange
@@ -342,3 +349,37 @@ private final class SubtreeCounter: Sendable {
     }
 }
 
+/// The clones one scan reads that `CloneOverlaps` compares once the walk is
+/// done: a member of each whole family, and the files sharing blocks with
+/// files the volume doesn't name.
+final class CloneSightings: Sendable {
+    private struct Seen {
+        var members: [CloneOverlaps.Member] = []
+        var holders: [CloneOverlaps.Holder] = []
+        var overflow = false
+    }
+
+    private let seen = Mutex(Seen())
+
+    func note(_ sharing: FileSpace.Sharing, allocated: Int64, device: Int32, path: String) {
+        guard let privateBytes = sharing.privateBytes else { return }
+        let copy = allocated - min(privateBytes, allocated)
+        guard copy >= Reclaim.checkedCopy else { return }
+        if sharing.sharesAllBlocks, let id = sharing.cloneID, let count = sharing.cloneCount, count > 0 {
+            let member = CloneOverlaps.Member(family: CloneFamily(device: device, id: id), path: path, total: Int(count), copy: copy)
+            seen.withLock { s in
+                if s.members.count < CloneOverlaps.compareLimit * 4 { s.members.append(member) } else { s.overflow = true }
+            }
+        } else if !sharing.sharesAllBlocks {
+            seen.withLock { s in
+                if s.holders.count < CloneOverlaps.compareLimit { s.holders.append(.init(device: device, path: path)) } else { s.overflow = true }
+            }
+        }
+    }
+
+    func record(scanOf root: String, stop: () -> Bool) {
+        let s = seen.withLock { $0 }
+        guard !s.overflow, !s.members.isEmpty else { return }
+        CloneOverlaps.record(scanOf: root, members: s.members, holders: s.holders, stop: stop)
+    }
+}

@@ -165,6 +165,86 @@ import Testing
         #expect(sum.open.keys.contains { $0.id == UInt64(Reclaim.openLimit + 9) })
     }
 
+    /// New bytes over `length` at `offset`, as a booted simulator writes to its image.
+    private func rewrite(_ box: Sandbox, _ rel: String, at offset: Int, length: Int) {
+        let fd = open(box.url.appending(path: rel).path, O_WRONLY)
+        #expect(fd >= 0)
+        var bytes = [UInt8](repeating: 0, count: length)
+        arc4random_buf(&bytes, length)
+        #expect(pwrite(fd, bytes, length, off_t(offset)) == length && fsync(fd) == 0 && close(fd) == 0)
+    }
+
+    @Test func aHardLinkedFileFreesItsBlocksWithItsLastName() throws {
+        let box = try Box()
+        try box.sandbox.file("a/film.bin", bytes: 1_500_000)
+        try box.sandbox.folder("b")
+        let a = box.path + "/a/film.bin", b = box.path + "/b/film link.bin"
+        #expect(link(a, b) == 0)
+        let copy = box.sandbox.allocated("a/film.bin")
+
+        let root = StorageScanner.scan(path: box.path, workers: 2).root
+        let first = try #require(root.find(path: box.path + "/a")), second = try #require(root.find(path: box.path + "/b"))
+        // Counted once, like du, and freed only when both names go.
+        #expect(root.size == copy && root.reclaim.bytes == copy)
+        #expect(first.reclaim.bytes == 0 && second.reclaim.bytes == 0)
+        #expect((first.reclaim + second.reclaim).bytes == copy)
+        // Chosen one by one, the same.
+        let one = try #require(Reclaim.file(at: a)), other = try #require(Reclaim.file(at: b))
+        #expect(one.bytes == 0 && other.bytes == 0 && (one + other).bytes == copy)
+    }
+
+    @Test func namesOfOneFileCompleteLikeAFamily() {
+        let name = Reclaim.file(allocated: 1_000, device: 1, sharing: nil, inode: 5, links: 2)
+        #expect(name.bytes == 0 && (name + name).bytes == 1_000)
+        let ofThree = Reclaim.file(allocated: 1_000, device: 1, sharing: nil, inode: 6, links: 3)
+        #expect((ofThree + ofThree).bytes == 0 && (ofThree + ofThree + ofThree).bytes == 1_000)
+        // A clone with a second name frees what it holds alone, once both go.
+        let cloned = FileSpace.Sharing(cloneID: 8, cloneCount: 2, privateBytes: 100, sharesAllBlocks: false)
+        let linked = Reclaim.file(allocated: 1_000, device: 1, sharing: cloned, inode: 7, links: 2)
+        #expect((linked + linked).bytes == 100)
+    }
+
+    @Test func aCloneRewrittenElsewhereKeepsWhatItStillShares() throws {
+        let box = try Box()
+        let mb = 1 << 20
+        try box.sandbox.file("sims/one/disk.img", bytes: 4 * mb)
+        try clone(box.sandbox, "sims/one/disk.img", to: "sims/two/disk.img")
+        try clone(box.sandbox, "sims/one/disk.img", to: "elsewhere/three/disk.img")
+        rewrite(box.sandbox, "elsewhere/three/disk.img", at: mb, length: mb)
+        let copy = box.sandbox.allocated("sims/one/disk.img")
+        let three = box.path + "/elsewhere/three/disk.img"
+        let own = try #require(FileSpace.sharing(three)?.privateBytes)
+        // The rewritten clone still holds the rest of the copy.
+        let kept = box.sandbox.allocated("elsewhere/three/disk.img") - own
+        #expect(own >= Int64(mb) && kept >= Int64(2 * mb))
+
+        let root = StorageScanner.scan(path: box.path, workers: 2).root
+        let sims = try #require(root.find(path: box.path + "/sims")), elsewhere = try #require(root.find(path: box.path + "/elsewhere"))
+        // The two whole clones look like a whole family, yet free only
+        // the part the third rewrote.
+        #expect(sims.reclaim.bytes == copy - kept)
+        #expect(elsewhere.reclaim.bytes == own)
+        // All three go: the copy and what the third holds alone.
+        #expect(root.reclaim.bytes == copy + own)
+        // Chosen apart, the folders never count more than goes.
+        #expect((sims.reclaim + elsewhere.reclaim).bytes <= copy + own)
+        // The two files chosen on their own, the same.
+        let one = try #require(Reclaim.file(at: box.path + "/sims/one/disk.img"))
+        let two = try #require(Reclaim.file(at: box.path + "/sims/two/disk.img"))
+        #expect((one + two).bytes == copy - kept)
+        // A later scan of the two alone still knows what the third keeps.
+        let alone = StorageScanner.scan(path: box.path + "/sims", workers: 1).root
+        #expect(alone.reclaim.bytes == copy - kept)
+    }
+
+    @Test func reclaimSavedBeforeNamesWereCountedStillReads() throws {
+        let json = #"{"bytes":7,"open":[{"device":1,"id":9},{"count":1,"total":2,"bytes":3}]}"#
+        let old = try JSONDecoder().decode(Reclaim.self, from: Data(json.utf8))
+        #expect(old.bytes == 7 && old.open[CloneFamily(device: 1, id: 9)]?.total == 2)
+        let back = try JSONDecoder().decode(Reclaim.self, from: JSONEncoder().encode(old))
+        #expect(back == old)
+    }
+
     /// A sandbox whose real path is used throughout, so scanned paths match.
     private struct Box {
         let sandbox: Sandbox

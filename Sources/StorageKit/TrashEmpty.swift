@@ -142,7 +142,7 @@ public enum TrashEmptier {
     ) -> Int64 {
         let own = Int64(st.st_blocks) * 512
         if st.st_mode & S_IFMT == S_IFREG {
-            reclaim.add(.file(allocated: own, device: st.st_dev, sharing: FileSpace.sharing(at: dir, name)))
+            reclaim.add(.file(allocated: own, device: st.st_dev, sharing: FileSpace.sharing(at: dir, name), inode: UInt64(st.st_ino), links: UInt32(st.st_nlink)))
             return own
         }
         guard st.st_mode & S_IFMT == S_IFDIR, st.st_dev == device else {

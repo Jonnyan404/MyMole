@@ -124,7 +124,17 @@ public final class Folder: Identifiable, @unchecked Sendable {
     /// What moving the whole folder frees: `size` less the blocks clones
     /// elsewhere keep, with the families it would complete. Valid after
     /// `finish()`; after pruning, an estimate until the place is read again.
-    public var reclaim: Reclaim { Reclaim(bytes: size - sharedBytes, open: openClones) }
+    /// Clones rewritten since, outside the folder, keep what they still
+    /// share of a family it holds whole (`CloneOverlaps`).
+    public var reclaim: Reclaim {
+        let raw = rawReclaim
+        guard !CloneOverlaps.isEmpty else { return raw }
+        let held = CloneOverlaps.held(inside: path)
+        return held > 0 ? Reclaim(bytes: raw.counted - held, open: raw.open) : raw
+    }
+
+    /// As the volume counts it, to add up into the folders above.
+    var rawReclaim: Reclaim { Reclaim(bytes: size - sharedBytes, open: openClones) }
 
     /// What moving only the files directly inside frees.
     public var looseReclaim: Reclaim { Reclaim(bytes: looseBytes - ownShared, open: ownClones) }
@@ -161,7 +171,7 @@ public final class Folder: Identifiable, @unchecked Sendable {
             var complete = f.riskListed && !f.unreadable
             for s in f.subfolders {
                 total.add(s.totalBytes)
-                reclaim.add(s.reclaim)
+                reclaim.add(s.rawReclaim)
                 count += s.fileCount
                 latest = max(latest, s.latestChange)
                 risk = PathRisk.merging(risk, s.riskCode)
