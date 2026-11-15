@@ -34,7 +34,7 @@ public enum CleanCategory: String, Sendable, Codable, CaseIterable, Comparable {
         case .logs: "Diagnostic logs and crash reports. Nothing reads them back."
         case .developerCaches: "Package managers' download caches and simulator caches. The next install is slower once."
         case .downloads: "Mail attachments you opened. The messages keep them."
-        case .devices: "Simulators with what's installed in them, and iPhone and iPad backups. They hold data, so none is ever chosen for you."
+        case .devices: "Simulators with what's installed in them, Android emulators' saved states, and iPhone and iPad backups. They hold data, so none is ever chosen for you."
         }
     }
 }
@@ -55,7 +55,7 @@ extension CleanCandidate {
         case (.downloads, _):
             "The messages keep their attachments; Mail fetches one again when it's opened."
         case (.devices, _):
-            "Holds data: a simulator's apps and content, or a device backup. It's gone for good once the Trash is emptied."
+            "Holds data: a simulator's apps and content, an emulator's saved state, or a device backup. It's gone for good once the Trash is emptied."
         }
     }
 }
@@ -138,6 +138,8 @@ public enum CleanRules {
         case simulators
         /// iPhone and iPad backups: a folder per device with its `Info.plist`.
         case backups
+        /// One Android emulator's saved states: a folder per snapshot.
+        case emulatorSnapshots
     }
 
     /// Caches macOS uses for iCloud and accounts: rebuilt, but at the cost
@@ -178,8 +180,13 @@ public enum CleanRules {
                    reason: "A tool's cache. Some hold large downloads such as models.", screensSecrets: true),
             Target(path: lib + "/Developer/CoreSimulator/Caches", mode: .whole, category: .developerCaches, safety: .safe,
                    reason: "Simulator caches."),
-            Target(path: lib + "/Developer/Xcode/iOS DeviceSupport", mode: .children, category: .developerCaches,
-                   safety: .review, reason: "Debug symbols for one device's OS version. Copied again when that device connects."),
+            Target(path: home + "/.gradle/wrapper/dists", mode: .children, category: .developerCaches, safety: .review,
+                   reason: "A Gradle version a project's wrapper downloaded. Fetched again when a project that names it builds, which needs the network."),
+            Target(path: home + "/.tart/cache/OCIs", mode: .whole, category: .developerCaches, safety: .review,
+                   reason: "Virtual machine images Tart pulled. Tart prunes them itself and pulls one again when it's needed, which needs the network. Your machines in ~/.tart/vms stay."),
+            Target(path: home + "/.tart/cache/IPSWs", mode: .whole, category: .developerCaches, safety: .review,
+                   reason: "macOS restore images Tart downloaded to make machines. Downloaded again for the next new machine."),
+        ] + deviceSupport(lib: lib) + [
             Target(path: lib + "/Containers/com.apple.mail/Data/Library/Mail Downloads", mode: .whole, category: .downloads,
                    safety: .review, reason: "Attachments Mail saved when you opened them."),
             Target(path: lib + "/Developer/CoreSimulator/Devices", mode: .children, category: .devices, safety: .review,
@@ -188,7 +195,45 @@ public enum CleanRules {
             Target(path: lib + "/Application Support/MobileSync/Backup", mode: .children, category: .devices, safety: .review,
                    reason: "A backup of an iPhone or iPad. It's gone for good unless the device is backed up again.",
                    holds: .backups),
-        ] + condaCaches(home: home) + appDataCaches(home: home)
+        ] + condaCaches(home: home) + appDataCaches(home: home) + emulatorSnapshots(home: home)
+    }
+
+    /// Xcode keeps debug symbols per platform, one folder per device OS version.
+    static let deviceSupportPlatforms = ["iOS", "watchOS", "tvOS", "visionOS", "macOS"]
+
+    static func deviceSupport(lib: String) -> [Target] {
+        deviceSupportPlatforms.map {
+            Target(path: lib + "/Developer/Xcode/\($0) DeviceSupport", mode: .children, category: .developerCaches,
+                   safety: .review, reason: "Debug symbols for one device's OS version. Copied again when that device connects.")
+        }
+    }
+
+    /// Where the Android emulator keeps its virtual devices by default.
+    static func emulatorFolder(home: String) -> String { home + "/.android/avd" }
+
+    /// Each virtual device's saved states. Only the snapshots: the device's
+    /// disk, settings and description stay, so it cold boots instead.
+    static func emulatorSnapshots(home: String) -> [Target] {
+        let base = emulatorFolder(home: home)
+        return (DirectoryListing.names(base) ?? []).filter { $0.hasSuffix(".avd") && !$0.hasPrefix(".") }.sorted().map {
+            Target(path: base + "/" + $0 + "/snapshots", mode: .children, category: .devices, safety: .review,
+                   reason: "A saved state of an Android emulator. It starts with a cold boot instead, keeping its apps and data.",
+                   holds: .emulatorSnapshots)
+        }.filter { CleanScanner.isRealFolder($0.path) }
+    }
+
+    /// A running emulator keeps lock files in its device's folder. A lock
+    /// left behind by a crash keeps the device's snapshots too.
+    static func emulatorRunning(_ snapshots: String) -> Bool {
+        let device = (snapshots as NSString).deletingLastPathComponent
+        guard let names = DirectoryListing.names(device) else { return true }
+        return names.contains { $0.hasSuffix(".lock") }
+    }
+
+    static func isEmulatorSnapshots(_ path: String, home: String) -> Bool {
+        let base = emulatorFolder(home: home) + "/"
+        guard path.hasPrefix(base), path.hasSuffix(".avd/snapshots") else { return false }
+        return !String(path.dropFirst(base.count)).dropLast("/snapshots".count).contains("/")
     }
 
     /// Where the Conda family keeps the packages it downloads, in the
@@ -298,7 +343,14 @@ public enum CleanRules {
         case .plain: nil
         case .simulators: simulator(path)?.title
         case .backups: backup(path).map { "Backup of " + $0 }
+        case .emulatorSnapshots: emulatorSnapshotTitle(path)
         }
+    }
+
+    /// "Phone_API_35 · default_boot": the virtual device, then the snapshot.
+    static func emulatorSnapshotTitle(_ path: String) -> String {
+        let device = ((path as NSString).deletingLastPathComponent as NSString).deletingLastPathComponent
+        return ((device as NSString).lastPathComponent as NSString).deletingPathExtension + " · " + (path as NSString).lastPathComponent
     }
 
     /// Safety for one item of a target, raised for caches that resync.
@@ -323,12 +375,15 @@ public enum CleanRules {
         case home + "/.nuget/packages": return ["dotnet"]
         case lib + "/Developer/Xcode/UserData/Previews": return ["Xcode"]
         case lib + "/Developer/CoreSimulator/Caches": return ["Simulator", "simctl"]
+        case home + "/.tart/cache/OCIs", home + "/.tart/cache/IPSWs": return ["tart"]
         case lib + "/Containers/com.apple.mail/Data/Library/Mail Downloads": return ["Mail"]
         case _ where condaRoots.contains(where: { path == home + "/" + $0 + "/pkgs" }): return ["conda", "mamba", "micromamba"]
         default:
             switch (path as NSString).deletingLastPathComponent {
-            case lib + "/Developer/Xcode/iOS DeviceSupport": return ["Xcode"]
+            case let parent where deviceSupport(lib: lib).contains(where: { $0.path == parent }): return ["Xcode"]
             case lib + "/Developer/CoreSimulator/Devices": return ["Simulator", "simctl"]
+            case home + "/.gradle/wrapper/dists": return ["gradle", "GradleDaemon", "GradleWrapperMain"]
+            case let parent where isEmulatorSnapshots(parent, home: home): return emulatorTools
             default: return appDataTools(path, home: home) ?? []
             }
         }
@@ -342,6 +397,9 @@ public enum CleanRules {
         guard let running else { return true }
         return tools.contains { t in running.contains(t) || running.contains { $0.hasPrefix(t + "-") } }
     }
+
+    /// The emulator and the machine it runs devices in.
+    static let emulatorTools = ["emulator", "qemu-system-aarch64", "qemu-system-x86_64"]
 
     /// Names of files that hold sign-in tokens or keys.
     static let secretNames: Set<String> = [".netrc", ".npmrc", "auth.json", "hosts.yml", "id_rsa", "id_ecdsa", "id_ed25519"]
@@ -382,6 +440,7 @@ public enum CleanRules {
         // and a device that's running are never offered.
         case .simulators: return simulator(path)?.shutDown == true
         case .backups: return isFolder(path)
+        case .emulatorSnapshots: return isFolder(path) && !emulatorRunning((path as NSString).deletingLastPathComponent)
         }
     }
 
@@ -705,7 +764,8 @@ public enum CleanScanner {
 /// to the home folder and the rules' format.
 public enum CleanStore {
     /// 2: candidates say when part of them couldn't be read.
-    static let formatVersion = 2
+    /// 3: developer tools' downloads in more places, and emulator snapshots.
+    static let formatVersion = 3
 
     public struct Saved: Sendable, Codable {
         public let version: Int
