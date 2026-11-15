@@ -124,13 +124,14 @@ public final class Folder: Identifiable, @unchecked Sendable {
     /// What moving the whole folder frees: `size` less the blocks clones
     /// elsewhere keep, with the families it would complete. Valid after
     /// `finish()`; after pruning, an estimate until the place is read again.
-    /// Clones rewritten since, outside the folder, keep what they still
-    /// share of a family it holds whole (`CloneOverlaps`).
+    /// Blocks clones rewritten since share go with the last file holding
+    /// them, in this folder or in what it's chosen with (`CloneOverlaps`).
     public var reclaim: Reclaim {
         let raw = rawReclaim
         guard !CloneOverlaps.isEmpty else { return raw }
-        let held = CloneOverlaps.held(inside: path)
-        return held > 0 ? Reclaim(bytes: raw.counted - held, open: raw.open) : raw
+        let found = CloneOverlaps.within(path)
+        guard !found.open.isEmpty || found.freed > 0 || !found.completed.isEmpty else { return raw }
+        return Reclaim(bytes: raw.counted + found.freed, open: raw.open.merging(found.open) { a, _ in a }, completed: found.completed)
     }
 
     /// As the volume counts it, to add up into the folders above.

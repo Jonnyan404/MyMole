@@ -9,6 +9,9 @@ public struct CloneFamily: Sendable, Hashable, Codable {
         case clones
         /// One file's names: `id` is its file number, the members its names.
         case names
+        /// Blocks clones rewritten since still share: `id` names the group
+        /// in `CloneOverlaps`, the members are the files holding them.
+        case blocks
     }
 
     public let device: Int32
@@ -53,9 +56,10 @@ public struct CloneMembers: Sendable, Hashable, Codable {
 /// A file rewritten in part after cloning gets a family of its own and
 /// counts only its private bytes, and the volume no longer counts it in the
 /// old family: that family can complete while the rewritten file still
-/// holds most of its copy. A scan compares their blocks (`CloneOverlaps`),
-/// and `bytes` leaves out what such files still hold of a family the set
-/// completes.
+/// holds most of its copy. A scan compares their blocks (`CloneOverlaps`):
+/// what such files share is a family of its own, by the files holding it,
+/// and `bytes` leaves out of each family the set completes what it shares
+/// with them.
 public struct Reclaim: Sendable, Hashable, Codable {
     /// Families tracked per set; past this the smallest are dropped, which
     /// only ever lowers the estimate.
@@ -71,11 +75,12 @@ public struct Reclaim: Sendable, Hashable, Codable {
     /// Clone families the set holds whole, with the copy each one added.
     public private(set) var completed: [CloneFamily: Int64]
 
-    /// What removing the set frees. Of each family it completes, the blocks
-    /// a clone rewritten since still holds stay, wherever that clone is.
+    /// What removing the set frees. Of each family it completes, the
+    /// blocks it shares with clones rewritten since are left to the groups
+    /// holding them, freed once all of those files are in the set too.
     public var bytes: Int64 {
         guard !completed.isEmpty else { return counted }
-        return max(0, counted - CloneOverlaps.held(completing: completed))
+        return max(0, counted - CloneOverlaps.sharedOutside(completing: completed))
     }
 
     public init(bytes: Int64 = 0) {
@@ -124,6 +129,18 @@ public struct Reclaim: Sendable, Hashable, Codable {
         let allocated = Int64(st.st_blocks) * 512
         guard st.st_mode & S_IFMT == S_IFREG else { return Reclaim(bytes: allocated) }
         return file(allocated: allocated, device: st.st_dev, sharing: FileSpace.sharing(path), inode: UInt64(st.st_ino), links: UInt32(st.st_nlink))
+            .holding(blocksOf: path)
+    }
+
+    /// With the groups of shared blocks the file at `path` holds part of
+    /// (`CloneOverlaps`), so choosing it with the others frees them.
+    public func holding(blocksOf path: String) -> Reclaim {
+        guard !CloneOverlaps.isEmpty else { return self }
+        let groups = CloneOverlaps.groups(of: path)
+        guard !groups.isEmpty else { return self }
+        var out = self
+        out.add(Reclaim(bytes: 0, open: groups))
+        return out
     }
 
     /// The bytes that are shared, with `allocated` the space the set

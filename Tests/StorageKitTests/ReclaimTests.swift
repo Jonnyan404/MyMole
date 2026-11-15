@@ -226,15 +226,46 @@ import Testing
         #expect(elsewhere.reclaim.bytes == own)
         // All three go: the copy and what the third holds alone.
         #expect(root.reclaim.bytes == copy + own)
-        // Chosen apart, the folders never count more than goes.
-        #expect((sims.reclaim + elsewhere.reclaim).bytes <= copy + own)
+        // Chosen apart, the folders free the same together.
+        #expect((sims.reclaim + elsewhere.reclaim).bytes == copy + own)
+        #expect((elsewhere.reclaim + sims.reclaim).bytes == copy + own)
         // The two files chosen on their own, the same.
         let one = try #require(Reclaim.file(at: box.path + "/sims/one/disk.img"))
         let two = try #require(Reclaim.file(at: box.path + "/sims/two/disk.img"))
         #expect((one + two).bytes == copy - kept)
+        let third = try #require(Reclaim.file(at: three))
+        #expect((one + two + third).bytes == copy + own && (third + two + one).bytes == copy + own)
         // A later scan of the two alone still knows what the third keeps.
         let alone = StorageScanner.scan(path: box.path + "/sims", workers: 1).root
         #expect(alone.reclaim.bytes == copy - kept)
+    }
+
+    @Test func clonesRewrittenApartFreeWhatOnlyTheyHold() throws {
+        let box = try Box()
+        let mb = 1 << 20
+        try box.sandbox.file("pair/a.img", bytes: 4 * mb)
+        try clone(box.sandbox, "pair/a.img", to: "pair/b.img")
+        // Beside it, a folder whose name sorts between "pair" and "pair/".
+        try clone(box.sandbox, "pair/a.img", to: "pair-x/c.img")
+        // Each clone rewrites a part of its own: no file holds the whole
+        // copy any more, so the volume names no family at all.
+        rewrite(box.sandbox, "pair/b.img", at: 0, length: mb)
+        rewrite(box.sandbox, "pair-x/c.img", at: 2 * mb, length: mb)
+        let copy = box.sandbox.allocated("pair/a.img")
+        let ownB = try #require(FileSpace.sharing(box.path + "/pair/b.img")?.privateBytes)
+        let ownC = try #require(FileSpace.sharing(box.path + "/pair-x/c.img")?.privateBytes)
+        #expect(ownB >= Int64(mb) && ownC >= Int64(mb))
+
+        let root = StorageScanner.scan(path: box.path, workers: 2).root
+        let pair = try #require(root.find(path: box.path + "/pair")), other = try #require(root.find(path: box.path + "/pair-x"))
+        // a and b go: b's own part, and the part of a's blocks c rewrote,
+        // which only a and b still hold.
+        #expect(pair.reclaim.bytes == ownB + ownC)
+        #expect(other.reclaim.bytes == ownC)
+        #expect(root.reclaim.bytes == copy + ownB + ownC)
+        #expect((pair.reclaim + other.reclaim).bytes == copy + ownB + ownC)
+        let a = try #require(Reclaim.file(at: box.path + "/pair/a.img")), b = try #require(Reclaim.file(at: box.path + "/pair/b.img"))
+        #expect(a.bytes == 0 && (a + b).bytes == ownB + ownC)
     }
 
     @Test func reclaimSavedBeforeNamesWereCountedStillReads() throws {

@@ -357,7 +357,7 @@ final class StorageModel {
                 if item.isFolder {
                     if let f = folders[name], ready(f), f.isFinished, f.size == item.size { out[item.path] = f.reclaim }
                 } else if let f = files[name], f.size == item.size {
-                    out[item.path] = f.reclaim
+                    out[item.path] = f.reclaim.holding(blocksOf: item.path)
                 }
             }
         }
@@ -1009,7 +1009,8 @@ final class StorageModel {
                 out.append(
                     LargeFile(
                         path: path + "/" + item.name, name: item.name, folder: path, size: item.size,
-                        modified: item.modified, kind: item.kind, reclaim: item.shared > 0 ? item.reclaim : nil))
+                        modified: item.modified, kind: item.kind,
+                        reclaim: item.shared > 0 ? item.reclaim.holding(blocksOf: path + "/" + item.name) : nil))
                 if out.count >= batch {
                     out.sort(by: largestFirst)
                     out.removeLast(out.count - limit)

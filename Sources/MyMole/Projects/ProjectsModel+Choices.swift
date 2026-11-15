@@ -129,7 +129,7 @@ extension ProjectsModel {
         let name = (p as NSString).lastPathComponent
         let listed = contents[entry]?.find(path: (p as NSString).deletingLastPathComponent)?.listedFiles.first { $0.name == name }
         let listedSize = listed?.size
-        let listedReclaim = listed?.reclaim
+        let listedReclaim = listed?.reclaim.holding(blocksOf: p)
         // Its entry wasn't opened: read and measured off the main thread,
         // where a disk that stops answering can't hold up the window, and
         // the totals catch up when it's done. Until then it counts nothing.

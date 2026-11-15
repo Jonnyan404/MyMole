@@ -2,56 +2,130 @@ import Darwin
 import Foundation
 import Synchronization
 
-/// Clone families that clones rewritten since still share blocks with.
+/// Blocks that clones rewritten since share, by which files hold them.
 ///
-/// APFS counts a family by the files that hold all of its blocks. A clone
-/// rewritten in part gets a family of its own and drops out of that count,
-/// yet keeps sharing the blocks it didn't rewrite: a family can look whole
-/// while such a file elsewhere still holds most of its copy. Nothing the
-/// volume reports ties the two together, so a scan compares where their
-/// blocks are on the device (`F_LOG2PHYS_EXT`) and records, per family,
-/// how much each rewritten clone still holds.
+/// APFS counts a clone family by the files that hold all of its blocks. A
+/// clone rewritten in part gets a family of its own and drops out of that
+/// count, yet keeps sharing the blocks it didn't rewrite; and once every
+/// clone is rewritten somewhere, the volume names no family at all. Nothing
+/// it reports ties such files together, so after a walk the scan compares
+/// where their blocks are on the device (`F_LOG2PHYS_EXT`) and records each
+/// stretch of shared blocks with the files holding it: a group. A group
+/// works like a family (`CloneFamily.Kind.blocks`): its bytes are freed once
+/// every file holding them goes, whichever folders or files they are chosen
+/// in. A whole family the volume counts frees its copy less what groups
+/// with other files hold of it.
 ///
-/// Only families such a file overlaps are kept, so the record stays small.
 /// It knows the files scans have read: a rewritten clone outside every
-/// scan is unknown, and the family's copy is counted as freed.
+/// scan is unknown, and what it shares is counted as freed.
 public enum CloneOverlaps {
-    struct Entry: Sendable, Equatable {
+    struct Family: Sendable, Equatable {
         /// Paths of the whole members, the files the volume counts.
         var members: Set<String>
         /// How many files the volume counts in the family.
         var total: Int
         /// The family's shared copy.
         var copy: Int64
-        /// Rewritten clones by path, with the bytes of the copy each still holds.
-        var holders: [String: Int64]
+        /// Groups holding part of the copy with other files.
+        var groups: Set<UInt64> = []
     }
 
-    private static let entries = Mutex([CloneFamily: Entry]())
+    struct Group: Sendable, Equatable {
+        let device: Int32
+        /// Every file holding the group's blocks: families' members and
+        /// rewritten clones.
+        var files: Set<String>
+        var bytes: Int64
+    }
 
-    static var isEmpty: Bool { entries.withLock { $0.isEmpty } }
+    private struct State {
+        var families: [CloneFamily: Family] = [:]
+        var groups: [UInt64: Group] = [:]
+        var next: UInt64 = 1
+        /// Every file of a group or family, sorted, to find those inside a folder.
+        var index: [(path: String, group: UInt64?, family: CloneFamily?)] = []
 
-    /// Of the families completed with their copies, what rewritten clones
-    /// still hold, wherever they are; at most each family's copy.
-    static func held(completing families: [CloneFamily: Int64]) -> Int64 {
-        entries.withLock { known in
+        mutating func reindex() {
+            var out: [(path: String, group: UInt64?, family: CloneFamily?)] = []
+            for (id, g) in groups { for f in g.files { out.append((f, id, nil)) } }
+            for (key, f) in families { for m in f.members { out.append((m, nil, key)) } }
+            index = out.sorted { $0.path < $1.path }
+        }
+
+        /// The entries for the file at `folder` and the files under it. A
+        /// sibling such as "pair-x" sorts between "pair" and "pair/", so the
+        /// path itself and what's under it are looked up apart.
+        func inside(_ folder: String) -> [(path: String, group: UInt64?, family: CloneFamily?)] {
+            if folder == "/" { return index }
+            func first(atLeast key: String) -> Int {
+                var low = 0, high = index.count
+                while low < high {
+                    let mid = (low + high) / 2
+                    if index[mid].path < key { low = mid + 1 } else { high = mid }
+                }
+                return low
+            }
+            var out: [(path: String, group: UInt64?, family: CloneFamily?)] = []
+            var i = first(atLeast: folder)
+            while i < index.count, index[i].path == folder { out.append(index[i]); i += 1 }
+            let prefix = folder + "/"
+            i = first(atLeast: prefix)
+            while i < index.count, index[i].path.hasPrefix(prefix) { out.append(index[i]); i += 1 }
+            return out
+        }
+    }
+
+    private static let state = Mutex(State())
+
+    static var isEmpty: Bool { state.withLock { $0.groups.isEmpty } }
+
+    /// Of the families completed with their copies, the bytes groups with
+    /// other files hold; at most each family's copy.
+    static func sharedOutside(completing families: [CloneFamily: Int64]) -> Int64 {
+        state.withLock { s in
             families.reduce(0) { sum, item in
-                guard let entry = known[item.key] else { return sum }
-                return sum + min(item.value, entry.holders.values.reduce(0, +))
+                guard let family = s.families[item.key] else { return sum }
+                let held = family.groups.reduce(Int64(0)) { $0 + (s.groups[$1]?.bytes ?? 0) }
+                return sum + min(item.value, held)
             }
         }
     }
 
-    /// What rewritten clones outside `folder` hold of the families whose
-    /// members are all inside it: removing the folder leaves those blocks.
-    static func held(inside folder: String) -> Int64 {
-        entries.withLock { known in
-            guard !known.isEmpty else { return 0 }
-            return known.values.reduce(0) { sum, entry in
-                guard entry.members.count >= entry.total, entry.members.allSatisfy({ Self.path($0, isIn: folder) }) else { return sum }
-                let outside = entry.holders.filter { !Self.path($0.key, isIn: folder) }.values.reduce(0, +)
-                return sum + min(entry.copy, outside)
+    /// The groups that files under `folder` hold blocks of, with how many
+    /// of each group's files are there, and the families it holds whole.
+    static func within(_ folder: String) -> (open: [CloneFamily: CloneMembers], freed: Int64, completed: [CloneFamily: Int64]) {
+        state.withLock { s in
+            var counts: [UInt64: Int] = [:], members: [CloneFamily: Int] = [:]
+            for entry in s.inside(folder) {
+                if let g = entry.group { counts[g, default: 0] += 1 }
+                if let f = entry.family { members[f, default: 0] += 1 }
             }
+            var open: [CloneFamily: CloneMembers] = [:], freed: Int64 = 0, completed: [CloneFamily: Int64] = [:]
+            for (id, count) in counts {
+                guard let g = s.groups[id] else { continue }
+                if count >= g.files.count {
+                    freed += g.bytes
+                } else {
+                    open[CloneFamily(device: g.device, id: id, kind: .blocks)] = CloneMembers(count: count, total: g.files.count, bytes: g.bytes)
+                }
+            }
+            for (key, count) in members {
+                guard let f = s.families[key], count >= f.members.count, f.members.count >= f.total else { continue }
+                completed[key] = f.copy
+            }
+            return (open, freed, completed)
+        }
+    }
+
+    /// The groups the file at `path` holds blocks of, one file of each.
+    static func groups(of path: String) -> [CloneFamily: CloneMembers] {
+        state.withLock { s in
+            var out: [CloneFamily: CloneMembers] = [:]
+            for entry in s.inside(path) where entry.path == path {
+                guard let id = entry.group, let g = s.groups[id] else { continue }
+                out[CloneFamily(device: g.device, id: id, kind: .blocks)] = CloneMembers(count: 1, total: g.files.count, bytes: g.bytes)
+            }
+            return out
         }
     }
 
@@ -78,57 +152,83 @@ public enum CloneOverlaps {
     static let compareLimit = 4_096
     /// Most extents read for one comparison.
     static let extentLimit = 2_000_000
+    /// Most groups kept; past this the smallest go, and what they hold is
+    /// counted as the volume counts it.
+    static let groupLimit = 20_000
 
-    /// Compares the blocks of `holders` with those of the families `members`
-    /// belong to, all read by a scan of `root`, and records the overlaps.
-    /// Overlaps recorded for files outside `root` stay: the scan couldn't
-    /// see them.
+    /// Compares the blocks of `holders` with each other and with those of
+    /// the families `members` belong to, all read by a scan of `root`, and
+    /// records the groups. Groups holding a file outside `root` stay: the
+    /// scan couldn't see all of their files.
     static func record(scanOf root: String, members: [Member], holders: [Holder], stop: () -> Bool = { false }) {
-        var families: [CloneFamily: (paths: Set<String>, total: Int, copy: Int64)] = [:]
+        guard holders.count <= compareLimit else { return }
+        var families: [CloneFamily: Family] = [:]
         for m in members {
-            families[m.family, default: ([], m.total, m.copy)].paths.insert(m.path)
+            families[m.family, default: Family(members: [], total: m.total, copy: m.copy)].members.insert(m.path)
         }
-        var found: [CloneFamily: [String: Int64]] = [:]
-        if !holders.isEmpty, !families.isEmpty, holders.count + families.count <= compareLimit,
-           let overlaps = compare(families: families.mapValues { $0.paths.sorted().first! }, holders: holders, stop: stop) {
-            found = overlaps
-        } else if !holders.isEmpty, !families.isEmpty {
-            return
+        var found: [(device: Int32, files: Set<String>, families: Set<CloneFamily>, bytes: Int64)] = []
+        if !holders.isEmpty {
+            guard let groups = compare(families: families, holders: holders, stop: stop) else { return }
+            found = groups
         }
         guard !stop() else { return }
-        entries.withLock { known in
-            for (family, seen) in families {
-                var holders = (known[family]?.holders ?? [:]).filter { !path($0.key, isIn: root) }
-                for (p, bytes) in found[family] ?? [:] { holders[p] = bytes }
-                guard !holders.isEmpty else {
-                    known[family] = nil
-                    continue
-                }
-                let members = (known[family]?.members ?? []).filter { !path($0, isIn: root) }.union(seen.paths)
-                known[family] = Entry(members: members, total: seen.total, copy: seen.copy, holders: holders)
+        state.withLock { s in
+            // What this scan saw again goes; what reaches outside it stays.
+            for (id, g) in s.groups where g.files.allSatisfy({ path($0, isIn: root) }) { s.groups[id] = nil }
+            for g in found {
+                let id = s.next
+                s.next += 1
+                s.groups[id] = Group(device: g.device, files: g.files, bytes: g.bytes)
+                for key in g.families { families[key]?.groups.insert(id) }
             }
+            if s.groups.count > groupLimit {
+                for (id, _) in s.groups.sorted(by: { $0.value.bytes < $1.value.bytes }).prefix(s.groups.count - groupLimit) { s.groups[id] = nil }
+            }
+            for (key, family) in families {
+                var kept: Set<UInt64> = s.families[key]?.groups.filter { s.groups[$0] != nil } ?? []
+                kept.formUnion(family.groups)
+                let outside = (s.families[key]?.members ?? []).filter { !path($0, isIn: root) }
+                s.families[key] = Family(members: family.members.union(outside), total: family.total, copy: family.copy, groups: kept)
+            }
+            for (key, family) in s.families {
+                let live = family.groups.filter { s.groups[$0] != nil }
+                s.families[key]?.groups = live
+                if live.isEmpty { s.families[key] = nil }
+            }
+            s.reindex()
         }
     }
 
-    /// For each family (by one member's path), the bytes each holder's
-    /// blocks overlap it; nil when the files are too many to compare.
-    private static func compare(families: [CloneFamily: String], holders: [Holder], stop: () -> Bool) -> [CloneFamily: [String: Int64]]? {
+    /// Per volume, every stretch of blocks that a rewritten clone shares
+    /// with another file, gathered by the files holding it; nil when the
+    /// files are too many to compare.
+    private static func compare(families: [CloneFamily: Family], holders: [Holder], stop: () -> Bool)
+        -> [(device: Int32, files: Set<String>, families: Set<CloneFamily>, bytes: Int64)]? {
         var budget = extentLimit
-        var out: [CloneFamily: [String: Int64]] = [:]
+        var out: [(device: Int32, files: Set<String>, families: Set<CloneFamily>, bytes: Int64)] = []
         // Device offsets mean something within one volume only.
         for (device, here) in Dictionary(grouping: holders, by: \.device) {
             let theirs = families.filter { $0.key.device == device }
-            guard !theirs.isEmpty else { continue }
             guard let found = sweep(families: theirs, holders: here.map(\.path), budget: &budget, stop: stop) else { return nil }
-            out.merge(found) { a, _ in a }
+            for (owners, bytes) in found {
+                var files = Set(owners.holders)
+                for key in owners.families { files.formUnion(theirs[key]?.members ?? []) }
+                out.append((device, files, owners.families, bytes))
+            }
         }
         return out
     }
 
+    private struct Owners: Hashable {
+        var families: Set<CloneFamily>
+        var holders: Set<String>
+    }
+
     /// One volume's comparison: every file's blocks as ranges of device
-    /// offsets, walked in order, adding up where a family's and a holder's
-    /// ranges cover the same blocks.
-    private static func sweep(families: [CloneFamily: String], holders: [String], budget: inout Int, stop: () -> Bool) -> [CloneFamily: [String: Int64]]? {
+    /// offsets, walked in order. A stretch held by a rewritten clone and at
+    /// least one other file (a family counting as its members) is added to
+    /// the group of exactly those files.
+    private static func sweep(families: [CloneFamily: Family], holders: [String], budget: inout Int, stop: () -> Bool) -> [Owners: Int64]? {
         enum Owner { case family(CloneFamily), holder(String) }
         var events: [(at: Int64, start: Bool, owner: Int)] = []
         var owners: [Owner] = []
@@ -143,39 +243,37 @@ public enum CloneOverlaps {
             }
             return true
         }
-        for (family, path) in families {
-            guard !stop(), add(path, as: .family(family)) else { return nil }
+        // Whole members hold the same blocks: one of each family is read.
+        for (key, family) in families {
+            guard !stop(), let one = family.members.sorted().first, add(one, as: .family(key)) else { return nil }
         }
         for path in holders {
             guard !stop(), add(path, as: .holder(path)) else { return nil }
         }
         events.sort { $0.at != $1.at ? $0.at < $1.at : (!$0.start && $1.start) }
-        var activeFamilies = Set<Int>(), activeHolders = Set<Int>()
-        var out: [CloneFamily: [String: Int64]] = [:]
+        var active = Set<Int>()
+        var out: [Owners: Int64] = [:]
         var last: Int64 = 0
         for e in events {
-            if e.at > last, !activeFamilies.isEmpty, !activeHolders.isEmpty {
-                for f in activeFamilies {
-                    guard case .family(let family) = owners[f] else { continue }
-                    for h in activeHolders {
-                        guard case .holder(let path) = owners[h] else { continue }
-                        out[family, default: [:]][path, default: 0] += e.at - last
+            if e.at > last, active.count > 1 {
+                var held = Owners(families: [], holders: [])
+                for i in active {
+                    switch owners[i] {
+                    case .family(let key): held.families.insert(key)
+                    case .holder(let path): held.holders.insert(path)
                     }
                 }
+                // A family's own copy, or one file's own blocks, the volume counts.
+                if !held.holders.isEmpty { out[held, default: 0] += e.at - last }
             }
             last = e.at
-            switch (owners[e.owner], e.start) {
-            case (.family, true): activeFamilies.insert(e.owner)
-            case (.family, false): activeFamilies.remove(e.owner)
-            case (.holder, true): activeHolders.insert(e.owner)
-            case (.holder, false): activeHolders.remove(e.owner)
-            }
+            if e.start { active.insert(e.owner) } else { active.remove(e.owner) }
         }
         return out
     }
 
-    /// Forgets every overlap; for tests.
-    static func removeAll() { entries.withLock { $0.removeAll() } }
+    /// Forgets every group; for tests.
+    static func removeAll() { state.withLock { $0 = State() } }
 }
 
 extension FileSpace {

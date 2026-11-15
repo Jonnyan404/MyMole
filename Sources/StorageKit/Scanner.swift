@@ -350,7 +350,7 @@ private final class SubtreeCounter: Sendable {
 }
 
 /// The clones one scan reads that `CloneOverlaps` compares once the walk is
-/// done: a member of each whole family, and the files sharing blocks with
+/// done: the members of whole families, and the files sharing blocks with
 /// files the volume doesn't name.
 final class CloneSightings: Sendable {
     private struct Seen {
@@ -379,7 +379,7 @@ final class CloneSightings: Sendable {
 
     func record(scanOf root: String, stop: () -> Bool) {
         let s = seen.withLock { $0 }
-        guard !s.overflow, !s.members.isEmpty else { return }
+        guard !s.overflow, !s.members.isEmpty || !s.holders.isEmpty else { return }
         CloneOverlaps.record(scanOf: root, members: s.members, holders: s.holders, stop: stop)
     }
 }
