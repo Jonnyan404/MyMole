@@ -429,15 +429,15 @@
     },
     "disk.nav.home.rings.input": {
       "budgetMilliseconds": 16.7,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.rings.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.rings.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.rings.hover": {
       "budgetMilliseconds": 4,
@@ -445,15 +445,15 @@
     },
     "disk.nav.home.wheel.input": {
       "budgetMilliseconds": 16.7,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.wheel.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.wheel.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.wheel.hover": {
       "budgetMilliseconds": 4,
@@ -461,15 +461,15 @@
     },
     "disk.nav.home.pie.input": {
       "budgetMilliseconds": 16.7,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.pie.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.pie.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.pie.hover": {
       "budgetMilliseconds": 4,
@@ -477,15 +477,15 @@
     },
     "disk.nav.home.boxes.input": {
       "budgetMilliseconds": 16.7,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.boxes.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.boxes.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.boxes.hover": {
       "budgetMilliseconds": 4,
@@ -493,15 +493,15 @@
     },
     "disk.nav.home.columns.input": {
       "budgetMilliseconds": 16.7,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.columns.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.columns.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.columns.hover": {
       "budgetMilliseconds": 4,
@@ -509,303 +509,303 @@
     },
     "disk.nav.home.bars.input": {
       "budgetMilliseconds": 16.7,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.bars.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.bars.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 11
+      "minimumSamples": 33
     },
     "disk.nav.home.bars.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.wide.rings.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 9
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 27
     },
     "disk.nav.wide.rings.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 9
+      "minimumSamples": 27
     },
     "disk.nav.wide.rings.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 9
+      "minimumSamples": 27
     },
     "disk.nav.wide.rings.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.wide.wheel.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 9
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 27
     },
     "disk.nav.wide.wheel.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 9
+      "minimumSamples": 27
     },
     "disk.nav.wide.wheel.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 9
+      "minimumSamples": 27
     },
     "disk.nav.wide.wheel.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.wide.pie.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 9
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 27
     },
     "disk.nav.wide.pie.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 9
+      "minimumSamples": 27
     },
     "disk.nav.wide.pie.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 9
+      "minimumSamples": 27
     },
     "disk.nav.wide.pie.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.wide.boxes.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 9
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 27
     },
     "disk.nav.wide.boxes.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 9
+      "minimumSamples": 27
     },
     "disk.nav.wide.boxes.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 9
+      "minimumSamples": 27
     },
     "disk.nav.wide.boxes.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.wide.columns.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 9
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 27
     },
     "disk.nav.wide.columns.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 9
+      "minimumSamples": 27
     },
     "disk.nav.wide.columns.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 9
+      "minimumSamples": 27
     },
     "disk.nav.wide.columns.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.wide.bars.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 9
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 27
     },
     "disk.nav.wide.bars.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 9
+      "minimumSamples": 27
     },
     "disk.nav.wide.bars.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 9
+      "minimumSamples": 27
     },
     "disk.nav.wide.bars.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.deep.rings.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 13
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 39
     },
     "disk.nav.deep.rings.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 13
+      "minimumSamples": 39
     },
     "disk.nav.deep.rings.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 13
+      "minimumSamples": 39
     },
     "disk.nav.deep.rings.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.deep.wheel.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 13
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 39
     },
     "disk.nav.deep.wheel.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 13
+      "minimumSamples": 39
     },
     "disk.nav.deep.wheel.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 13
+      "minimumSamples": 39
     },
     "disk.nav.deep.wheel.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.deep.pie.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 13
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 39
     },
     "disk.nav.deep.pie.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 13
+      "minimumSamples": 39
     },
     "disk.nav.deep.pie.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 13
+      "minimumSamples": 39
     },
     "disk.nav.deep.pie.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.deep.boxes.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 13
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 39
     },
     "disk.nav.deep.boxes.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 13
+      "minimumSamples": 39
     },
     "disk.nav.deep.boxes.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 13
+      "minimumSamples": 39
     },
     "disk.nav.deep.boxes.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.deep.columns.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 13
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 39
     },
     "disk.nav.deep.columns.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 13
+      "minimumSamples": 39
     },
     "disk.nav.deep.columns.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 13
+      "minimumSamples": 39
     },
     "disk.nav.deep.columns.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.deep.bars.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 13
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 39
     },
     "disk.nav.deep.bars.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 13
+      "minimumSamples": 39
     },
     "disk.nav.deep.bars.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 13
+      "minimumSamples": 39
     },
     "disk.nav.deep.bars.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.tiny.rings.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 8
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 24
     },
     "disk.nav.tiny.rings.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 8
+      "minimumSamples": 24
     },
     "disk.nav.tiny.rings.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 8
+      "minimumSamples": 24
     },
     "disk.nav.tiny.rings.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.tiny.wheel.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 8
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 24
     },
     "disk.nav.tiny.wheel.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 8
+      "minimumSamples": 24
     },
     "disk.nav.tiny.wheel.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 8
+      "minimumSamples": 24
     },
     "disk.nav.tiny.wheel.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.tiny.pie.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 8
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 24
     },
     "disk.nav.tiny.pie.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 8
+      "minimumSamples": 24
     },
     "disk.nav.tiny.pie.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 8
+      "minimumSamples": 24
     },
     "disk.nav.tiny.pie.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.tiny.boxes.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 8
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 24
     },
     "disk.nav.tiny.boxes.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 8
+      "minimumSamples": 24
     },
     "disk.nav.tiny.boxes.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 8
+      "minimumSamples": 24
     },
     "disk.nav.tiny.boxes.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.tiny.columns.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 8
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 24
     },
     "disk.nav.tiny.columns.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 8
+      "minimumSamples": 24
     },
     "disk.nav.tiny.columns.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 8
+      "minimumSamples": 24
     },
     "disk.nav.tiny.columns.hover": {
       "budgetMilliseconds": 4,
       "minimumSamples": 55
     },
     "disk.nav.tiny.bars.input": {
-      "budgetMilliseconds": 16.7,
-      "minimumSamples": 8
+      "budgetMilliseconds": 33.3,
+      "minimumSamples": 24
     },
     "disk.nav.tiny.bars.visible": {
       "budgetMilliseconds": 100,
-      "minimumSamples": 8
+      "minimumSamples": 24
     },
     "disk.nav.tiny.bars.stall": {
       "budgetMilliseconds": 33,
-      "minimumSamples": 8
+      "minimumSamples": 24
     },
     "disk.nav.tiny.bars.hover": {
       "budgetMilliseconds": 4,
