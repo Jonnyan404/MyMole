@@ -575,6 +575,7 @@
     "%lld apps of macOS hidden" : {},
     "%lld apps · leftovers go to the Trash too" : {},
     "%lld can't be cleaned: the project folder, its history or a protected place" : {},
+    "%lld changed since the list was read and stayed." : {},
     "%lld chosen · %@" : {
       "localizations" : {
         "en" : {
@@ -599,6 +600,16 @@
     "%lld couldn't be put back" : {},
     "%lld couldn't be removed" : {},
     "%lld couldn't be removed (locked, or not yours to remove)" : {},
+    "%lld couldn't be removed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld couldn't be removed: %2$@"
+          }
+        }
+      }
+    },
     "%lld data item%@ chosen" : {
       "localizations" : {
         "en" : {
@@ -1031,7 +1042,9 @@
     "Apps" : {},
     "Apps in %@ aren't listed." : {},
     "Apps' own login items are in System Settings" : {},
+    "As each tool lists them. Only what the tool builds or downloads again starts chosen. What may hold your work is chosen only by you, and what's in use or holds data is only shown. Each item goes through the tool's own command and is deleted for good." : {},
     "Ask before" : {},
+    "Asking each tool what it keeps…" : {},
     "At launch" : {},
     "At least %@ in one pane, at most once a week." : {},
     "Automatic" : {},
@@ -1293,6 +1306,8 @@
     "Desktop" : {},
     "Details" : {},
     "Details for %@" : {},
+    "Developer Tools" : {},
+    "Developer Tools…" : {},
     "Disable Helper" : {},
     "Discard Change" : {},
     "Discovery is still running. This early result cannot be chosen." : {},
@@ -1307,6 +1322,7 @@
     "Disks" : {},
     "Dismiss" : {},
     "Dismiss these problems" : {},
+    "Docker, simulator runtimes, Android devices and virtual machines, as each tool lists them" : {},
     "Documents" : {},
     "Don't Ask Again applies only to this action. Turn the question on again in Settings → Confirmations." : {},
     "Don't Scan This Folder" : {},
@@ -1329,6 +1345,7 @@
     "Each app goes to the Trash with the leftovers you choose. Only caches and logs tied by identity start chosen; settings, website data, scripts, launch configuration and name matches stay unless you choose them." : {},
     "Each control has six steps, from Gentle to Hyperspeed, and starts at Maximum. Hyperspeed removes every limit and can use a lot of memory and disk. Results are complete at every step. If MyMole makes this Mac sluggish, lower a control. Scans can always be stopped, and a change applies from the next scan." : {},
     "Each folder row includes its contents. Your data stays unless you choose it." : {},
+    "Each goes through its tool's own command and can't be undone. Each tool's list is read again first; anything that started or changed since is left alone." : {},
     "Each leftover shows how it's tied to the app. Only caches and logs tied by identity start chosen. Settings, website data, saved state, scripts, launch configuration and name matches stay unless you choose them." : {},
     "Each pane's last scan and the disk map's history, shown at once after a launch: %@." : {},
     "Each scan keeps folders %lld levels deep from %@ and files from %@; changes below %@ aren't listed, and smaller files aren't compared one by one." : {
@@ -1604,6 +1621,7 @@
     "List" : {},
     "List duplicate candidates" : {},
     "List width" : {},
+    "Listed by macOS" : {},
     "Listing files: %@" : {},
     "Live Status" : {},
     "Live, every 2 s" : {},
@@ -1620,6 +1638,7 @@
     "Locked" : {},
     "Locked in Finder: unlocked right before it moves, and locked again if it stays" : {},
     "Login" : {},
+    "Look Again" : {},
     "Look for installers again" : {},
     "Look for pictures that look alike again" : {},
     "Looking" : {},
@@ -2066,6 +2085,7 @@
     "One ring, total in the middle" : {},
     "Only data last changed before this is chosen" : {},
     "Only in the Disk Map." : {},
+    "Only shown: %@" : {},
     "Only the MyMole app can open at login." : {},
     "Only the first %@ pictures were looked at" : {},
     "Only the name matches, so it may be another project's or app's of the same name. Never chosen for you." : {},
@@ -2197,6 +2217,7 @@
     "Reading your Mac's status…" : {},
     "Ready" : {},
     "Rebuildable" : {},
+    "Rebuilt" : {},
     "Rebuilt by itself; you unticked it." : {},
     "Received" : {},
     "Recent cleanups" : {},
@@ -2221,6 +2242,8 @@
     "Remind Me Later" : {},
     "Removable" : {},
     "Remove" : {},
+    "Remove %lld items for good?" : {},
+    "Remove %lld…" : {},
     "Remove Saved Filter" : {},
     "Remove filter: %@" : {},
     "Remove from Blacklist" : {},
@@ -2540,6 +2563,8 @@
     "Show, hide, resize and reorder cards" : {},
     "Showing results from %@" : {},
     "Shown in overview" : {},
+    "Shown only" : {},
+    "Shown only (%lld)" : {},
     "Shrank" : {},
     "Shrank since %@" : {},
     "Sidebar" : {},
@@ -2771,6 +2796,7 @@
     "To" : {},
     "Today" : {},
     "Today %@" : {},
+    "Tool" : {},
     "Top processes" : {},
     "Total CPU use" : {},
     "Transfer rates since the previous reading." : {},
@@ -2880,6 +2906,7 @@
     "Version" : {},
     "Version / Build" : {},
     "View" : {},
+    "Virtual machines and Android's files, with their sizes, to look at. The App Store edition can't run Docker, Xcode's or Android's tools, so it removes nothing here; the direct edition removes what you choose with each tool's own command." : {},
     "Visible files using less than 1 MB on disk, read a page at a time. Use Quick Look to inspect them; this list is for browsing." : {},
     "Wait for the current move or maintenance task to finish." : {},
     "Wait for the list to load." : {},
@@ -2902,6 +2929,7 @@
     "What Changes compares against. Fewer keep less on disk; older scans go as new ones are saved." : {},
     "What Homebrew and installer packages put on the Mac, to look at" : {},
     "What starts by itself, and the plug-ins apps added" : {},
+    "What to do" : {},
     "What's in %@ isn't listed." : {},
     "What's in %@ isn't listed. The result isn't saved as complete; give MyMole Full Disk Access or scan again." : {},
     "What's on screen stays until you quit. After the next launch each pane scans afresh. Keep lists, project rules and History aren't touched." : {},
@@ -2940,6 +2968,7 @@
     "Your change couldn't be saved (%@). Nothing is removed until it's saved or given up." : {},
     "Your change to the keep list couldn't be saved (%@). Nothing is moved until it is saved or given up." : {},
     "Your change to the keep list couldn't be saved (%@). Nothing is removed until it is saved or given up." : {},
+    "Your choice" : {},
     "Your data is chosen: documents and databases the app made go with it." : {},
     "Your disk is nearly full" : {},
     "Your home folder" : {},
@@ -3023,6 +3052,7 @@
     "macOS hasn't provided battery data. You can hide this card if it isn't useful on this Mac." : {},
     "macOS is waiting for you to allow MyMole in System Settings → General → Login Items." : {},
     "macOS itself, apps and other users' folders outside the mapped folder, and folders MyMole couldn't read." : {},
+    "macOS protects these, or every user of this Mac shares them, so MyMole only shows them. Each says what to do instead." : {},
     "macOS reported these paths, but no app was found there. These records aren't installed copies or removal targets, and don't identify individual Siri entries." : {},
     "matching section" : {},
     "matching sections" : {},
