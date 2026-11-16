@@ -26,5 +26,15 @@ import Testing
         #expect(throws: ScanExport.Failure.damaged) { try ScanExport.read(Data(loop.utf8)) }
         let slash = #"{"format":"mymole-scan","version":1,"rootPath":"/synthetic","date":"2026-11-07T00:00:00Z","truncated":false,"items":[{"n":"synthetic","p":-1,"s":1,"m":0,"k":7,"c":0,"b":0},{"n":"../etc","p":0,"s":1,"m":0,"k":7}]}"#
         #expect(throws: ScanExport.Failure.damaged) { try ScanExport.read(Data(slash.utf8)) }
+        // Sizes or counts whose totals can't be held.
+        let head = #"{"format":"mymole-scan","version":1,"rootPath":"/synthetic","date":"2026-11-07T00:00:00Z","truncated":false,"items":[{"n":"synthetic","p":-1,"s":1,"m":0,"k":7,"c":0,"b":0},"#
+        for rest in [
+            #"{"n":"a","p":0,"s":9223372036854775807,"m":0,"k":7},{"n":"b","p":0,"s":1,"m":0,"k":7}]}"#,
+            #"{"n":"a","p":0,"s":1,"m":0,"k":7,"c":0,"b":9223372036854775807}]}"#,
+            #"{"n":"a","p":0,"s":0,"m":0,"k":7,"c":9223372036854775807,"b":0}]}"#,
+            #"{"n":"a","p":0,"s":0,"m":0,"k":7,"c":0,"b":-1}]}"#,
+        ] {
+            #expect(throws: ScanExport.Failure.damaged) { _ = try ScanExport.read(Data((head + rest).utf8)).tree() }
+        }
     }
 }
