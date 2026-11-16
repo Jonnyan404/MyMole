@@ -43,8 +43,8 @@ public struct UserProtections: Sendable {
     /// kept, or holding something kept, so a folder never goes with a kept
     /// item inside it.
     public func read() throws -> @Sendable (String) -> Bool {
-        let kept = try Self.kept(keepList: keepList, projectBase: projectBase)
-        return { kept.protects($0) }
+        let kept = try Self.kept(keepList: keepList, projectBase: projectBase).resolved
+        return Trasher.resolving { kept.protects($0) }
     }
 
     /// Deep Clean's keep list and the paths kept in the project rules, as
@@ -58,7 +58,7 @@ public struct UserProtections: Sendable {
 
     /// What's kept among system items, by the same rule.
     public func readSystem() throws -> @Sendable (String) -> Bool {
-        let keep = try CleanKeepList.load(from: systemKeepList)
-        return { keep.protects($0) }
+        let keep = try CleanKeepList.load(from: systemKeepList).resolved
+        return Trasher.resolving { keep.protects($0) }
     }
 }

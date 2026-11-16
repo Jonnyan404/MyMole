@@ -409,6 +409,12 @@ public struct CleanKeepList: Sendable, Codable, Equatable {
         paths.contains { k in path == k || path.hasPrefix(k + "/") || k.hasPrefix(path + "/") }
     }
 
+    /// The list with each kept path also as it is with the folders above
+    /// it resolved, so an item kept through a link is kept where it is.
+    public var resolved: CleanKeepList {
+        CleanKeepList(paths: paths.union(paths.compactMap(Trasher.resolvingParent)))
+    }
+
     public static var defaultURL: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appending(path: "MyMole/DeepClean/keep.json")

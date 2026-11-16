@@ -373,7 +373,7 @@ public enum Trasher {
     public static func clear(_ paths: [String], through gate: TrashGate) -> (allowed: [String], refused: [(path: String, reason: String)]) {
         let keeps: @Sendable (String) -> Bool
         do {
-            keeps = try gate.protections()
+            keeps = resolving(try gate.protections())
         } catch {
             return ([], paths.map { ($0, protectionsUnreadable) })
         }
@@ -409,6 +409,13 @@ public enum Trasher {
         var plan = plan(paths, through: gate)
         run(&plan, through: gate, backend: backend)
         return plan.outcome
+    }
+
+    /// Protections that also hold for `path` with the folders above it
+    /// resolved: a kept item reached through a link to a folder above it
+    /// is the same item, and so is a folder holding it.
+    static func resolving(_ keeps: @escaping @Sendable (String) -> Bool) -> @Sendable (String) -> Bool {
+        { path in keeps(path) || resolvingParent(path).map { $0 != path && keeps($0) } == true }
     }
 
     /// How often a long batch reads the protections again.
