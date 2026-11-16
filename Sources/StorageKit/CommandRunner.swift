@@ -74,7 +74,14 @@ enum ProcessGroup {
         defer { posix_spawnattr_destroy(&attr) }
         // A group of its own, so the program and whatever it starts can be
         // stopped together; nothing else of ours leaks into it.
-        posix_spawnattr_setflags(&attr, Int16(POSIX_SPAWN_SETPGROUP | POSIX_SPAWN_CLOEXEC_DEFAULT))
+        // Signals as a program expects them, whatever this process ignores
+        // or blocks, so it stops when asked.
+        var none = sigset_t(), all = sigset_t()
+        sigemptyset(&none)
+        sigfillset(&all)
+        posix_spawnattr_setsigmask(&attr, &none)
+        posix_spawnattr_setsigdefault(&attr, &all)
+        posix_spawnattr_setflags(&attr, Int16(POSIX_SPAWN_SETPGROUP | POSIX_SPAWN_CLOEXEC_DEFAULT | POSIX_SPAWN_SETSIGMASK | POSIX_SPAWN_SETSIGDEF))
         posix_spawnattr_setpgroup(&attr, 0)
 
         let argv: [UnsafeMutablePointer<CChar>?] = ([exe] + args).map { strdup($0) } + [nil]
@@ -126,11 +133,13 @@ enum ProcessGroup {
 
         guard exited.wait(timeout: .now() + timeLimit) == .success else {
             killpg(pid, SIGTERM)
-            _ = exited.wait(timeout: .now() + grace)
+            // The program's exit is signalled once: when it quit within the
+            // grace, it isn't waited for again.
+            let quit = exited.wait(timeout: .now() + grace) == .success
             // Whatever is left in the group, the program itself included,
             // didn't quit when asked.
             if !groupGone(pid, within: grace) { killpg(pid, SIGKILL) }
-            exited.wait()
+            if !quit { exited.wait() }
             let gone = groupGone(pid, within: grace)
             _ = read.wait(timeout: .now() + 1)
             return gone

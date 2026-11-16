@@ -86,6 +86,19 @@ final class StorageSafetyFixture: @unchecked Sendable {
   #expect(kill(child, 0) != 0)
  }
 
+ @Test func aTimedOutProgramThatQuitsWhenAskedIsLetGo() {
+  // Run apart, so a reply that never comes fails the test instead of holding it.
+  let replied = DispatchSemaphore(value: 0)
+  let result = Mutex<(code: Int32, output: String)?>(nil)
+  Thread.detachNewThread {
+   let r = CommandRunner.processes(timeLimit: 0.2, grace: 5).run("/bin/sleep", ["30"])
+   result.withLock { $0 = r }
+   replied.signal()
+  }
+  #expect(replied.wait(timeout: .now() + 20) == .success)
+  #expect(result.withLock { $0?.code } == CommandRunner.timedOut)
+ }
+
  @Test func outputPastTheLimitStopsTheProgramAndIsNotUsed() {
   let result = CommandRunner.processes(timeLimit: 10, outputLimit: 1 << 20).run("/bin/sh", ["-c", "while :; do echo synthetic-noise; done"])
   #expect(result.code == CommandRunner.outputTooLarge)
