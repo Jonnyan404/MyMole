@@ -35,6 +35,9 @@ public struct DuplicateFile: Sendable, Hashable, Identifiable {
     /// What the copy holds that no other file shares; nil where the volume
     /// doesn't say it shares any.
     public var privateBytes: Int64? = nil
+    /// Of the copy its whole clone family shares, what clones rewritten
+    /// since still hold: those blocks stay when the whole family goes.
+    public var heldElsewhere: Int64 = 0
     var version: DuplicateVersion? = nil
     /// The disk's name when the copy is on one that can be disconnected:
     /// removable, ejectable or reached over the network.
@@ -87,7 +90,7 @@ public struct DuplicateGroup: Sendable, Hashable, Identifiable {
 
     /// Every file holding the family's blocks is in the group, as far as
     /// the volume counts them.
-    private func isWhole(_ family: [DuplicateFile]) -> Bool {
+    func isWhole(_ family: [DuplicateFile]) -> Bool {
         guard let count = family.compactMap(\.cloneCount).max(), count > 0 else { return true }
         return family.count >= Int(count)
     }
@@ -98,9 +101,15 @@ public struct DuplicateGroup: Sendable, Hashable, Identifiable {
         min(file.privateBytes ?? (family > 1 ? 0 : bytes), bytes)
     }
 
+    /// What a whole family frees once all of it goes: its copy, less what
+    /// clones rewritten since still hold of it.
+    private func wholeFrees(_ family: [DuplicateFile]) -> Int64 {
+        max(0, bytes - (family.map(\.heldElsewhere).max() ?? 0))
+    }
+
     /// What moving all of a family frees.
     private func familyFrees(_ family: [DuplicateFile]) -> Int64 {
-        if family.count > 1 && isWhole(family) { return bytes }
+        if family.count > 1 && isWhole(family) { return wholeFrees(family) }
         return family.reduce(0) { $0 + own($1, among: family.count) }
     }
 
@@ -149,7 +158,7 @@ public struct DuplicateGroup: Sendable, Hashable, Identifiable {
             guard let last = leaving.last else { continue }
             if leaving.count == family.count && family.count > 1 && isWhole(family) {
                 for f in leaving { out[f.path] = 0 }
-                out[last.path] = bytes
+                out[last.path] = wholeFrees(family)
             } else {
                 for f in leaving { out[f.path] = own(f, among: family.count) }
             }
@@ -336,8 +345,90 @@ public enum DuplicateFinder {
                 }
             }
         }
-        let sorted = groups.withLock { $0 }.sorted { $0.spare != $1.spare ? $0.spare > $1.spare : $0.digest < $1.digest }
+        let found = groups.withLock { $0 }
+        let checked = progress.isCancelled ? found : withBlocksHeldElsewhere(found, among: bySize.values.flatMap { $0 }, progress: progress)
+        let sorted = checked.sorted { $0.spare != $1.spare ? $0.spare > $1.spare : $0.digest < $1.digest }
         return DuplicateListing(groups: sorted, unreadable: unreadable.sorted(), uncompared: missed.load(ordering: .relaxed), excluded: excluded.sorted())
+    }
+
+    /// Whole clone families among the copies, with what clones rewritten
+    /// since hold of each one's copy. APFS no longer counts a clone rewritten
+    /// in part in its family, yet it keeps the blocks it didn't rewrite; it
+    /// differs from the copies, so it isn't one of them. Where the blocks of
+    /// each family and of the files searched that share some of theirs are
+    /// on the device (`F_LOG2PHYS_EXT`) tells how much, as do the groups
+    /// Disk Map scans recorded (`CloneOverlaps`). A rewritten clone outside
+    /// the search and those scans is unknown.
+    static func withBlocksHeldElsewhere(_ groups: [DuplicateGroup], among candidates: [Found], progress: ScanProgress) -> [DuplicateGroup] {
+        var wholes: [CloneFamily: String] = [:]
+        for g in groups where g.bytes >= Reclaim.checkedCopy {
+            for family in g.families where family.count > 1 && g.isWhole(family) {
+                guard let first = family.min(by: { $0.path < $1.path }), let id = first.cloneID else { continue }
+                wholes[CloneFamily(device: first.device, id: id)] = first.path
+            }
+        }
+        guard !wholes.isEmpty else { return groups }
+        var held: [CloneFamily: Int64] = [:]
+        for key in wholes.keys { held[key] = CloneOverlaps.sharedOutside(completing: [key: .max]) }
+        let devices = Set(wholes.keys.map(\.device))
+        var holders: [Int32: [String]] = [:]
+        var budget = CloneOverlaps.extentLimit
+        FileSpace.withoutDownloading {
+            var count = 0
+            for f in candidates where devices.contains(f.device) && f.bytes >= Reclaim.checkedCopy && f.links <= 1 {
+                guard !progress.isCancelled, count < CloneOverlaps.compareLimit else { break }
+                guard let sharing = FileSpace.sharing(f.path), sharing.privateBytes != nil, !sharing.sharesAllBlocks else { continue }
+                holders[f.device, default: []].append(f.path)
+                count += 1
+            }
+        }
+        for (device, paths) in holders where !progress.isCancelled {
+            var ranges: [Range<Int64>] = []
+            for path in paths {
+                guard let r = FileSpace.extents(path, limit: budget) else { continue }
+                budget -= r.count
+                ranges += r
+            }
+            let theirs = merged(ranges)
+            for (key, path) in wholes where key.device == device {
+                guard let r = FileSpace.extents(path, limit: budget) else { continue }
+                budget -= r.count
+                held[key] = max(held[key] ?? 0, overlap(merged(r), theirs))
+            }
+        }
+        return groups.map { g in
+            var g = g
+            g.files = g.files.map { f in
+                var f = f
+                if let id = f.cloneID, let h = held[CloneFamily(device: f.device, id: id)] { f.heldElsewhere = min(h, g.bytes) }
+                return f
+            }
+            return g
+        }
+    }
+
+    /// Ranges sorted and joined where they touch.
+    static func merged(_ ranges: [Range<Int64>]) -> [Range<Int64>] {
+        var out: [Range<Int64>] = []
+        for r in ranges.sorted(by: { $0.lowerBound < $1.lowerBound }) where !r.isEmpty {
+            if let last = out.last, r.lowerBound <= last.upperBound {
+                out[out.count - 1] = last.lowerBound..<max(last.upperBound, r.upperBound)
+            } else {
+                out.append(r)
+            }
+        }
+        return out
+    }
+
+    /// Bytes two sorted, joined lists of ranges have in common.
+    static func overlap(_ a: [Range<Int64>], _ b: [Range<Int64>]) -> Int64 {
+        var i = 0, j = 0, total: Int64 = 0
+        while i < a.count && j < b.count {
+            let lo = max(a[i].lowerBound, b[j].lowerBound), hi = min(a[i].upperBound, b[j].upperBound)
+            if hi > lo { total += hi - lo }
+            if a[i].upperBound < b[j].upperBound { i += 1 } else { j += 1 }
+        }
+        return total
     }
 
     struct FileID: Hashable {
