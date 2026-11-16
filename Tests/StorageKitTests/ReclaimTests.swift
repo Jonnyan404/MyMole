@@ -330,6 +330,23 @@ import Testing
         #expect((a + h).bytes == ownH)
     }
 
+    @Test func scanningAFolderAgainRecordsItsSharedBlocksOnce() throws {
+        let box = try Box()
+        let mb = 1 << 20
+        try box.sandbox.file("seen/a.img", bytes: 4 * mb)
+        try clone(box.sandbox, "seen/a.img", to: "other/b.img")
+        try clone(box.sandbox, "seen/a.img", to: "seen/h.img")
+        rewrite(box.sandbox, "seen/h.img", at: 0, length: mb)
+        let ownH = try #require(FileSpace.sharing(box.path + "/seen/h.img")?.privateBytes)
+        let copy = box.sandbox.allocated("seen/a.img")
+
+        _ = StorageScanner.scan(path: box.path, workers: 2)
+        // b, read by the first scan, is outside the next ones.
+        for _ in 0..<2 { _ = StorageScanner.scan(path: box.path + "/seen", workers: 2) }
+        let files = try ["seen/a.img", "other/b.img", "seen/h.img"].map { try #require(Reclaim.file(at: box.path + "/" + $0)) }
+        #expect(files.reduce(Reclaim(bytes: 0), +).bytes == copy + ownH)
+    }
+
     @Test func reclaimSavedBeforeNamesWereCountedStillReads() throws {
         let json = #"{"bytes":7,"open":[{"device":1,"id":9},{"count":1,"total":2,"bytes":3}]}"#
         let old = try JSONDecoder().decode(Reclaim.self, from: Data(json.utf8))
