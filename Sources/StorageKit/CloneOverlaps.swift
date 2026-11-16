@@ -194,9 +194,12 @@ public enum CloneOverlaps {
             found = groups
         }
         guard !stop() else { return }
+        // Files outside `root` this scan read as well: its groups of them
+        // replace those an earlier scan recorded.
+        let reread = Set(known.values.joined())
         state.withLock { s in
-            // What this scan saw again goes; what reaches outside it stays.
-            for (id, g) in s.groups where g.files.allSatisfy({ path($0, isIn: root) }) { s.groups[id] = nil }
+            // What this scan saw again goes; what reaches past it stays.
+            for (id, g) in s.groups where g.files.allSatisfy({ path($0, isIn: root) || reread.contains($0) }) { s.groups[id] = nil }
             for g in found {
                 let id = s.next
                 s.next += 1
