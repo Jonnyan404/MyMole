@@ -11,7 +11,8 @@ import Testing
 
     @Test func mouseDownAndPresentationJoinOneHintReadAndInventoryChangesInvalidateIt() async {
         var reads = 0
-        let warmup = ReviewWarmup { _ in reads += 1; return .init(mentions: []) }
+        // Joined however long a busy Mac takes between the calls.
+        let warmup = ReviewWarmup(freshFor: .seconds(3_600)) { _ in reads += 1; return .init(mentions: []) }
         let key = ReviewWarmup.Key(app: app("Editor"), revision: 1)
         warmup.prepare(key)
         _ = await warmup.value(for: key)

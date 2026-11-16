@@ -20,11 +20,16 @@ import StorageKit
     private var started = ContinuousClock.now
     private var job: Task<Value, Never>?
     private let read: @MainActor (AppBundle) async -> Value
+    /// How long a read started for a key is joined rather than read again.
+    private let freshFor: Duration
 
-    init(read: @escaping @MainActor (AppBundle) async -> Value) { self.read = read }
+    init(freshFor: Duration = .seconds(5), read: @escaping @MainActor (AppBundle) async -> Value) {
+        self.freshFor = freshFor
+        self.read = read
+    }
 
     func prepare(_ key: Key) {
-        if self.key == key, job != nil, ContinuousClock.now - started < .seconds(5) { return }
+        if self.key == key, job != nil, ContinuousClock.now - started < freshFor { return }
         let previous = job
         previous?.cancel()
         self.key = key
