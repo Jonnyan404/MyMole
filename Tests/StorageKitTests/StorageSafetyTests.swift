@@ -99,6 +99,16 @@ final class StorageSafetyFixture: @unchecked Sendable {
   #expect(result.withLock { $0?.code } == CommandRunner.timedOut)
  }
 
+ @Test func aProgramIsReadAndWaitedForWhileTheSharedThreadsAreBusy() {
+  // Every thread of the shared pool held: the program must still be read and waited for.
+  let hold = DispatchSemaphore(value: 0)
+  let holders = 256
+  for _ in 0..<holders { DispatchQueue.global(qos: .utility).async { hold.wait() } }
+  defer { for _ in 0..<holders { hold.signal() } }
+  let result = CommandRunner.processes(timeLimit: 5, drain: 2).run("/bin/echo", ["synthetic"])
+  #expect(result.code == 0 && result.output == "synthetic\n")
+ }
+
  @Test func outputPastTheLimitStopsTheProgramAndIsNotUsed() {
   let result = CommandRunner.processes(timeLimit: 10, outputLimit: 1 << 20).run("/bin/sh", ["-c", "while :; do echo synthetic-noise; done"])
   #expect(result.code == CommandRunner.outputTooLarge)

@@ -99,10 +99,17 @@ enum ProcessGroup {
 
         // Read while it runs, so a full pipe can't stall the program, up to
         // `outputLimit`: past it the group is stopped and nothing is used.
+        // Threads of their own, not the shared pool: with the pool busy, a
+        // reader or waiter queued there could start only after the time
+        // limit, and the program would be taken for one that ran too long.
         let output = Mutex((data: Data(), overflow: false))
         let read = DispatchGroup()
-        DispatchQueue.global(qos: .utility).async(group: read) {
-            defer { close(readFD) }
+        read.enter()
+        Thread.detachNewThread {
+            defer {
+                close(readFD)
+                read.leave()
+            }
             var buffer = [UInt8](repeating: 0, count: 64 * 1024)
             while true {
                 let n = Darwin.read(readFD, &buffer, buffer.count)
@@ -124,7 +131,7 @@ enum ProcessGroup {
         }
         let status = Mutex<Int32?>(nil)
         let exited = DispatchSemaphore(value: 0)
-        DispatchQueue.global(qos: .utility).async {
+        Thread.detachNewThread {
             var s: Int32 = 0
             while waitpid(pid, &s, 0) < 0 && errno == EINTR {}
             status.withLock { $0 = s }
