@@ -92,6 +92,18 @@ public struct ScanExport: Codable, Sendable {
                 !item.n.isEmpty, !item.n.contains("/"), FileKind(rawValue: item.k) != nil
             else { throw Failure.damaged }
         }
+        // Sizes and counts no folder's total can overflow: every one is
+        // summed into the root's.
+        var bytes: Int64 = 0, files = 0
+        for item in s.items {
+            guard item.s >= 0, (item.b ?? 0) >= 0, (item.c ?? 0) >= 0, item.m.isFinite else { throw Failure.damaged }
+            let (a, over1) = bytes.addingReportingOverflow(item.s)
+            let (b, over2) = a.addingReportingOverflow(item.b ?? 0)
+            let (c, over3) = files.addingReportingOverflow(item.c ?? 0)
+            let (d, over4) = c.addingReportingOverflow(1)
+            guard !over1, !over2, !over3, !over4 else { throw Failure.damaged }
+            (bytes, files) = (b, d)
+        }
         return s
     }
 
