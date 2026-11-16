@@ -166,9 +166,9 @@ final class PrivilegedClient {
         return r
     }
 
-    func removeLeftovers(_ paths: [String], appID: String, ids: [String]) async throws -> RemovalReport {
+    func removeLeftovers(_ paths: [String], appID: String, ids: [String], appPath: String? = nil) async throws -> RemovalReport {
         let reply = try await run(
-            .removeLeftovers(paths: paths, appID: appID, ids: ids),
+            .removeLeftovers(paths: paths, appID: appID, ids: ids, appPath: appPath),
             prompt: String(localized: "MyMole needs administrator rights to delete what the app left outside your Library."))
         guard case .removal(let r) = reply else { throw Failure.failed(String(localized: "The privileged tool gave an unexpected answer.")) }
         return r
@@ -307,7 +307,7 @@ extension PrivilegedClient {
         let paths: [String]
         switch envelope.request {
         case .applicationTrash: return (0, PrivilegedTool.output(.refused("The synthetic administrator operation was cancelled.")))
-        case .removeSystem(let p, _), .removeLeftovers(let p, _, _): paths = p
+        case .removeSystem(let p, _), .removeLeftovers(let p, _, _, _): paths = p
         case .maintenance(let tasks, _):
             let reports = tasks.compactMap(MaintenanceTask.init(rawValue:)).map { TaskReport($0, .failed, String(localized: "Stood in for by the smoke test.")) }
             return (0, PrivilegedTool.output(.reports(reports)))

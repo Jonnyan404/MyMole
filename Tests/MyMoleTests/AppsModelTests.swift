@@ -58,7 +58,7 @@ import Testing
                 otherCopies: lookUpCopies ?? { app in
                     copies?.map { AppBundle(path: $0, name: app.name, bundleID: app.bundleID, version: nil, bytes: 0, fromAppStore: false) }
                 },
-                system: system ?? AppsModel.SystemSide(base: path + "/system", isReady: { false }, remove: { _, _, _ in RemovalReport() }),
+                system: system ?? AppsModel.SystemSide(base: path + "/system", isReady: { false }, remove: { _, _, _, _ in RemovalReport() }),
                 trash: testBin(url), protections: protections, imageOf: imageOf, eject: eject, identityReaders: identityReaders, runtimeRoots: runtimeRoots)
         }
 
@@ -110,7 +110,7 @@ import Testing
         let home = try Home()
         var calls = 0
         var model: AppsModel!
-        let system = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _ in .init() },
+        let system = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _, _ in .init() },
             trashApp: { app, source in
                 calls += 1
                 #expect(model.authorizingApp == app.path)
@@ -130,7 +130,7 @@ import Testing
     @Test func aHelperMoveDoesNotTriggerFindersSeparateAuthorizationPrompt() async throws {
         let home = try Home()
         var finderPrompts = 0, helperMoves = 0
-        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _ in .init() },
+        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _, _ in .init() },
             trashApp: { app, source in
                 helperMoves += 1
                 return try Self.simulatedAdministratorMove(app, source, home: home.path)
@@ -460,7 +460,7 @@ import Testing
     @Test func cancellingAdministratorApprovalLeavesTheAppDataAndSystemFilesUntouched() async throws {
         let home = try Home()
         var calls = 0, systemCalls = 0
-        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _ in systemCalls += 1; return .init() },
+        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _, _ in systemCalls += 1; return .init() },
             trashApp: { _, _ in calls += 1; throw PrivilegedClient.Failure.cancelled })
         let model = home.model(system: side, recycle: Self.deniedRecycle)
         let app = try #require(AppFinder.metadata(home.path + "/Applications/Editor.app"))
@@ -473,7 +473,7 @@ import Testing
 
     @Test(arguments: [false, true]) func administratorMovesRevalidateVerifiedAndManuallyReviewedLeftovers(_ manual: Bool) async throws {
         let home = try Home()
-        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _ in .init() },
+        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _, _ in .init() },
             trashApp: { app, source in try Self.simulatedAdministratorMove(app, source, home: home.path) })
         let model = home.model(system: side, identityReaders: .init(groups: { _ in manual ? nil : [] }), recycle: Self.deniedRecycle)
         let app = try #require(AppFinder.metadata(home.path + "/Applications/Editor.app"))
@@ -487,7 +487,7 @@ import Testing
 
     @Test func aCopyInstalledDuringAdministratorApprovalKeepsTheSharedData() async throws {
         let home = try Home()
-        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _ in .init() },
+        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _, _ in .init() },
             trashApp: { app, source in
                 let receipt = try Self.simulatedAdministratorMove(app, source, home: home.path)
                 try home.write("Applications/Editor.app/Contents/MacOS/bin")
@@ -506,7 +506,7 @@ import Testing
         for startApp in [false, true] {
             let home = try Home()
             var running = false, calls = 0
-            let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _ in .init() },
+            let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _, _ in .init() },
                 trashApp: { _, _ in calls += 1; return nil })
             let model = home.model(system: side, recycle: { paths in
                 if startApp { running = true } else { try! CleanKeepList(paths: Set(paths)).save(to: home.protections.keepList) }
@@ -521,7 +521,7 @@ import Testing
     @Test func administratorRestoreIsOnlyRequestedForTheRecordedAppAfterOrdinaryUndoFails() async throws {
         let home = try Home()
         var restores = 0
-        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _ in .init() },
+        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _, _ in .init() },
             trashApp: { app, source in try Self.simulatedAdministratorMove(app, source, home: home.path) },
             restoreApp: { receipt in
                 restores += 1
@@ -767,7 +767,7 @@ import Testing
         let denied = Mutex(true)
         var systemCalls = 0
         try home.write("system/Library/Caches/com.vendor.Editor/item")
-        let system = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _ in
+        let system = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { _, _, _, _ in
             systemCalls += 1
             return RemovalReport()
         })
@@ -1095,7 +1095,7 @@ import Testing
         let helper = home.path + "/system/Library/PrivilegedHelperTools/com.vendor.Editor.helper"
         try CleanKeepList(paths: [helper]).save(to: home.protections.systemKeepList)
         let asked = Asked()
-        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { paths, appID, ids in
+        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { paths, appID, ids, _ in
             asked.calls.append((paths, appID, ids))
             var r = RemovalReport()
             r.removed = paths
@@ -1117,6 +1117,30 @@ import Testing
 
     final class Asked { var calls: [(paths: [String], appID: String, ids: [String])] = [] }
 
+    @Test func theMakersJobsAreOfferedUnchosenAndTheToolLearnsWhereTheAppWas() async throws {
+        let home = try Home()
+        try home.write("system/Library/LaunchAgents/com.vendor.updater.plist")
+        try home.write("system/Users/synthetic/.keep")
+        try home.write("system/Applications/.keep")
+        final class Sent { var appPath: String? }
+        let sent = Sent()
+        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { paths, _, _, appPath in
+            sent.appPath = appPath
+            var r = RemovalReport()
+            r.removed = paths
+            return r
+        })
+        let model = home.model(system: side)
+        model.load()
+        await model.loadJob?.value
+        let app = try #require(model.apps.first)
+        let found = await model.systemLeftovers(for: app)
+        let job = try #require(found.first { $0.name == "com.vendor.updater.plist" })
+        #expect(job.why == .maker && !job.kind.chosenByDefault)
+        #expect(await model.uninstall(app, leftovers: [], system: [job]) == .done)
+        #expect(sent.appPath == URL(fileURLWithPath: app.path).resolvingSymlinksInPath().path)
+    }
+
     @Test func systemLeftoversNeedRootAndGoThroughTheTool() async throws {
         let home = try Home()
         try home.write("system/Library/PrivilegedHelperTools/com.vendor.Editor.helper")
@@ -1124,7 +1148,7 @@ import Testing
         let asked = Asked()
         final class Ready { var value = false }
         let ready = Ready()
-        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { ready.value }, remove: { paths, appID, ids in
+        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { ready.value }, remove: { paths, appID, ids, _ in
             asked.calls.append((paths, appID, ids))
             var r = RemovalReport()
             r.removed = paths
@@ -1466,7 +1490,7 @@ import Testing
     @Test func manualReviewNeverAuthorizesSystemDeletion() async throws {
         let home = try Home()
         let asked = Asked()
-        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { paths, id, ids in
+        let side = AppsModel.SystemSide(base: home.path + "/system", isReady: { true }, remove: { paths, id, ids, _ in
             asked.calls.append((paths, id, ids))
             return RemovalReport()
         })

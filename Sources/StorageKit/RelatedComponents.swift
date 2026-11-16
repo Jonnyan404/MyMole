@@ -84,3 +84,66 @@ public enum RelatedComponents {
         return .present
     }
 }
+
+extension RelatedComponents {
+    /// A part of an app that is only shown: macOS protects it, or every
+    /// user of the Mac shares it. `path` is nil for what macOS lists by ID only.
+    public struct Shown: Identifiable, Equatable, Sendable {
+        public let path: String?
+        public let name: String
+        public let note: String
+        public let bytes: Int64?
+        public var id: String { path ?? name }
+    }
+
+    public static let systemExtensionsTool = "/usr/bin/systemextensionsctl"
+    static let kernelNote = "A kernel extension. macOS protects it: remove it with the vendor's uninstaller, then restart."
+
+    /// The app's protected and shared parts, by the vendor's list, by the
+    /// bundle ID of each kernel extension, and by the system extensions
+    /// macOS reports. Discovery only.
+    public static func shown(for app: AppBundle, home: String = Home.path, systemBase: String = "", runner: CommandRunner) -> [Shown] {
+        guard let id = app.bundleID, AppLeftovers.isWellFormed(id), !app.isProtected else { return [] }
+        let spaces = VendorRules.makerNamespaces(for: id)
+        func ours(_ other: String) -> Bool {
+            let o = other.lowercased()
+            return o == id.lowercased() || o.hasPrefix(id.lowercased() + ".") || spaces.contains { o.hasPrefix($0) }
+        }
+        var out: [Shown] = []
+        for part in VendorRules.parts(for: id) where part.handling == .show {
+            let path = part.resolved(home: home, base: systemBase)
+            var st = stat()
+            guard lstat(path, &st) == 0, st.st_mode & S_IFMT == S_IFDIR || st.st_mode & S_IFMT == S_IFREG else { continue }
+            out.append(Shown(path: path, name: (path as NSString).lastPathComponent, note: part.note ?? VendorRules.protectedNote,
+                             bytes: AppLeftovers.measure(path)))
+        }
+        let kexts = systemBase + "/Library/Extensions"
+        for name in (DirectoryListing.names(kexts) ?? []).sorted() where name.lowercased().hasSuffix(".kext") {
+            let path = kexts + "/" + name
+            guard let kid = AppIdentity.bundleInfo(atPath: path)?["CFBundleIdentifier"] as? String, ours(kid) else { continue }
+            out.append(Shown(path: path, name: name, note: kernelNote, bytes: AppLeftovers.measure(path)))
+        }
+        if runner.exists(systemExtensionsTool) {
+            let r = runner.run(systemExtensionsTool, ["list"])
+            if r.code == 0 {
+                for ext in systemExtensions(r.output) where ours(ext.id) {
+                    out.append(Shown(path: nil, name: ext.name, note: VendorRules.protectedNote + " (\(ext.id), \(ext.state))", bytes: nil))
+                }
+            }
+        }
+        return out
+    }
+
+    /// The extensions `systemextensionsctl list` prints, one per tab-separated row.
+    static func systemExtensions(_ output: String) -> [(id: String, name: String, state: String)] {
+        output.split(separator: "\n").compactMap { line in
+            let fields = line.split(separator: "\t", omittingEmptySubsequences: false).map { $0.trimmingCharacters(in: .whitespaces) }
+            guard let index = fields.firstIndex(where: { $0.hasSuffix(")") && $0.contains(" (") }) else { return nil }
+            let id = String(fields[index].prefix { $0 != " " })
+            guard AppLeftovers.isWellFormed(id) else { return nil }
+            let name = index + 1 < fields.count ? fields[index + 1] : id
+            let state = fields.last.map { $0.trimmingCharacters(in: CharacterSet(charactersIn: "[]")) } ?? ""
+            return (id, name.isEmpty ? id : name, state)
+        }
+    }
+}

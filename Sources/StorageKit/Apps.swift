@@ -98,6 +98,9 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
         case loose
         /// Exact app/helper identity in a scoped runtime root; temporary data needs review.
         case runtimeID
+        /// On the vendor's own list of what its app installs, at that exact
+        /// path. Never chosen for the user.
+        case knownPart
         /// Discovery can continue with partial owner information. These
         /// rows require separate manual review, never automatic selection.
         case unverified
@@ -112,6 +115,7 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
             case .vendor: "its maker's, and no other app of the maker is left"
             case .loose: "by a looser match of its name; look before choosing"
             case .runtimeID: "by an app or helper ID in a per-user runtime folder; review its contents"
+            case .knownPart: "on the vendor's own list of what the app installs"
             case .unverified: "a possible app match; ownership couldn't be verified"
             }
         }
@@ -119,7 +123,7 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
 
     /// Only rebuildable caches/logs with identity evidence start chosen.
     public var canRemove: Bool { evidence != .unverified }
-    public var chosenByDefault: Bool { canRemove && kind.chosenByDefault && ![.name, .vendorFolder, .vendor, .loose, .runtimeID].contains(evidence) }
+    public var chosenByDefault: Bool { canRemove && kind.chosenByDefault && ![.name, .vendorFolder, .vendor, .loose, .runtimeID, .knownPart].contains(evidence) }
 
     /// What a leftover holds, which decides whether it starts chosen.
     public enum Kind: Int, Sendable, Comparable {
@@ -322,7 +326,8 @@ public enum AppFinder {
     /// one of `supportFolders` (Application Support in the home and system
     /// Library). Such apps install parts outside the Library that only their
     /// uninstaller knows.
-    public static func ownUninstaller(of app: AppBundle, folders: [String], supportFolders: [String] = []) -> String? {
+    public static func ownUninstaller(of app: AppBundle, folders: [String], supportFolders: [String] = [],
+                                      vendorRoots: (home: String, base: String)? = nil) -> String? {
         let inside = ["Contents", "Contents/Resources", "Contents/SharedSupport", "Contents/Helpers", "Contents/Library"]
             .map { app.path + "/" + $0 }
         let parent = (app.path as NSString).deletingLastPathComponent
@@ -346,6 +351,10 @@ public enum AppFinder {
                     if let found = uninstaller(in: sub, besides: app.path, naming: mustName) { return found }
                 }
             }
+        }
+        // Where the vendor puts the uninstaller for this very app.
+        if let roots = vendorRoots, let id = app.bundleID {
+            return VendorRules.uninstallers(for: id, home: roots.home, base: roots.base).first
         }
         return nil
     }
@@ -495,6 +504,8 @@ public enum AppLeftovers {
         if !app.isProtected && !scan.shouldStop && Trasher.noLinksBetween(home, and: lib) {
             out += vendorFolders(of: app, lib: lib, installed: installed, scan: scan)
             out += vendorShared(of: app, lib: lib, installed: installed, scan: scan)
+            let known = Set(out.map(\.path))
+            out += knownParts(of: app, home: home, installed: installed, identity: identity, scan: scan).filter { !known.contains($0.path) }
         }
         if deep && !app.isProtected && !scan.shouldStop {
             var known = Set(out.map(\.path))
@@ -537,6 +548,49 @@ public enum AppLeftovers {
         return letters(folder) == c
     }
 
+    // MARK: Parts on the vendor's own list
+
+    /// The vendor's listed parts in the home folder that are there, and
+    /// that no other installed app sharing them still uses.
+    static func knownParts(of app: AppBundle, home: String, installed: [AppBundle], identity: AppIdentity, scan: LeftoverScan) -> [Leftover] {
+        guard let id = app.bundleID else { return [] }
+        var out: [Leftover] = []
+        for part in VendorRules.offered(for: id, home: home) where part.inHome && !scan.shouldStop {
+            let path = part.resolved(home: home)
+            guard isKnownPart(path, part: part, of: app, home: home, installed: installed, identity: identity),
+                  let m = scan.measure(path) else { continue }
+            var l = Leftover(path: path, bytes: m, place: knownPlace(path, home: home))
+            l.evidence = .knownPart
+            out.append(l)
+        }
+        return out
+    }
+
+    static func knownPlace(_ path: String, home: String) -> String {
+        let lib = home + "/Library/"
+        guard path.hasPrefix(lib) else { return "Home" }
+        return (String(path.dropFirst(lib.count)) as NSString).deletingLastPathComponent
+    }
+
+    /// A real file or folder at the part's path, with no link on the way,
+    /// whose sharing apps are all gone.
+    static func isKnownPart(_ path: String, part: VendorRules.Part, of app: AppBundle, home: String,
+                            installed: [AppBundle], identity: AppIdentity) -> Bool {
+        guard let id = app.bundleID, !app.isProtected, Trasher.isPlainPath(path), Trasher.noLinksBetween(home, and: path) else { return false }
+        var st = stat()
+        guard lstat(path, &st) == 0, st.st_mode & S_IFMT == S_IFDIR || st.st_mode & S_IFMT == S_IFREG,
+              VendorRules.bundleMatches(part, at: path) else { return false }
+        let owners = Set((installed.filter { $0.path != app.path }.compactMap(\.bundleID) + identity.otherOwnerIDs).map { $0.lowercased() })
+        return VendorRules.isFree(part, owners: owners, app: [id] + identity.helperIDs)
+    }
+
+    static func isStillKnownPart(_ path: String, of app: AppBundle, home: String, installed: [AppBundle], identity: AppIdentity) -> Bool {
+        guard let id = app.bundleID,
+              let part = VendorRules.offered(for: id, home: home).first(where: { $0.inHome && $0.resolved(home: home) == path })
+        else { return false }
+        return isKnownPart(path, part: part, of: app, home: home, installed: installed, identity: identity)
+    }
+
     /// What the app's folder inside its maker's may be called: its name,
     /// and its name without the maker's ("Chrome" of "Google Chrome").
     static func productNames(_ app: AppBundle, inVendorFolder vendor: String) -> Set<String> {
@@ -548,13 +602,30 @@ public enum AppLeftovers {
 
     /// Whether `entry` in `vendor` folder is `app`'s, and no other installed app's.
     static func isAppsVendorEntry(_ entry: String, vendor: String, of app: AppBundle, installed: [AppBundle]) -> Bool {
-        guard let id = app.bundleID, isVendorFolder(vendor, of: id),
-            productNames(app, inVendorFolder: vendor).contains(entry.lowercased())
-        else { return false }
+        guard let id = app.bundleID, isVendorFolder(vendor, of: id), names(entry, app, inVendorFolder: vendor) else { return false }
         // Another installed app the folder's name could be: it stays.
         return !installed.contains { other in
-            other.path != app.path && (other.bundleID == id || productNames(other, inVendorFolder: vendor).contains(entry.lowercased()))
+            other.path != app.path && (other.bundleID == id || names(entry, other, inVendorFolder: vendor))
         }
+    }
+
+    /// The entry is the app's name in its maker's folder, or that name run
+    /// together with a version, as JetBrains and Android Studio name theirs
+    /// ("IntelliJIdea2024.3" for IntelliJ IDEA).
+    static func names(_ entry: String, _ app: AppBundle, inVendorFolder vendor: String) -> Bool {
+        let products = productNames(app, inVendorFolder: vendor)
+        if products.contains(entry.lowercased()) { return true }
+        guard let product = unversioned(entry) else { return false }
+        return products.contains { letters($0) == letters(product) }
+    }
+
+    /// "IntelliJIdea" of "IntelliJIdea2024.3": the name before a version of
+    /// at least four digits and dots. Nil when there's no such version.
+    static func unversioned(_ entry: String) -> String? {
+        let version = entry.reversed().prefix { $0.isNumber || $0 == "." }
+        guard version.count >= 4, version.contains(where: \.isNumber), let first = version.last, first.isNumber else { return nil }
+        let name = String(entry.dropLast(version.count))
+        return letters(name).count >= 3 ? name : nil
     }
 
     static func vendorFolders(of app: AppBundle, lib: String, installed: [AppBundle], scan: LeftoverScan) -> [Leftover] {
@@ -750,6 +821,7 @@ public enum AppLeftovers {
         let lib = home + "/Library/"
         if RuntimeLeftovers.isStill(path, of: app, installed: installed, identity: identity, roots: runtimeRoots) { return true }
         // What the deeper search offered, checked again by its own rules.
+        if isStillKnownPart(path, of: app, home: home, installed: installed, identity: identity) { return true }
         if deep { return DeepLeftovers.isStill(path, of: app, home: home, installed: installed) }
         guard path.hasPrefix(lib), Trasher.noLinksBetween(home, and: path) else { return false }
         let folder = (String(path.dropFirst(lib.count)) as NSString).deletingLastPathComponent

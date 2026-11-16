@@ -46,7 +46,7 @@ import Testing
                     }
                     return Trasher.moveToTrash(paths, through: TrashGate(still: { _ in true }, protections: TrashGate.keepsNothing), backend: backend)
                 }, finderTrash: finder, isRunning: { _ in true }, otherCopies: { _ in copiesUnavailable ? nil : [] },
-                system: AppsModel.SystemSide(base: path + "/system", isReady: { false }, remove: { _, _, _ in .init() }),
+                system: AppsModel.SystemSide(base: path + "/system", isReady: { false }, remove: { _, _, _, _ in .init() }),
                 trash: backend, protections: UserProtections(root: root.appending(path: "protections")),
                 imageOf: { _ in nil }, eject: { _ in "Not in tests" }, ownAppPath: appPath, ownAppID: bundleID, identityReaders: .init(groups: { _ in [] }))
             return SelfRemovalModel(apps: apps, prepare: { [self] in
