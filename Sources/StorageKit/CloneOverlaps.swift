@@ -173,8 +173,9 @@ public enum CloneOverlaps {
 
     /// Compares the blocks of `holders` with each other and with those of
     /// the families `members` belong to, all read by a scan of `root`, and
-    /// records the groups. Groups holding a file outside `root` stay: the
-    /// scan couldn't see all of their files.
+    /// records the groups. They replace the groups recorded of the same
+    /// files; a group holding a file outside `root` this scan didn't read
+    /// stays, as the scan couldn't see all of its files.
     static func record(scanOf root: String, members: [Member], holders: [Holder], stop: () -> Bool = { false }) {
         guard holders.count <= compareLimit else { return }
         var families: [CloneFamily: Family] = [:]
@@ -182,15 +183,28 @@ public enum CloneOverlaps {
             families[m.family, default: Family(members: [], total: m.total, copy: m.copy)].members.insert(m.path)
         }
         // Members earlier scans read outside this one hold the same blocks.
-        let known = state.withLock { s in
-            families.keys.reduce(into: [CloneFamily: Set<String>]()) { out, key in
+        // Rewritten clones outside it in groups with files in it are read
+        // again: one gone or rewritten since leaves its groups.
+        let earlier = state.withLock { s -> (known: [CloneFamily: Set<String>], holders: Set<String>)? in
+            let here = s.inside(root)
+            guard !families.isEmpty || !holders.isEmpty || !here.isEmpty else { return nil }
+            let known = families.keys.reduce(into: [CloneFamily: Set<String>]()) { out, key in
                 out[key] = s.families[key]?.members.filter { !path($0, isIn: root) }
             }
+            let named = Set(s.families.values.flatMap(\.members))
+            var outside = Set<String>()
+            for id in Set(here.compactMap(\.group)) {
+                for f in s.groups[id]?.files ?? [] where !path(f, isIn: root) && !named.contains(f) { outside.insert(f) }
+            }
+            return (known, outside)
         }
+        guard let earlier else { return }
+        let known = earlier.known
         var read = families
         for (key, outside) in known { read[key]?.members.formUnion(outside) }
-        let unread = stop() ? [] : unreadHolders(of: read, besides: holders, scanOf: root)
-        let holders = holders + unread
+        let again = stillSharing(earlier.holders.sorted(), limit: compareLimit - holders.count)
+        let unread = stop() ? [] : unreadHolders(of: read, besides: holders + again, scanOf: root)
+        let holders = holders + again + unread
         var found: [(device: Int32, files: Set<String>, families: Set<CloneFamily>, bytes: Int64, outside: Bool)] = []
         if !holders.isEmpty {
             guard let groups = compare(families: read, holders: holders, stop: stop) else { return }
@@ -199,7 +213,7 @@ public enum CloneOverlaps {
         guard !stop() else { return }
         // Files outside `root` this scan read as well: its groups of them
         // replace those an earlier scan recorded.
-        let reread = Set(known.values.joined()).union(unread.map(\.path))
+        let reread = Set(known.values.joined()).union(earlier.holders).union(unread.map(\.path))
         state.withLock { s in
             // What this scan saw again goes; what reaches past it stays.
             for (id, g) in s.groups where g.files.allSatisfy({ path($0, isIn: root) || reread.contains($0) }) { s.groups[id] = nil }
@@ -224,6 +238,20 @@ public enum CloneOverlaps {
                 if live.isEmpty { s.families[key] = nil }
             }
             s.reindex()
+        }
+    }
+
+    /// Those of `paths` that still share some of their blocks, not all.
+    private static func stillSharing(_ paths: [String], limit: Int) -> [Holder] {
+        FileSpace.withoutDownloading {
+            var out: [Holder] = []
+            for path in paths where out.count < limit {
+                var st = stat()
+                guard lstat(path, &st) == 0, (st.st_mode & S_IFMT) == S_IFREG, st.st_nlink <= 1,
+                      let sharing = FileSpace.sharing(path), let privateBytes = sharing.privateBytes, !sharing.sharesAllBlocks else { continue }
+                out.append(Holder(device: Int32(st.st_dev), path: path, privateBytes: privateBytes))
+            }
+            return out
         }
     }
 

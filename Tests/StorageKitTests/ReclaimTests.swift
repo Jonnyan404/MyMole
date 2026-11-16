@@ -372,6 +372,34 @@ import Testing
         #expect(files.reduce(Reclaim(bytes: 0), +).bytes == copy + ownH)
     }
 
+    @Test func rescanningForgetsTheBlocksOfARewrittenCloneSinceRemoved() throws {
+        let box = try Box()
+        let mb = 1 << 20
+        try box.sandbox.file("pair/a.img", bytes: 4 * mb)
+        try clone(box.sandbox, "pair/a.img", to: "pair/b.img")
+        try clone(box.sandbox, "pair/a.img", to: "other/c.img")
+        rewrite(box.sandbox, "other/c.img", at: 0, length: mb)
+        let copy = box.sandbox.allocated("pair/a.img")
+        let first = StorageScanner.scan(path: box.path, workers: 1).root
+        #expect(try #require(first.find(path: box.path + "/pair")).reclaim.bytes < copy)
+        try FileManager.default.removeItem(atPath: box.path + "/other/c.img")
+        #expect(StorageScanner.scan(path: box.path + "/pair", workers: 1).root.reclaim.bytes == copy)
+    }
+
+    @Test func rescanningFilesNoLongerSharingForgetsWhatTheyShared() throws {
+        let box = try Box()
+        let mb = 1 << 20
+        try box.sandbox.file("a.img", bytes: 4 * mb)
+        try clone(box.sandbox, "a.img", to: "b.img")
+        rewrite(box.sandbox, "a.img", at: 0, length: mb)
+        rewrite(box.sandbox, "b.img", at: mb, length: mb)
+        _ = StorageScanner.scan(path: box.path, workers: 1)
+        rewrite(box.sandbox, "a.img", at: 0, length: 4 * mb)
+        rewrite(box.sandbox, "b.img", at: 0, length: 4 * mb)
+        let second = StorageScanner.scan(path: box.path, workers: 1).root
+        #expect(second.reclaim.bytes == second.size)
+    }
+
     @Test func reclaimSavedBeforeNamesWereCountedStillReads() throws {
         let json = #"{"bytes":7,"open":[{"device":1,"id":9},{"count":1,"total":2,"bytes":3}]}"#
         let old = try JSONDecoder().decode(Reclaim.self, from: Data(json.utf8))
