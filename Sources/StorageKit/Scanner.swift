@@ -372,7 +372,7 @@ final class CloneSightings: Sendable {
             }
         } else if !sharing.sharesAllBlocks {
             seen.withLock { s in
-                if s.holders.count < CloneOverlaps.compareLimit { s.holders.append(.init(device: device, path: path)) } else { s.overflow = true }
+                if s.holders.count < CloneOverlaps.compareLimit { s.holders.append(.init(device: device, path: path, privateBytes: privateBytes)) } else { s.overflow = true }
             }
         }
     }

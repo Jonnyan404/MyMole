@@ -268,6 +268,68 @@ import Testing
         #expect(a.bytes == 0 && (a + b).bytes == ownB + ownC)
     }
 
+    @Test func holesOfSparseClonesAreNotSharedBlocks() throws {
+        let box = try Box()
+        let mb = 1 << 20
+        // A sparse image like a simulator's: 4 MB of data in 96 MB.
+        try box.sandbox.folder("a")
+        let a = box.path + "/a/disk.img"
+        let fd = open(a, O_CREAT | O_WRONLY, 0o644)
+        var data = [UInt8](repeating: 0, count: 4 * mb)
+        arc4random_buf(&data, data.count)
+        #expect(ftruncate(fd, off_t(96 * mb)) == 0 && pwrite(fd, data, data.count, off_t(32 * mb)) == data.count && fsync(fd) == 0 && close(fd) == 0)
+        try clone(box.sandbox, "a/disk.img", to: "b/disk.img")
+        rewrite(box.sandbox, "b/disk.img", at: 33 * mb, length: mb)
+        let allocated = box.sandbox.allocated("a/disk.img")
+        #expect(allocated < Int64(16 * mb))
+        let ownA = try #require(FileSpace.sharing(a)?.privateBytes)
+        let ownB = try #require(FileSpace.sharing(box.path + "/b/disk.img")?.privateBytes)
+
+        let root = StorageScanner.scan(path: box.path, workers: 2).root
+        let first = try #require(root.find(path: box.path + "/a")), second = try #require(root.find(path: box.path + "/b"))
+        // Only blocks on the device count: the holes hold nothing.
+        #expect(first.reclaim.bytes == ownA && second.reclaim.bytes == ownB)
+        #expect(root.reclaim.bytes == allocated + ownB)
+        #expect((first.reclaim + second.reclaim).bytes == allocated + ownB)
+    }
+
+    @Test func blocksAlsoHeldOutsideTheScanAreNotCountedFreed() throws {
+        let box = try Box()
+        let mb = 1 << 20
+        try box.sandbox.file("pair/a.img", bytes: 4 * mb)
+        try clone(box.sandbox, "pair/a.img", to: "pair/b.img")
+        try clone(box.sandbox, "pair/a.img", to: "unscanned/c.img")
+        rewrite(box.sandbox, "pair/b.img", at: 0, length: mb)
+        rewrite(box.sandbox, "unscanned/c.img", at: 2 * mb, length: mb)
+        let ownB = try #require(FileSpace.sharing(box.path + "/pair/b.img")?.privateBytes)
+        // a holds the part b rewrote with c alone: its private size, read
+        // across the volume, says so although the scan never reads c.
+        #expect(FileSpace.sharing(box.path + "/pair/a.img")?.privateBytes == 0)
+
+        let pair = StorageScanner.scan(path: box.path + "/pair", workers: 2).root
+        // Of a and b, only what the volume says b holds alone is sure to be
+        // freed; the blocks they share may be c's too.
+        #expect(pair.reclaim.bytes == ownB)
+        let a = try #require(Reclaim.file(at: box.path + "/pair/a.img")), b = try #require(Reclaim.file(at: box.path + "/pair/b.img"))
+        #expect((a + b).bytes == ownB)
+    }
+
+    @Test func blocksOfAFamilyWithAMemberOutsideTheScanAreNotCountedFreed() throws {
+        let box = try Box()
+        let mb = 1 << 20
+        try box.sandbox.file("seen/a.img", bytes: 4 * mb)
+        try clone(box.sandbox, "seen/a.img", to: "unscanned/b.img")
+        try clone(box.sandbox, "seen/a.img", to: "seen/h.img")
+        rewrite(box.sandbox, "seen/h.img", at: 0, length: mb)
+        let ownH = try #require(FileSpace.sharing(box.path + "/seen/h.img")?.privateBytes)
+
+        let seen = StorageScanner.scan(path: box.path + "/seen", workers: 2).root
+        // b keeps every block a has, whatever h shares with a.
+        #expect(seen.reclaim.bytes == ownH)
+        let a = try #require(Reclaim.file(at: box.path + "/seen/a.img")), h = try #require(Reclaim.file(at: box.path + "/seen/h.img"))
+        #expect((a + h).bytes == ownH)
+    }
+
     @Test func reclaimSavedBeforeNamesWereCountedStillReads() throws {
         let json = #"{"bytes":7,"open":[{"device":1,"id":9},{"count":1,"total":2,"bytes":3}]}"#
         let old = try JSONDecoder().decode(Reclaim.self, from: Data(json.utf8))
