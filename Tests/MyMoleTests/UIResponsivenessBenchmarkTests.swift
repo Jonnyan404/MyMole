@@ -914,15 +914,25 @@ struct UIResponsivenessBenchmarkTests {
             sorted[min(sorted.count - 1, max(0, Int(ceil(Double(sorted.count) * fraction)) - 1))]
         }
         let interactionScope = ProcessInfo.processInfo.environment["MYMOLE_UI_BENCHMARK_SCOPE"] == "interaction"
-        let hardware = values.count == 1 || name.hasSuffix("frame-delivery")
+        let frames = name.contains("frame-delivery")
+        // One-off work, frame intervals and anything else measured by the
+        // clock alone, such as the time until a change shows.
+        let hardware = values.count == 1 || frames || cpu.isEmpty
         let gate = interactionScope ? (hardware ? "wall-liveness" : "thread-cpu") : "wall"
         let cpuP95 = cpu.isEmpty ? "n/a" : String(format: "%.3fms", percentile(cpu, 0.95))
         print(String(format: "ui-bench %@ n=%d p50=%.3fms p95=%.3fms p99=%.3fms max=%.3fms over33ms=%d budget=%.3fms cpu_p95=%@ gate=%@",
                      name, wall.count, percentile(wall, 0.5), percentile(wall, 0.95), percentile(wall, 0.99),
                      wall.last ?? 0, wall.filter { $0 > 33.3 }.count, budget, cpuP95, gate))
         guard ProcessInfo.processInfo.environment["MYMOLE_STRICT_UI_BENCHMARKS"] == "1" else { return }
+        // The budgets are for a physical Mac, which the local release gate
+        // holds them to. A shared virtual Mac runs the same work several
+        // times slower and draws without a GPU, so there the clock only
+        // shows whether the interface keeps going, and thread CPU is held
+        // to a multiple of the budget: enough to catch work that grows out
+        // of bounds, not small regressions.
+        let scale = interactionScope ? UIGate.virtualCPUScale : 1
         if interactionScope && hardware {
-            #expect((wall.last ?? 0) < (name.hasSuffix("frame-delivery") ? 100 : 1_000), "UI presentation stopped making progress")
+            #expect((wall.last ?? 0) < (values.count == 1 ? UIGate.virtualOneOff : UIGate.virtualFrameGap), "UI presentation stopped making progress")
             return
         }
         if interactionScope {
@@ -930,11 +940,12 @@ struct UIResponsivenessBenchmarkTests {
             guard cpu.count == values.count else { return }
         }
         let checked = interactionScope ? cpu : wall
-        #expect(percentile(checked, 0.95) <= budget, "UI service budget exceeded")
-        let p99Budget = p99 ?? (name.hasSuffix("frame-delivery") ? 33.3 : max(budget * 2, 33.3))
-        #expect(percentile(checked, 0.99) <= p99Budget, "UI p99 budget exceeded")
+        #expect(percentile(checked, 0.95) <= budget * scale, "UI service budget exceeded")
+        let p99Budget = p99 ?? (frames ? 33.3 : max(budget * 2, 33.3))
+        #expect(percentile(checked, 0.99) <= p99Budget * scale, "UI p99 budget exceeded")
         if budget < 100 {
-            #expect((wall.last ?? 0) < 100, "An interactive update blocked for 100 ms")
+            let stall = interactionScope ? UIGate.virtualFrameGap : 100
+            #expect((wall.last ?? 0) < stall, "An interactive update blocked for \(Int(stall)) ms")
         }
     }
 }
@@ -1041,6 +1052,19 @@ private struct BenchmarkStatusPanel: View {
 private struct UISample {
     let wall: Double
     let cpu: Double?
+}
+
+/// Limits on a virtual Mac, where the scope is "interaction";
+/// scripts/check-ui-coverage.py holds reports to the same numbers.
+private enum UIGate {
+    /// Thread CPU against the physical budgets. A shared virtual Mac spends
+    /// two to seven times as long on the same steps.
+    static let virtualCPUScale = 8.0
+    /// Milliseconds without a frame or between interactive steps before
+    /// the interface counts as stopped.
+    static let virtualFrameGap = 1_000.0
+    /// Milliseconds one-off work such as a first render may take.
+    static let virtualOneOff = 10_000.0
 }
 
 private struct UIWorkStamp {

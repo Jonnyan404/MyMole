@@ -8,6 +8,12 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 
+# The virtual Mac's limits, the same as UIGate in the benchmark tests: thread
+# CPU at a multiple of the physical budget, and the clock only for stops.
+VIRTUAL_CPU_SCALE = 8.0
+VIRTUAL_FRAME_GAP = 1_000.0
+VIRTUAL_ONE_OFF = 10_000.0
+
 
 def inventory():
     return json.loads((REPO / "Tests/UIInteractionCoverage.json").read_text())
@@ -51,20 +57,22 @@ def benchmarks(config, text):
         if not numbers["p50"] <= numbers["p95"] <= numbers["p99"] <= numbers["max"]:
             raise ValueError("Invalid KPI percentiles: " + name)
         gate = values["gate"]
+        frames = "frame-delivery" in name
         if gate == "wall":
-            p99_limit = 33.3 if name.endswith("frame-delivery") else max(numbers["budget"] * 2, 33.3)
+            p99_limit = 33.3 if frames else max(numbers["budget"] * 2, 33.3)
             if numbers["p95"] > numbers["budget"] or numbers["p99"] > p99_limit:
                 raise ValueError("Wall-time budget exceeded: " + name)
         elif gate == "thread-cpu":
             cpu = float(values["cpu_p95"].removesuffix("ms"))
-            if not math.isfinite(cpu) or not 0 < cpu <= numbers["budget"]:
+            if not math.isfinite(cpu) or not 0 < cpu <= numbers["budget"] * VIRTUAL_CPU_SCALE:
                 raise ValueError("CPU budget exceeded: " + name)
         elif gate == "wall-liveness":
-            if numbers["max"] >= (100 if name.endswith("frame-delivery") else 1000):
+            if numbers["max"] >= (VIRTUAL_ONE_OFF if int(values["n"]) == 1 else VIRTUAL_FRAME_GAP):
                 raise ValueError("Presentation stopped: " + name)
         else:
             raise ValueError("Unknown KPI gate: " + name)
-        if numbers["budget"] < 100 and numbers["max"] >= 100:
+        stall = 100 if gate == "wall" else VIRTUAL_FRAME_GAP
+        if numbers["budget"] < 100 and gate != "wall-liveness" and numbers["max"] >= stall:
             raise ValueError("Interactive wall-clock stall: " + name)
     return len(found)
 

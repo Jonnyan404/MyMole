@@ -40,11 +40,32 @@ class CoverageGuardTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 guard.benchmarks(self.config, self.report().replace("p95=0.002ms", f"p95={value}ms", 1))
 
+    def changed(self, name, *replacements):
+        lines = []
+        for line in self.lines:
+            if line.split()[1] == name:
+                for old, new in replacements:
+                    line = line.replace(old, new)
+            lines.append(line)
+        return "\n".join(lines)
+
     def test_cpu_and_stall_failures_are_refused(self):
-        for change in [self.lines[0].replace("gate=wall", "gate=thread-cpu").replace("cpu_p95=0.002", "cpu_p95=nan"),
-                       self.lines[0].replace("gate=wall", "gate=wall-liveness").replace("max=0.004", "max=1001")]:
+        frames = "main.sidebar.frame-delivery"
+        for text in [self.changed("table.load.10000", ("gate=wall", "gate=thread-cpu"), ("cpu_p95=0.002", "cpu_p95=nan")),
+                     self.changed("table.load.10000", ("gate=wall", "gate=wall-liveness"), ("max=0.004", "max=10001")),
+                     self.changed(frames, ("gate=wall", "gate=wall-liveness"), ("max=0.004", "max=1001")),
+                     self.changed("table.resize.10000", ("gate=wall", "gate=thread-cpu"), ("cpu_p95=0.002", "cpu_p95=134")),
+                     self.changed("table.resize.10000", ("gate=wall", "gate=thread-cpu"), ("max=0.004", "max=1001")),
+                     self.changed("table.resize.10000", ("max=0.004", "max=101"))]:
             with self.assertRaises(ValueError):
-                guard.benchmarks(self.config, "\n".join([change] + self.lines[1:]))
+                guard.benchmarks(self.config, text)
+
+    def test_a_virtual_mac_is_held_to_its_own_limits(self):
+        frames = "main.sidebar.frame-delivery"
+        for text in [self.changed("table.load.10000", ("gate=wall", "gate=wall-liveness"), ("max=0.004", "max=9000")),
+                     self.changed(frames, ("gate=wall", "gate=wall-liveness"), ("max=0.004", "max=900")),
+                     self.changed("table.resize.10000", ("gate=wall", "gate=thread-cpu"), ("cpu_p95=0.002", "cpu_p95=133"), ("max=0.004", "max=900"))]:
+            self.assertEqual(guard.benchmarks(self.config, text), len(self.lines))
 
     def test_missing_or_duplicate_e2e_evidence_is_refused(self):
         lines = ["ui-e2e " + name for name in self.config["e2eTests"].values()]
