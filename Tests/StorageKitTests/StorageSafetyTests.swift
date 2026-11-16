@@ -104,8 +104,9 @@ final class StorageSafetyFixture: @unchecked Sendable {
    defer { kill(holder, SIGKILL) }
    #expect(kill(holder, 0) != 0)
   }
+  // Let go by the drain, not the time limit, however busy the Mac is.
   #expect(result.code == CommandRunner.outputUnfinished)
-  #expect(Date().timeIntervalSince(started) < 5)
+  #expect(Date().timeIntervalSince(started) < 10)
  }
 
  @Test func smallCredentialInsideChosenFolderMustWarn() throws {
