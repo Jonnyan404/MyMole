@@ -379,7 +379,8 @@ final class CloneSightings: Sendable {
 
     func record(scanOf root: String, stop: () -> Bool) {
         let s = seen.withLock { $0 }
-        guard !s.overflow, !s.members.isEmpty || !s.holders.isEmpty else { return }
+        // A scan that read no clones still clears what earlier ones recorded here.
+        guard !s.overflow, !s.members.isEmpty || !s.holders.isEmpty || !CloneOverlaps.isEmpty else { return }
         CloneOverlaps.record(scanOf: root, members: s.members, holders: s.holders, stop: stop)
     }
 }
