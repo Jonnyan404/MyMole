@@ -126,7 +126,7 @@ extension Trasher {
         }
         var keeps: @Sendable (String) -> Bool
         do {
-            keeps = try gate.protections()
+            keeps = resolving(try gate.protections())
         } catch {
             for i in plan.items.indices { plan.set(i, .refused(protectionsUnreadable)) }
             return
@@ -139,7 +139,7 @@ extension Trasher {
             }
             if Date().timeIntervalSince(readAt) > refreshProtections {
                 do {
-                    keeps = try gate.protections()
+                    keeps = resolving(try gate.protections())
                     readAt = Date()
                 } catch {
                     for j in plan.items.indices[i...] { plan.set(j, .refused("Your protections couldn't be read, so it wasn't moved.")) }

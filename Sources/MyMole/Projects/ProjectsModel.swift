@@ -736,6 +736,7 @@ final class ProjectsModel {
                     protections: {
                         var read = current.merging(try ProjectStore.loadRules(base: base))
                         read.keepPaths.formUnion(try CleanKeepList.load(from: keepList).paths)
+                        read.keepPaths.formUnion(read.keepPaths.compactMap(Trasher.resolvingParent))
                         let now = read
                         return { now.guards($0) }
                     })
