@@ -357,8 +357,8 @@ public enum DuplicateFinder {
     /// differs from the copies, so it isn't one of them. Where the blocks of
     /// each family and of the files searched that share some of theirs are
     /// on the device (`F_LOG2PHYS_EXT`) tells how much, as do the groups
-    /// Disk Map scans recorded (`CloneOverlaps`). A rewritten clone outside
-    /// the search and those scans is unknown.
+    /// Disk Map scans recorded (`CloneOverlaps`), and a rewritten clone
+    /// outside both is found by its length (`SameSizeFiles`).
     static func withBlocksHeldElsewhere(_ groups: [DuplicateGroup], among candidates: [Found], progress: ScanProgress) -> [DuplicateGroup] {
         var wholes: [CloneFamily: String] = [:]
         for g in groups where g.bytes >= Reclaim.checkedCopy {
@@ -381,6 +381,17 @@ public enum DuplicateFinder {
                 holders[f.device, default: []].append(f.path)
                 count += 1
             }
+        }
+        // Clones rewritten outside the search, found by the families' length.
+        var lengths: [Int64: Set<Int32>] = [:]
+        for (key, path) in wholes {
+            var st = stat()
+            if lstat(path, &st) == 0 { lengths[Int64(st.st_size), default: []].insert(key.device) }
+        }
+        let searched = Set(candidates.map(\.path))
+        let room = CloneOverlaps.compareLimit - holders.values.reduce(0) { $0 + $1.count }
+        for h in SameSizeFiles.holders(lengths: lengths, skip: searched.contains, limit: room) where !progress.isCancelled {
+            holders[h.device, default: []].append(h.path)
         }
         for (device, paths) in holders where !progress.isCancelled {
             var ranges: [Range<Int64>] = []

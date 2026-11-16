@@ -97,6 +97,32 @@ import Testing
         #expect(g.spare == g.bytes && g.freed(going: [backup]) == [backup: g.bytes])
     }
 
+    @Test func clonesRewrittenOutsideTheSearchKeepWhatTheyStillShare() throws {
+        let box = try Sandbox()
+        let mb = 1 << 20
+        try box.file("Images/one.img", bytes: 4 * mb)
+        try clone(box, "Images/one.img", to: "Images/two.img")
+        try clone(box, "Images/one.img", to: "Devices/booted.img")
+        let booted = box.path + "/Devices/booted.img"
+        let fd = open(booted, O_WRONLY)
+        var bytes = [UInt8](repeating: 0, count: mb)
+        arc4random_buf(&bytes, mb)
+        #expect(pwrite(fd, bytes, mb, off_t(mb)) == mb && fsync(fd) == 0 && close(fd) == 0)
+        let own = try #require(FileSpace.sharing(booted)?.privateBytes)
+        let one = box.path + "/Images/one.img", two = box.path + "/Images/two.img"
+        let pair = box.allocated("Images/one.img") - (box.allocated("Devices/booted.img") - own)
+        #expect(pair > 0)
+
+        // Only the pair is searched. A folder Spotlight leaves out keeps the
+        // rewritten clone unknown; once indexed, its length finds it.
+        let unknown = try #require(DuplicateFinder.find(in: [box.path + "/Images"], minimum: 100_000, workers: 1).groups.first)
+        #expect(unknown.freed(going: [one, two]).values.reduce(0, +) == unknown.bytes)
+        SameSizeFiles.indexedForTests.withLock { _ = $0.insert(booted) }
+        defer { SameSizeFiles.indexedForTests.withLock { _ = $0.remove(booted) } }
+        let g = try #require(DuplicateFinder.find(in: [box.path + "/Images"], minimum: 100_000, workers: 1).groups.first)
+        #expect(g.freed(going: [one, two]).values.reduce(0, +) == pair)
+    }
+
     @Test func clonesOfAFileOutsideTheSearchFreeNothing() throws {
         let box = try Sandbox()
         // The original lies outside the searched folders, as a simulator
