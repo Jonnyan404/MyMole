@@ -330,6 +330,31 @@ import Testing
         #expect((a + h).bytes == ownH)
     }
 
+    @Test func aWholePairFreesLessWhatAClonePastTheScanStillHolds() throws {
+        let box = try Box()
+        let mb = 1 << 20
+        try box.sandbox.file("pair/a.img", bytes: 4 * mb)
+        try clone(box.sandbox, "pair/a.img", to: "pair/b.img")
+        try clone(box.sandbox, "pair/a.img", to: "unscanned/c.img")
+        rewrite(box.sandbox, "unscanned/c.img", at: 0, length: mb)
+        let c = box.path + "/unscanned/c.img"
+        let copy = box.sandbox.allocated("pair/a.img")
+        let sharedC = box.sandbox.allocated("unscanned/c.img") - (try #require(FileSpace.sharing(c)?.privateBytes))
+        // The pair reads as any whole pair: nothing the volume says of a or b names c.
+        #expect(FileSpace.sharing(box.path + "/pair/a.img")?.cloneCount == 2)
+
+        // A folder Spotlight leaves out keeps c unknown.
+        #expect(StorageScanner.scan(path: box.path + "/pair", workers: 2).root.reclaim.bytes == copy)
+        SameSizeFiles.indexedForTests.withLock { _ = $0.insert(c) }
+        defer { SameSizeFiles.indexedForTests.withLock { _ = $0.remove(c) } }
+        let pair = StorageScanner.scan(path: box.path + "/pair", workers: 2).root
+        #expect(pair.reclaim.bytes == copy - sharedC)
+        let a = try #require(Reclaim.file(at: box.path + "/pair/a.img")), b = try #require(Reclaim.file(at: box.path + "/pair/b.img"))
+        #expect((a + b).bytes == copy - sharedC)
+        let withC = try #require(Reclaim.file(at: c))
+        #expect((a + b + withC).bytes == copy + box.sandbox.allocated("unscanned/c.img") - sharedC)
+    }
+
     @Test func scanningAFolderAgainRecordsItsSharedBlocksOnce() throws {
         let box = try Box()
         let mb = 1 << 20

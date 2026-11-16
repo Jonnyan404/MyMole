@@ -20,8 +20,9 @@ import Synchronization
 /// read across the volume, so when it is less than what the clone holds
 /// apart from every file read, a file outside the scans holds the rest: its
 /// groups then stay open, never counted as freed. So do the groups of a
-/// family whose members weren't all read. Whole clones rewritten outside
-/// every scan leave no such trace, and what they share is counted as freed.
+/// family whose members weren't all read. A clone rewritten outside every
+/// scan from a family read whole leaves no such trace; its length is found
+/// instead (`SameSizeFiles`), and its blocks are compared like any other.
 public enum CloneOverlaps {
     struct Family: Sendable, Equatable {
         /// Paths of the whole members, the files the volume counts.
@@ -186,17 +187,19 @@ public enum CloneOverlaps {
                 out[key] = s.families[key]?.members.filter { !path($0, isIn: root) }
             }
         }
+        var read = families
+        for (key, outside) in known { read[key]?.members.formUnion(outside) }
+        let unread = stop() ? [] : unreadHolders(of: read, besides: holders, scanOf: root)
+        let holders = holders + unread
         var found: [(device: Int32, files: Set<String>, families: Set<CloneFamily>, bytes: Int64, outside: Bool)] = []
         if !holders.isEmpty {
-            var read = families
-            for (key, outside) in known { read[key]?.members.formUnion(outside) }
             guard let groups = compare(families: read, holders: holders, stop: stop) else { return }
             found = groups
         }
         guard !stop() else { return }
         // Files outside `root` this scan read as well: its groups of them
         // replace those an earlier scan recorded.
-        let reread = Set(known.values.joined())
+        let reread = Set(known.values.joined()).union(unread.map(\.path))
         state.withLock { s in
             // What this scan saw again goes; what reaches past it stays.
             for (id, g) in s.groups where g.files.allSatisfy({ path($0, isIn: root) || reread.contains($0) }) { s.groups[id] = nil }
@@ -222,6 +225,23 @@ public enum CloneOverlaps {
             }
             s.reindex()
         }
+    }
+
+    /// Rewritten clones outside `root` that no scan read and that may hold
+    /// blocks of the families whose members were all read, found by length
+    /// (`SameSizeFiles`).
+    private static func unreadHolders(of families: [CloneFamily: Family], besides holders: [Holder], scanOf root: String) -> [Holder] {
+        let room = compareLimit - holders.count
+        guard room > 0 else { return [] }
+        var lengths: [Int64: Set<Int32>] = [:]
+        for (key, family) in families.sorted(by: { $0.value.copy > $1.value.copy }) where family.members.count >= family.total {
+            guard lengths.count < SameSizeFiles.lengthLimit, let one = family.members.min() else { continue }
+            var st = stat()
+            guard lstat(one, &st) == 0 else { continue }
+            lengths[Int64(st.st_size), default: []].insert(key.device)
+        }
+        let known = Set(holders.map(\.path)).union(families.values.flatMap(\.members))
+        return SameSizeFiles.holders(lengths: lengths, skip: { path($0, isIn: root) || known.contains($0) }, limit: room)
     }
 
     /// Per volume, every stretch of blocks that a rewritten clone shares
