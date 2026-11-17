@@ -1,4 +1,4 @@
-import Synchronization
+import SynchronizationCompat
 import SwiftUI
 
 /// The one way the charts write a name onto a colored block. A name is drawn

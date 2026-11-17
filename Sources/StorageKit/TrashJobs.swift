@@ -1,6 +1,6 @@
 import Darwin
 import Foundation
-import Synchronization
+import SynchronizationCompat
 
 /// What a destructive job does to its items.
 public enum TrashAction: String, Sendable {

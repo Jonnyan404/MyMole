@@ -225,7 +225,7 @@ struct StatusTelemetry: View {
             Label("Details", systemImage: "chevron.right").frame(minHeight: 24).contentShape(.rect)
         }
             .buttonStyle(.borderless).font(.caption).foregroundStyle(.secondary)
-            .allowsWindowActivationEvents()
+            .allowsWindowActivationEventsCompat()
             .accessibilityLabel("Details for \(card.title)")
             .popover(isPresented: $showingDetails, arrowEdge: .bottom) {
                 ViewThatFits(in: .vertical) {
@@ -339,7 +339,7 @@ struct StatusTelemetry: View {
             Label(title, systemImage: symbol).frame(minHeight: 24).contentShape(.rect)
         }
             .buttonStyle(.borderless).font(.caption).foregroundStyle(palette.accentText.color)
-            .allowsWindowActivationEvents()
+            .allowsWindowActivationEventsCompat()
     }
 }
 

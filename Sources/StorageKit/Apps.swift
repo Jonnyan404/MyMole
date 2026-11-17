@@ -1,6 +1,6 @@
 import Darwin
 import Foundation
-import Synchronization
+import SynchronizationCompat
 
 // Installed apps and what they leave in the user's Library. Leftovers are
 // matched by the app's exact bundle ID, or its exact name in the two places

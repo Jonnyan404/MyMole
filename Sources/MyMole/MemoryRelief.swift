@@ -18,7 +18,10 @@ enum MemoryRelief {
 final class MemoryPressureWatch {
     enum Level { case warning, critical }
 
-    private let source: DispatchSourceMemoryPressure
+    // deinit runs outside the main actor and has to cancel the source, which
+    // the macOS 14 SDK types as non-Sendable. Every other read is on the main
+    // actor, and nothing else touches it once deinit begins.
+    private nonisolated(unsafe) let source: DispatchSourceMemoryPressure
 
     init(_ handle: @escaping @MainActor (Level) -> Void) {
         source = DispatchSource.makeMemoryPressureSource(eventMask: [.warning, .critical], queue: .main)

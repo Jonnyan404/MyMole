@@ -2,7 +2,7 @@ import CoreGraphics
 import Darwin
 import Foundation
 import ImageIO
-import Synchronization
+import SynchronizationCompat
 
 /// A photo or picture among others that look the same: a burst, a resized
 /// or re-saved copy, an edit exported again.

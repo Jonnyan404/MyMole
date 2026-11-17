@@ -1,6 +1,6 @@
 import Foundation
 import os
-import Synchronization
+import SynchronizationCompat
 
 /// How long the interface's own work takes, so a slow moment can be put
 /// down to reading, working out or drawing. Kept on this Mac only: every

@@ -1,6 +1,6 @@
 import Darwin
 import Foundation
-import Synchronization
+import SynchronizationCompat
 
 /// Discovered paths survive pane changes for this session. Every ownership
 /// decision rereads them; discovery never supplies cached deletion approval.

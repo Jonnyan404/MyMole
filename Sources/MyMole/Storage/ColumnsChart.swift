@@ -24,7 +24,7 @@ struct ColumnsChart: View {
                     guard r.height >= 1 else { continue }
                     let color = ChartColors.color(for: arc.segment, branch: arc.branch, depth: arc.depth, byKind: model.colorByKind)
                     let hot = model.isHighlighted(arc.segment)
-                    let fill = hot ? color.mix(with: .white, by: 0.3) : color
+                    let fill = hot ? color.blended(with: .white, by: 0.3) : color
                     batch.add(Path(roundedRect: r.insetBy(dx: 1, dy: 0.5), cornerRadius: min(4, r.height / 3)), color: fill, edged: false)
                     if r.height >= 20 { labels.append((arc, r, fill)) }
                 }

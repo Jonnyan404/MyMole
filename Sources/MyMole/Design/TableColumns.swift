@@ -68,7 +68,12 @@ struct TableColumnsButton: NSViewRepresentable {
         let button = NSPopUpButton(frame: .zero, pullsDown: true)
         button.bezelStyle = .rounded
         button.autoenablesItems = false
-        button.altersStateOfSelectedItem = false
+        // macOS 15 only: without it the pull-down may restyle itself once an
+        // item is chosen. On macOS 14 the column list still works, it just
+        // keeps the system's own selected-item appearance.
+        if #available(macOS 15.0, *) {
+            button.altersStateOfSelectedItem = false
+        }
         button.controlSize = .small
         button.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
         button.toolTip = String(localized: "Show or hide columns. You can also right-click a column heading.")

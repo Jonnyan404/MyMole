@@ -1,7 +1,7 @@
 import Foundation
 import StorageKit
 import SwiftUI
-import Synchronization
+import SynchronizationCompat
 
 /// State of the Duplicates pane: the groups of identical files found, which
 /// copies are chosen for the Trash, and what the last move can undo. One

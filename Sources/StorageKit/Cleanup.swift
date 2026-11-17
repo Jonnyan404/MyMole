@@ -1,6 +1,6 @@
 import Darwin
 import Foundation
-import Synchronization
+import SynchronizationCompat
 
 // Deep Clean on MyMole's own rules: caches, logs and tool downloads in the
 // user's own Library and home folder, which apps and tools rebuild by

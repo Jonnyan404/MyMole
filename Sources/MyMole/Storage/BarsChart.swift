@@ -41,7 +41,7 @@ struct BarsChart: View {
             }
             GeometryReader { g in
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(hot ? color.mix(with: .white, by: 0.3) : color)
+                    .fill(hot ? color.blended(with: .white, by: 0.3) : color)
                     .frame(width: max(4, g.size.width * fraction))
             }
             .frame(height: 14)

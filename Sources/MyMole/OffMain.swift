@@ -1,6 +1,6 @@
 import Foundation
 import Observation
-import Synchronization
+import SynchronizationCompat
 
 /// One projection worker, one replaceable pending request. Earlier visible
 /// results remain available while the newest input is being prepared.

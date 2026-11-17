@@ -1,5 +1,5 @@
 import StorageKit
-import Synchronization
+import SynchronizationCompat
 
 /// One search's updates, shared by its workers and its main-actor publisher.
 /// The reference owns the lock; no task captures a local noncopyable mutex.

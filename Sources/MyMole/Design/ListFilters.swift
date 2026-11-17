@@ -58,7 +58,7 @@ struct DSFilterBody<Content: View>: View {
     @ViewBuilder var content: Content
 
     var body: some View {
-        Group(subviews: content) { fields in
+        SubviewsGroup(content) { fields in
             if fields.count > 12 {
                 List {
                     ForEach(fields) { field in
@@ -120,7 +120,7 @@ final class FilterBodyScroll: NSScrollView {
     func invalidateContent() {
         host.rootView = AnyView(content.frame(maxWidth: .infinity, alignment: .topLeading)
             .fixedSize(horizontal: false, vertical: true)
-            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { [weak self] height in
+            .onGeometryChangeCompat(for: CGFloat.self) { $0.size.height } action: { [weak self] height in
                 guard let self, abs(self.reportedHeight - height) > 0.5 else { return }
                 self.reportedHeight = height
                 self.needsLayout = true

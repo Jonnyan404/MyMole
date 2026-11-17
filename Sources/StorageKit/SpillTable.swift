@@ -1,5 +1,5 @@
 import Foundation
-import Synchronization
+import SynchronizationCompat
 
 /// A large list of files kept on disk instead of in memory, the way Inkline
 /// opens a document it can't keep resident and QuikZip keeps only its hot

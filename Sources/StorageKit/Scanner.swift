@@ -1,6 +1,6 @@
 import Darwin
 import Foundation
-import Synchronization
+import SynchronizationCompat
 
 /// Live counters, readable from any thread while a scan runs.
 public final class ScanProgress: Sendable {

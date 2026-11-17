@@ -1,5 +1,5 @@
 import Foundation
-import Synchronization
+import SynchronizationCompat
 
 /// Picture fingerprints worked out before, so a search again reads only
 /// pictures that are new or changed. An entry counts only for the same

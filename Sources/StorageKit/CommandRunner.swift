@@ -1,6 +1,6 @@
 import Darwin
 import Foundation
-import Synchronization
+import SynchronizationCompat
 
 /// Runs a program and returns its exit code and output. Injected so tests
 /// never run real system programs.

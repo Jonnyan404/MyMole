@@ -1,7 +1,7 @@
 import CoreServices
 import Darwin
 import Foundation
-import Synchronization
+import SynchronizationCompat
 
 /// Clones no scan or search read that may still hold blocks of a whole
 /// clone family. A clone rewritten in part keeps its length, and the

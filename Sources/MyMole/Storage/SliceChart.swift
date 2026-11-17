@@ -35,7 +35,7 @@ struct SliceChart: View {
                     for s in slices {
                         let hot = s.segment.map(model.isHighlighted) ?? false
                         let path = g.path(s)
-                        ctx.fill(path, with: .color(hot ? s.color.mix(with: .white, by: 0.3) : s.color))
+                        ctx.fill(path, with: .color(hot ? s.color.blended(with: .white, by: 0.3) : s.color))
                         ctx.stroke(path, with: .color(palette.workspace.color), lineWidth: 1.5)
                     }
                     drawLabels(ctx, g, slices: slices)

@@ -1,5 +1,5 @@
 import Foundation
-import Synchronization
+import SynchronizationCompat
 
 /// How many disk walks run at once, whichever pane started them. Smart
 /// Scan, a launch's prefetch and a pane's own Rescan can each start

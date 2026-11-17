@@ -1,6 +1,6 @@
 import Darwin
 import Foundation
-import Synchronization
+import SynchronizationCompat
 
 /// Blocks that clones rewritten since share, by which files hold them.
 ///

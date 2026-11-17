@@ -61,7 +61,7 @@ struct DSSection<Content: View, Accessory: View>: View {
             }
             Group {
                 if rows {
-                    Group(subviews: content) { subviews in
+                    SubviewsGroup(content) { subviews in
                         VStack(alignment: .leading, spacing: 0) {
                             ForEach(subviews) { row in
                                 row
@@ -770,7 +770,7 @@ private struct BottomFeedback<Toast: View>: ViewModifier {
             .overlay(alignment: .bottom) {
                 ZStack { toast }
                     .padding(.horizontal, DS.Space.lg)
-                    .onGeometryChange(for: CGFloat.self) { ceil($0.size.height) } action: { next in
+                    .onGeometryChangeCompat(for: CGFloat.self) { ceil($0.size.height) } action: { next in
                         withAnimation(Motion.content) { height = next }
                     }
                     .padding(.bottom, DS.Space.lg)

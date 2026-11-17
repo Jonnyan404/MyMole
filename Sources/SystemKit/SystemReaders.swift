@@ -1,8 +1,11 @@
-import Darwin
 import Foundation
 import IOKit
 import IOKit.ps
-import Synchronization
+import SynchronizationCompat
+// mach_task_self_ is a mutable C global; the SDK shipped with macOS 14 does not
+// annotate it, so Swift 6 rejects the reference. Reading it is safe after
+// launch, and @preconcurrency keeps that one diagnostic out of the build.
+@preconcurrency import Darwin
 
 // The live readers: kernel counters through sysctl and Mach, volumes through
 // Foundation, disks and the battery through IOKit, processes through ps.

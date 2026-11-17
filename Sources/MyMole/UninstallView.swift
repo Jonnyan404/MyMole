@@ -401,7 +401,7 @@ struct UninstallView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .onGeometryChange(for: Int.self) { max(1, Int(($0.size.width + Theme.gap) / (DS.Size.appTileMinimum + Theme.gap))) } action: { gridColumns = $0 }
+                .onGeometryChangeCompat(for: Int.self) { max(1, Int(($0.size.width + Theme.gap) / (DS.Size.appTileMinimum + Theme.gap))) } action: { gridColumns = $0 }
                 .onKeyPress(keys: [.leftArrow, .rightArrow, .upArrow, .downArrow]) { key in
                     guard key.modifiers.isEmpty, let current = filtered.firstIndex(where: { $0.path == focusedApp }) else { return .ignored }
                     let columns = gridColumns

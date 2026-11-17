@@ -23,7 +23,7 @@ struct SunburstChart: View {
                         let hot = model.isHighlighted(arc.segment)
                         let color = ChartColors.color(
                             for: arc.segment, branch: arc.branch, depth: arc.depth, byKind: model.colorByKind)
-                        batch.add(g.path(arc), color: hot ? color.mix(with: .white, by: 0.35) : color)
+                        batch.add(g.path(arc), color: hot ? color.blended(with: .white, by: 0.35) : color)
                     }
                     batch.draw(in: ctx, edge: palette.workspace.color)
                 }

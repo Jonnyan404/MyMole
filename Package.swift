@@ -8,7 +8,9 @@ import PackageDescription
 let package = Package(
     name: "MyMole",
     platforms: [
-        .macOS(.v26)
+        // 14.4 rather than 14.0: NSHostingMenu, used by the pane toolbars,
+        // arrived in 14.4. The build host runs 14.8.9.
+        .macOS("14.4")
     ],
     products: [
         .executable(name: "MyMole", targets: ["MyMole"]),
@@ -18,18 +20,26 @@ let package = Package(
         .executable(name: "MyMoleHelper", targets: ["MyMoleHelper"]),
     ],
     targets: [
+        // Back-deploy of Swift's Synchronization module (Mutex/Atomic are
+        // macOS 15+ in the standard library) so the package runs on macOS 14.
+        .target(
+            name: "SynchronizationCompat",
+            path: "Sources/SynchronizationCompat"
+        ),
         // Disk analysis: parallel bulk-attribute scanner, folder tree, file
         // kinds, chart layouts, snapshots for change tracking, projects,
         // installers, Deep Clean rules, apps and leftovers, Trash + undo,
         // cleanup history.
         .target(
             name: "StorageKit",
+            dependencies: ["SynchronizationCompat"],
             path: "Sources/StorageKit"
         ),
         // Live readings of the Mac itself: CPU, memory, volumes, disk and
         // network throughput, battery and the busiest processes.
         .target(
             name: "SystemKit",
+            dependencies: ["SynchronizationCompat"],
             path: "Sources/SystemKit"
         ),
         // What runs as root, and the contract with it: maintenance tasks,
@@ -37,7 +47,7 @@ let package = Package(
         // prints (versioned JSON on its command line/output or authenticated XPC).
         .target(
             name: "PrivilegedKit",
-            dependencies: ["StorageKit"],
+            dependencies: ["StorageKit", "SynchronizationCompat"],
             path: "Sources/PrivilegedKit"
         ),
         // The privileged tool: handles approved requests under a shared lock,
@@ -49,8 +59,13 @@ let package = Package(
         ),
         .executableTarget(
             name: "MyMole",
-            dependencies: ["StorageKit", "SystemKit", "PrivilegedKit"],
-            path: "Sources/MyMole"
+            dependencies: ["StorageKit", "SystemKit", "PrivilegedKit", "SynchronizationCompat"],
+            path: "Sources/MyMole",
+            // Swift 6.2.4 on this toolchain asserts while emitting debug info
+            // for a boxed CGFloat in this module ("Failed to reconstruct type
+            // for $s12CoreGraphics7CGFloatVz_XxD"). The flag below is the
+            // workaround the assertion itself suggests.
+            swiftSettings: [.unsafeFlags(["-Xfrontend", "-disable-round-trip-debug-types"])]
         ),
         .testTarget(
             name: "MyMoleTests",

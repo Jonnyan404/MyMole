@@ -1,5 +1,5 @@
 import Foundation
-import Synchronization
+import SynchronizationCompat
 
 /// One core's tick counters since boot.
 public struct CoreTicks: Sendable, Equatable {

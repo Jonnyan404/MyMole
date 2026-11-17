@@ -1,5 +1,5 @@
 import Foundation
-import Synchronization
+import SynchronizationCompat
 
 /// Hands values sent from any thread to the main actor, at most one
 /// delivery per `interval`, always the latest: a scan reporting from many

@@ -1,4 +1,4 @@
-import Synchronization
+import SynchronizationCompat
 
 /// Separates an uncancellable filesystem read from cooperative processing of
 /// the published tree. Retirement prevents a late reader from starting that

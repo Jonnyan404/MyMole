@@ -52,7 +52,7 @@ struct TreemapChart: View {
                     ctx.fill(
                         shape,
                         with: .linearGradient(
-                            Gradient(colors: [fill.mix(with: .white, by: 0.12), fill.mix(with: .black, by: 0.12)]),
+                            Gradient(colors: [fill.blended(with: .white, by: 0.12), fill.blended(with: .black, by: 0.12)]),
                             startPoint: c.rect.origin, endPoint: CGPoint(x: c.rect.maxX, y: c.rect.maxY)))
                     if c.level == 1 { outlines.addPath(shape) }
                 }
@@ -118,7 +118,7 @@ struct TreemapChart: View {
     private func fill(for cell: Cell) -> Color {
         if cell.rest > 0 { return Color.gray.opacity(0.35) }
         let color = ChartColors.color(for: cell.segment, branch: cell.branch, depth: cell.level, byKind: model.colorByKind)
-        return model.isHighlighted(cell.segment) ? color.mix(with: .white, by: 0.3) : color
+        return model.isHighlighted(cell.segment) ? color.blended(with: .white, by: 0.3) : color
     }
 
     private func name(of segment: Segment) -> String {

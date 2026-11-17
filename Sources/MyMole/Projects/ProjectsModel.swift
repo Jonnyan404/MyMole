@@ -306,16 +306,17 @@ final class ProjectsModel {
         // Projects walks every project folder, so even a scan someone waits
         // on stays a step below the other panes.
         let list = listProjects
-        scanJob = Task.detached(priority: level.priority(background: true)) { [weak self] in
+        let model = WeakReference(self)
+        scanJob = Task.detached(priority: level.priority(background: true)) {
             let all = list(
                 roots, rules, p, workers,
                 { found in
-                    DispatchQueue.main.async { MainActor.assumeIsolated { self?.found(found, run: p) } }
+                    DispatchQueue.main.async { MainActor.assumeIsolated { model.value?.found(found, run: p) } }
                 },
                 { done in
-                    DispatchQueue.main.async { MainActor.assumeIsolated { self?.measured(done, run: p) } }
+                    DispatchQueue.main.async { MainActor.assumeIsolated { model.value?.measured(done, run: p) } }
                 })
-            DispatchQueue.main.async { MainActor.assumeIsolated { self?.finished(all, run: p) } }
+            DispatchQueue.main.async { MainActor.assumeIsolated { model.value?.finished(all, run: p) } }
         }
     }
 
@@ -903,7 +904,8 @@ final class ProjectsModel {
         let all = footprints.map(\.project)
         let measure = measureProject
         rescanTasks[project]?.cancel()
-        rescanTasks[project] = Task.detached(priority: .userInitiated) { [weak self] in
+        let model = WeakReference(self)
+        rescanTasks[project] = Task.detached(priority: .userInitiated) {
             let fresh = await ScanBudget.shared.run(background: false) { measure(f.project, all, rules) }
             guard !Task.isCancelled, let fresh else { return }
             DispatchQueue.main.async {
@@ -911,14 +913,14 @@ final class ProjectsModel {
                     // Only the newest measure of the project lands, and only
                     // it ends the project's measuring; a full scan since
                     // owns every project.
-                    guard let self, self.rescanJobs[project] == job else { return }
-                    self.rescanJobs[project] = nil
-                    self.rescanTasks[project] = nil
-                    self.rescanning.remove(project)
-                    guard let i = self.footprints.firstIndex(where: { $0.id == project }) else { return }
-                    self.dropContents(touching: f.items.flatMap(\.entries).map(\.path))
-                    self.footprints[i] = fresh
-                    self.prune()
+                    guard let model = model.value, model.rescanJobs[project] == job else { return }
+                    model.rescanJobs[project] = nil
+                    model.rescanTasks[project] = nil
+                    model.rescanning.remove(project)
+                    guard let i = model.footprints.firstIndex(where: { $0.id == project }) else { return }
+                    model.dropContents(touching: f.items.flatMap(\.entries).map(\.path))
+                    model.footprints[i] = fresh
+                    model.prune()
                 }
             }
         }
