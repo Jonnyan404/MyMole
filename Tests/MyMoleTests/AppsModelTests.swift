@@ -1042,7 +1042,7 @@ import Testing
         #expect(await model.uninstall(app, leftovers: [cache, cache]) == .done)
         #expect(!home.exists("Library/Caches/com.vendor.Editor"))
         let text = try #require(model.notice?.text)
-        #expect(text.contains("and 1 leftover ") && !text.contains("couldn't be moved"))
+        #expect(text.contains("and 1 leftover") && !text.contains("couldn't be moved"))
         model.undoUninstall()
         await model.undoJob?.value
         #expect(home.exists("Applications/Editor.app/Contents/Info.plist") && home.exists("Library/Caches/com.vendor.Editor/c"))
@@ -1112,7 +1112,7 @@ import Testing
         #expect(asked.calls.count == 1)
         #expect(asked.calls.first?.paths == found.map(\.path).filter { $0 != helper })
         #expect(model.systemProblems.map(\.path) == [helper])
-        #expect(model.notice?.text.contains("1 system item stayed") == true)
+        #expect(model.notice.map { $0.text.contains("1 system item") && $0.text.contains("stayed") } == true)
     }
 
     final class Asked { var calls: [(paths: [String], appID: String, ids: [String])] = [] }
@@ -1175,7 +1175,7 @@ import Testing
         #expect(asked.calls.first?.paths == picked.map(\.path))
         #expect(asked.calls.first?.appID == "com.vendor.Editor")
         #expect(asked.calls.first?.ids == ["com.vendor.Editor"])
-        #expect(model.notice?.text.contains("1 system item deleted for good") == true)
+        #expect(model.notice.map { $0.text.contains("1 system item") && $0.text.contains("deleted for good") } == true)
     }
 
     @Test func anotherInstalledAppsLongerIDKeepsItsSystemFiles() async throws {

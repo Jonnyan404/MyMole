@@ -44,7 +44,7 @@ struct StartupView: View {
             PaneTool.button("startup.reload", "Reload", symbol: "arrow.clockwise", help: "Read the launch folders again") { model.load() }
         }
         .actionConfirmation(
-            String(localized: "Move \(model.chosen.count.formatted()) startup item\(model.chosen.count == 1 ? "" : "s") to the Trash?"),
+            String(localized: "Move \(model.chosen.count) startup items to the Trash?"),
             isPresented: $confirming,
             message: String(localized: "\(model.chosenItems.map(\.label).sorted().joined(separator: ", ")). They stop starting from the next login; one that's running now keeps running until then, or until you quit its app. You can undo right after, or put them back from the Trash later.")
         ) { model.trashChosen() }
@@ -57,9 +57,9 @@ struct StartupView: View {
             if show == .jobs {
                 DSMetric(
                     jobs.count.formatted(),
-                    "item\(jobs.count == 1 ? "" : "s") start\(jobs.count == 1 ? "s" : "") by \(jobs.count == 1 ? "itself" : "themselves")")
+                    "\(jobs.count) items start by themselves")
             } else {
-                DSMetric(plugins.count.formatted(), "plug-in\(plugins.count == 1 ? "" : "s") in your Library and the one for every user")
+                DSMetric(plugins.count.formatted(), "\(plugins.count) plug-ins in your Library and the one for every user")
             }
         } actions: {
             DSControlField("Filter startup items and plug-ins") {
@@ -81,7 +81,7 @@ struct StartupView: View {
                 DSCapsule("Read \(at.formatted(.relative(presentation: .named)))", symbol: "clock")
             }
             if model.leftovers > 0 {
-                DSCountCapsule(model.leftovers, "leftover\(model.leftovers == 1 ? "" : "s"): the program is gone", tint: .orange)
+                DSCountCapsule(model.leftovers, "\(model.leftovers) leftovers: the program is gone", tint: .orange)
             }
             if show == .jobs {
                 // Where the rest is, and what the Running column means: standing facts, kept quiet.
@@ -93,7 +93,7 @@ struct StartupView: View {
             }
             if !model.broken.isEmpty {
                 DSCapsule(
-                    "\(model.broken.count) job list\(model.broken.count == 1 ? "" : "s") couldn't be read",
+                    "\(model.broken.count) job lists couldn't be read",
                     symbol: "exclamationmark.triangle.fill", tint: .orange
                 )
                 .help(
@@ -102,7 +102,7 @@ struct StartupView: View {
             }
             if !model.unreadable.isEmpty {
                 DSCapsule(
-                    "\(model.unreadable.count) folder\(model.unreadable.count == 1 ? "" : "s") couldn't be read",
+                    "\(model.unreadable.count) folders couldn't be read",
                     symbol: "exclamationmark.triangle.fill", tint: .orange
                 )
                 .help(model.unreadable.joined(separator: ", "))

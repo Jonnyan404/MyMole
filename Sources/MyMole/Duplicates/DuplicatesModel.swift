@@ -332,9 +332,9 @@ final class DuplicatesModel {
             chosen.formUnion(g.files.filter { $0.path != kept.path && !self.keep.protects($0.path) }.map(\.path))
         }
         if without > 0 {
-            show(Notice(text: String(localized: "\(without) file\(without == 1 ? " has" : "s have") no copy in that folder, so nothing of \(without == 1 ? "it" : "them") is chosen."), canUndo: false))
+            show(Notice(text: String(localized: "\(without) files have no copy in that folder, so nothing of them is chosen."), canUndo: false))
         } else if tagged > 0 {
-            show(Notice(text: String(localized: "The copies of \(tagged) file\(tagged == 1 ? "" : "s") have different tags, so they're left for you to choose."), canUndo: false))
+            show(Notice(text: String(localized: "The copies of \(tagged) files have different tags, so they're left for you to choose."), canUndo: false))
         }
     }
 
@@ -431,7 +431,7 @@ final class DuplicatesModel {
             CleanupLog.submit(record, to: logURL)
             var text = moved.isEmpty
                 ? String(localized: "Nothing was moved")
-                : String(localized: "Moved \(moved.count) cop\(moved.count == 1 ? "y" : "ies") (\(ByteSize.format(total))) to the Trash")
+                : String(localized: "Moved \(moved.count) copies (\(ByteSize.format(total))) to the Trash")
             if picked.count > moved.count { text += String(localized: " · \(picked.count - moved.count) left alone") }
             show(Notice(text: text, canUndo: !moved.isEmpty))
             startScanAfterTrash()
@@ -462,7 +462,7 @@ final class DuplicatesModel {
             }
             show(Notice(
                 text: failed.isEmpty
-                    ? String(localized: "Restored \(back.count) cop\(back.count == 1 ? "y" : "ies")")
+                    ? String(localized: "Restored \(back.count) copies")
                     : String(localized: "Restored \(back.count); \(failed.count) couldn't be put back. Undo tries those again."),
                 canUndo: !failed.isEmpty))
             scanAfterTrash = false

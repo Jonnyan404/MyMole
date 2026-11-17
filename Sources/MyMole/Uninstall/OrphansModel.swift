@@ -311,7 +311,7 @@ final class OrphansModel {
             CleanupLog.submit(record, to: logURL)
             var text = gone.isEmpty
                 ? String(localized: "Nothing was moved")
-                : String(localized: "Moved \(gone.count) leftover\(gone.count == 1 ? "" : "s") (\(ByteSize.format(gone.reduce(0) { $0 + $1.bytes }))) to the Trash")
+                : String(localized: "Moved \(gone.count) leftovers (\(ByteSize.format(gone.reduce(0) { $0 + $1.bytes }))) to the Trash")
             if picked.count > gone.count { text += String(localized: " · \(picked.count - gone.count) left alone") }
             show(Notice(text: text, canUndo: !gone.isEmpty))
         }
@@ -342,7 +342,7 @@ final class OrphansModel {
             trashing = false
             show(Notice(
                 text: failed.isEmpty
-                    ? String(localized: "Restored \(back.count) leftover\(back.count == 1 ? "" : "s")")
+                    ? String(localized: "Restored \(back.count) leftovers")
                     : String(localized: "Restored \(back.count); \(failed.count) couldn't be put back. Undo tries those again."),
                 canUndo: !failed.isEmpty))
         }

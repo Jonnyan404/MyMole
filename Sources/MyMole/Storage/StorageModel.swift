@@ -1413,7 +1413,7 @@ final class StorageModel {
         revision += 1
         var text = outcome.moved.isEmpty && !outcome.failed.isEmpty
             ? nothingMoved(outcome.failed)
-            : String(localized: "Moved \(outcome.moved.count) item\(outcome.moved.count == 1 ? "" : "s") (\(Freeing.phrase(movedBytes, frees: freed))) to the Trash")
+            : String(localized: "Moved \(outcome.moved.count) items (\(Freeing.phrase(movedBytes, frees: freed))) to the Trash")
         if !outcome.moved.isEmpty && !outcome.failed.isEmpty { text += String(localized: " · \(outcome.failed.count) skipped") }
         showNotice(Notice(text: text, canUndo: !outcome.moved.isEmpty))
     }
@@ -1478,7 +1478,7 @@ final class StorageModel {
         if failed.isEmpty, let id = undone?.id { shelf.remove(id) }
         revision += 1
         showNotice(Notice(
-            text: failed.isEmpty ? String(localized: "Restored \(restored) item\(restored == 1 ? "" : "s")") : String(localized: "Restored \(restored); \(failed.count) couldn't be put back. Undo tries those again."),
+            text: failed.isEmpty ? String(localized: "Restored \(restored) items") : String(localized: "Restored \(restored); \(failed.count) couldn't be put back. Undo tries those again."),
             canUndo: !failed.isEmpty))
     }
 

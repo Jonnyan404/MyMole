@@ -51,7 +51,7 @@ struct DeepCleanView: View {
 
     private var confirmationText: String {
         let costs = Array(Set(model.chosenCandidates.map(\.consequence))).sorted()
-        return String(localized: "\(model.chosen.count.formatted()) item\(model.chosen.count == 1 ? "" : "s"). You can undo right after, and the space is freed when you empty the Trash.")
+        return String(localized: "\(model.chosen.count) items. You can undo right after, and the space is freed when you empty the Trash.")
             + "\n\n" + costs.joined(separator: "\n")
     }
 
@@ -112,7 +112,11 @@ struct DeepCleanView: View {
             } else if model.trashing {
                 DSRunningCapsule(text: "Moving to the Trash", since: nil)
             } else if model.isStale {
-                DSCapsule("From an earlier scan\(ago.map { ", \($0)" } ?? "")", symbol: "clock", tint: .orange)
+                if let ago {
+                    DSCapsule("From an earlier scan, \(ago)", symbol: "clock", tint: .orange)
+                } else {
+                    DSCapsule("From an earlier scan", symbol: "clock", tint: .orange)
+                }
                 DSStripButton("Scan Again", symbol: "arrow.clockwise") { model.scan() }
             } else if let ago {
                 DSCapsule("Scanned \(ago)", symbol: "clock")
@@ -137,7 +141,7 @@ struct DeepCleanView: View {
             }
             if !model.unreadablePlaces.isEmpty {
                 DSCapsule(
-                    "\(model.unreadablePlaces.count) place\(model.unreadablePlaces.count == 1 ? "" : "s") couldn't be read",
+                    "\(model.unreadablePlaces.count) places couldn't be read",
                     symbol: "exclamationmark.triangle.fill", tint: .orange
                 )
                 .help(

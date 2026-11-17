@@ -180,7 +180,7 @@ struct UninstallView: View {
             }
             if !model.unreadableFolders.isEmpty {
                 DSCapsule(
-                    "\(model.unreadableFolders.count) folder\(model.unreadableFolders.count == 1 ? "" : "s") couldn't be read",
+                    "\(model.unreadableFolders.count) folders couldn't be read",
                     symbol: "exclamationmark.triangle.fill", tint: .orange
                 )
                 .help(
@@ -266,7 +266,7 @@ struct UninstallView: View {
         .dsBottom(showing: !picked.isEmpty) {
             DSActionBar {
                 DSText(
-                    "\(pickedApps.count.formatted()) app\(pickedApps.count == 1 ? "" : "s") chosen · \(ByteSize.format(pickedApps.reduce(0) { $0 + $1.bytes }))",
+                    "\(pickedApps.count) apps chosen · \(ByteSize.format(pickedApps.reduce(0) { $0 + $1.bytes }))",
                     .lead)
             } trailing: {
                 Button("Unchoose All") { picked = [] }
@@ -444,7 +444,8 @@ struct UninstallView: View {
 
     private func cardHelp(_ app: AppBundle) -> String {
         let version = app.version.map { String(localized: "version \($0)") }
-        return [app.name, version, (app.path as NSString).abbreviatingWithTildeInPath].compactMap { $0 }.joined(separator: " · ")
+        let line = [app.name, version, (app.path as NSString).abbreviatingWithTildeInPath].compactMap { $0 }.joined(separator: " · ")
+        return app.finderBytes.map { line + "\n" + compressedNote(app, finderBytes: $0) } ?? line
     }
 
     private func card(_ app: AppBundle) -> some View {
@@ -858,8 +859,8 @@ struct UninstallSheet: View {
             action: removed == nil ? .reset : .orphans, always: hasManualSelection, button: removed == nil ? String(localized: "Reset") : String(localized: "Move to Trash"),
             message: (removed == nil ? String(
                 localized:
-                    "\(app.name) stays. The \(chosen.count) chosen leftover\(chosen.count == 1 ? "" : "s") (\(fmt(chosenLeftoverBytes))) go to the Trash, so it starts over as on its first launch. You can undo right after."
-            ) : String(localized: "The \(chosen.count) chosen leftover\(chosen.count == 1 ? "" : "s") (\(fmt(chosenLeftoverBytes))) go to the Trash. The app already there stays untouched. Ownership and keep rules are checked again. You can undo right after.")) + lockedText(among: chosen) + manualSelectionMessage
+                    "\(app.name) stays. The \(chosen.count) chosen leftovers (\(fmt(chosenLeftoverBytes))) go to the Trash, so it starts over as on its first launch. You can undo right after."
+            ) : String(localized: "The \(chosen.count) chosen leftovers (\(fmt(chosenLeftoverBytes))) go to the Trash. The app already there stays untouched. Ownership and keep rules are checked again. You can undo right after.")) + lockedText(among: chosen) + manualSelectionMessage
         ) { reset() }
     }
 
@@ -910,7 +911,7 @@ struct UninstallSheet: View {
 
     /// What the confirmation says goes where: to the Trash, and for good.
     private var confirmText: String {
-        let trash = String(localized: "The app and \(chosen.count) leftover\(chosen.count == 1 ? "" : "s") are moved to the Trash. You can undo right after.")
+        let trash = String(localized: "The app and \(chosen.count) leftovers are moved to the Trash. You can undo right after.")
             + lockedText(among: chosen.union([app.path])) + manualSelectionMessage
             + (worry(leftovers ?? []).map { "\n\n" + $0 } ?? "")
         guard !systemChosen.isEmpty else { return trash }
@@ -923,7 +924,7 @@ struct UninstallSheet: View {
     /// Said when items locked in Finder are among those going.
     private func lockedText(among paths: Set<String>) -> String {
         let n = locked.intersection(paths).count
-        return n == 0 ? "" : " " + String(localized: "\(n) of them \(n == 1 ? "is" : "are") locked in Finder and unlocked to move.")
+        return n == 0 ? "" : " " + String(localized: "\(n) of them are locked in Finder and unlocked to move.")
     }
 
     /// What the app left outside your Library, for the privileged tool to delete.
@@ -934,7 +935,7 @@ struct UninstallSheet: View {
                 DSNotice(.warning, "System-wide settings or data are chosen. They're deleted for good, not moved to the Trash.")
             }
         } else {
-            DSNotice(.info, "\(system.count) item\(system.count == 1 ? "" : "s") outside your Library, such as launch jobs or a privileged helper, need administrator rights to remove, which App Store apps may not ask for. The direct edition of MyMole removes them, or you can remove them yourself.")
+            DSNotice(.info, "\(system.count) items outside your Library, such as launch jobs or a privileged helper, need administrator rights to remove, which App Store apps may not ask for. The direct edition of MyMole removes them, or you can remove them yourself.")
         }
         FileTable(
             rows: system.map {
@@ -1086,13 +1087,14 @@ struct UninstallSheet: View {
 
     private var manualSelectionMessage: String {
         let count = (leftovers ?? []).filter { !$0.canRemove && chosen.contains($0.path) }.count
-        return count == 0 ? "" : "\n\n" + String(localized: "Unverified — use with caution. You chose \(count) unverified match\(count == 1 ? "" : "es"). Ownership couldn't be confirmed; other apps may use this data. Continue only if you reviewed the selected paths. They go to the Trash, where you can restore them.")
+        return count == 0 ? "" : "\n\n" + String(localized: "Unverified — use with caution. You chose \(count) unverified matches. Ownership couldn't be confirmed; other apps may use this data. Continue only if you reviewed the selected paths. They go to the Trash, where you can restore them.")
     }
 
     private func rows(_ leftovers: [Leftover]) -> [FileRow] {
         (macOS || removed != nil ? [] : [keptBadge(FileRow(
             id: app.path, name: app.name, size: app.bytes, kind: String(localized: "App"),
-            location: (app.path as NSString).deletingLastPathComponent, symbol: "macwindow", canChoose: false,
+            location: (app.path as NSString).deletingLastPathComponent, symbol: "macwindow",
+            subtitle: app.finderBytes.map { compressedNote(app, finderBytes: $0) }, canChoose: false,
             choiceHelp: String(localized: "Uninstall includes the app. Reset keeps the app and only moves the chosen data.")))])
             + leftovers.map {
                 keptBadge(
@@ -1173,3 +1175,8 @@ struct UninstallSheet: View {
 }
 
 private func fmt(_ b: Int64) -> String { ByteCountFormatter.string(fromByteCount: b, countStyle: .file) }
+
+/// Why a compressed bundle is smaller here than in Finder, which counts its files uncompressed.
+private func compressedNote(_ app: AppBundle, finderBytes: Int64) -> String {
+    String(localized: "Stored compressed: \(fmt(app.bytes)) on disk, \(fmt(finderBytes)) in Finder")
+}

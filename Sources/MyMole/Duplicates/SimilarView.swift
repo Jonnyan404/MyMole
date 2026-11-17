@@ -106,7 +106,7 @@ struct SimilarView: View {
             }
         }
         .actionConfirmation(
-            String(localized: "Move \(model.chosen.count.formatted()) picture\(model.chosen.count == 1 ? "" : "s") to the Trash?"),
+            String(localized: "Move \(model.chosen.count) pictures to the Trash?"),
             isPresented: $confirming,
             message: String(
                 localized:
@@ -123,7 +123,7 @@ struct SimilarView: View {
         DSPaneHeader {
             DSMetric(
                 ByteSize.format(model.spareBytes),
-                "in \(model.groups.count.formatted()) group\(model.groups.count == 1 ? "" : "s") of pictures that look alike")
+                "in \(model.groups.count) groups of pictures that look alike")
         } actions: {
             DSControlField("Filter photo groups") {
                 DSFilterField(String(localized: "Filter by name or folder"), text: $query).frame(minWidth: 180, idealWidth: 280, maxWidth: .infinity)
@@ -159,7 +159,7 @@ struct SimilarView: View {
             }
             if !model.unreadable.isEmpty {
                 DSCapsule(
-                    "\(model.unreadable.count) folder\(model.unreadable.count == 1 ? "" : "s") couldn't be read",
+                    "\(model.unreadable.count) folders couldn't be read",
                     symbol: "exclamationmark.triangle.fill", tint: .orange
                 )
                 .help(model.unreadable.map { ($0 as NSString).abbreviatingWithTildeInPath }.joined(separator: ", "))

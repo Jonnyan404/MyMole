@@ -32,7 +32,7 @@ struct SystemCleanView: View {
         }
         .actionConfirmation(String(localized: "Permanently delete \(fmt(model.chosenBytes))?"), isPresented: $confirming,
                             button: String(localized: "Delete for Good"),
-                            message: String(localized: "\(model.chosen.count) system item\(model.chosen.count == 1 ? "" : "s") are deleted for good; they can't go to the Trash. The services that made them rebuild what they need. macOS asks for an administrator's password first.")) { model.removeChosen() }
+                            message: String(localized: "\(model.chosen.count) system items are deleted for good; they can't go to the Trash. The services that made them rebuild what they need. macOS asks for an administrator's password first.")) { model.removeChosen() }
         .onAppear { model.scanIfNeeded() }
     }
 
@@ -57,7 +57,7 @@ struct SystemCleanView: View {
             if let r = model.lastResult { DSCapsule(r, symbol: "trash") }
             if !model.leftStaging.isEmpty {
                 DSCapsule(
-                    "An earlier removal left \(model.leftStaging.count) folder\(model.leftStaging.count == 1 ? "" : "s") aside",
+                    "An earlier removal left \(model.leftStaging.count) folders aside",
                     symbol: "exclamationmark.triangle.fill", tint: .orange
                 )
                 .help(
@@ -66,7 +66,7 @@ struct SystemCleanView: View {
             }
             if !model.unreadable.isEmpty {
                 DSCapsule(
-                    "\(model.unreadable.count) place\(model.unreadable.count == 1 ? "" : "s") couldn't be read",
+                    "\(model.unreadable.count) places couldn't be read",
                     symbol: "exclamationmark.triangle.fill", tint: .orange
                 )
                 .help("What's in \(model.unreadable.joined(separator: ", ")) isn't listed.")

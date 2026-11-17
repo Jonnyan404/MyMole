@@ -209,7 +209,7 @@ final class StartupModel {
             CleanupLog.submit(record, to: logURL)
             var text = gone.isEmpty
                 ? String(localized: "Nothing was moved")
-                : String(localized: "Moved \(gone.count) startup item\(gone.count == 1 ? "" : "s") to the Trash. It takes effect at the next login")
+                : String(localized: "Moved \(gone.count) startup items to the Trash. It takes effect at the next login")
             if picked.count > gone.count { text += String(localized: " · \(picked.count - gone.count) left alone") }
             show(Notice(text: text, canUndo: !gone.isEmpty))
         }
@@ -237,7 +237,7 @@ final class StartupModel {
             }
             show(Notice(
                 text: failed.isEmpty
-                    ? String(localized: "Restored \(back.count) startup item\(back.count == 1 ? "" : "s")")
+                    ? String(localized: "Restored \(back.count) startup items")
                     : String(localized: "Restored \(back.count); \(failed.count) couldn't be put back. Undo tries those again."),
                 canUndo: !failed.isEmpty))
             load()

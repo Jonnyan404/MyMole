@@ -698,6 +698,7 @@ final class AppsModel {
                                       version: metadata.version, bytes: app.bytes, fromAppStore: metadata.fromAppStore)
                 fresh.incomplete = app.incomplete
                 fresh.sizePending = app.sizePending
+                fresh.logicalBytes = app.logicalBytes
                 return progress.isCancelled ? nil : fresh
             }.value
         } onCancel: { progress.cancel() }
@@ -981,11 +982,11 @@ final class AppsModel {
                 uniquingKeysWith: { a, _ in a }), administratorMove: administratorMove, finderMove: finderMove))
         var text = rest.moved.isEmpty
             ? String(localized: "Moved \(app.name) (\(fmt(bytes))) to the Trash")
-            : String(localized: "Moved \(app.name) and \(rest.moved.count) leftover\(rest.moved.count == 1 ? "" : "s") (\(fmt(bytes))) to the Trash")
+            : String(localized: "Moved \(app.name) and \(rest.moved.count) leftovers (\(fmt(bytes))) to the Trash")
         if !rest.failed.isEmpty { text += String(localized: " · \(rest.failed.count) couldn't be moved") }
         let deleted = systemReport.removed.count
-        if deleted > 0 { text += String(localized: " · \(deleted) system item\(deleted == 1 ? "" : "s") deleted for good") }
-        if systemFailed > 0 { text += String(localized: " · \(systemFailed) system item\(systemFailed == 1 ? "" : "s") stayed") }
+        if deleted > 0 { text += String(localized: " · \(deleted) system items deleted for good") }
+        if systemFailed > 0 { text += String(localized: " · \(systemFailed) system items stayed") }
         show(Notice(text: text, canUndo: true))
         return .done
     }
@@ -1073,8 +1074,8 @@ final class AppsModel {
             id: record.id, records: rest.moved, app: nil, deleted: 0,
             sizes: Dictionary(gone.map { ($0.path, $0.bytes) }, uniquingKeysWith: { a, _ in a })))
         var text = removed == nil
-            ? String(localized: "Reset \(app.name): moved \(gone.count) item\(gone.count == 1 ? "" : "s") (\(fmt(bytes))) to the Trash")
-            : String(localized: "Moved \(gone.count) leftover\(gone.count == 1 ? "" : "s") of \(app.name) (\(fmt(bytes))) to the Trash")
+            ? String(localized: "Reset \(app.name): moved \(gone.count) items (\(fmt(bytes))) to the Trash")
+            : String(localized: "Moved \(gone.count) leftovers of \(app.name) (\(fmt(bytes))) to the Trash")
         if !rest.failed.isEmpty { text += String(localized: " · \(rest.failed.count) couldn't be moved") }
         show(Notice(text: text, canUndo: true))
         return .done
@@ -1218,7 +1219,7 @@ final class AppsModel {
             CleanupLog.submitRestore(id, restored: restored, bytes: back.reduce(0) { $0 + (undoSizes[$1] ?? 0) }, failed: failed.count, in: logURL)
         }
         var text = failed.isEmpty
-            ? String(localized: "Restored \(restored) item\(restored == 1 ? "" : "s")")
+            ? String(localized: "Restored \(restored) items")
             : String(localized: "Restored \(restored); \(failed.count) couldn't be put back. Undo tries those again, or use Put Back in the Trash.")
         if undoDeleted > 0 { text += String(localized: " System items deleted for good stay deleted.") }
         // What couldn't come back stays ready for another try.
@@ -1393,7 +1394,7 @@ final class AppsModel {
         }
         lastBatch = runs
         guard !runs.isEmpty else { return problems }
-        var text = String(localized: "Moved \(apps) app\(apps == 1 ? "" : "s") and \(items) leftover\(items == 1 ? "" : "s") (\(fmt(bytes))) to the Trash")
+        var text = String(localized: "Moved \(apps) apps and \(items) leftovers (\(fmt(bytes))) to the Trash")
         if !problems.isEmpty { text += String(localized: " · \(problems.count) stayed") }
         show(Notice(text: text, canUndo: true))
         return problems

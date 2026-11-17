@@ -2,12 +2,34 @@
   "sourceLanguage" : "en",
   "strings" : {
     "" : {},
-    " %lld local Time Machine snapshot%@ on this disk." : {
+    " %lld local Time Machine snapshots are on this disk." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : " %1$lld local Time Machine snapshot%2$@ on this disk."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : " %arg local Time Machine snapshot is on this disk."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : " %arg local Time Machine snapshots are on this disk."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -35,22 +57,66 @@
     " · %lld refused by the rules" : {},
     " · %lld skipped" : {},
     " · %lld stayed" : {},
-    " · %lld system item%@ deleted for good" : {
+    " · %lld system items deleted for good" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : " · %1$lld system item%2$@ deleted for good"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : " · %arg system item deleted for good"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : " · %arg system items deleted for good"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    " · %lld system item%@ stayed" : {
+    " · %lld system items stayed" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : " · %1$lld system item%2$@ stayed"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : " · %arg system item stayed"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : " · %arg system items stayed"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -105,27 +171,39 @@
         }
       }
     },
-    "%@ and %lld leftover%@ are moved to the Trash. You can undo right after." : {
+    "%@ and %lld leftovers are moved to the Trash. You can undo right after." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ and %2$lld leftover%3$@ are moved to the Trash. You can undo right after."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ and %arg leftover are moved to the Trash. You can undo right after."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ and %arg leftovers are moved to the Trash. You can undo right after."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "%@ and Don't Ask Again" : {},
-    "%@ app%@ chosen · %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ app%2$@ chosen · %3$@"
-          }
-        }
-      }
-    },
     "%@ changed since the list was made. Reload and try again." : {},
     "%@ chosen" : {},
     "%@ chosen · %@" : {
@@ -250,26 +328,6 @@
     "%@ is part of macOS, so it stays. Its caches and settings can be reset; its data is never offered." : {},
     "%@ is part of macOS." : {},
     "%@ isn't a disk image MyMole can move." : {},
-    "%@ item%@ chosen · %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ item%2$@ chosen · %3$@"
-          }
-        }
-      }
-    },
-    "%@ item%@. You can undo right after, and the space is freed when you empty the Trash." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ item%2$@. You can undo right after, and the space is freed when you empty the Trash."
-          }
-        }
-      }
-    },
     "%@ macOS lets App Store apps into the folders you choose, so choose %@ in the next window. MyMole remembers it; you can take it back in Settings.%@" : {
       "localizations" : {
         "en" : {
@@ -356,25 +414,37 @@
       }
     },
     "%@ selected" : {},
-    "%@ smaller file%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ smaller file%2$@"
-          }
-        }
-      }
-    },
     "%@ smaller files" : {},
     "%@ smaller items" : {},
     "%@ so far" : {},
-    "%@ stays. The %lld chosen leftover%@ (%@) go to the Trash, so it starts over as on its first launch. You can undo right after." : {
+    "%@ stays. The %lld chosen leftovers (%@) go to the Trash, so it starts over as on its first launch. You can undo right after." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ stays. The %2$lld chosen leftover%3$@ (%4$@) go to the Trash, so it starts over as on its first launch. You can undo right after."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ stays. The %arg chosen leftover (%3$@) goes to the Trash, so it starts over as on its first launch. You can undo right after."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ stays. The %arg chosen leftovers (%3$@) go to the Trash, so it starts over as on its first launch. You can undo right after."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -432,12 +502,34 @@
         }
       }
     },
-    "%@ · %lld level%@ deep" : {
+    "%@ · %lld levels deep" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ · %2$lld level%3$@ deep"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ · %arg level deep"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ · %arg levels deep"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -561,18 +653,72 @@
       }
     },
     "%lld app or folder locations couldn't be read. Their contents aren't included." : {},
-    "%lld app%@ · %@ to the Trash" : {
+    "%lld app-data locations couldn't be fully inspected or were linked. Their contents aren't offered; this isn't a complete search." : {},
+    "%lld apps chosen · %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld app%2$@ · %3$@ to the Trash"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg app chosen · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg apps chosen · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "%lld app-data locations couldn't be fully inspected or were linked. Their contents aren't offered; this isn't a complete search." : {},
     "%lld apps of macOS hidden" : {},
+    "%lld apps · %@ to the Trash" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg app · %2$@ to the Trash"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg apps · %2$@ to the Trash"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld apps · leftovers go to the Trash too" : {},
     "%lld can't be cleaned: the project folder, its history or a protected place" : {},
     "%lld changed since the list was read and stayed." : {},
@@ -610,58 +756,168 @@
         }
       }
     },
-    "%lld data item%@ chosen" : {
+    "%lld data items chosen" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld data item%2$@ chosen"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg data item chosen"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg data items chosen"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "%lld deleted for good" : {},
-    "%lld file%@ couldn't be compared" : {
+    "%lld files couldn't be compared" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld file%2$@ couldn't be compared"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg file couldn't be compared"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg files couldn't be compared"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "%lld file%@ no copy in that folder, so nothing of %@ is chosen." : {
+    "%lld files have no copy in that folder, so nothing of them is chosen." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld file%2$@ no copy in that folder, so nothing of %3$@ is chosen."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg file has no copy in that folder, so nothing of it is chosen."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg files have no copy in that folder, so nothing of them is chosen."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "%lld folder%@ couldn't be read" : {
+    "%lld folders couldn't be read" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld folder%2$@ couldn't be read"
-          }
-        }
-      }
-    },
-    "%lld folder%@ in your Library couldn't be read, so what's in %@ isn't listed: %@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld folder%2$@ in your Library couldn't be read, so what's in %3$@ isn't listed: %4$@."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg folder couldn't be read"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg folders couldn't be read"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "%lld folders excluded from the scan" : {},
+    "%lld folders in your Library couldn't be read, so what's in them isn't listed: %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg folder in your Library couldn't be read, so what's in it isn't listed: %2$@."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg folders in your Library couldn't be read, so what's in them isn't listed: %2$@."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld folders · files of %@ and more" : {
       "localizations" : {
         "en" : {
@@ -672,102 +928,427 @@
         }
       }
     },
-    "%lld group%@ matched by name only" : {
+    "%lld groups matched by name only" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld group%2$@ matched by name only"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg group matched by name only"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg groups matched by name only"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "%lld hidden" : {},
     "%lld in use by running apps or tools" : {},
-    "%lld item%@" : {
+    "%lld items" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld item%2$@"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg item"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg items"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "%lld item%@ changed in the last week" : {
+    "%lld items changed in the last week" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld item%2$@ changed in the last week"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg item changed in the last week"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg items changed in the last week"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "%lld item%@ outside your Library, such as launch jobs or a privileged helper, need administrator rights to remove, which App Store apps may not ask for. The direct edition of MyMole removes them, or you can remove them yourself." : {
+    "%lld items chosen · %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld item%2$@ outside your Library, such as launch jobs or a privileged helper, need administrator rights to remove, which App Store apps may not ask for. The direct edition of MyMole removes them, or you can remove them yourself."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg item chosen · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg items chosen · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "%lld item%@ outside your Library, such as launch jobs, %@ offered when you uninstall the app on its own." : {
+    "%lld items outside your Library, such as launch jobs or a privileged helper, need administrator rights to remove, which App Store apps may not ask for. The direct edition of MyMole removes them, or you can remove them yourself." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld item%2$@ outside your Library, such as launch jobs, %3$@ offered when you uninstall the app on its own."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg item outside your Library, such as a launch job or a privileged helper, needs administrator rights to remove, which App Store apps may not ask for. The direct edition of MyMole removes it, or you can remove it yourself."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg items outside your Library, such as launch jobs or a privileged helper, need administrator rights to remove, which App Store apps may not ask for. The direct edition of MyMole removes them, or you can remove them yourself."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "%lld item%@ you moved to the Trash from %@. MyMole only shows it; Finder's Empty Trash empties it with the rest." : {
+    "%lld items outside your Library, such as launch jobs, are offered when you uninstall the app on its own." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld item%2$@ you moved to the Trash from %3$@. MyMole only shows it; Finder's Empty Trash empties it with the rest."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg item outside your Library, such as a launch job, is offered when you uninstall the app on its own."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg items outside your Library, such as launch jobs, are offered when you uninstall the app on its own."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "%lld item%@, %@, will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there." : {
+    "%lld items start by themselves" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld item%2$@, %3$@, will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "item starts by itself"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "items start by themselves"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "%lld item%@, at least %@ (part couldn't be measured), will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld item%2$@, at least %3$@ (part couldn't be measured), will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there."
-          }
-        }
-      }
-    },
-    "%lld items" : {},
     "%lld items weren't deleted." : {},
-    "%lld job list%@ couldn't be read" : {
+    "%lld items you moved to the Trash from %@. MyMole only shows it; Finder's Empty Trash empties it with the rest." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld job list%2$@ couldn't be read"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg item you moved to the Trash from %2$@. MyMole only shows it; Finder's Empty Trash empties it with the rest."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg items you moved to the Trash from %2$@. MyMole only shows it; Finder's Empty Trash empties it with the rest."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld items, %@, will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg item, %2$@, will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg items, %2$@, will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld items, at least %@ (part couldn't be measured), will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg item, at least %2$@ (part couldn't be measured), will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg items, at least %2$@ (part couldn't be measured), will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld items. You can undo right after, and the space is freed when you empty the Trash." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg item. You can undo right after, and the space is freed when you empty the Trash."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg items. You can undo right after, and the space is freed when you empty the Trash."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld job lists couldn't be read" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg job list couldn't be read"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg job lists couldn't be read"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "%lld kept" : {},
     "%lld left: changed since you confirmed, or stopped" : {},
+    "%lld leftovers: the program is gone" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "leftover: the program is gone"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "leftovers: the program is gone"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld notices" : {},
     "%lld of %lld found · choices include hidden results" : {
       "localizations" : {
@@ -831,12 +1412,34 @@
     },
     "%lld of 64 points differ from the best" : {},
     "%lld of the dropped items isn't an app MyMole can read." : {},
-    "%lld of them %@ locked in Finder and unlocked to move." : {
+    "%lld of them are locked in Finder and unlocked to move." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld of them %2$@ locked in Finder and unlocked to move."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg of them is locked in Finder and unlocked to move."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg of them are locked in Finder and unlocked to move."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -847,22 +1450,98 @@
     "%lld percent now" : {},
     "%lld percent of the disk used" : {},
     "%lld pictures" : {},
-    "%lld place%@ couldn't be read" : {
+    "%lld places couldn't be read" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld place%2$@ couldn't be read"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg place couldn't be read"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg places couldn't be read"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "%lld place%@ couldn't be read, so what's there isn't listed: %@." : {
+    "%lld places couldn't be read, so what's there isn't listed: %@." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld place%2$@ couldn't be read, so what's there isn't listed: %3$@."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg place couldn't be read, so what's there isn't listed: %2$@."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg places couldn't be read, so what's there isn't listed: %2$@."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld plug-ins in your Library and the one for every user" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "plug-in in your Library and the one for every user"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "plug-ins in your Library and the one for every user"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -881,35 +1560,133 @@
     "%lld recently written" : {},
     "%lld scans per folder" : {},
     "%lld search folders excluded for safety" : {},
-    "%lld shown · %lld app ID%@ with multiple copies" : {
+    "%lld shown · %lld app IDs with multiple copies" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld shown · %2$lld app ID%3$@ with multiple copies"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld shown · %arg app ID with multiple copies"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld shown · %arg app IDs with multiple copies"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld smaller files" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg smaller file"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg smaller files"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "%lld smaller items" : {},
     "%lld smaller items not shown — see the list on the right." : {},
-    "%lld system item%@ are deleted for good; they can't go to the Trash. The services that made them rebuild what they need. macOS asks for an administrator's password first." : {
+    "%lld system items are deleted for good; they can't go to the Trash. The services that made them rebuild what they need. macOS asks for an administrator's password first." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld system item%2$@ are deleted for good; they can't go to the Trash. The services that made them rebuild what they need. macOS asks for an administrator's password first."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg system item is deleted for good; it can't go to the Trash. The service that made it rebuilds what it needs. macOS asks for an administrator's password first."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg system items are deleted for good; they can't go to the Trash. The services that made them rebuild what they need. macOS asks for an administrator's password first."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "%lld system-wide items are deleted for good and can't be undone." : {},
-    "%lld task%@" : {
+    "%lld tasks" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld task%2$@"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg task"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg tasks"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -995,12 +1772,34 @@
     "Always Keep" : {},
     "Always Keep Remove Try Again Discard Change protected files folders never remove safety rules" : {},
     "An app dragged to the Trash leaves its settings, caches and data in your Library. Nothing is removed until you choose it." : {},
-    "An earlier removal left %lld folder%@ aside" : {
+    "An earlier removal left %lld folders aside" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "An earlier removal left %1$lld folder%2$@ aside"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "An earlier removal left %arg folder aside"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "An earlier removal left %arg folders aside"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1277,12 +2076,34 @@
     "Deep Clean Keep List" : {},
     "Deep Clean, Projects, Installers, the disk map and app leftovers all work in it." : {},
     "Default" : {},
-    "Delete %lld Item%@ for Good" : {
+    "Delete %lld Items for Good" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Delete %1$lld Item%2$@ for Good"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Delete %arg Item for Good"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Delete %arg Items for Good"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1290,12 +2111,34 @@
     "Delete for Good" : {},
     "Delete for Good…" : {},
     "Delete what's in the Trash for good, after a confirmation" : {},
-    "Deleted %lld item%@ (%@) for good" : {
+    "Deleted %lld items (%@) for good" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Deleted %1$lld item%2$@ (%3$@) for good"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Deleted %arg item (%2$@) for good"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Deleted %arg items (%2$@) for good"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1462,7 +2305,8 @@
     "Free memory when macOS runs low" : {},
     "From" : {},
     "From an earlier listing" : {},
-    "From an earlier scan%@" : {},
+    "From an earlier scan" : {},
+    "From an earlier scan, %@" : {},
     "Full Disk Access" : {},
     "Gentle" : {},
     "Get Help" : {},
@@ -1480,12 +2324,34 @@
     "Grew" : {},
     "Grew since %@" : {},
     "Grid" : {},
-    "Has %lld other name%@ (hard link%@) — its space stays in use until every name goes" : {
+    "Has %lld other names (hard links) — its space stays in use until every name goes" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Has %1$lld other name%2$@ (hard link%3$@) — its space stays in use until every name goes"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Has %arg other name (hard link) — its space stays in use until every name goes"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Has %arg other names (hard links) — its space stays in use until every name goes"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1685,75 +2551,197 @@
     "More for this project" : {},
     "Most Files First" : {},
     "Move %@" : {},
-    "Move %@ cop%@ to the Trash?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move %1$@ cop%2$@ to the Trash?"
-          }
-        }
-      }
-    },
     "Move %@ earlier" : {},
-    "Move %@ installer%@ to the Trash?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move %1$@ installer%2$@ to the Trash?"
-          }
-        }
-      }
-    },
-    "Move %@ item%@ to the Trash?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move %1$@ item%2$@ to the Trash?"
-          }
-        }
-      }
-    },
     "Move %@ later" : {},
-    "Move %@ picture%@ to the Trash?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move %1$@ picture%2$@ to the Trash?"
-          }
-        }
-      }
-    },
-    "Move %@ startup item%@ to the Trash?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move %1$@ startup item%2$@ to the Trash?"
-          }
-        }
-      }
-    },
     "Move %@ to the Trash?" : {},
-    "Move %lld item%@ to the Trash?" : {
+    "Move %lld copies to the Trash?" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Move %1$lld item%2$@ to the Trash?"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Move %arg copy to the Trash?"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Move %arg copies to the Trash?"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "Move %lld leftover%@ to the Trash?" : {
+    "Move %lld installers to the Trash?" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Move %1$lld leftover%2$@ to the Trash?"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Move %arg installer to the Trash?"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Move %arg installers to the Trash?"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Move %lld items to the Trash?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Move %arg item to the Trash?"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Move %arg items to the Trash?"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Move %lld leftovers to the Trash?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Move %arg leftover to the Trash?"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Move %arg leftovers to the Trash?"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Move %lld pictures to the Trash?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Move %arg picture to the Trash?"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Move %arg pictures to the Trash?"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Move %lld startup items to the Trash?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Move %arg startup item to the Trash?"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Move %arg startup items to the Trash?"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1780,93 +2768,311 @@
         }
       }
     },
-    "Moved %@ and %lld leftover%@ (%@) to the Trash" : {
+    "Moved %@ and %lld leftovers (%@) to the Trash" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Moved %1$@ and %2$lld leftover%3$@ (%4$@) to the Trash"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %1$@ and %arg leftover (%3$@) to the Trash"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %1$@ and %arg leftovers (%3$@) to the Trash"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "Moved %@ to the Trash" : {},
-    "Moved %lld app%@ and %lld leftover%@ (%@) to the Trash" : {
+    "Moved %lld apps and %lld leftovers (%@) to the Trash" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Moved %1$lld app%2$@ and %3$lld leftover%4$@ (%5$@) to the Trash"
+            "state" : "translated",
+            "value" : "Moved %#@count1@ and %#@count2@ (%3$@) to the Trash"
+          },
+          "substitutions" : {
+            "count1" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg app"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg apps"
+                    }
+                  }
+                }
+              }
+            },
+            "count2" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leftover"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leftovers"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "Moved %lld cop%@ (%@) to the Trash" : {
+    "Moved %lld copies (%@) to the Trash" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Moved %1$lld cop%2$@ (%3$@) to the Trash"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg copy (%2$@) to the Trash"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg copies (%2$@) to the Trash"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "Moved %lld installer%@ (%@) to the Trash" : {
+    "Moved %lld installers (%@) to the Trash" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Moved %1$lld installer%2$@ (%3$@) to the Trash"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg installer (%2$@) to the Trash"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg installers (%2$@) to the Trash"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "Moved %lld item%@ (%@) to the Trash" : {
+    "Moved %lld items (%@) to the Trash" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Moved %1$lld item%2$@ (%3$@) to the Trash"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg item (%2$@) to the Trash"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg items (%2$@) to the Trash"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "Moved %lld leftover%@ (%@) to the Trash" : {
+    "Moved %lld leftovers (%@) to the Trash" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Moved %1$lld leftover%2$@ (%3$@) to the Trash"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg leftover (%2$@) to the Trash"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg leftovers (%2$@) to the Trash"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "Moved %lld leftover%@ of %@ (%@) to the Trash" : {
+    "Moved %lld leftovers of %@ (%@) to the Trash" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Moved %1$lld leftover%2$@ of %3$@ (%4$@) to the Trash"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg leftover of %2$@ (%3$@) to the Trash"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg leftovers of %2$@ (%3$@) to the Trash"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "Moved %lld picture%@ (%@) to the Trash" : {
+    "Moved %lld pictures (%@) to the Trash" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Moved %1$lld picture%2$@ (%3$@) to the Trash"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg picture (%2$@) to the Trash"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg pictures (%2$@) to the Trash"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "Moved %lld startup item%@ to the Trash. It takes effect at the next login" : {
+    "Moved %lld startup items to the Trash. It takes effect at the next login" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Moved %1$lld startup item%2$@ to the Trash. It takes effect at the next login"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg startup item to the Trash. It takes effect at the next login"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg startup items to the Trash. It takes effect at the next login"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2033,16 +3239,40 @@
     "Nothing to refresh here." : {},
     "Nothing was deleted" : {},
     "Nothing was moved" : {},
-    "Nothing was moved to the Trash; MyMole couldn't move %@%@." : {
+    "Nothing was moved to the Trash." : {},
+    "Nothing was moved to the Trash; MyMole couldn't move %lld items: %@." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Nothing was moved to the Trash; MyMole couldn't move %1$@%2$@."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Nothing was moved to the Trash; MyMole couldn't move %arg item: %2$@."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Nothing was moved to the Trash; MyMole couldn't move %arg items: %2$@."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
+    "Nothing was moved to the Trash; MyMole couldn't move it: %@." : {},
     "Nothing was moved." : {},
     "Nothing was moved: %@" : {},
     "Nothing was moved: Deep Clean's keep list couldn't be read." : {},
@@ -2252,12 +3482,34 @@
     "Remove from the list" : {},
     "Remove this protection. No files are moved." : {},
     "Removed" : {},
-    "Removed %@ from %lld item%@" : {
+    "Removed %@ from %lld items" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Removed %1$@ from %2$lld item%3$@"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Removed %1$@ from %arg item"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Removed %1$@ from %arg items"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2271,12 +3523,34 @@
     "Rescan" : {},
     "Rescan Entire Map" : {},
     "Reset" : {},
-    "Reset %@: moved %lld item%@ (%@) to the Trash" : {
+    "Reset %@: moved %lld items (%@) to the Trash" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Reset %1$@: moved %2$lld item%3$@ (%4$@) to the Trash"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Reset %1$@: moved %arg item (%3$@) to the Trash"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Reset %1$@: moved %arg items (%3$@) to the Trash"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2300,62 +3574,194 @@
         }
       }
     },
-    "Restored %lld cop%@" : {
+    "Restored %lld copies" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Restored %1$lld cop%2$@"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Restored %arg copy"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Restored %arg copies"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "Restored %lld installer%@" : {
+    "Restored %lld installers" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Restored %1$lld installer%2$@"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Restored %arg installer"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Restored %arg installers"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "Restored %lld item%@" : {
+    "Restored %lld items" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Restored %1$lld item%2$@"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Restored %arg item"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Restored %arg items"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "Restored %lld leftover%@" : {
+    "Restored %lld leftovers" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Restored %1$lld leftover%2$@"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Restored %arg leftover"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Restored %arg leftovers"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "Restored %lld picture%@" : {
+    "Restored %lld pictures" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Restored %1$lld picture%2$@"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Restored %arg picture"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Restored %arg pictures"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "Restored %lld startup item%@" : {
+    "Restored %lld startup items" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Restored %1$lld startup item%2$@"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Restored %arg startup item"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Restored %arg startup items"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2400,12 +3806,34 @@
     "Review this copy and its data before it goes to the Trash." : {},
     "Rings" : {},
     "Rows" : {},
-    "Run %lld maintenance task%@?" : {
+    "Run %lld maintenance tasks?" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Run %1$lld maintenance task%2$@?"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Run %arg maintenance task?"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Run %arg maintenance tasks?"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2518,12 +3946,34 @@
     "Shared updater components (%lld)" : {},
     "Shared · system Library" : {},
     "Shared · your Library" : {},
-    "Shares its space with %lld other cop%@ here: moving it frees space only when they all go." : {
+    "Shares its space with %lld other copies here: moving it frees space only when they all go." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Shares its space with %1$lld other cop%2$@ here: moving it frees space only when they all go."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Shares its space with %arg other copy here: moving it frees space only when they all go."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Shares its space with %arg other copies here: moving it frees space only when they all go."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2664,12 +4114,34 @@
         }
       }
     },
-    "The %lld chosen leftover%@ (%@) go to the Trash. The app already there stays untouched. Ownership and keep rules are checked again. You can undo right after." : {
+    "The %lld chosen leftovers (%@) go to the Trash. The app already there stays untouched. Ownership and keep rules are checked again. You can undo right after." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "The %1$lld chosen leftover%2$@ (%3$@) go to the Trash. The app already there stays untouched. Ownership and keep rules are checked again. You can undo right after."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "The %arg chosen leftover (%2$@) goes to the Trash. The app already there stays untouched. Ownership and keep rules are checked again. You can undo right after."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "The %arg chosen leftovers (%2$@) go to the Trash. The app already there stays untouched. Ownership and keep rules are checked again. You can undo right after."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2679,12 +4151,34 @@
     "The Photos library is left alone: remove pictures there in Photos. Nothing leaves the Mac; pictures are compared by a small fingerprint made here." : {},
     "The Trash is already empty." : {},
     "The administrator move could not be verified. No app data was moved." : {},
-    "The app and %lld leftover%@ are moved to the Trash. You can undo right after." : {
+    "The app and %lld leftovers are moved to the Trash. You can undo right after." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "The app and %1$lld leftover%2$@ are moved to the Trash. You can undo right after."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "The app and %arg leftover are moved to the Trash. You can undo right after."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "The app and %arg leftovers are moved to the Trash. You can undo right after."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2704,12 +4198,34 @@
     "The app restore could not be verified." : {},
     "The app's move to the Trash could not be verified. No app data was moved. Check the app in Finder before trying again." : {},
     "The complete folder contents couldn't be selected. Nothing was added. Check access or choose smaller groups." : {},
-    "The copies of %lld file%@ have different tags, so they're left for you to choose." : {
+    "The copies of %lld files have different tags, so they're left for you to choose." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "The copies of %1$lld file%2$@ have different tags, so they're left for you to choose."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "The copies of %arg file have different tags, so they're left for you to choose."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "The copies of %arg files have different tags, so they're left for you to choose."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2754,12 +4270,34 @@
     "This Folder" : {},
     "This adds a cleanup suggestion on future scans. Nothing is removed now. Source control, protected locations and whitelist rules still take priority." : {},
     "This app" : {},
-    "This app and the %lld chosen data item%@ go to the Trash. Open at Login is turned off. MyMole then quits. You can restore them with Put Back in Finder's Trash; in-app Undo isn't available after quitting." : {
+    "This app and the %lld chosen data items go to the Trash. Open at Login is turned off. MyMole then quits. You can restore them with Put Back in Finder's Trash; in-app Undo isn't available after quitting." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "This app and the %1$lld chosen data item%2$@ go to the Trash. Open at Login is turned off. MyMole then quits. You can restore them with Put Back in Finder's Trash; in-app Undo isn't available after quitting."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "This app and the %arg chosen data item go to the Trash. Open at Login is turned off. MyMole then quits. You can restore them with Put Back in Finder's Trash; in-app Undo isn't available after quitting."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "This app and the %arg chosen data items go to the Trash. Open at Login is turned off. MyMole then quits. You can restore them with Put Back in Finder's Trash; in-app Undo isn't available after quitting."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2861,12 +4399,34 @@
     "Unverified match. Review its path; removal always asks for confirmation." : {},
     "Unverified matches are for inspection only. Search again before choosing data to remove." : {},
     "Unverified — use with caution" : {},
-    "Unverified — use with caution. You chose %lld unverified match%@. Ownership couldn't be confirmed; other apps may use this data. Continue only if you reviewed the selected paths. They go to the Trash, where you can restore them." : {
+    "Unverified — use with caution. You chose %lld unverified matches. Ownership couldn't be confirmed; other apps may use this data. Continue only if you reviewed the selected paths. They go to the Trash, where you can restore them." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Unverified — use with caution. You chose %1$lld unverified match%2$@. Ownership couldn't be confirmed; other apps may use this data. Continue only if you reviewed the selected paths. They go to the Trash, where you can restore them."
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Unverified — use with caution. You chose %arg unverified match. Ownership couldn't be confirmed; other apps may use this data. Continue only if you reviewed the selected paths. It goes to the Trash, where you can restore it."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Unverified — use with caution. You chose %arg unverified matches. Ownership couldn't be confirmed; other apps may use this data. Continue only if you reviewed the selected paths. They go to the Trash, where you can restore them."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2999,48 +4559,103 @@
     "found so far in %@ items" : {},
     "from an earlier scan" : {},
     "grew" : {},
-    "in %@ group%@ of pictures that look alike" : {
+    "in %lld groups of pictures that look alike" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "in %1$@ group%2$@ of pictures that look alike"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "in %arg group of pictures that look alike"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "in %arg groups of pictures that look alike"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "in %@ installer%@" : {
+    "in %lld installers" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "in %1$@ installer%2$@"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "in %arg installer"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "in %arg installers"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "in spare copies of %@ file%@" : {
+    "in spare copies of %lld files" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "in spare copies of %1$@ file%2$@"
-          }
-        }
-      }
-    },
-    "item%@ start%@ by %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "item%1$@ start%2$@ by %3$@"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "in spare copies of %arg file"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "in spare copies of %arg files"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
     "kept" : {},
-    "leftover%@: the program is gone" : {},
     "loaded now, not running" : {},
     "looks the same as the best" : {},
     "macOS approval when administrator access is needed" : {},
@@ -3066,12 +4681,34 @@
         }
       }
     },
-    "moved or deleted in %lld run%@" : {
+    "moved or deleted in %lld runs" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "moved or deleted in %1$lld run%2$@"
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "moved or deleted in %arg run"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "moved or deleted in %arg runs"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -3083,7 +4720,6 @@
     "partly read" : {},
     "permissions privacy protected folders settings" : {},
     "permissions privacy uninstall cannot move Trash administrator approval delete other apps Finder" : {},
-    "plug-in%@ in your Library and the one for every user" : {},
     "queued" : {},
     "remove MyMole itself self uninstall quit leftovers settings caches data" : {},
     "removed" : {},

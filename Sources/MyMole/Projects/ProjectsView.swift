@@ -44,7 +44,7 @@ struct ProjectsView: View {
         }
         .paneToolbar("Projects", subtitle: "\(subtitle)") { tools }
         .actionConfirmation(
-            String(localized: "Move \(model.chosenEntries.count.formatted()) item\(model.chosenEntries.count == 1 ? "" : "s") to the Trash?"),
+            String(localized: "Move \(model.chosenEntries.count) items to the Trash?"),
             isPresented: $confirming, action: .projects,
             message: String(localized: "\(Freeing.phrase(model.chosenBytes, frees: model.chosenFrees)) from \(Set(model.chosenEntries.map(\.project)).count) project(s):\n\(reviewList)\n\nAnything holding a Git repository, key files, files Git tracks or uncommitted work stays. You can undo right after, or put things back from the Trash later.")
         ) { model.trashChosen() }
@@ -326,7 +326,7 @@ struct ProjectsView: View {
 
     private var actionBar: some View {
         DSActionBar {
-            DSText("\(model.chosenEntries.count.formatted()) item\(model.chosenEntries.count == 1 ? "" : "s") chosen · \(Freeing.phrase(model.chosenBytes, frees: model.chosenFrees))", .lead)
+            DSText("\(model.chosenEntries.count) items chosen · \(Freeing.phrase(model.chosenBytes, frees: model.chosenFrees))", .lead)
                 .keepWhole()
             Button("Clear") { model.chosen = [] }
                 .accessibilityLabel("Clear the choice")

@@ -22,7 +22,7 @@ struct HistoryView: View {
                 VStack(spacing: 0) {
                     DSPaneHeader {
                         DSMetric(
-                            ByteSize.format(removed), "moved or deleted in \(app.cleanups.count) run\(app.cleanups.count == 1 ? "" : "s")")
+                            ByteSize.format(removed), "moved or deleted in \(app.cleanups.count) runs")
                     } actions: {
                         EmptyView()
                     } strip: {
@@ -34,7 +34,7 @@ struct HistoryView: View {
                                 "Trash on \(t.name): \(t.partial ? "at least " : "")\(ByteSize.format(t.bytes))", symbol: "externaldrive"
                             )
                             .help(
-                                "\(t.count) item\(t.count == 1 ? "" : "s") you moved to the Trash from \(t.name). MyMole only shows it; Finder's Empty Trash empties it with the rest."
+                                "\(t.count) items you moved to the Trash from \(t.name). MyMole only shows it; Finder's Empty Trash empties it with the rest."
                             )
                         }
                         if app.trash.canEmpty, let bytes = app.trash.frees {
@@ -108,8 +108,7 @@ struct HistoryView: View {
     private func counts(_ r: CleanupRecord) -> String {
         var parts: [String] = []
         if r.items > 0 {
-            let s = r.items == 1 ? "" : "s"
-            parts.append(r.source == "Optimize" ? String(localized: "\(r.items) task\(s)") : String(localized: "\(r.items) item\(s)"))
+            parts.append(r.source == "Optimize" ? String(localized: "\(r.items) tasks") : String(localized: "\(r.items) items"))
         }
         if r.deleted > 0 { parts.append(String(localized: "\(r.deleted) deleted for good")) }
         return parts.isEmpty ? "—" : parts.joined(separator: " · ")

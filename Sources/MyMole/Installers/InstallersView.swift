@@ -26,7 +26,7 @@ struct InstallersView: View {
         }
         .paneToolbar("Installers", subtitle: "Disk images and packages left after installing") { tools }
         .actionConfirmation(
-            String(localized: "Move \(model.chosen.count.formatted()) installer\(model.chosen.count == 1 ? "" : "s") to the Trash?"),
+            String(localized: "Move \(model.chosen.count) installers to the Trash?"),
             isPresented: $confirming, action: .installers,
             message: String(localized: "\(fmt(model.chosenBytes)). You can undo right after, or put them back from the Trash later.")
         ) { model.trashChosen() }
@@ -41,7 +41,7 @@ struct InstallersView: View {
             PaneTool.menu("installers.folders", "Searched Folders", symbol: "folder", help: "The folders searched for installers") {
                 Section("Looking in") {
                     ForEach(model.locations, id: \.path) { loc in
-                        Menu(String(localized: "\(Breakable.path(loc.path).replacingOccurrences(of: "\u{200B}", with: "")) · \(loc.depth) level\(loc.depth == 1 ? "" : "s") deep")) {
+                        Menu(String(localized: "\(Breakable.path(loc.path).replacingOccurrences(of: "\u{200B}", with: "")) · \(loc.depth) levels deep")) {
                             FileMenuItems(paths: [loc.path], canOpen: false)
                         }
                     }
@@ -70,7 +70,7 @@ struct InstallersView: View {
 
     private var header: some View {
         DSPaneHeader {
-            DSMetric(fmt(model.totalBytes), "in \(model.files.count.formatted()) installer\(model.files.count == 1 ? "" : "s")")
+            DSMetric(fmt(model.totalBytes), "in \(model.files.count) installers")
         } actions: {
             DSControlField("Filter installers") {
                 DSFilterField(String(localized: "Filter by name or folder"), text: $query)
@@ -91,7 +91,11 @@ struct InstallersView: View {
                 }
                 DSStripButton("Stop", symbol: "stop.fill") { model.stop() }
             } else if model.isStale {
-                DSCapsule("From an earlier scan\(ago.map { ", \($0)" } ?? "")", symbol: "clock", tint: .orange)
+                if let ago {
+                    DSCapsule("From an earlier scan, \(ago)", symbol: "clock", tint: .orange)
+                } else {
+                    DSCapsule("From an earlier scan", symbol: "clock", tint: .orange)
+                }
                 DSStripButton("Scan Again", symbol: "arrow.clockwise") { model.scan() }
             } else if let ago {
                 DSCapsule("Scanned \(ago)", symbol: "clock")
@@ -102,7 +106,7 @@ struct InstallersView: View {
             }
             if !model.unreadableFolders.isEmpty {
                 DSCapsule(
-                    "\(model.unreadableFolders.count) folder\(model.unreadableFolders.count == 1 ? "" : "s") couldn't be read",
+                    "\(model.unreadableFolders.count) folders couldn't be read",
                     symbol: "exclamationmark.triangle.fill", tint: .orange
                 )
                 .help(

@@ -963,7 +963,7 @@ private final class TreeNameCell: NSTableCellView, ColumnWidthProviding {
             hoverHelp = p
         case .smallFiles(_, _, let count, _):
             choiceIsEditable = false
-            title.stringValue = String(localized: "\(count.formatted()) smaller file\(count == 1 ? "" : "s")")
+            title.stringValue = String(localized: "\(count) smaller files")
             title.textColor = .secondaryLabelColor
             icon.image = FileCellResources.symbol("doc.on.doc")
             check.isEnabled = false
