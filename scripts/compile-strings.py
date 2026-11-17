@@ -50,7 +50,15 @@ def plural_cases(localization):
 
 
 def stringsdict_entry(key, localization):
-    """The dictionary for one phrase, or None when it counts nothing."""
+    """The dictionary for one phrase, or None when it counts nothing.
+
+    The catalog writes the count as `%arg`, which is what Xcode's catalog editor
+    shows and what xcstringstool turns into a real specifier when it compiles.
+    A .stringsdict has no such notation: left as `%arg`, printf reads it as a
+    hexadecimal float (`%a`) followed by "rg". Each substitution's text gets its
+    own argument back, positionally, so a phrase that also names an app or a size
+    keeps every argument pointing where the source phrase had it.
+    """
     cases = plural_cases(localization)
     if not cases:
         return None
@@ -58,12 +66,13 @@ def stringsdict_entry(key, localization):
     body = unit.get("value") or key
     entry = {"NSStringLocalizedFormatKey": body}
     for name, (specifier, variants) in cases.items():
+        argument = (localization.get("substitutions", {}).get(name) or {}).get("argNum", 1)
         rule = {"NSStringFormatSpecTypeKey": PLURAL_RULE,
                 "NSStringFormatValueTypeKey": specifier}
         for case, node in variants.items():
             value = (node.get("stringUnit") or {}).get("value")
             if value is not None:
-                rule[case] = value
+                rule[case] = value.replace("%arg", f"%{argument}${specifier}")
         entry[name] = rule
     return entry
 
