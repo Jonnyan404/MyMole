@@ -9,6 +9,9 @@ struct Entry {
     /// Bytes actually allocated on disk (not the logical length), so sparse
     /// and compressed files count what they really cost.
     var allocated: Int64
+    /// The file's length, which Finder shows: more than `allocated` when
+    /// the file is stored compressed, as App Store installs are.
+    var length: Int64 = 0
     let linkCount: UInt32
     let fileID: UInt64
     let device: Int32
@@ -159,7 +162,7 @@ enum DirectoryReader {
         let hasAlloc = returned.fileattr & fileAllocSize != 0
         let hasLength = returned.fileattr & fileDataLength != 0
         return Entry(
-            name: name, kind: kind, allocated: hasAlloc ? alloc : 0,
+            name: name, kind: kind, allocated: hasAlloc ? alloc : 0, length: kind == .file && hasLength ? length : 0,
             linkCount: returned.fileattr & fileLinkCount != 0 ? links : 1,
             fileID: fileID, device: device,
             modified: TimeInterval(mod.tv_sec) + TimeInterval(mod.tv_nsec) / 1e9,
@@ -207,7 +210,7 @@ enum DirectoryReader {
                 type == S_IFREG ? .file : type == S_IFDIR ? .folder : type == S_IFLNK ? .symlink : .other
             body(
                 Entry(
-                    name: name, kind: kind, allocated: allocated(st),
+                    name: name, kind: kind, allocated: allocated(st), length: kind == .file ? Int64(st.st_size) : 0,
                     linkCount: UInt32(st.st_nlink), fileID: UInt64(st.st_ino), device: st.st_dev,
                     modified: TimeInterval(st.st_mtimespec.tv_sec)))
         }

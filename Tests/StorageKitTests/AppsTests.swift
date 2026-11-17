@@ -61,6 +61,27 @@ func makeApp(_ box: Sandbox, _ rel: String, id: String?, name: String? = nil, by
         #expect(apps.first { $0.name == "Tool" }?.fromAppStore == false)
     }
 
+    @Test func readsTheSizeFinderShowsBesideWhatTheBundleTakes() throws {
+        let box = try Sandbox()
+        try makeApp(box, "Applications/Plain.app", id: "com.vendor.Plain", bytes: 60_000)
+        try makeApp(box, "Applications/Packed.app", id: "com.vendor.Packed")
+        // A sparse file, like a compressed one, is longer than what it takes on disk.
+        let sparse = try box.file("Applications/Packed.app/Contents/Resources/data", bytes: 1)
+        let handle = try FileHandle(forWritingTo: sparse)
+        try handle.truncate(atOffset: 8_000_000)
+        try handle.close()
+
+        let plain = try #require(AppFinder.read(box.path + "/Applications/Plain.app"))
+        #expect(try #require(plain.logicalBytes) >= 60_000)
+        #expect(plain.finderBytes == nil)
+        let packed = try #require(AppFinder.read(box.path + "/Applications/Packed.app"))
+        #expect(packed.bytes < 1_000_000)
+        #expect(packed.finderBytes.map { $0 >= 8_000_000 } == true)
+        let decoded = try JSONDecoder().decode(AppBundle.self, from: JSONEncoder().encode(packed))
+        #expect(decoded.logicalBytes == packed.logicalBytes)
+        #expect(AppFinder.metadata(box.path + "/Applications/Packed.app")?.finderBytes == nil)
+    }
+
     @Test func findsAnUninstallerTheAppShips() throws {
         let box = try Sandbox()
         let apps = box.path + "/Applications"

@@ -316,6 +316,7 @@
         }
       }
     },
+    "%@ in Finder (stored compressed)" : {},
     "%@ is in a protected location." : {},
     "%@ is in the Trash" : {},
     "%@ is in the Trash. Disk use goes down once it's emptied." : {},
@@ -4072,6 +4073,16 @@
     "Stops before the next item. Anything already moved can be undone." : {},
     "Stops running scans, then closes the folder to MyMole." : {},
     "Storage" : {},
+    "Stored compressed: %@ on disk, %@ in Finder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Stored compressed: %1$@ on disk, %2$@ in Finder"
+          }
+        }
+      }
+    },
     "Sunburst, four levels deep" : {},
     "Support" : {},
     "Swap" : {},

@@ -1094,7 +1094,7 @@ struct UninstallSheet: View {
         (macOS || removed != nil ? [] : [keptBadge(FileRow(
             id: app.path, name: app.name, size: app.bytes, kind: String(localized: "App"),
             location: (app.path as NSString).deletingLastPathComponent, symbol: "macwindow",
-            subtitle: app.finderBytes.map { compressedNote(app, finderBytes: $0) }, canChoose: false,
+            subtitle: app.finderBytes.map { String(localized: "\(fmt($0)) in Finder (stored compressed)") }, canChoose: false,
             choiceHelp: String(localized: "Uninstall includes the app. Reset keeps the app and only moves the chosen data.")))])
             + leftovers.map {
                 keptBadge(

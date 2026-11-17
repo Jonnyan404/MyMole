@@ -23,6 +23,9 @@ public struct AppBundle: Sendable, Hashable, Codable, Identifiable {
     public var incomplete: Bool = false
     /// Metadata is available, but the bundle's size hasn't been read yet.
     public var sizePending: Bool = false
+    /// The files' lengths, the size Finder shows. `bytes` is what the
+    /// bundle takes on disk; nil where it hasn't been read.
+    public var logicalBytes: Int64? = nil
 
     public init(path: String, name: String, bundleID: String?, version: String?, bytes: Int64, fromAppStore: Bool) {
         self.path = path
@@ -36,7 +39,7 @@ public struct AppBundle: Sendable, Hashable, Codable, Identifiable {
     public var id: String { path }
 
     private enum CodingKeys: String, CodingKey {
-        case path, name, bundleID, version, bytes, fromAppStore, incomplete, sizePending
+        case path, name, bundleID, version, bytes, fromAppStore, incomplete, sizePending, logicalBytes
     }
 
     public init(from decoder: any Decoder) throws {
@@ -49,6 +52,16 @@ public struct AppBundle: Sendable, Hashable, Codable, Identifiable {
         fromAppStore = try c.decode(Bool.self, forKey: .fromAppStore)
         incomplete = try c.decodeIfPresent(Bool.self, forKey: .incomplete) ?? false
         sizePending = try c.decodeIfPresent(Bool.self, forKey: .sizePending) ?? false
+        logicalBytes = try c.decodeIfPresent(Int64.self, forKey: .logicalBytes)
+    }
+
+    /// The size Finder shows, where it is notably more than what the bundle
+    /// takes on disk: its files are stored compressed, as App Store installs
+    /// are, and Finder counts them uncompressed. Removing the app frees `bytes`.
+    public var finderBytes: Int64? {
+        guard let logicalBytes, !sizePending, logicalBytes - bytes >= 1_000_000, logicalBytes - bytes >= logicalBytes / 100
+        else { return nil }
+        return logicalBytes
     }
 
     /// Part of macOS: moving it would fail or break the system.
@@ -401,6 +414,7 @@ public enum AppFinder {
             path: metadata.path, name: metadata.name, bundleID: metadata.bundleID, version: metadata.version,
             bytes: r.root.size, fromAppStore: metadata.fromAppStore)
         app.incomplete = r.cancelled || !r.deniedPaths.isEmpty || r.root.unreadable
+        app.logicalBytes = r.logicalBytes
         return app
     }
 }
@@ -959,7 +973,7 @@ public struct AppListingStep: Sendable {
 }
 
 public enum AppStore {
-    static let formatVersion = 2
+    static let formatVersion = 3
 
     public struct Saved: Sendable, Codable {
         public let version: Int
