@@ -68,7 +68,7 @@ struct UIInteractionEndToEndTests {
                               base: files.root.appending(path: "apps"), logURL: files.log,
                               recycle: { paths in Trasher.moveToTrash(paths, through: .init(still: { _ in true }, protections: TrashGate.keepsNothing), backend: files.backend) },
                               isRunning: { _ in false }, otherCopies: { _ in [] },
-                              system: .init(base: files.home + "/System", isReady: { false }, remove: { _, _, _ in .init() }),
+                              system: .init(base: files.home + "/System", isReady: { false }, remove: { _, _, _, _ in .init() }),
                               trash: files.backend, protections: files.protections, imageOf: { _ in nil },
                               eject: { _ in "Disabled in UI verification" }, identityReaders: .init(groups: { _ in [] }), runtimeRoots: [])
         model.jobs = files.jobs

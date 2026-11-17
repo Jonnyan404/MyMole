@@ -401,7 +401,7 @@ struct UninstallView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .onGeometryChange(for: Int.self) { max(1, Int(($0.size.width + Theme.gap) / (DS.Size.appTileMinimum + Theme.gap))) } action: { gridColumns = $0 }
+                .onGeometryChange(for: Int.self) { [gap = Theme.gap, tile = DS.Size.appTileMinimum] proxy in max(1, Int((proxy.size.width + gap) / (tile + gap))) } action: { gridColumns = $0 }
                 .onKeyPress(keys: [.leftArrow, .rightArrow, .upArrow, .downArrow]) { key in
                     guard key.modifiers.isEmpty, let current = filtered.firstIndex(where: { $0.path == focusedApp }) else { return .ignored }
                     let columns = gridColumns
@@ -519,6 +519,8 @@ struct UninstallSheet: View {
     @State private var preview: [Leftover] = []
     @State private var earlyPaths: [LeftoverPreview] = []
     @State private var related = RelatedComponents.Report()
+    @State private var shown: [RelatedComponents.Shown] = []
+    @State private var shownSelection: Set<String> = []
     @State private var relatedSelection = Set<String>()
     @State private var chosen = Set<String>()
     @State private var selection = Set<String>()
@@ -887,6 +889,23 @@ struct UninstallSheet: View {
         if !related.unreadable.isEmpty {
             DSText("Some known shared-component locations couldn't be inspected. This isn't a complete installation manifest.", .metadata)
         }
+        if !shown.isEmpty {
+            DisclosureGroup("Shown only (\(shown.count))") {
+                VStack(alignment: .leading, spacing: DS.Space.sm) {
+                    DSText("macOS protects these, or every user of this Mac shares them, so MyMole only shows them. Each says what to do instead.", .metadata)
+                    FileTable(
+                        rows: shown.map {
+                            FileRow(id: $0.id, name: $0.name, size: $0.bytes, kind: $0.note,
+                                    location: $0.path.map { ($0 as NSString).deletingLastPathComponent } ?? String(localized: "Listed by macOS"),
+                                    symbol: $0.path == nil ? "puzzlepiece.extension" : "lock")
+                        }, columns: [.name, .size, .kind, .location], titles: [.kind: String(localized: "What to do")],
+                        autosave: "uninstall.shown", selection: $shownSelection, marks: nil,
+                        onOpen: { FileActions.reveal($0.filter { $0.hasPrefix("/") }) },
+                        menu: { paths in FileActions.menu(paths.filter { $0.hasPrefix("/") }, canOpen: false) })
+                        .frame(height: 130)
+                }.padding(.top, DS.Space.sm)
+            }
+        }
     }
 
     /// What the confirmation says goes where: to the Trash, and for good.
@@ -920,7 +939,7 @@ struct UninstallSheet: View {
         FileTable(
             rows: system.map {
                 keptBadge(FileRow(id: $0.path, name: $0.name, size: $0.bytes, kind: "\($0.kind.title) · \($0.place)",
-                                  location: ($0.path as NSString).deletingLastPathComponent, symbol: "lock.shield",
+                                  location: ($0.path as NSString).deletingLastPathComponent, symbol: "lock.shield", subtitle: $0.why?.title,
                                   canChoose: model.canRemoveSystemLeftovers && !hasManualSelection,
                                   choiceHelp: hasManualSelection ? String(localized: "System-wide deletion cannot be combined with unverified manual matches.") : nil))
             },
@@ -1059,8 +1078,10 @@ struct UninstallSheet: View {
     private func loadRelated(run: UUID) async {
         guard removed == nil else { return }
         let found = await model.relatedComponents(for: app)
+        let protected = await model.shownComponents(for: app)
         guard !Task.isCancelled, searchRequest == run else { return }
         related = found
+        shown = protected
     }
 
     private var manualSelectionMessage: String {

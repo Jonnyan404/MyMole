@@ -16,8 +16,9 @@ public enum PrivilegedRequest: Codable, Sendable, Equatable {
     /// kept item or holding one) is refused at the moment it would go.
     case removeSystem(paths: [String], keep: [String])
     /// What an uninstalled app left system-wide, checked against
-    /// `SystemLeftovers` for `appID` and `ids` again.
-    case removeLeftovers(paths: [String], appID: String, ids: [String])
+    /// `SystemLeftovers` for `appID` and `ids` again. `appPath` is where the
+    /// app was: only an installer record of that one app is its record.
+    case removeLeftovers(paths: [String], appID: String, ids: [String], appPath: String? = nil)
     /// Exactly one verified app, moved between Applications and the active
     /// user's private Trash. No permanent deletion or arbitrary destination.
     case applicationTrash(ApplicationTrash.Request, restoring: Bool)
@@ -53,7 +54,7 @@ public enum PrivilegedTool {
     }
     /// The tool and the app ship in one bundle; a mismatch means a tool from
     /// another build was asked, which is refused.
-    public static let version = "8"
+    public static let version = "9"
     public static let name = "MyMoleHelper"
 
     /// The command-line argument for `envelope`.
@@ -90,8 +91,8 @@ public enum PrivilegedTool {
             return .reports(wanted.map { dryRun ? engine.check($0) : engine.run($0) })
         case .removeSystem(let paths, let keep):
             return .removal(SystemCleanRules.remove(paths, keep: CleanKeepList(paths: Set(keep))))
-        case .removeLeftovers(let paths, let appID, let ids):
-            return .removal(SystemLeftovers.remove(paths, appID: appID, ids: ids, runner: runner))
+        case .removeLeftovers(let paths, let appID, let ids, let appPath):
+            return .removal(SystemLeftovers.remove(paths, appID: appID, ids: ids, appPath: appPath, runner: runner))
         case .applicationTrash(let request, let restoring):
             do { return .applicationTrash(try ApplicationTrash.move(request, restoring: restoring)) }
             catch let failure as ApplicationTrash.Failure { return .applicationTrashRefusal(failure) }

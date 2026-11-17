@@ -20,7 +20,8 @@ public enum RuntimeLeftovers {
             guard length > 1, length <= Int(PATH_MAX) else { return nil }
             var bytes = [CChar](repeating: 0, count: length)
             guard confstr(name, &bytes, length) == length else { return nil }
-            return URL(fileURLWithPath: String(cString: bytes)).resolvingSymlinksInPath().path
+            let text = String(decoding: bytes.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }, as: UTF8.self)
+            return URL(fileURLWithPath: text).resolvingSymlinksInPath().path
         }
         return [(Int32(_CS_DARWIN_USER_CACHE_DIR), Root.Kind.caches), (Int32(_CS_DARWIN_USER_TEMP_DIR), .temporary)]
             .compactMap { key, kind in path(key).map { Root(path: $0, kind: kind) } }
