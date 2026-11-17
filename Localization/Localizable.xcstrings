@@ -2948,12 +2948,12 @@
         }
       }
     },
-    "Appearance Theme Layout Table lines light dark system density compact spacious grid rows Native Graphite Blue Fjord Paper" : {
+    "Appearance Theme Layout Table lines light dark system density compact spacious grid rows Native Graphite Blue Fjord Paper Language English Simplified Chinese language 语言 英文 简体中文 中文" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "外观 主题 布局 表格线 浅色 深色 跟随系统 密度 紧凑 宽松 网格 行 原生 石墨 蓝色 峡湾 纸张"
+            "value" : "外观 主题 布局 表格线 浅色 深色 跟随系统 密度 紧凑 宽松 网格 行 原生 石墨 蓝色 峡湾 纸张 语言 英文 简体中文 中文"
           }
         }
       }
@@ -7759,6 +7759,16 @@
         }
       }
     },
+    "Language" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语言"
+          }
+        }
+      }
+    },
     "Large Files" : {
       "localizations" : {
         "zh-Hans" : {
@@ -9327,6 +9337,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "MyMole 需要管理员权限才能运行系统维护。"
+          }
+        }
+      }
+    },
+    "MyMole opens in %@ the next time it starts." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole 下次启动时将显示为 %1$@。"
           }
         }
       }
@@ -12113,6 +12133,16 @@
         }
       }
     },
+    "Relaunch MyMole" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新启动 MyMole"
+          }
+        }
+      }
+    },
     "Reload" : {
       "localizations" : {
         "zh-Hans" : {
@@ -12817,6 +12847,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "运行次数"
+          }
+        }
+      }
+    },
+    "Same as the Mac" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟随系统"
           }
         }
       }
@@ -14855,6 +14895,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "将 MyMole 从菜单栏移除；关闭其窗口即退出"
+          }
+        }
+      }
+    },
+    "Text, menus and dialogs are drawn in this language. macOS settles it when MyMole starts, so a change takes effect the next time it opens." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字、菜单和对话框都使用该语言显示。macOS 会在 MyMole 启动时确定语言，因此更改会在下次启动后生效。"
           }
         }
       }

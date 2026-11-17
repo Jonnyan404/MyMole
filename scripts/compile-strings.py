@@ -49,6 +49,14 @@ def main():
             per_locale.setdefault(locale, {})[key] = unit.get("value", key)
 
     os.makedirs(resources, exist_ok=True)
+    # The source language is spelled as the key itself, so the catalog carries no
+    # "en" entries. Write them out anyway: a bundle whose only .lproj folder is
+    # another language offers no English, either in the per-app language list in
+    # System Settings or in MyMole's own Language picker, which reads the folders.
+    english = {key: key for key in catalog.get("strings", {}) if key}
+    english.update(per_locale.get(source, {}))
+    per_locale[source] = english
+
     written = 0
     for locale, table in sorted(per_locale.items()):
         if not table:

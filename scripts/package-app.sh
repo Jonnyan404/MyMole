@@ -94,21 +94,13 @@ cat > "$PLIST" <<PLIST_EOF
 </plist>
 PLIST_EOF
 
-# The languages the bundle ships are the .lproj folders that were just written.
-# macOS reads this list to decide what the app can be shown in.
-locales=""
-for folder in "$APP/Contents/Resources"/*.lproj; do
-  [ -d "$folder" ] || continue
-  locales="$locales $(basename "$folder" .lproj)"
-done
-if [ -n "$locales" ]; then
-  "$PLIST_BUDDY" -c "Add :CFBundleLocalizations array" "$PLIST" 2>/dev/null
-  index=0
-  for locale in $locales; do
-    "$PLIST_BUDDY" -c "Add :CFBundleLocalizations:$index string $locale" "$PLIST"
-    index=$((index + 1))
-  done
-  echo "localizations: $(echo $locales)"
+# The languages the bundle ships are the .lproj folders that were just written,
+# and macOS reads them from there. Don't also list them in CFBundleLocalizations:
+# naming a language twice — as a folder and in that array — makes the bundle
+# report every localization twice, which the Language picker in Settings lists.
+shipped=$(cd "$APP/Contents/Resources" && ls -d *.lproj 2>/dev/null | sed 's/\.lproj$//' | tr '\n' ' ')
+if [ -n "$shipped" ]; then
+  echo "localizations: $shipped"
 fi
 
 # The privacy strings macOS shows in its permission prompts come from the

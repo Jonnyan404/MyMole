@@ -30,7 +30,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
 
     private var terms: String {
         switch self {
-        case .appearance: String(localized: "Appearance Theme Layout Table lines light dark system density compact spacious grid rows Native Graphite Blue Fjord Paper")
+        case .appearance: String(localized: "Appearance Theme Layout Table lines light dark system density compact spacious grid rows Native Graphite Blue Fjord Paper Language English Simplified Chinese language 语言 英文 简体中文 中文")
         case .menuBar: String(localized: "Show MyMole in the menu bar Show free space beside the icon Open MyMole at login Open Login Items launch startup close window quit")
         case .background: String(localized: "Scan in the background Notify me when the disk is nearly full Notify me when a scan finds a lot to clean Notify me when an app in the Trash left things behind Notify me when an app keeps the processor busy notifications alerts schedule daily weekly")
         case .performance: String(localized: "Scan speed Gentle Light Balanced Full Default Reset threads processor power Large results memory disk spill saved scans history points Responsiveness Automatic Gentle Light Fast Maximum Hyperspeed no limits interface cache charts icons repaint Low Power Free memory when macOS runs low pressure release")

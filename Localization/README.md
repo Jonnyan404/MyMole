@@ -12,6 +12,23 @@ catalog has drifted from the code.
    key is the English source text, and looking it up depends on that text.
 3. Run `scripts/sync-strings.sh --check` before opening a pull request.
 
+## Choosing the language
+
+macOS settles a bundle's language when the process starts: `Bundle.main` reads the
+`AppleLanguages` default, picks the first localization the bundle ships for it, and
+every `String(localized:)` and `Text("…")` resolves against that. No supported call
+changes it for a process already running, so the picker in **Settings → Appearance →
+Language** stores the choice and it is applied by the next launch — with a button to
+relaunch straight away.
+
+- *Same as the Mac* removes the app's own `AppleLanguages`, handing the choice back
+  to the system language and to the per-app entry in System Settings.
+- Any other option writes `AppleLanguages` into MyMole's defaults, which is the same
+  key the per-app entry in System Settings writes. The two stay in step.
+- The list is read from the bundle's `.lproj` folders, so a new translation appears
+  in it — and in `CFBundleLocalizations`, which the packaging script derives from
+  those folders — with no code to change.
+
 ## What a translation has to preserve
 
 The key doubles as a `printf` format, so a translation must keep the same number
