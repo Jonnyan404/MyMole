@@ -130,6 +130,8 @@ if [ "${MYMOLE_UI_BENCHMARK:-}" = 1 ]; then
   mkdir -m 700 "$root/ui-home"
   test_ui_home="$root/ui-home"
   test_deadline=180
+  # A virtual Mac runs the same steps about three times slower.
+  [ "${MYMOLE_UI_BENCHMARK_SCOPE:-}" != interaction ] || test_deadline=540
 fi
 targets=()
 # SwiftPM can link one package test bundle or separate target bundles.
