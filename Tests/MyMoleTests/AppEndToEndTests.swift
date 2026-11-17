@@ -5,7 +5,7 @@ import Foundation
 import ImageIO
 import PrivilegedKit
 import StorageKit
-import Synchronization
+import SynchronizationCompat
 import SystemKit
 import Testing
 import UniformTypeIdentifiers

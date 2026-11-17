@@ -2,7 +2,7 @@
 // uninstalls that run at the same time.
 import Darwin
 import Foundation
-import Synchronization
+import SynchronizationCompat
 import Testing
 import StorageKit
 import PrivilegedKit

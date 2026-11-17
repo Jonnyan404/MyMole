@@ -69,23 +69,23 @@ let package = Package(
         ),
         .testTarget(
             name: "MyMoleTests",
-            dependencies: ["MyMole"],
+            dependencies: ["MyMole", "SynchronizationCompat"],
             path: "Tests/MyMoleTests"
         ),
         .testTarget(
             name: "StorageKitTests",
-            dependencies: ["StorageKit"],
+            dependencies: ["StorageKit", "SynchronizationCompat"],
             path: "Tests/StorageKitTests",
             resources: [.copy("Fixtures/UninstallCorpus.json")]
         ),
         .testTarget(
             name: "PrivilegedKitTests",
-            dependencies: ["PrivilegedKit", "StorageKit"],
+            dependencies: ["PrivilegedKit", "StorageKit", "SynchronizationCompat"],
             path: "Tests/PrivilegedKitTests"
         ),
         .testTarget(
             name: "SystemKitTests",
-            dependencies: ["SystemKit"],
+            dependencies: ["SystemKit", "SynchronizationCompat"],
             path: "Tests/SystemKitTests"
         ),
     ]

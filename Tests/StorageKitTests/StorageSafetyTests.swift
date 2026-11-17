@@ -2,7 +2,7 @@
 // worktrees, replaced installers, Undo, time limits and credential warnings.
 import Darwin
 import Foundation
-import Synchronization
+import SynchronizationCompat
 import Testing
 
 final class StorageSafetyFixture: @unchecked Sendable {

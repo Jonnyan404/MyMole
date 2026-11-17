@@ -2,7 +2,7 @@
 // ownership of system-wide helpers.
 import Darwin
 import Foundation
-import Synchronization
+import SynchronizationCompat
 import Testing
 import StorageKit
 

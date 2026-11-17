@@ -1,7 +1,7 @@
 import AppKit
 import Foundation
 import SwiftUI
-import Synchronization
+import SynchronizationCompat
 import Testing
 
 @testable import MyMole

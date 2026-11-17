@@ -1,7 +1,7 @@
 import Darwin
 import Foundation
 import StorageKit
-import Synchronization
+import SynchronizationCompat
 import Testing
 @testable import PrivilegedKit
 

@@ -2,7 +2,7 @@
 import Foundation
 import PrivilegedKit
 import StorageKit
-import Synchronization
+import SynchronizationCompat
 import Testing
 
 @testable import MyMole

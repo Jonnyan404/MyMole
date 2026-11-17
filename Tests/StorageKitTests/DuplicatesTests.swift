@@ -1,7 +1,7 @@
 import CryptoKit
 import Darwin
 import Foundation
-import Synchronization
+import SynchronizationCompat
 import Testing
 
 @testable import StorageKit

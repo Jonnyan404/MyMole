@@ -1,7 +1,7 @@
 import AppKit
 import Foundation
 import StorageKit
-import Synchronization
+import SynchronizationCompat
 import SwiftUI
 import Testing
 
