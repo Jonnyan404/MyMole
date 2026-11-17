@@ -178,7 +178,10 @@ final class Sandbox {
         let r = StorageScanner.scan(path: box.path)
         let arcs = Sunburst.layout(r.root)
         let inner = arcs.filter { $0.depth == 1 }
-        #expect(abs(inner.reduce(0) { $0 + ($1.end - $1.start) } - 2 * .pi) < 1e-9)
+        // Split in two: as one expression the type checker on this SDK gives up
+        // with "unable to type-check ... in reasonable time".
+        let span = inner.reduce(into: 0.0) { $0 += $1.end - $1.start }
+        #expect(abs(span - 2 * .pi) < 1e-9)
         #expect(inner.first?.segment.name == "a")  // largest first
         #expect(inner.contains { if case .files = $0.segment { true } else { false } })
         #expect(Sunburst.hit(arcs, ring: 1, angle: 0.01)?.segment.name == "a")

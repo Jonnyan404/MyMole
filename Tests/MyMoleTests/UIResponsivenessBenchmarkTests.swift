@@ -95,7 +95,9 @@ struct UIResponsivenessBenchmarkTests {
             let destination: StatusCardID = step.isMultiple(of: 2) ? .cpu : .memory
             let payload = StatusCardDrag(card: source, session: state.session)
             let timing = UIWorkStamp()
-            let data = try await payload.exported(as: StatusCardDrag.contentType)
+            // Transferable's exported(as:) is 15.2+; the representation is the
+            // Codable one, so the same bytes come straight from the encoder.
+            let data = try JSONEncoder().encode(payload)
             let provider = NSItemProvider()
             provider.registerDataRepresentation(forTypeIdentifier: StatusCardDrag.contentType.identifier, visibility: .ownProcess) { complete in
                 complete(data, nil); return nil
@@ -990,7 +992,10 @@ private struct BenchmarkStatusPanel: View {
 
 /// The longest the main queue went between turns since `reset()`.
 @MainActor private final class UIGapWatch {
-    private let timer = DispatchSource.makeTimerSource(queue: .main)
+    // deinit runs outside the main actor and has to cancel the source, which
+    // the macOS 14 SDK types as non-Sendable. Nothing else touches it once
+    // deinit begins.
+    private nonisolated(unsafe) let timer = DispatchSource.makeTimerSource(queue: .main)
     private var last = DispatchTime.now().uptimeNanoseconds
     private(set) var value = 0.0
 

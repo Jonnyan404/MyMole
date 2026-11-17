@@ -127,4 +127,29 @@ extension Atomic where Value: FixedWidthInteger {
             return (old, value)
         }
     }
+
+    @discardableResult
+    public func max(
+        _ operand: Value,
+        ordering: AtomicOrdering = .relaxed
+    ) -> (oldValue: Value, newValue: Value) {
+        storage.withLock { value in
+            let old = value
+            // Swift.max, not the method being defined.
+            value = Swift.max(value, operand)
+            return (old, value)
+        }
+    }
+
+    @discardableResult
+    public func min(
+        _ operand: Value,
+        ordering: AtomicOrdering = .relaxed
+    ) -> (oldValue: Value, newValue: Value) {
+        storage.withLock { value in
+            let old = value
+            value = Swift.min(value, operand)
+            return (old, value)
+        }
+    }
 }

@@ -257,7 +257,9 @@ struct UIInteractionEndToEndTests {
         for valid in [true, false] {
             let before = state.layout
             let payload = StatusCardDrag(card: .memory, session: valid ? state.session : UUID())
-            let data = try await payload.exported(as: StatusCardDrag.contentType)
+            // Transferable's exported(as:) is 15.2+; the representation is the
+            // Codable one, so the same bytes come straight from the encoder.
+            let data = try JSONEncoder().encode(payload)
             let provider = NSItemProvider()
             provider.registerDataRepresentation(forTypeIdentifier: StatusCardDrag.contentType.identifier, visibility: .ownProcess) { complete in
                 complete(data, nil)

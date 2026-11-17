@@ -1,6 +1,14 @@
 // swift-tools-version:6.2
 import PackageDescription
 
+// Swift 6.2.4 on this toolchain asserts while emitting debug info for a boxed
+// CGFloat or Array<CGFloat> ("Failed to reconstruct type for
+// $s12CoreGraphics7CGFloatVz_XxD"), naming this flag as the workaround. Both
+// the app target and the test targets hit it.
+let roundTripDebugTypes: [SwiftSetting] = [
+    .unsafeFlags(["-Xfrontend", "-disable-round-trip-debug-types"])
+]
+
 // MyMole — a native SwiftUI Mac cleaner. Everything runs on MyMole's own
 // engine. In the direct edition, system-level work goes through a privileged
 // tool for one request at a time, via an approved service or an administrator
@@ -61,32 +69,32 @@ let package = Package(
             name: "MyMole",
             dependencies: ["StorageKit", "SystemKit", "PrivilegedKit", "SynchronizationCompat"],
             path: "Sources/MyMole",
-            // Swift 6.2.4 on this toolchain asserts while emitting debug info
-            // for a boxed CGFloat in this module ("Failed to reconstruct type
-            // for $s12CoreGraphics7CGFloatVz_XxD"). The flag below is the
-            // workaround the assertion itself suggests.
-            swiftSettings: [.unsafeFlags(["-Xfrontend", "-disable-round-trip-debug-types"])]
+            swiftSettings: roundTripDebugTypes
         ),
         .testTarget(
             name: "MyMoleTests",
             dependencies: ["MyMole", "SynchronizationCompat"],
-            path: "Tests/MyMoleTests"
+            path: "Tests/MyMoleTests",
+            swiftSettings: roundTripDebugTypes
         ),
         .testTarget(
             name: "StorageKitTests",
             dependencies: ["StorageKit", "SynchronizationCompat"],
             path: "Tests/StorageKitTests",
-            resources: [.copy("Fixtures/UninstallCorpus.json")]
+            resources: [.copy("Fixtures/UninstallCorpus.json")],
+            swiftSettings: roundTripDebugTypes
         ),
         .testTarget(
             name: "PrivilegedKitTests",
             dependencies: ["PrivilegedKit", "StorageKit", "SynchronizationCompat"],
-            path: "Tests/PrivilegedKitTests"
+            path: "Tests/PrivilegedKitTests",
+            swiftSettings: roundTripDebugTypes
         ),
         .testTarget(
             name: "SystemKitTests",
             dependencies: ["SystemKit", "SynchronizationCompat"],
-            path: "Tests/SystemKitTests"
+            path: "Tests/SystemKitTests",
+            swiftSettings: roundTripDebugTypes
         ),
     ]
 )

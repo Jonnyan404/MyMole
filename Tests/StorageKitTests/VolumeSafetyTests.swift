@@ -155,9 +155,11 @@ import Testing
         try box.file("Documents/a.bin", bytes: 200_000)
         try Data(contentsOf: box.url.appending(path: "Documents/a.bin")).write(to: box.url.appending(path: "Downloads.bin"))
         var tagged = box.url.appending(path: "Documents/a.bin")
-        var values = URLResourceValues()
-        values.tagNames = ["Synthetic Blue", "Synthetic Red"]
-        try tagged.setResourceValues(values)
+        // URLResourceValues.tagNames is get-only in this SDK; the key-based
+        // setter that has taken them since 10.9 lives on NSURL.
+        try (tagged as NSURL).setResourceValue(
+            ["Synthetic Blue", "Synthetic Red"], forKey: .tagNamesKey
+        )
         let g = try #require(DuplicateFinder.find(in: [box.path], minimum: 100_000, workers: 1).groups.first)
         #expect(g.files.first { $0.name == "a.bin" }?.tags == ["Synthetic Blue", "Synthetic Red"])
         #expect(g.tagsDiffer)

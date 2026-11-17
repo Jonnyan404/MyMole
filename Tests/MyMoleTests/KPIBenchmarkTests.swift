@@ -1,4 +1,7 @@
 import AppKit
+// mach_task_self_ is a mutable C global that the macOS 14 SDK does not
+// annotate; reading it after launch is safe.
+@preconcurrency import Darwin
 import Foundation
 @testable import StorageKit
 import SynchronizationCompat
@@ -66,9 +69,14 @@ struct KPIBenchmarkTests {
     // MARK: Large results, in memory and on disk
 
     private static func spillRows(_ n: Int) -> [SpillTable.Row] {
-        (0..<n).map { i in
-            SpillTable.Row(path: "/synthetic/folder-\(i % 997)/file-\(i).bin", size: Int64((i &* 7_919) % 100_003) + 1_048_576,
-                           modified: Date(timeIntervalSinceReferenceDate: Double(i % 86_400)), kind: FileKind.allCases[i % FileKind.allCases.count])
+        // One local per field: as a single initializer call the type checker on
+        // this SDK gives up on the arithmetic.
+        (0..<n).map { i -> SpillTable.Row in
+            let path = "/synthetic/folder-\(i % 997)/file-\(i).bin"
+            let size = Int64((i &* 7_919) % 100_003) + 1_048_576
+            let modified = Date(timeIntervalSinceReferenceDate: Double(i % 86_400))
+            let kind = FileKind.allCases[i % FileKind.allCases.count]
+            return SpillTable.Row(path: path, size: size, modified: modified, kind: kind)
         }
     }
 

@@ -1,5 +1,7 @@
 import AppKit
-import Darwin
+// mach_task_self_ is a mutable C global that the macOS 14 SDK does not
+// annotate; reading it after launch is safe.
+@preconcurrency import Darwin
 import Foundation
 @testable import StorageKit
 import SynchronizationCompat

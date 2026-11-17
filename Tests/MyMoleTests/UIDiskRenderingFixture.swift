@@ -34,25 +34,38 @@ import SwiftUI
 /// with `children` folders of `files` large files and one more level below.
 @MainActor func largeSyntheticDiskModel(in directory: URL, branches: Int = 40, children: Int = 40, files: Int = 12) async throws -> StorageModel {
     let root = Folder(name: "Synthetic home", parent: nil, rootPath: "/synthetic/home")
-    root.subfolders = (0..<branches).map { b in
-        let top = Folder(name: "Synthetic area \(b)", parent: root)
-        top.subfolders = (0..<children).map { c in
-            let mid = Folder(name: "Synthetic folder \(b)-\(c)", parent: top)
-            mid.subfolders = (0..<3).map { d in
-                let leaf = Folder(name: "Synthetic leaf \(d)", parent: mid)
-                leaf.listedFiles = (0..<files).map { f in
-                    FileItem(name: "Generated \(f).bin", size: Int64((b + 1) * (c + 2) * (d + 1) * (f + 1)) * 1_048_576, modified: .distantPast, kind: .other)
-                }
-                leaf.ownBytes[.other] = leaf.listedFiles.reduce(0) { $0 + $1.size }
-                leaf.finish()
-                return leaf
-            }
-            mid.finish()
-            return mid
+    // One function per level, not one nested closure: on this SDK the type
+    // checker runs out of budget on the nested chain and reports it as
+    // "unable to type-check this expression in reasonable time".
+    func leaf(at depth: Int, in mid: Folder, area: Int, branch: Int) -> Folder {
+        let leaf = Folder(name: "Synthetic leaf \(depth)", parent: mid)
+        var listed: [FileItem] = []
+        for f in 0..<files {
+            let copies = (area + 1) * (branch + 2) * (depth + 1)
+            let size = Int64(copies * (f + 1)) * 1_048_576
+            listed.append(FileItem(name: "Generated \(f).bin", size: size, modified: .distantPast, kind: .other))
         }
+        leaf.listedFiles = listed
+        leaf.ownBytes[.other] = leaf.listedFiles.reduce(0) { $0 + $1.size }
+        leaf.finish()
+        return leaf
+    }
+
+    func folder(in top: Folder, area: Int, branch: Int) -> Folder {
+        let mid = Folder(name: "Synthetic folder \(area)-\(branch)", parent: top)
+        mid.subfolders = (0..<3).map { depth in leaf(at: depth, in: mid, area: area, branch: branch) }
+        mid.finish()
+        return mid
+    }
+
+    func area(_ index: Int) -> Folder {
+        let top = Folder(name: "Synthetic area \(index)", parent: root)
+        top.subfolders = (0..<children).map { branch in folder(in: top, area: index, branch: branch) }
         top.finish()
         return top
     }
+
+    root.subfolders = (0..<branches).map { area($0) }
     root.finish()
     let export = directory.appending(path: "large-synthetic.mymolescan")
     try ScanExport(of: root).data().write(to: export)
