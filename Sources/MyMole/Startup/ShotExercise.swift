@@ -2,7 +2,7 @@
 import AppKit
 import StorageKit
 
-/// The UI smoke build's pane pictures (`scripts/ui-smoke.sh --pane-shots-only`):
+/// The UI smoke build's pane pictures:
 /// on a synthetic home, the app opens every pane at the smallest and a wide
 /// window, draws its own window into a PNG in the run folder and lists every
 /// control that a pane pushed sideways out of its viewport. Like the resize

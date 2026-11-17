@@ -3,7 +3,7 @@ import Foundation
 import StorageKit
 
 /// The UI smoke build's record of every time the main thread was held up
-/// for longer than a frame, for the resize checks in scripts/ui-smoke.sh.
+/// for longer than a frame, for the resize check.
 /// A run-loop timer in the common modes ticks every 2 ms; a tick that
 /// arrives late means the main thread was busy for that long, whatever kept
 /// it busy. It is a run-loop timer rather than one on the main queue: while
