@@ -51,6 +51,15 @@ if [ -f "$REPO/LICENSE" ]; then
   cp "$REPO/LICENSE" "$APP/Contents/Resources/Licenses/MyMole-LICENSE.txt"
 fi
 
+# Nothing in the SwiftPM build compiles the string catalog, and String(localized:)
+# resolves against Bundle.main: without .lproj folders in Resources every lookup
+# falls back to the English key. Xcode's xcstringstool does this for an official
+# build; here the same job is done by the script next to this one.
+if [ -f "$REPO/Localization/Localizable.xcstrings" ]; then
+  python3 "$REPO/scripts/compile-strings.py" \
+    "$REPO/Localization/Localizable.xcstrings" "$APP/Contents/Resources"
+fi
+
 PLIST="$APP/Contents/Info.plist"
 cat > "$PLIST" <<PLIST_EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -65,6 +74,8 @@ cat > "$PLIST" <<PLIST_EOF
     <string>MyMole</string>
     <key>CFBundleIdentifier</key>
     <string>$BUNDLE_ID</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -82,6 +93,23 @@ cat > "$PLIST" <<PLIST_EOF
 </dict>
 </plist>
 PLIST_EOF
+
+# The languages the bundle ships are the .lproj folders that were just written.
+# macOS reads this list to decide what the app can be shown in.
+locales=""
+for folder in "$APP/Contents/Resources"/*.lproj; do
+  [ -d "$folder" ] || continue
+  locales="$locales $(basename "$folder" .lproj)"
+done
+if [ -n "$locales" ]; then
+  "$PLIST_BUDDY" -c "Add :CFBundleLocalizations array" "$PLIST" 2>/dev/null
+  index=0
+  for locale in $locales; do
+    "$PLIST_BUDDY" -c "Add :CFBundleLocalizations:$index string $locale" "$PLIST"
+    index=$((index + 1))
+  done
+  echo "localizations: $(echo $locales)"
+fi
 
 # The privacy strings macOS shows in its permission prompts come from the
 # repository's own plist, so there is one place to edit them.
