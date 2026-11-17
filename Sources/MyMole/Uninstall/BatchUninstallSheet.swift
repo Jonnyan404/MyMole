@@ -111,7 +111,7 @@ struct BatchUninstallSheet: View {
             if systemCount > 0 {
                 DSNotice(
                     .info,
-                    "\(systemCount) item\(systemCount == 1 ? "" : "s") outside your Library, such as launch jobs, \(systemCount == 1 ? "is" : "are") offered when you uninstall the app on its own."
+                    "\(systemCount) items outside your Library, such as launch jobs, are offered when you uninstall the app on its own."
                 )
             }
             if !searchFinished, !submitted, !ran {
@@ -135,7 +135,7 @@ struct BatchUninstallSheet: View {
             DSActionGroup {
                 DSText(
                     String(
-                        localized: "\(chosenApps.count) app\(chosenApps.count == 1 ? "" : "s") · \(ByteSize.format(total)) to the Trash"),
+                        localized: "\(chosenApps.count) apps · \(ByteSize.format(total)) to the Trash"),
                     .lead)
             } trailing: {
                 Button(ran ? "Done" : "Cancel") { dismiss() }
@@ -173,10 +173,10 @@ struct BatchUninstallSheet: View {
 
     private var confirmText: String {
         let leftovers = chosenApps.reduce(0) { $0 + chosenLeftovers(of: $1).count }
-        var text = String(localized: "\(chosenApps.map(\.name).joined(separator: ", ")) and \(leftovers) leftover\(leftovers == 1 ? "" : "s") are moved to the Trash. You can undo right after.")
+        var text = String(localized: "\(chosenApps.map(\.name).joined(separator: ", ")) and \(leftovers) leftovers are moved to the Trash. You can undo right after.")
         let going = Set(chosenApps.map(\.path) + chosenApps.flatMap { chosenLeftovers(of: $0).map(\.path) })
         let n = locked.intersection(going).count
-        if n > 0 { text += " " + String(localized: "\(n) of them \(n == 1 ? "is" : "are") locked in Finder and unlocked to move.") }
+        if n > 0 { text += " " + String(localized: "\(n) of them are locked in Finder and unlocked to move.") }
         return text
     }
 

@@ -76,7 +76,7 @@ import Testing
         let all = TrashModel.report(.init(removed: 3, bytes: 2_000_000, failed: 0, skipped: 0))
         #expect(all.contains("3 items") && !all.contains("couldn't"))
         let some = TrashModel.report(.init(removed: 1, bytes: 1_000, failed: 2, skipped: 1))
-        #expect(some.contains("1 item ") && some.contains("2 couldn't be removed") && some.contains("1 left"))
+        #expect(some.contains("Deleted 1 item") && some.contains("2 couldn't be removed") && some.contains("1 left"))
         #expect(TrashModel.report(.init(removed: 0, bytes: 0, failed: 1, skipped: 0)).hasPrefix("Nothing was deleted"))
     }
 }

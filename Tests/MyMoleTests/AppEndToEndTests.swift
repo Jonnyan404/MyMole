@@ -177,7 +177,7 @@ struct AppEndToEndTests {
         let model = AppsModel(home: f.home, folders: [f.home + "/Applications"], base: f.root.appending(path: "apps"), logURL: f.log,
             recycle: { paths in Trasher.moveToTrash(paths, through: .init(still: { _ in true }, protections: TrashGate.keepsNothing), backend: f.backend) },
             isRunning: { _ in false }, otherCopies: { _ in [] },
-            system: .init(base: f.home + "/System", isReady: { false }, remove: { _, _, _ in .init() }),
+            system: .init(base: f.home + "/System", isReady: { false }, remove: { _, _, _, _ in .init() }),
             trash: f.backend, protections: f.protections, imageOf: { _ in nil }, eject: { _ in "Disabled in E2E" },
             identityReaders: .init(groups: { _ in [] }), runtimeRoots: [])
         model.load()
@@ -564,7 +564,7 @@ struct AppEndToEndTests {
                 events.append("move")
                 return Trasher.moveToTrash(paths, through: .init(still: { _ in true }, protections: TrashGate.keepsNothing), backend: f.backend)
             }, isRunning: { _ in true }, otherCopies: { _ in [] },
-            system: .init(base: f.home + "/System", isReady: { false }, remove: { _, _, _ in .init() }), trash: f.backend,
+            system: .init(base: f.home + "/System", isReady: { false }, remove: { _, _, _, _ in .init() }), trash: f.backend,
             protections: f.protections, imageOf: { _ in nil }, eject: { _ in "Disabled in E2E" }, ownAppPath: own,
             ownAppID: "com.example.SyntheticEditor", identityReaders: .init(groups: { _ in [] }), runtimeRoots: [])
         apps.jobs = f.jobs

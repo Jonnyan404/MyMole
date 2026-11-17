@@ -469,9 +469,12 @@ struct DSFilterField: View {
 /// The notice for a move where nothing reached the Trash, with the first
 /// reason, so it never reads as "Moved Zero KB".
 func nothingMoved(_ failed: [(path: String, reason: String)]) -> String {
-    let count = failed.count == 1 ? "it" : "\(failed.count) items"
-    let why = failed.first.map { ": \($0.reason.trimmingCharacters(in: CharacterSet(charactersIn: ".")))" } ?? ""
-    return String(localized: "Nothing was moved to the Trash; MyMole couldn't move \(count)\(why).")
+    guard let reason = failed.first?.reason.trimmingCharacters(in: CharacterSet(charactersIn: ".")) else {
+        return String(localized: "Nothing was moved to the Trash.")
+    }
+    return failed.count == 1
+        ? String(localized: "Nothing was moved to the Trash; MyMole couldn't move it: \(reason).")
+        : String(localized: "Nothing was moved to the Trash; MyMole couldn't move \(failed.count) items: \(reason).")
 }
 
 /// An empty result from a scan that couldn't read everything: nothing was

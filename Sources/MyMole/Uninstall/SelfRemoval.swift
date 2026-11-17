@@ -175,7 +175,7 @@ struct SelfRemovalSheet: View {
                         separator: "\n"), .metadata)
             }
             DSActionGroup {
-                DSText("\(model.chosenLeftovers.count) data item\(model.chosenLeftovers.count == 1 ? "" : "s") chosen", .metadata)
+                DSText("\(model.chosenLeftovers.count) data items chosen", .metadata)
             } trailing: {
                 if model.removed {
                     Button("Quit MyMole") { model.finish() }.primaryAction()
@@ -198,7 +198,7 @@ struct SelfRemovalSheet: View {
             button: String(localized: "Uninstall MyMole and Quit"),
             message: String(
                 localized:
-                    "This app and the \(model.chosenLeftovers.count) chosen data item\(model.chosenLeftovers.count == 1 ? "" : "s") go to the Trash. Open at Login is turned off. MyMole then quits. You can restore them with Put Back in Finder's Trash; in-app Undo isn't available after quitting."
+                    "This app and the \(model.chosenLeftovers.count) chosen data items go to the Trash. Open at Login is turned off. MyMole then quits. You can restore them with Put Back in Finder's Trash; in-app Undo isn't available after quitting."
             )
         ) {
             Task { await model.remove() }

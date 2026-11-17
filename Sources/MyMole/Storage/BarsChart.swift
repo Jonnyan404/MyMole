@@ -39,12 +39,9 @@ struct BarsChart: View {
                 DSValue(String(format: "%.1f%%", share * 100), .metadata)
                 DSValue(bytes: p.size, .lead, weight: .semibold)
             }
-            GeometryReader { g in
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(hot ? color.blended(with: .white, by: 0.3) : color)
-                    .frame(width: max(4, g.size.width * fraction))
-            }
-            .frame(height: 14)
+            Bar(fraction: fraction)
+                .fill(hot ? color.blended(with: .white, by: 0.3) : color)
+                .frame(height: 14)
         }
         .padding(DS.Space.sm)
         .background(hot ? palette.accent.color.opacity(0.08) : .clear, in: .rect(cornerRadius: DS.Radius.control))
@@ -57,5 +54,21 @@ struct BarsChart: View {
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isButton)
         .accessibilityAction { if case .folder(let f) = p { model.open(f) } }
+    }
+}
+
+/// A bar as long as `fraction` of the width it is given, at least 4 points.
+/// A shape sizes itself from its frame, so no row needs a geometry reader.
+private struct Bar: Shape {
+    var fraction: Double
+
+    var animatableData: Double {
+        get { fraction }
+        set { fraction = newValue }
+    }
+
+    func path(in rect: CGRect) -> Path {
+        let width = min(rect.width, max(4, rect.width * fraction))
+        return Path(roundedRect: CGRect(x: rect.minX, y: rect.minY, width: width, height: rect.height), cornerRadius: 4)
     }
 }

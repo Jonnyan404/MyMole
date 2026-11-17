@@ -296,7 +296,7 @@ final class InstallersModel {
         let skipped = picked.count - gone.count
         var text = gone.isEmpty && !outcome.failed.isEmpty
             ? nothingMoved(outcome.failed)
-            : String(localized: "Moved \(gone.count) installer\(gone.count == 1 ? "" : "s") (\(fmt(gone.reduce(0) { $0 + $1.bytes }))) to the Trash")
+            : String(localized: "Moved \(gone.count) installers (\(fmt(gone.reduce(0) { $0 + $1.bytes }))) to the Trash")
         if skipped > 0 { text += String(localized: " · \(skipped) left alone") }
         show(Notice(text: text, canUndo: !gone.isEmpty))
     }
@@ -329,7 +329,7 @@ final class InstallersModel {
             target = nil
             show(Notice(
                 text: failed.isEmpty
-                    ? String(localized: "Restored \(back.count) installer\(back.count == 1 ? "" : "s")")
+                    ? String(localized: "Restored \(back.count) installers")
                     : String(localized: "Restored \(back.count); \(failed.count) couldn't be put back. Undo tries those again."),
                 canUndo: !failed.isEmpty))
         }

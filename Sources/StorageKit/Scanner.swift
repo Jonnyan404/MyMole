@@ -103,6 +103,9 @@ public struct ScanResult: Sendable {
     /// Folders a file server showed inside themselves, through a link it
     /// followed: listed, but neither walked nor counted again (first 500).
     public var loops: [String] = []
+    /// The counted files' lengths, as Finder adds them up: more than the
+    /// root's size when files are stored compressed.
+    public var logicalBytes: Int64 = 0
 }
 
 /// Parallel directory walk into a `Folder` tree.
@@ -170,7 +173,8 @@ public enum StorageScanner {
         if onRoot == nil { root.finish() }
         return ScanResult(
             root: root, deniedPaths: walk.denied.withLock { $0 }, duration: Date().timeIntervalSince(start),
-            cancelled: progress.isCancelled, loops: walk.loops?.found ?? [])
+            cancelled: progress.isCancelled, loops: walk.loops?.found ?? [],
+            logicalBytes: walk.logicalBytes.load(ordering: .relaxed))
     }
 
     /// What the item at `path` takes on disk: a folder's whole tree, walked
@@ -192,6 +196,7 @@ private final class Walk: @unchecked Sendable {
     let queue = WorkQueue()
     let tracker = SubtreeCounter()
     let hardLinks = Mutex(Set<UInt64>())
+    let logicalBytes = Atomic<Int64>(0)
     let clones = CloneSightings()
     let denied = Mutex([String]())
     /// Written once on the starting thread before workers exist; read-only after.
@@ -235,6 +240,7 @@ private final class Walk: @unchecked Sendable {
         var found: [FoundFile] = []
         var files = 0
         var bytes: Int64 = 0
+        var lengths: Int64 = 0
         var reclaim = Reclaim()
         for e in entries {
             guard !progress.isCancelled else { folder.riskListed = false; break }
@@ -275,6 +281,7 @@ private final class Walk: @unchecked Sendable {
                 }
                 files += 1
                 bytes += e.allocated
+                lengths += e.length
             case .symlink, .other:
                 continue  // never followed, never counted
             }
@@ -286,6 +293,7 @@ private final class Walk: @unchecked Sendable {
         progress.filesCounter.add(files, ordering: .relaxed)
         progress.foldersCounter.add(1, ordering: .relaxed)
         progress.bytesCounter.add(bytes, ordering: .relaxed)
+        logicalBytes.add(lengths, ordering: .relaxed)
         return subs
     }
 }

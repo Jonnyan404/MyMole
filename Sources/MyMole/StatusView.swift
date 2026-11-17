@@ -97,7 +97,7 @@ struct StatusView: View {
                                     else if dropTarget == card.id { dropTarget = nil }
                                 }))
                         }
-                        .onGeometryChangeCompat(for: Int.self) { StatusGrid.columnCount(width: $0.size.width, spacing: DS.Space.md) } action: { gridColumns = $0 }
+                        .onGeometryChangeCompat(for: Int.self) { [spacing = DS.Space.md] proxy in StatusGrid.columnCount(width: proxy.size.width, spacing: spacing) } action: { gridColumns = $0 }
                         if editingLayout { endDropTarget }
                     } else {
                         DSLoading("Reading your Mac's status…").padding(DS.Space.xl * 2)

@@ -61,7 +61,7 @@ struct OrphansSheet: View {
                     if !model.unreadable.isEmpty {
                         DSNotice(
                             .warning,
-                            "\(model.unreadable.count) folder\(model.unreadable.count == 1 ? "" : "s") in your Library couldn't be read, so what's in \(model.unreadable.count == 1 ? "it" : "them") isn't listed: \(model.unreadable.map { ($0 as NSString).abbreviatingWithTildeInPath }.joined(separator: ", "))."
+                            "\(model.unreadable.count) folders in your Library couldn't be read, so what's in them isn't listed: \(model.unreadable.map { ($0 as NSString).abbreviatingWithTildeInPath }.joined(separator: ", "))."
                         )
                     }
                     VStack(alignment: .leading, spacing: DS.Space.sm) {
@@ -167,7 +167,7 @@ struct OrphansSheet: View {
             if removed == nil { releaseAccess(); choosing = false }
         }
         .actionConfirmation(
-            String(localized: "Move \(model.chosen.count) leftover\(model.chosen.count == 1 ? "" : "s") to the Trash?"),
+            String(localized: "Move \(model.chosen.count) leftovers to the Trash?"),
             isPresented: $confirm, action: .orphans,
             message: String(
                 localized:

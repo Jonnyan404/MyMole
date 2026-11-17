@@ -109,7 +109,7 @@ struct AppCopiesSheet: View {
                     }
                     HStack {
                         let groups = model.counts.values.filter { $0 > 1 }.count
-                        DSText("\(visible.count) shown · \(groups) app ID\(groups == 1 ? "" : "s") with multiple copies", .metadata)
+                        DSText("\(visible.count) shown · \(groups) app IDs with multiple copies", .metadata)
                         Spacer()
                         if model.loading || model.measuring || projected.working { ProgressView().controlSize(.small) }
                     }

@@ -49,7 +49,7 @@ struct DuplicatesView: View {
         }
         .paneToolbar("Duplicates", subtitle: "Files with the same content in your own folders") { tools }
         .actionConfirmation(
-            String(localized: "Move \(model.chosen.count.formatted()) cop\(model.chosen.count == 1 ? "y" : "ies") to the Trash?"),
+            String(localized: "Move \(model.chosen.count) copies to the Trash?"),
             isPresented: $confirming, action: .duplicates,
             message: confirmationMessage
         ) { model.trashChosen() }
@@ -92,7 +92,7 @@ struct DuplicatesView: View {
     private var header: some View {
         DSPaneHeader {
             DSMetric(
-                fmt(model.spareBytes), "in spare copies of \(model.displayGroups.count.formatted()) file\(model.displayGroups.count == 1 ? "" : "s")")
+                fmt(model.spareBytes), "in spare copies of \(model.displayGroups.count) files")
         } actions: {
             DSControlField("Filter duplicate groups") {
                 DSFilterField(String(localized: "Filter by name or folder"), text: $query)
@@ -151,7 +151,7 @@ struct DuplicatesView: View {
             )
             if model.uncompared > 0 {
                 DSCapsule(
-                    "\(model.uncompared) file\(model.uncompared == 1 ? "" : "s") couldn't be compared",
+                    "\(model.uncompared) files couldn't be compared",
                     symbol: "exclamationmark.triangle.fill", tint: .orange
                 )
                 .help(
@@ -164,7 +164,7 @@ struct DuplicatesView: View {
             }
             if !model.unreadable.isEmpty {
                 DSCapsule(
-                    "\(model.unreadable.count) folder\(model.unreadable.count == 1 ? "" : "s") couldn't be read",
+                    "\(model.unreadable.count) folders couldn't be read",
                     symbol: "exclamationmark.triangle.fill", tint: .orange
                 )
                 .help(model.unreadable.map { ($0 as NSString).abbreviatingWithTildeInPath }.joined(separator: ", "))
@@ -271,7 +271,7 @@ struct DuplicatesView: View {
                     } else if clones > 0 {
                         r.badge = String(localized: "Clone")
                         r.badgeTint = .systemGray
-                        r.badgeHelp = String(localized: "Shares its space with \(clones) other cop\(clones == 1 ? "y" : "ies") here: moving it frees space only when they all go.")
+                        r.badgeHelp = String(localized: "Shares its space with \(clones) other copies here: moving it frees space only when they all go.")
                     }
                     model.keep.mark(&r)
                     r.bulkCheckable = f.path != g.files.last?.path

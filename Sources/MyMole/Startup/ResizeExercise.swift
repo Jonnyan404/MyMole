@@ -2,7 +2,7 @@
 import AppKit
 import StorageKit
 
-/// The UI smoke build's resize check (`scripts/ui-smoke.sh --resize-only`):
+/// The UI smoke build's resize check:
 /// the whole app, launched on a synthetic home, resizes its own window and
 /// drags its sidebar divider a frame at a time in each pane, while launch's
 /// scans run as they would for a user. Each step's own main-thread time and

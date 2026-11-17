@@ -640,8 +640,8 @@ final class ProjectsModel {
             }
         }
         var left: [String] = []
-        if recent > 0 { left.append(String(localized: "\(recent) item\(recent == 1 ? "" : "s") changed in the last week")) }
-        if byName > 0 { left.append(String(localized: "\(byName) group\(byName == 1 ? "" : "s") matched by name only")) }
+        if recent > 0 { left.append(String(localized: "\(recent) items changed in the last week")) }
+        if byName > 0 { left.append(String(localized: "\(byName) groups matched by name only")) }
         if !left.isEmpty {
             show(Notice(text: String(localized: "Left unchosen: \(left.joined(separator: " and ")); tick them yourself if they can go"), canUndo: false))
         }
@@ -779,7 +779,7 @@ final class ProjectsModel {
         CleanupLog.submit(record, to: logURL)
         var text = outcome.moved.isEmpty && !outcome.failed.isEmpty
             ? nothingMoved(outcome.failed)
-            : String(localized: "Moved \(outcome.moved.count) item\(outcome.moved.count == 1 ? "" : "s") (\(Freeing.phrase(movedBytes, frees: freed))) to the Trash")
+            : String(localized: "Moved \(outcome.moved.count) items (\(Freeing.phrase(movedBytes, frees: freed))) to the Trash")
         if !outcome.moved.isEmpty && !outcome.failed.isEmpty { text += String(localized: " · \(outcome.failed.count) couldn't be moved") }
         if !partly.isEmpty { text += String(localized: " · \(partly.count) kept in part") }
         if let why = held.values.sorted().first {
@@ -838,7 +838,7 @@ final class ProjectsModel {
         if needsScan || scanAfterTrash || scanning { scan() }
         scanAfterTrash = false
         show(Notice(
-            text: failed.isEmpty ? String(localized: "Restored \(restored) item\(restored == 1 ? "" : "s")") : String(localized: "Restored \(restored); \(failed.count) couldn't be put back. Undo tries those again."),
+            text: failed.isEmpty ? String(localized: "Restored \(restored) items") : String(localized: "Restored \(restored); \(failed.count) couldn't be put back. Undo tries those again."),
             canUndo: !failed.isEmpty))
     }
 

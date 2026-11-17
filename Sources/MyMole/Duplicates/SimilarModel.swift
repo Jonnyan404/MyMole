@@ -247,7 +247,7 @@ final class SimilarModel {
             CleanupLog.submit(record, to: logURL)
             var text = moved.isEmpty
                 ? String(localized: "Nothing was moved")
-                : String(localized: "Moved \(moved.count) picture\(moved.count == 1 ? "" : "s") (\(ByteSize.format(total))) to the Trash")
+                : String(localized: "Moved \(moved.count) pictures (\(ByteSize.format(total))) to the Trash")
             if picked.count > moved.count { text += String(localized: " · \(picked.count - moved.count) left alone") }
             show(Notice(text: text, canUndo: !moved.isEmpty))
         }
@@ -271,7 +271,7 @@ final class SimilarModel {
             }
             show(Notice(
                 text: failed.isEmpty
-                    ? String(localized: "Restored \(back.count) picture\(back.count == 1 ? "" : "s")")
+                    ? String(localized: "Restored \(back.count) pictures")
                     : String(localized: "Restored \(back.count); \(failed.count) couldn't be put back. Undo tries those again."),
                 canUndo: !failed.isEmpty))
             scan()

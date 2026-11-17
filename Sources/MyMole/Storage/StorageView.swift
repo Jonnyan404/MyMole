@@ -314,7 +314,7 @@ struct OutsideTheMap: View {
 
     private var purgeableText: String {
         let count = space.snapshots?.count ?? 0
-        let snapshots = count == 0 ? "" : String(localized: " \(count) local Time Machine snapshot\(count == 1 ? " is" : "s are") on this disk.")
+        let snapshots = count == 0 ? "" : String(localized: " \(count) local Time Machine snapshots are on this disk.")
         return String(localized: "Counted as free, as Finder does: macOS frees it by itself when space is needed, mostly caches it manages and local Time Machine snapshots.") + snapshots
     }
 
@@ -359,7 +359,7 @@ struct SkippedView: View {
         } else {
             List {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("\(model.denied.count) folder\(model.denied.count == 1 ? "" : "s") couldn't be read").font(.headline)
+                    Text("\(model.denied.count) folders couldn't be read").font(.headline)
                     Text(
                         "Their contents aren't counted above. Most are protected by macOS; Full Disk Access lets MyMole see inside the ones that belong to you."
                     )
@@ -444,7 +444,7 @@ struct ReviewSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.gap) {
-            Text("Move \(items.count) item\(items.count == 1 ? "" : "s") to the Trash?").font(.title2.bold())
+            Text("Move \(items.count) items to the Trash?").font(.title2.bold())
             Text(
                 "\(Freeing.phrase(model.markedBytes, frees: model.markedFrees)). Everything goes to the Trash, so you can undo right after or put things back from the Trash later."
             )
@@ -512,7 +512,7 @@ struct ReviewSheet: View {
         } else if let risk = PathRisk.of(m.path) {
             riskLabel(risk)
         } else if let n = hints?.links[m.path], n > 0 {
-            Label("Has \(n) other name\(n == 1 ? "" : "s") (hard link\(n == 1 ? "" : "s")) — its space stays in use until every name goes", systemImage: "link")
+            Label("Has \(n) other names (hard links) — its space stays in use until every name goes", systemImage: "link")
                 .font(.caption).foregroundStyle(.secondary)
         } else if let risk = model.scannedRisk(for: m) {
             riskLabel(risk)

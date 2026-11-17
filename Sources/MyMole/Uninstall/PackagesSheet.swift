@@ -27,7 +27,7 @@ struct PackagesSheet: View {
                 if !listing.unreadable.isEmpty {
                     DSNotice(
                         .warning,
-                        "\(listing.unreadable.count) place\(listing.unreadable.count == 1 ? "" : "s") couldn't be read, so what's there isn't listed: \(listing.unreadable.joined(separator: ", "))."
+                        "\(listing.unreadable.count) places couldn't be read, so what's there isn't listed: \(listing.unreadable.joined(separator: ", "))."
                     )
                 }
                 FileTable(

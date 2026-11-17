@@ -118,7 +118,7 @@ final class TrashModel {
     static func report(_ out: TrashEmptier.Outcome) -> String {
         var parts: [String] = []
         if out.removed > 0 {
-            parts.append(String(localized: "Deleted \(out.removed) item\(out.removed == 1 ? "" : "s") (\(Freeing.phrase(out.bytes, frees: out.frees))) for good"))
+            parts.append(String(localized: "Deleted \(out.removed) items (\(Freeing.phrase(out.bytes, frees: out.frees))) for good"))
         } else {
             parts.append(String(localized: "Nothing was deleted"))
         }
@@ -138,14 +138,14 @@ extension View {
             isPresented: Binding(get: { trash.confirming != nil }, set: { if !$0 { trash.confirming = nil } }),
             presenting: trash.confirming
         ) { listing in
-            Button("Delete \(listing.count) Item\(listing.count == 1 ? "" : "s") for Good", role: .destructive) {
+            Button("Delete \(listing.count) Items for Good", role: .destructive) {
                 Task { await trash.empty(listing) }
             }
             Button("Cancel", role: .cancel) {}
         } message: { listing in
             Text(listing.partial
-                ? String(localized: "\(listing.count) item\(listing.count == 1 ? "" : "s"), at least \(Freeing.phrase(listing.bytes, frees: listing.frees)) (part couldn't be measured), will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there.")
-                : String(localized: "\(listing.count) item\(listing.count == 1 ? "" : "s"), \(Freeing.phrase(listing.bytes, frees: listing.frees)), will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there."))
+                ? String(localized: "\(listing.count) items, at least \(Freeing.phrase(listing.bytes, frees: listing.frees)) (part couldn't be measured), will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there.")
+                : String(localized: "\(listing.count) items, \(Freeing.phrase(listing.bytes, frees: listing.frees)), will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there."))
         }
         .confirmationKeyboard(isPresented: Binding(get: { trash.confirming != nil }, set: { if !$0 { trash.confirming = nil } }))
         .dsBottom(showing: false) {

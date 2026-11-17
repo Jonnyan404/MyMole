@@ -27,6 +27,22 @@ choose what to remove.
 Find app caches, logs, crash reports and developer caches. Choose which files
 to move to the Trash. Keep rules exclude files and folders from cleanup.
 
+Simulators, Android emulator snapshots, device backups and Xcode archives are
+listed but never chosen for you.
+
+Developer Tools lists what Docker, Xcode's simulators, Android and virtual
+machine apps keep, with sizes:
+
+- Unused build cache and untagged images no container uses start chosen.
+- Stopped containers, unused images and anonymous volumes, simulator runtimes
+  no simulator uses, simulators whose runtime is gone, and Android devices and
+  system images no device uses are removed only if you choose them.
+- Named volumes, anything in use, running emulators and virtual machines are
+  only shown.
+- Each removal goes through the tool's own command (`docker`, `xcrun simctl`,
+  `avdmanager`, `sdkmanager`) after the tool's list is read again. It can't be
+  undone. The App Store edition only lists these and removes nothing.
+
 ![Deep Clean showing fictional application caches and cleanup categories](.github/images/deep-clean.png)
 
 ## System Clean
@@ -41,6 +57,14 @@ Undo is not available.
 
 Remove apps individually or in batches. Review their caches, settings and data
 before removal. Personal data starts unselected.
+
+For well-known vendors, Uninstall also finds the parts their own uninstall
+lists name, such as audio drivers, browser plug-ins and updaters, and the
+installer's record of the app when that record installed this app alone. Parts
+shared by a vendor's apps are offered only with the last of those apps.
+Kernel and system extensions and folders every user shares are only shown,
+with what to do instead. When an app ships its own uninstaller, MyMole points
+to it. Removing system-wide parts needs the GitHub edition.
 
 Also includes app reset, searches for files left by removed apps, and lists of
 app copies and file associations.

@@ -227,7 +227,7 @@ final class SystemCleanModel {
                 chosen.subtract(gone)
                 var text = report.removed.isEmpty
                     ? String(localized: "Nothing was removed")
-                    : String(localized: "Removed \(ByteCountFormatter.string(fromByteCount: report.bytes, countStyle: .file)) from \(report.removed.count) item\(report.removed.count == 1 ? "" : "s")")
+                    : String(localized: "Removed \(ByteCountFormatter.string(fromByteCount: report.bytes, countStyle: .file)) from \(report.removed.count) items")
                 if !report.failed.isEmpty { text += String(localized: " · \(report.failed.count) couldn't be removed") }
                 if !report.refused.isEmpty { text += String(localized: " · \(report.refused.count) refused by the rules") }
                 if kept > 0 { text += String(localized: " · \(kept) kept") }

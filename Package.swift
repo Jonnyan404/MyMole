@@ -81,7 +81,7 @@ let package = Package(
             name: "StorageKitTests",
             dependencies: ["StorageKit", "SynchronizationCompat"],
             path: "Tests/StorageKitTests",
-            resources: [.copy("Fixtures/UninstallCorpus.json")],
+            resources: [.copy("Fixtures/UninstallCorpus.json"), .copy("Fixtures/Receipts.json")],
             swiftSettings: roundTripDebugTypes
         ),
         .testTarget(

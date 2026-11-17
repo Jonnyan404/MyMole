@@ -531,7 +531,7 @@ final class DeepCleanModel {
         undoCandidates = undoCandidates.filter { c in failedPaths.contains { $0 == c.path || $0.hasPrefix(c.path + "/") } }
         if failed.isEmpty, let id = undone?.id { shelf.remove(id) }
         show(Notice(
-            text: failed.isEmpty ? String(localized: "Restored \(restored) item\(restored == 1 ? "" : "s")") : String(localized: "Restored \(restored); \(failed.count) couldn't be put back. Undo tries those again."),
+            text: failed.isEmpty ? String(localized: "Restored \(restored) items") : String(localized: "Restored \(restored); \(failed.count) couldn't be put back. Undo tries those again."),
             canUndo: !failed.isEmpty))
     }
 

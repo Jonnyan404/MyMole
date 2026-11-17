@@ -37,7 +37,7 @@ struct OptimizeView: View {
         }
         .paneToolbar("Optimize", subtitle: "Refresh caches and databases macOS keeps")
         .actionConfirmation(
-            String(localized: "Run \(model.runnable.count) maintenance task\(model.runnable.count == 1 ? "" : "s")?"),
+            String(localized: "Run \(model.runnable.count) maintenance tasks?"),
             isPresented: $confirm, button: String(localized: "Optimize Now"),
             message: model.runnable.map { $0.title + ": " + $0.effect }.joined(separator: "\n\n")
         ) { model.run() }

@@ -55,7 +55,7 @@ final class ModelSafetyFixture: @unchecked Sendable {
    started.withLock { $0 += 1 }
    _ = release.wait(timeout: .now() + 5)
    return []
-  }, system: .init(base: b.root.appending(path: "System").path, isReady: { false }, remove: { _,_,_ in RemovalReport() }),
+  }, system: .init(base: b.root.appending(path: "System").path, isReady: { false }, remove: { _,_,_,_ in RemovalReport() }),
    protections: UserProtections(root: b.root.appending(path: "support")))
   let first = Task { await model.uninstall(a, leftovers: []) }
   let next = Task { await model.uninstall(second, leftovers: []) }

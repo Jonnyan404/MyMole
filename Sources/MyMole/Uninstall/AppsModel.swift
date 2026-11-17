@@ -19,7 +19,7 @@ final class AppsModel {
     struct SystemSide {
         var base: String
         var isReady: @MainActor () -> Bool
-        var remove: @MainActor (_ paths: [String], _ appID: String, _ ids: [String]) async throws -> RemovalReport
+        var remove: @MainActor (_ paths: [String], _ appID: String, _ ids: [String], _ appPath: String) async throws -> RemovalReport
         /// Why the tool can't be asked now, such as another system task.
         var blocker: @MainActor () -> String? = { nil }
         var trashApp: (@MainActor (AppBundle, RemovedApp.Source) async throws -> ApplicationTrash.Receipt?)? = nil
@@ -28,14 +28,14 @@ final class AppsModel {
         static func live(_ privileged: PrivilegedClient) -> SystemSide {
             SystemSide(
                 base: "", isReady: { privileged.isAvailable },
-                remove: { try await privileged.removeLeftovers($0, appID: $1, ids: $2) },
+                remove: { try await privileged.removeLeftovers($0, appID: $1, ids: $2, appPath: $3) },
                 blocker: { privileged.blocker },
                 trashApp: { try await privileged.trashApplication($0, source: $1) },
                 restoreApp: { try await privileged.restoreApplication($0) })
         }
 
         /// Looked for in the real system, never removed.
-        static let unavailable = SystemSide(base: "", isReady: { false }, remove: { _, _, _ in RemovalReport() })
+        static let unavailable = SystemSide(base: "", isReady: { false }, remove: { _, _, _, _ in RemovalReport() })
     }
 
     private(set) var apps: [AppBundle] = [] { didSet { appListRevision &+= 1 } }
@@ -486,8 +486,9 @@ final class AppsModel {
     func ownUninstaller(of app: AppBundle) async -> String? {
         let folders = folders
         let support = [home + "/Library/Application Support", system.base + "/Library/Application Support"]
+        let roots = (home: home, base: system.base)
         return await Task.detached(priority: .userInitiated) {
-            AppFinder.ownUninstaller(of: app, folders: folders, supportFolders: support)
+            AppFinder.ownUninstaller(of: app, folders: folders, supportFolders: support, vendorRoots: roots)
         }.value
     }
 
@@ -597,6 +598,22 @@ final class AppsModel {
         }.value
     }
 
+    /// What's only shown for the app: parts macOS protects or every user
+    /// shares, with what to do instead. The App Store edition doesn't ask
+    /// macOS for its system extensions.
+    func shownComponents(for app: AppBundle) async -> [RelatedComponents.Shown] {
+        let home = home
+        let base = system.base
+        #if APPSTORE
+        let runner = CommandRunner(run: { _, _ in (1, "") }, exists: { _ in false })
+        #else
+        let runner = CommandRunner.processes(timeLimit: 10)
+        #endif
+        return await Task.detached(priority: .userInitiated) {
+            RelatedComponents.shown(for: app, home: home, systemBase: base, runner: runner)
+        }.value
+    }
+
     /// Whether system-wide leftovers can be removed now.
     var canRemoveSystemLeftovers: Bool { system.isReady() }
 
@@ -625,9 +642,16 @@ final class AppsModel {
         return await Task.detached(priority: .userInitiated) {
             let others = ownership.identity.otherOwnerIDs
             // What another installed app's longer ID names is that app's.
-            return SystemLeftovers.find(ids: ownership.systemIDs, base: base)
+            let origin = app.bundleID.map { SystemLeftovers.Origin(id: $0, path: Self.systemPath(of: app, base: base)) }
+            return SystemLeftovers.find(ids: ownership.systemIDs, base: base, app: origin)
                 .filter { l in !others.contains { l.name.lowercased() == $0.lowercased() || l.name.lowercased().hasPrefix($0.lowercased() + ".") } }
         }.value
+    }
+
+    /// Where the app is on the system volume, as the installer's record names it.
+    nonisolated static func systemPath(of app: AppBundle, base: String) -> String {
+        let real = URL(fileURLWithPath: app.path).resolvingSymlinksInPath().path
+        return !base.isEmpty && real.hasPrefix(base + "/") ? String(real.dropFirst(base.count)) : real
     }
 
     /// The app's own ID and its helpers', unless another copy is installed
@@ -674,6 +698,7 @@ final class AppsModel {
                                       version: metadata.version, bytes: app.bytes, fromAppStore: metadata.fromAppStore)
                 fresh.incomplete = app.incomplete
                 fresh.sizePending = app.sizePending
+                fresh.logicalBytes = app.logicalBytes
                 return progress.isCancelled ? nil : fresh
             }.value
         } onCancel: { progress.cancel() }
@@ -922,7 +947,7 @@ final class AppsModel {
                 let going = paths.filter { !keeps($0) }
                 if !going.isEmpty {
                     do {
-                        systemReport = try await system.remove(going, id, approved?.systemIDs ?? [])
+                        systemReport = try await system.remove(going, id, approved?.systemIDs ?? [], Self.systemPath(of: app, base: system.base))
                         job.record(.deleteForGood, done: systemReport.removed, failed: systemReport.failed, refused: systemReport.refused)
                     } catch {
                         systemError = Problem(.uninstall, error).description
@@ -957,11 +982,11 @@ final class AppsModel {
                 uniquingKeysWith: { a, _ in a }), administratorMove: administratorMove, finderMove: finderMove))
         var text = rest.moved.isEmpty
             ? String(localized: "Moved \(app.name) (\(fmt(bytes))) to the Trash")
-            : String(localized: "Moved \(app.name) and \(rest.moved.count) leftover\(rest.moved.count == 1 ? "" : "s") (\(fmt(bytes))) to the Trash")
+            : String(localized: "Moved \(app.name) and \(rest.moved.count) leftovers (\(fmt(bytes))) to the Trash")
         if !rest.failed.isEmpty { text += String(localized: " · \(rest.failed.count) couldn't be moved") }
         let deleted = systemReport.removed.count
-        if deleted > 0 { text += String(localized: " · \(deleted) system item\(deleted == 1 ? "" : "s") deleted for good") }
-        if systemFailed > 0 { text += String(localized: " · \(systemFailed) system item\(systemFailed == 1 ? "" : "s") stayed") }
+        if deleted > 0 { text += String(localized: " · \(deleted) system items deleted for good") }
+        if systemFailed > 0 { text += String(localized: " · \(systemFailed) system items stayed") }
         show(Notice(text: text, canUndo: true))
         return .done
     }
@@ -1049,8 +1074,8 @@ final class AppsModel {
             id: record.id, records: rest.moved, app: nil, deleted: 0,
             sizes: Dictionary(gone.map { ($0.path, $0.bytes) }, uniquingKeysWith: { a, _ in a })))
         var text = removed == nil
-            ? String(localized: "Reset \(app.name): moved \(gone.count) item\(gone.count == 1 ? "" : "s") (\(fmt(bytes))) to the Trash")
-            : String(localized: "Moved \(gone.count) leftover\(gone.count == 1 ? "" : "s") of \(app.name) (\(fmt(bytes))) to the Trash")
+            ? String(localized: "Reset \(app.name): moved \(gone.count) items (\(fmt(bytes))) to the Trash")
+            : String(localized: "Moved \(gone.count) leftovers of \(app.name) (\(fmt(bytes))) to the Trash")
         if !rest.failed.isEmpty { text += String(localized: " · \(rest.failed.count) couldn't be moved") }
         show(Notice(text: text, canUndo: true))
         return .done
@@ -1194,7 +1219,7 @@ final class AppsModel {
             CleanupLog.submitRestore(id, restored: restored, bytes: back.reduce(0) { $0 + (undoSizes[$1] ?? 0) }, failed: failed.count, in: logURL)
         }
         var text = failed.isEmpty
-            ? String(localized: "Restored \(restored) item\(restored == 1 ? "" : "s")")
+            ? String(localized: "Restored \(restored) items")
             : String(localized: "Restored \(restored); \(failed.count) couldn't be put back. Undo tries those again, or use Put Back in the Trash.")
         if undoDeleted > 0 { text += String(localized: " System items deleted for good stay deleted.") }
         // What couldn't come back stays ready for another try.
@@ -1369,7 +1394,7 @@ final class AppsModel {
         }
         lastBatch = runs
         guard !runs.isEmpty else { return problems }
-        var text = String(localized: "Moved \(apps) app\(apps == 1 ? "" : "s") and \(items) leftover\(items == 1 ? "" : "s") (\(fmt(bytes))) to the Trash")
+        var text = String(localized: "Moved \(apps) apps and \(items) leftovers (\(fmt(bytes))) to the Trash")
         if !problems.isEmpty { text += String(localized: " · \(problems.count) stayed") }
         show(Notice(text: text, canUndo: true))
         return problems
