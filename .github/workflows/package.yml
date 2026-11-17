@@ -53,10 +53,13 @@ jobs:
         run: |
           set -euo pipefail
           xcodebuild -version
-          swift --version
+          version="$(swift --version)"
+          printf '%s\n' "$version"
           # SwiftPM needs 6.2 for this manifest; anything older fails earlier
-          # with a confusing parse error, so say it plainly here.
-          swift --version | head -1 | grep -qE 'Swift version 6\.[2-9]' \
+          # with a confusing parse error, so say it plainly here. The whole
+          # output is matched: grep -q would close the pipe early and pipefail
+          # would then report a match as a failure.
+          printf '%s\n' "$version" | grep -E 'Swift version 6\.[2-9]' \
             || { echo "Swift 6.2 or newer is required" >&2; exit 1; }
 
       - name: Build (${{ matrix.arch }})
@@ -83,11 +86,13 @@ jobs:
       - name: Refuse a bundle that claims another architecture
         run: |
           set -euo pipefail
-          if ! lipo -archs dist/MyMole.app/Contents/MacOS/MyMole \
-             | tr ' ' '\n' | grep -qx "${{ matrix.arch }}"; then
-            echo "bundle is not ${{ matrix.arch }}" >&2
-            exit 1
-          fi
+          for binary in MyMole MyMoleHelper; do
+            arches="$(lipo -archs "dist/MyMole.app/Contents/MacOS/$binary")"
+            case " $arches " in
+              *" ${{ matrix.arch }} "*) echo "$binary: $arches" ;;
+              *) echo "$binary is [$arches], not ${{ matrix.arch }}" >&2; exit 1 ;;
+            esac
+          done
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
