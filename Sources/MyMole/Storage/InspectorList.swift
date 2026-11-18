@@ -106,7 +106,7 @@ struct InspectorList: View {
             DSText(
                 model.showingLive && cur.parent == nil
                     ? "\(ByteCountFormatter.string(fromByteCount: model.chartedSize(cur), countStyle: .file)) so far"
-                    : "\(ByteCountFormatter.string(fromByteCount: cur.size, countStyle: .file)) · \(cur.fileCount.formatted()) files",
+                    : "\(ByteCountFormatter.string(fromByteCount: cur.size, countStyle: .file)) · \(cur.fileCount) files",
                 .metadata)
             if !rebuildable.isEmpty {
                 Button {
@@ -313,7 +313,7 @@ struct InspectorList: View {
             kind: e.kindTitle, items: e.pending ? nil : e.items,
             location: (e.path as NSString).deletingLastPathComponent,
             symbol: f == nil ? e.kind.symbol : (f?.inheritedKind?.symbol ?? "folder.fill"),
-            subtitle: modified.map { f == nil ? $0.listText : "\($0.listText) · \(e.items.formatted()) files" },
+            subtitle: modified.map { f == nil ? $0.listText : String(localized: "\($0.listText) · \(e.items) files") },
             tint: f == nil ? NSColor(ChartColors.kind(e.kind)) : palette.accentText.ns,
             badge: f?.rebuildable == nil ? nil : String(localized: "Rebuildable"),
             badgeHelp: f?.rebuildable.map { "\($0.label): \($0.reason)" },
@@ -394,7 +394,7 @@ struct InspectorList: View {
                 if cur.smallFileCount > 0 {
                     HStack(spacing: DS.Space.xs) {
                         DSText(
-                            "+ \(cur.smallFileCount.formatted()) smaller files · \(ByteCountFormatter.string(fromByteCount: cur.smallFileBytes, countStyle: .file))",
+                            "+ \(cur.smallFileCount) smaller files · \(ByteCountFormatter.string(fromByteCount: cur.smallFileBytes, countStyle: .file))",
                             .metadata)
                         Button("List") { smallFilesOf = cur.path }
                             .buttonStyle(.link)

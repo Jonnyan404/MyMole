@@ -41,5 +41,10 @@
   "deep-clean.scan.250-places": 50,
   "duplicates.2k-files": 2500,
   "similar.group-20k-pictures": 50,
-  "status.reading": 50
+  "status.reading": 50,
+  "uninstall.leftovers.one-app": 500,
+  "uninstall.removed-apps.300": 500,
+  "installers.scan.200": 100,
+  "similar.fingerprints.save-50k": 800,
+  "similar.fingerprints.load-50k": 800
 }

@@ -629,7 +629,10 @@ func testBin(_ box: Sandbox) throws -> TrashBackend {
 
     @Test func lowPowerModeOrHeatHoldsScansAtBalanced() {
         #expect(PerformanceLevel.full.held(lowPower: true, thermal: .nominal) == .balanced)
-        #expect(PerformanceLevel.hyperspeed.held(lowPower: false, thermal: .serious) == .balanced)
+        // Hyperspeed has no limits, this one included.
+        #expect(PerformanceLevel.hyperspeed.held(lowPower: true, thermal: .critical) == .hyperspeed)
+        #expect(!PerformanceLevel.hyperspeed.isHeldWhenStrained && PerformanceLevel.full.isHeldWhenStrained && !PerformanceLevel.balanced.isHeldWhenStrained)
+        #expect(PerformanceLevel.full.held(lowPower: false, thermal: .serious) == .balanced)
         #expect(PerformanceLevel.fast.held(lowPower: false, thermal: .critical) == .balanced)
         // A level already below Balanced stays where it was chosen.
         #expect(PerformanceLevel.light.held(lowPower: true, thermal: .critical) == .light)

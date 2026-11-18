@@ -38,7 +38,7 @@ struct ScanSpeedControl: View {
                 }
                 Text(level.detail)
                 Text(PerformanceSummary.scans(level))
-                if strained, level > .balanced {
+                if strained, level.isHeldWhenStrained {
                     Text("Held at Balanced while this Mac is in Low Power Mode or running hot.")
                         .accessibilityIdentifier("settings.scan-speed.held")
                 }

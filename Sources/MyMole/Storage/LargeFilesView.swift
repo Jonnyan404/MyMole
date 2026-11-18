@@ -282,7 +282,7 @@ struct LargeFilesView: View {
             return String(localized: "\(picked.count.formatted()) of \(all) selected · \(size(picked))")
         }
         return model.scanning
-            ? String(localized: "\(all) files · \(size(shown)) so far") : String(localized: "\(all) files · \(size(shown))")
+            ? String(localized: "\(shown.count) files · \(size(shown)) so far") : String(localized: "\(shown.count) files · \(size(shown))")
     }
 
     private func menu(_ chosen: [LargeFile], rows: [LargeFile]) -> [TableMenuEntry] {

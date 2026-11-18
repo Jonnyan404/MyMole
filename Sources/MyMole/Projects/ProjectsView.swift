@@ -162,7 +162,7 @@ struct ProjectsView: View {
             if model.scanning { PulseDot() }
             VStack(alignment: .trailing, spacing: DS.Space.xxs) {
                 DSValue(bytes: model.freeableBytes, .heading, weight: .semibold)
-                DSText(full ? "could go · \(fmt(model.outsideBytes)) outside project folders" : "could go", .metadata).keepWhole()
+                DSText(full && model.outsideBytes > 0 ? "could go · \(fmt(model.outsideBytes)) outside project folders" : "could go", .metadata).keepWhole()
             }
         }
         .help("\(fmt(model.outsideBytes)) of it is outside the project folders")

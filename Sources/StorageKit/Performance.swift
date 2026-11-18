@@ -14,7 +14,7 @@ import Foundation
 /// what scans started ahead get and in how many walks run at once. Each
 /// scan reads the level as it starts, so a change applies from the next scan.
 /// In Low Power Mode, or while the Mac runs hot, a scan starts at Balanced at
-/// most whatever is chosen (`inEffect`).
+/// most (`inEffect`), except at Hyperspeed, which has no limits of any kind.
 public enum PerformanceLevel: Int, CaseIterable, Sendable, Comparable {
     case gentle = 1
     case light
@@ -34,7 +34,8 @@ public enum PerformanceLevel: Int, CaseIterable, Sendable, Comparable {
 
     /// The level a scan starting now runs at: the chosen one, or Balanced at
     /// most while the Mac is in Low Power Mode or reports that it's running
-    /// hot. Settings keeps showing the level that was chosen.
+    /// hot; Hyperspeed stays Hyperspeed. Settings keeps showing the level
+    /// that was chosen.
     public static func inEffect(
         in defaults: UserDefaults = .standard, lowPower: Bool = ProcessInfo.processInfo.isLowPowerModeEnabled,
         thermal: ProcessInfo.ThermalState = ProcessInfo.processInfo.thermalState
@@ -51,9 +52,13 @@ public enum PerformanceLevel: Int, CaseIterable, Sendable, Comparable {
         lowPower || thermal == .serious || thermal == .critical
     }
 
+    /// Hyperspeed is never held: it's the step chosen to have no limits.
     public func held(lowPower: Bool, thermal: ProcessInfo.ThermalState) -> PerformanceLevel {
-        Self.isStrained(lowPower: lowPower, thermal: thermal) ? min(self, .balanced) : self
+        self != .hyperspeed && Self.isStrained(lowPower: lowPower, thermal: thermal) ? min(self, .balanced) : self
     }
+
+    /// Whether a strained Mac holds this step back.
+    public var isHeldWhenStrained: Bool { self > .balanced && self != .hyperspeed }
 
     /// A saved value; anything unknown, or nothing saved (0), is the standard level.
     public init(saved: Int) {

@@ -244,11 +244,11 @@ struct DashboardView: View {
         .filling()
     }
 
-    /// Where a find comes from and how old that scan is, apart from the
-    /// Mac's own readings above, which are live.
+    /// Where a find is, which pane found it and how old that scan is, apart
+    /// from the Mac's own readings above, which are live.
     private func findDetail(_ find: Find) -> String {
-        guard let at = app.scannedAt(of: find.pane) else { return find.pane.title }
-        return String(localized: "\(find.pane.title) · scanned \(at.formatted(.relative(presentation: .named)))")
+        guard let at = app.scannedAt(of: find.pane) else { return find.location + " · " + find.pane.title }
+        return find.location + " · " + String(localized: "\(find.pane.title) · scanned \(at.formatted(.relative(presentation: .named)))")
     }
 
     private var finds: some View {
@@ -309,6 +309,9 @@ struct Find: Identifiable, Equatable {
     let bytes: Int64
 
     var id: String { pane.rawValue + ":" + path }
+
+    /// The folder it's in, so two finds of one name can be told apart.
+    var location: String { ((path as NSString).deletingLastPathComponent as NSString).abbreviatingWithTildeInPath }
 
     /// The `limit` biggest. A path two panes found is listed once, where it's bigger.
     /// The biggest, each place once: a find inside or holding one already

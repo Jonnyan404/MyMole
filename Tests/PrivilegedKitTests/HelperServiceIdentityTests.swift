@@ -22,6 +22,24 @@ import Testing
         }
     }
 
+    /// An older copy of the app isn't served by a newer service; the tool
+    /// itself, a bare program, is never asked for a build.
+    @Test func theAppMustBeAtLeastTheBuildThatCarriesTheService() throws {
+        var identity = try #require(HelperServiceIdentity(appID: "com.example.Cleaner", teamID: "AB12CD34EF"))
+        #expect(!identity.requirement(helper: false).contains("CFBundleVersion"))
+        identity.minimumAppBuild = HelperServiceIdentity.build("49.2")
+        let app = identity.requirement(helper: false)
+        #expect(app.hasSuffix(" and info[CFBundleVersion] >= \"49.2\""))
+        #expect(!identity.requirement(helper: true).contains("CFBundleVersion"))
+        var requirement: SecRequirement?
+        #expect(SecRequirementCreateWithString(app as CFString, [], &requirement) == errSecSuccess && requirement != nil)
+        // Only digits in dotted groups name a build: nothing else reaches the requirement.
+        for text in ["", "49\" or true", "49.a", "49..2", ".49", "49.", "4 9", String(repeating: "9", count: 33)] {
+            #expect(HelperServiceIdentity.build(text) == nil, "\(text)")
+        }
+        #expect(HelperServiceIdentity.build(nil) == nil && HelperServiceIdentity.build("49") == "49")
+    }
+
     @Test func identityValuesCannotInjectARequirement() {
         for id in ["", "com.example.\" or true", "com.example/Other", "com.example\nOther"] {
             #expect(HelperServiceIdentity(appID: id, teamID: "AB12CD34EF") == nil)

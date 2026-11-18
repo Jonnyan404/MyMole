@@ -75,9 +75,9 @@ struct DeepCleanView: View {
     private var header: some View {
         DSPaneHeader {
             if showsPreview {
-                DSMetric(fmt(model.preview.reduce(0) { $0 + $1.bytes }), "found so far in \(model.preview.count.formatted()) items")
+                DSMetric(fmt(model.preview.reduce(0) { $0 + $1.bytes }), "found so far in \(model.preview.count) items")
             } else {
-                DSMetric(fmt(model.totalBytes), "found in \(model.candidates.count.formatted()) items")
+                DSMetric(fmt(model.totalBytes), "found in \(model.candidates.count) items")
             }
         } actions: {
             DSControlField("Filter results") {
@@ -301,7 +301,7 @@ struct DeepCleanView: View {
                 .accessibilityLabel("Clear the choice")
                         .controlSize(.small)
                 }
-                Label("Moved to the Trash — you can undo.", systemImage: "trash")
+                Label("Chosen items go to the Trash, and you can undo.", systemImage: "trash")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .labelStyle(.titleAndIcon)

@@ -47,11 +47,11 @@ struct StorageView: View {
             return String(localized: "Saved scan \(opened.file), made \(opened.date.formatted(date: .abbreviated, time: .shortened)) · only to look at")
         }
         if model.scanning {
-            return String(localized: "Scanning… \(model.liveFiles.formatted()) files · \(ByteCountFormatter.string(fromByteCount: model.liveBytes, countStyle: .file))")
+            return String(localized: "Scanning… \(model.liveFiles) files · \(ByteCountFormatter.string(fromByteCount: model.liveBytes, countStyle: .file))")
         }
         guard let r = model.root else { return String(localized: "Where your space went") }
         let size = ByteCountFormatter.string(fromByteCount: r.size, countStyle: .file)
-        let files = r.fileCount.formatted()
+        let files = r.fileCount
         if model.incomplete { return String(localized: "Partial map · \(size) in \(files) files") }
         return model.lastDuration.map { String(localized: "\(size) in \(files) files in \(Int($0.rounded())) s") }
             ?? String(localized: "\(size) in \(files) files")
@@ -128,7 +128,7 @@ struct StorageView: View {
     private var chart: some View {
         ZStack {
             if model.root == nil {
-                CenterCard(symbol: nil, title: "Scanning…", subtitle: "\(model.liveFiles.formatted()) files so far") {}
+                CenterCard(symbol: nil, title: "Scanning…", subtitle: "\(model.liveFiles) files so far") {}
             } else if model.currentIsEmpty {
                 ContentUnavailableView("No Mapped Contents", systemImage: "folder",
                     description: Text("This folder has no files or folders in the current map."))

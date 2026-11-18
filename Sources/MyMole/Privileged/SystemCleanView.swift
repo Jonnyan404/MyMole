@@ -38,7 +38,7 @@ struct SystemCleanView: View {
 
     private var header: some View {
         DSPaneHeader {
-            DSMetric(fmt(model.totalBytes), "found in \(model.candidates.count.formatted()) items")
+            DSMetric(fmt(model.totalBytes), "found in \(model.candidates.count) items")
         } actions: {
             DSControlField("Choose for permanent deletion") {
                 Button("Choose Safe Items") { model.chooseSafe() }

@@ -321,6 +321,56 @@ struct KPIBenchmarkTests {
         Self.gate("similar.group-20k-pictures", Self.ms { _ = SimilarImages.group(prints) })
     }
 
+    /// Opening an uninstall review, Left by Removed Apps and Installers, in
+    /// a Library that 300 apps have left their folders in.
+    @Test func leftoversAndInstallersAreFoundQuickly() throws {
+        let box = try Box()
+        for i in 0..<300 {
+            let id = "com.example.app\(i)"
+            box.file("home/Library/Caches/\(id)/cache", bytes: 64)
+            box.file("home/Library/Preferences/\(id).plist", bytes: 64)
+            box.file("home/Library/Application Support/\(id)/data", bytes: 64)
+        }
+        let home = box.path + "/home"
+        let app = AppBundle(path: home + "/Applications/App7.app", name: "App7", bundleID: "com.example.app7", version: nil, bytes: 0, fromAppStore: false)
+        _ = AppLeftovers.list(for: app, home: home, installed: [app], deep: true)
+        var leftovers = 0
+        Self.gate("uninstall.leftovers.one-app", Self.ms { leftovers = AppLeftovers.list(for: app, home: home, installed: [app], deep: true).items.count })
+        #expect(leftovers >= 1)
+        // Another maker's app is installed; the 300 have none left that answers to them.
+        box.file("home/Applications/Viewer.app/Contents/Resources/item", bytes: 0)
+        try (["CFBundleIdentifier": "org.other.Viewer", "CFBundleName": "Viewer"] as NSDictionary)
+            .write(to: box.root.appending(path: "home/Applications/Viewer.app/Contents/Info.plist"))
+        let installed = [try #require(AppFinder.metadata(home + "/Applications/Viewer.app"))]
+        _ = Orphans.list(home: home, installed: installed, known: { _ in false }, running: [])
+        var orphans = 0
+        Self.gate("uninstall.removed-apps.300", Self.ms { orphans = Orphans.list(home: home, installed: installed, known: { _ in false }, running: []).orphans.count })
+        #expect(orphans > 0)
+
+        for i in 0..<200 { box.file("home/Downloads/Installer-\(i).\(i % 2 == 0 ? "dmg" : "pkg")", bytes: 4_096) }
+        for i in 0..<2_000 { box.file("home/Downloads/notes/note-\(i).txt", bytes: 16) }
+        let places = [InstallerLocation(path: home + "/Downloads", depth: 2)]
+        _ = InstallerFinder.list(in: places)
+        var installers = 0
+        Self.gate("installers.scan.200", Self.ms { installers = InstallerFinder.list(in: places).files.count })
+        #expect(installers == 200)
+    }
+
+    /// Similar Photos reads its saved fingerprints at every search and writes them after.
+    @Test func savedFingerprintsAreReadAndWrittenQuickly() throws {
+        let box = try Box()
+        var cache = FingerprintCache()
+        for i in 0..<50_000 {
+            cache.store(FingerprintCache.key(device: 1, inode: UInt64(i), length: Int64(i) + 1, modified: Date(timeIntervalSince1970: Double(i))),
+                        print: UInt64(i) &* 0x9E37_79B9_7F4A_7C15, width: 100, height: 100)
+        }
+        let url = box.root.appending(path: "fingerprints/pictures.json")
+        Self.gate("similar.fingerprints.save-50k", Self.ms { cache.save(to: url) })
+        var loaded = FingerprintCache()
+        Self.gate("similar.fingerprints.load-50k", Self.ms { loaded = FingerprintCache.load(from: url) })
+        #expect(loaded.entries.count == 50_000)
+    }
+
     // MARK: Live Status
 
     /// One reading of the Mac, as Live Status takes every two seconds while it shows.

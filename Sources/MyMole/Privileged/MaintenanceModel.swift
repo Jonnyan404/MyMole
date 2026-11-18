@@ -55,7 +55,13 @@ final class MaintenanceModel {
 
     var enabled: [MaintenanceTask] { offered.filter { !off.contains($0) } }
 
-    func isOn(_ t: MaintenanceTask) -> Bool { !off.contains(t) }
+    /// On, and something this Mac can do: a task the last check found
+    /// unavailable here reads as off and can't be switched.
+    func isOn(_ t: MaintenanceTask) -> Bool { !off.contains(t) && !isUnavailable(t) }
+
+    /// The last check found that this Mac can't run the task, as when the
+    /// program it drives isn't part of this version of macOS.
+    func isUnavailable(_ t: MaintenanceTask) -> Bool { reports[t]?.status == .unavailable }
 
     func setOn(_ t: MaintenanceTask, _ on: Bool) {
         if on { off.remove(t) } else { off.insert(t) }
@@ -63,7 +69,7 @@ final class MaintenanceModel {
 
     /// Tasks that would run now: on, and possible in this edition.
     var runnable: [MaintenanceTask] {
-        enabled.filter { !$0.needsRoot || privileged.isAvailable }
+        enabled.filter { (!$0.needsRoot || privileged.isAvailable) && !isUnavailable($0) }
     }
 
     var willChange: Int { enabled.filter { reports[$0]?.status == .willRun }.count }

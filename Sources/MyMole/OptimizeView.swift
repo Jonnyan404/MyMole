@@ -105,7 +105,7 @@ struct OptimizeView: View {
                     .toggleStyle(.switch)
                     .labelsHidden()
                     .accessibilityLabel(t.title)
-                    .disabled(model.phase != .idle)
+                    .disabled(model.phase != .idle || model.isUnavailable(t))
             }
         }
     }

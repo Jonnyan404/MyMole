@@ -94,9 +94,9 @@ struct UninstallView: View {
             if model.apps.isEmpty && model.loading {
                 DSMetric("—", "apps · finding the first results…")
             } else if projected.value.measuring {
-                DSMetric(filtered.count.formatted(), "apps · measuring sizes…")
+                DSMetric(filtered.count.formatted(), "\(filtered.count) apps · measuring sizes…")
             } else {
-                DSMetric(filtered.count.formatted(), "apps · \(ByteSize.format(projected.value.totalBytes)) on disk")
+                DSMetric(filtered.count.formatted(), "\(filtered.count) apps · \(ByteSize.format(projected.value.totalBytes)) on disk")
             }
         } actions: {
             DSControlField("Filter apps") {

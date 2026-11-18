@@ -71,7 +71,7 @@ struct TreemapChart: View {
                 for c in cells where c.level == 1 && c.rect.height > 34 {
                     let rect = CGRect(x: c.rect.minX + 7, y: c.rect.minY + 4, width: c.rect.width - 14, height: 28)
                     if c.rest > 0 {
-                        ChartLabel.draw(String(localized: "\(c.rest.formatted()) smaller items"), in: rect, on: fill(for: c), ctx: ctx)
+                        ChartLabel.draw(String(localized: "\(c.rest) smaller items"), in: rect, on: fill(for: c), ctx: ctx)
                         continue
                     }
                     if !labeled, let hovered, hovered.branch == c.branch,

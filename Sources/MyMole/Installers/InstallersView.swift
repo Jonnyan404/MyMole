@@ -225,7 +225,7 @@ struct InstallersView: View {
                 .accessibilityLabel("Clear the choice")
                         .controlSize(.small)
                 }
-                Label("Moved to the Trash — you can undo.", systemImage: "trash")
+                Label("Chosen items go to the Trash, and you can undo.", systemImage: "trash")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .labelStyle(.titleAndIcon)

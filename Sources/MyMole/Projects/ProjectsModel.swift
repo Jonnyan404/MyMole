@@ -307,14 +307,17 @@ final class ProjectsModel {
         // on stays a step below the other panes.
         let list = listProjects
         scanJob = Task.detached(priority: level.priority(background: true)) { [weak self] in
-            let all = list(
-                roots, rules, p, workers,
-                { found in
-                    DispatchQueue.main.async { MainActor.assumeIsolated { self?.found(found, run: p) } }
-                },
-                { done in
-                    DispatchQueue.main.async { MainActor.assumeIsolated { self?.measured(done, run: p) } }
-                })
+            // The walk blocks until it's done: on a thread of its own, not one of the shared task threads.
+            let all = await ScanBudget.onOwnThread {
+                list(
+                    roots, rules, p, workers,
+                    { found in
+                        DispatchQueue.main.async { MainActor.assumeIsolated { self?.found(found, run: p) } }
+                    },
+                    { done in
+                        DispatchQueue.main.async { MainActor.assumeIsolated { self?.measured(done, run: p) } }
+                    })
+            }
             DispatchQueue.main.async { MainActor.assumeIsolated { self?.finished(all, run: p) } }
         }
     }

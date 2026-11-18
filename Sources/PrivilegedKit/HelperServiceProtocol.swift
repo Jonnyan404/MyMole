@@ -11,6 +11,10 @@ import Security
 public struct HelperServiceIdentity: Sendable, Equatable {
     public let appID: String
     public let teamID: String
+    /// The app's build that carries this service: an older copy of the app
+    /// isn't served, since what was fixed in between is fixed in the app too.
+    /// Nil where the bundle names no build, as in a development build.
+    public var minimumAppBuild: String?
     public var serviceID: String { appID + ".helper" }
     public var plistName: String { serviceID + ".plist" }
 
@@ -29,6 +33,17 @@ public struct HelperServiceIdentity: Sendable, Equatable {
             + " and certificate 1[field.1.2.840.113635.100.6.2.6] exists"
             + " and certificate leaf[field.1.2.840.113635.100.6.1.13] exists"
             + " and !entitlement[\"com.apple.security.get-task-allow\"] exists"
+            // The tool is a bare program without a build number of its own.
+            + (helper ? "" : minimumAppBuild.map { " and info[CFBundleVersion] >= \"\($0)\"" } ?? "")
+    }
+
+    /// A build number as the app bundle carries it: digits in dotted groups,
+    /// compared number by number. Anything else names no build.
+    public static func build(_ text: String?) -> String? {
+        guard let text, !text.isEmpty, text.utf8.count <= 32,
+              text.split(separator: ".", omittingEmptySubsequences: false).allSatisfy({ !$0.isEmpty && $0.utf8.allSatisfy { (48...57).contains($0) } })
+        else { return nil }
+        return text
     }
 
     /// Ad-hoc, test and App Store signatures cannot register this root service.
@@ -43,8 +58,10 @@ public struct HelperServiceIdentity: Sendable, Equatable {
               let identifier = values[kSecCodeInfoIdentifier as String] as? String,
               let team = values[kSecCodeInfoTeamIdentifier as String] as? String,
               !helper || identifier.hasSuffix(".helper"),
-              let identity = Self(appID: helper ? String(identifier.dropLast(".helper".count)) : identifier, teamID: team)
+              var identity = Self(appID: helper ? String(identifier.dropLast(".helper".count)) : identifier, teamID: team)
         else { return nil }
+        // The tool lies in the app's bundle, so the bundle's build is the app's.
+        identity.minimumAppBuild = build(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String)
         var requirement: SecRequirement?
         guard SecRequirementCreateWithString(identity.requirement(helper: helper) as CFString, [], &requirement) == errSecSuccess,
               SecCodeCheckValidity(code, SecCSFlags(rawValue: kSecCSStrictValidate), requirement) == errSecSuccess else { return nil }
