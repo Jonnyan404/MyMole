@@ -1399,7 +1399,7 @@ final class StorageModel {
         largeFiles = largeFiles.filter { !removed($0.path) }
         previousFiles.releaseLater()
         if largeFilesSpill != nil { spillRemoved += Trasher.outermost(movedPaths) }
-        let record = CleanupRecord(source: "Disk Map", items: outcome.moved.count, bytes: freed, failed: outcome.failed.count)
+        let record = CleanupRecord(source: CleanupSource.diskMap.rawValue, items: outcome.moved.count, bytes: freed, failed: outcome.failed.count)
         let needsRefresh = items.contains { $0.needsRefresh && movedPaths.contains($0.path) }
         if !outcome.moved.isEmpty {
             shelf.add(Run(id: record.id, records: outcome.moved, pruned: pruned, refreshAfterUndo: needsRefresh, reclaims: movedReclaims))

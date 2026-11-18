@@ -10,7 +10,7 @@ import SwiftUI
 @Observable
 final class TrashModel {
     /// The history's name for an emptying of the Trash.
-    static let source = "Trash"
+    static let source = CleanupSource.trash.rawValue
     /// The Trash is measured again at most this often.
     static let freshFor: TimeInterval = 60
 

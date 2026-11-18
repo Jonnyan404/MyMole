@@ -475,7 +475,7 @@ final class DeepCleanModel {
         if partly.count > gone.count { isStale = true }
         chosen.subtract(picked.map(\.path))
         let freed = sizes.values.reduce(0, +)
-        let record = CleanupRecord(source: "Deep Clean", items: outcome.moved.count, bytes: freed, failed: outcome.failed.count)
+        let record = CleanupRecord(source: CleanupSource.deepClean.rawValue, items: outcome.moved.count, bytes: freed, failed: outcome.failed.count)
         CleanupLog.submit(record, to: logURL)
         if !outcome.moved.isEmpty {
             shelf.add(Run(id: record.id, records: outcome.moved, candidates: gone, sizes: sizes))

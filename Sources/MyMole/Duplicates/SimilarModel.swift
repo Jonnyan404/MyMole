@@ -8,7 +8,7 @@ import SwiftUI
 @MainActor
 @Observable
 final class SimilarModel {
-    static let source = "Similar Photos"
+    static let source = CleanupSource.similar.rawValue
 
     struct Notice: Equatable {
         let text: String

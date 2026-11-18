@@ -10,7 +10,7 @@ import SwiftUI
 @MainActor
 @Observable
 final class StartupModel {
-    static let source = "Startup Items"
+    static let source = CleanupSource.startup.rawValue
 
     struct Notice: Equatable {
         let text: String

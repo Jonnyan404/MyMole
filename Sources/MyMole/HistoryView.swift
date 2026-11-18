@@ -9,7 +9,7 @@ struct HistoryView: View {
     /// Not space won back: what sits in the Trash takes space until it's emptied.
     private var removed: Int64 {
         // An emptied Trash isn't added: what MyMole moved there was counted when it moved.
-        app.cleanups.filter { $0.freedSomething && $0.source != TrashModel.source }.reduce(0) { $0 + $1.freedBytes }
+        app.cleanups.filter { $0.freedSomething && $0.kind != .trash }.reduce(0) { $0 + $1.freedBytes }
     }
 
     var body: some View {
@@ -70,9 +70,9 @@ struct HistoryView: View {
 
     private func row(_ r: CleanupRecord) -> some View {
         HStack(spacing: DS.Space.md) {
-            DSIcon(symbol: Self.symbol(r.source), large: true)
+            DSIcon(symbol: r.symbol, large: true)
             VStack(alignment: .leading, spacing: DS.Space.xxs) {
-                DSText(Self.title(r.source), .heading)
+                DSText(r.title, .heading)
                 DSText(([r.date.formatted(date: .abbreviated, time: .shortened)] + details(r)).joined(separator: " · "), .metadata)
             }
             Spacer(minLength: DS.Space.md)
@@ -111,7 +111,7 @@ struct HistoryView: View {
     private func counts(_ r: CleanupRecord) -> String {
         var parts: [String] = []
         if r.items > 0 {
-            parts.append(r.source == "Optimize" ? String(localized: "\(r.items) tasks") : String(localized: "\(r.items) items"))
+            parts.append(r.kind == .optimize ? String(localized: "\(r.items) tasks") : String(localized: "\(r.items) items"))
         }
         if r.deleted > 0 { parts.append(String(localized: "\(r.deleted) deleted for good")) }
         return parts.isEmpty ? "—" : parts.joined(separator: " · ")
@@ -121,49 +121,10 @@ struct HistoryView: View {
     /// from an earlier session, or one of more than ten moves ago.
     /// The Trash was emptied by MyMole after `r`, so nothing of it is there to put back.
     static func trashEmptied(after r: CleanupRecord, in all: [CleanupRecord]) -> Bool {
-        all.contains { $0.source == TrashModel.source && $0.date > r.date && $0.deleted > 0 }
+        all.contains { $0.kind == .trash && $0.date > r.date && $0.deleted > 0 }
     }
 
     static func inTrashWithoutUndo(_ r: CleanupRecord, undoable: Bool) -> Bool {
-        !undoable && r.items > r.restored && !["Optimize", "System Clean"].contains(r.source)
-    }
-
-    /// A run's name as shown. Runs keep the English name they were saved
-    /// with, so the history reads the same whatever the language.
-    static func title(_ source: String) -> String {
-        switch source {
-        case "Deep Clean": String(localized: "Deep Clean")
-        case "Installers": String(localized: "Installers")
-        case "Uninstall": String(localized: "Uninstall")
-        case "Projects": String(localized: "Projects")
-        case "Disk Map": String(localized: "Disk Map")
-        case "System Clean": String(localized: "System Clean")
-        case "Optimize": String(localized: "Optimize")
-        case TrashModel.source: String(localized: "Trash")
-        case StartupModel.source: String(localized: "Startup Items")
-        case DuplicatesModel.source: String(localized: "Duplicates")
-        case OrphansModel.source: String(localized: "Removed Apps")
-        case SimilarModel.source: String(localized: "Similar Photos")
-        case AppsModel.resetSource: String(localized: "Reset")
-        default: source
-        }
-    }
-
-    static func symbol(_ source: String) -> String {
-        switch source {
-        case "Deep Clean": Pane.clean.symbol
-        case "Installers": Pane.installer.symbol
-        case "Uninstall": Pane.uninstall.symbol
-        case "Projects": Pane.projects.symbol
-        case "Disk Map": Pane.diskMap.symbol
-        case "System Clean": Pane.systemClean.symbol
-        case "Optimize": Pane.optimize.symbol
-        case StartupModel.source: Pane.startup.symbol
-        case DuplicatesModel.source: Pane.duplicates.symbol
-        case OrphansModel.source: Pane.uninstall.symbol
-        case SimilarModel.source: "photo.on.rectangle"
-        case AppsModel.resetSource: "arrow.counterclockwise"
-        default: "trash"
-        }
+        !undoable && r.items > r.restored && r.kind?.movesToTrash != false
     }
 }

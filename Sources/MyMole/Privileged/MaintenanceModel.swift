@@ -125,7 +125,7 @@ final class MaintenanceModel {
             lastRun = .now
             let done = all.filter { reports[$0]?.status == .done }.count
             let failed = all.filter { reports[$0]?.status == .failed }.count
-            let record = CleanupRecord(source: "Optimize", items: done, bytes: 0, failed: failed)
+            let record = CleanupRecord(source: CleanupSource.optimize.rawValue, items: done, bytes: 0, failed: failed)
             CleanupLog.submit(record, to: logURL)
         }
         phase = .idle

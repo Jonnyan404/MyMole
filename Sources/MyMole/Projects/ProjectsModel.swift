@@ -771,7 +771,7 @@ final class ProjectsModel {
             let stale = Set(gone.map(\.project)).intersection(rescanning)
             for project in Set(gone.filter(\.part).map(\.project)).union(stale) { rescan(project) }
         }
-        let record = CleanupRecord(source: "Projects", items: outcome.moved.count, bytes: freed, failed: outcome.failed.count)
+        let record = CleanupRecord(source: CleanupSource.projects.rawValue, items: outcome.moved.count, bytes: freed, failed: outcome.failed.count)
         if !outcome.moved.isEmpty {
             shelf.add(Run(id: record.id, records: outcome.moved, entries: gone, needsScan: !partly.isEmpty))
         }
