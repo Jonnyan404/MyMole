@@ -53,8 +53,7 @@ macOS settles a bundle's language when the process starts: `Bundle.main` reads t
 `AppleLanguages` default, picks the first localization the bundle ships for it, and
 every `String(localized:)` and `Text("…")` resolves against that. No supported call
 changes it for a process already running, so the picker in **Settings → Appearance →
-Language** stores the choice and it is applied by the next launch — with a button to
-relaunch straight away.
+Language** stores the choice and it is applied by the next launch.
 
 - *Same as the Mac* removes the app's own `AppleLanguages`, handing the choice back
   to the system language and to the per-app entry in System Settings.

@@ -16297,6 +16297,86 @@
         }
       }
     },
+    "A background agent changed. The app stayed in place. Reopen the app if an earlier agent was stopped." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Hintergrund-Agent hat sich geändert. Die App ist geblieben. Öffne die App erneut, wenn ein früherer Agent gestoppt wurde."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un agente en segundo plano cambió. La app se quedó donde estaba. Vuelve a abrir la app si se detuvo un agente anterior."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un agent d’arrière-plan a changé. L’app est restée en place. Rouvrez l’app si un agent précédent a été arrêté."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "एक बैकग्राउंड एजेंट बदल गया। ऐप अपनी जगह रहा। अगर कोई पिछला एजेंट रोका गया था तो ऐप फिर से खोलें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "백그라운드 에이전트가 변경되었습니다. 앱은 그대로 남았습니다. 이전 에이전트가 중지되었다면 앱을 다시 여세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "某个后台代理发生了变化。应用保持原位。如果之前的代理已被停止，请重新打开该应用。"
+          }
+        }
+      }
+    },
+    "A background process is still running after its agent was stopped. The app stayed in place." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Hintergrundprozess läuft noch, nachdem sein Agent gestoppt wurde. Die App ist geblieben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un proceso en segundo plano sigue en ejecución tras detener su agente. La app se quedó donde estaba."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un processus d’arrière-plan tourne encore après l’arrêt de son agent. L’app est restée en place."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "एजेंट रोकने के बाद भी एक बैकग्राउंड प्रोसेस चल रहा है। ऐप अपनी जगह रहा।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트를 중지한 후에도 백그라운드 프로세스가 실행 중입니다. 앱은 그대로 남았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "代理停止后仍有后台进程在运行。应用保持原位。"
+          }
+        }
+      }
+    },
     "A backup of an iPhone or iPad. It's gone for good unless the device is backed up again." : {
       "localizations" : {
         "de" : {
@@ -16497,6 +16577,46 @@
         }
       }
     },
+    "A folder could not be opened." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Ordner konnte nicht geöffnet werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo abrir una carpeta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un dossier n’a pas pu être ouvert."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "एक फ़ोल्डर खोला नहीं जा सका।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "폴더를 열 수 없었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法打开某个文件夹。"
+          }
+        }
+      }
+    },
     "A folder inside can't be read, so it couldn't be checked." : {
       "localizations" : {
         "de" : {
@@ -16617,6 +16737,86 @@
         }
       }
     },
+    "A linked or inaccessible folder was refused." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein verknüpfter oder nicht zugänglicher Ordner wurde abgelehnt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se rechazó una carpeta enlazada o inaccesible."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un dossier lié ou inaccessible a été refusé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "एक लिंक या अप्राप्य फ़ोल्डर अस्वीकार किया गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "링크되었거나 접근할 수 없는 폴더가 거부되었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已拒绝链接的或无法访问的文件夹。"
+          }
+        }
+      }
+    },
+    "A linked or malformed folder was refused." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein verknüpfter oder fehlerhafter Ordner wurde abgelehnt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se rechazó una carpeta enlazada o mal formada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un dossier lié ou mal formé a été refusé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "एक लिंक या गलत बना फ़ोल्डर अस्वीकार किया गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "링크되었거나 잘못된 폴더가 거부되었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已拒绝链接的或格式错误的文件夹。"
+          }
+        }
+      }
+    },
     "A named volume: databases and other data live here. Remove it in Docker if you're sure." : {
       "localizations" : {
         "de" : {
@@ -16653,6 +16853,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "具名卷：数据库和其他数据存放于此。确认无误后可在 Docker 中移除。"
+          }
+        }
+      }
+    },
+    "A running background process couldn't be tied to this app's loaded agent. Nothing was moved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein laufender Hintergrundprozess konnte keinem geladenen Agent dieser App zugeordnet werden. Nichts wurde bewegt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo vincular un proceso en segundo plano en ejecución con el agente cargado de esta app. No se movió nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un processus d’arrière-plan en cours n’a pas pu être rattaché à l’agent chargé de cette app. Rien n’a été déplacé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "एक चल रहे बैकग्राउंड प्रोसेस को इस ऐप के लोड किए एजेंट से जोड़ा नहीं जा सका। कुछ नहीं ले जाया गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실행 중인 백그라운드 프로세스를 이 앱의 로드된 에이전트와 연결할 수 없었습니다. 아무것도 이동되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法将某个正在运行的后台进程对应到该应用已加载的代理。没有移动任何内容。"
           }
         }
       }
@@ -18123,6 +18363,46 @@
         }
       }
     },
+    "Administrator approval is required." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Genehmigung eines Administrators ist erforderlich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se necesita la aprobación de un administrador."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’approbation d’un administrateur est requise."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "एडमिनिस्ट्रेटर की स्वीकृति आवश्यक है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "관리자 승인이 필요합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要管理员批准。"
+          }
+        }
+      }
+    },
     "Agent sessions" : {
       "localizations" : {
         "de" : {
@@ -19511,6 +19791,46 @@
         }
       }
     },
+    "Another MyMole system task is still running, so nothing was changed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine andere Systemaufgabe von MyMole läuft noch, daher wurde nichts geändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otra tarea del sistema de MyMole sigue en curso, así que no se cambió nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une autre tâche système de MyMole est encore en cours, rien n’a donc été modifié."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole का एक अन्य सिस्टम कार्य अभी चल रहा है, इसलिए कुछ नहीं बदला गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 MyMole 시스템 작업이 아직 실행 중이어서 아무것도 변경되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "另一个 MyMole 系统任务仍在运行，因此没有做任何更改。"
+          }
+        }
+      }
+    },
     "Another system task is running." : {
       "localizations" : {
         "de" : {
@@ -20427,6 +20747,126 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "会在此文件夹内读取应用元数据，包括构建产物。不会在应用包内搜索嵌套副本；依赖与版本控制文件夹会被跳过。"
+          }
+        }
+      }
+    },
+    "App metadata or protections are not a bounded regular file." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App-Metadaten oder Schutzregeln sind keine reguläre Datei begrenzter Größe."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los metadatos de la app o las protecciones no son un archivo normal de tamaño limitado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les métadonnées de l’app ou les protections ne sont pas un fichier ordinaire de taille limitée."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप मेटाडेटा या सुरक्षाएँ सीमित आकार की सामान्य फ़ाइल नहीं हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 메타데이터 또는 보호 규칙이 크기가 제한된 일반 파일이 아닙니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用元数据或保护规则不是大小受限的普通文件。"
+          }
+        }
+      }
+    },
+    "App metadata or protections changed while being read." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App-Metadaten oder Schutzregeln haben sich beim Lesen geändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los metadatos de la app o las protecciones cambiaron mientras se leían."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les métadonnées de l’app ou les protections ont changé pendant la lecture."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पढ़ते समय ऐप मेटाडेटा या सुरक्षाएँ बदल गईं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "읽는 동안 앱 메타데이터 또는 보호 규칙이 변경되었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "读取期间应用元数据或保护规则发生了变化。"
+          }
+        }
+      }
+    },
+    "App metadata or protections could not be read." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App-Metadaten oder Schutzregeln konnten nicht gelesen werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron leer los metadatos de la app ni las protecciones."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les métadonnées de l’app ou les protections n’ont pas pu être lues."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप मेटाडेटा या सुरक्षाएँ पढ़ी नहीं जा सकीं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 메타데이터 또는 보호 규칙을 읽을 수 없었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取应用元数据或保护规则。"
           }
         }
       }
@@ -21627,6 +22067,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "返回 %1$@（⌘↑）"
+          }
+        }
+      }
+    },
+    "Background processes couldn't be checked after stopping the agents. The app stayed in place." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hintergrundprozesse konnten nach dem Stoppen der Agents nicht geprüft werden. Die App ist geblieben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron comprobar los procesos en segundo plano tras detener los agentes. La app se quedó donde estaba."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les processus d’arrière-plan n’ont pas pu être vérifiés après l’arrêt des agents. L’app est restée en place."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "एजेंट रोकने के बाद बैकग्राउंड प्रोसेस जाँचे नहीं जा सके। ऐप अपनी जगह रहा।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트를 중지한 후 백그라운드 프로세스를 확인할 수 없었습니다. 앱은 그대로 남았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止代理后无法检查后台进程。应用保持原位。"
           }
         }
       }
@@ -43463,6 +43943,46 @@
         }
       }
     },
+    "It changed while being removed and is kept at %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es hat sich beim Entfernen geändert und wird unter %@ aufbewahrt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambió mientras se eliminaba y se conserva en %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il a changé pendant la suppression et est conservé à %@."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "हटाते समय यह बदल गया और %@ पर रखा गया है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제거하는 동안 변경되어 %@에 보관됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "它在移除期间发生了变化，已保留在 %@。"
+          }
+        }
+      }
+    },
     "It has used a whole core for %lld minutes or more, and may be stuck. Look at it in Live Status, or quit it if you don't need it." : {
       "localizations" : {
         "de" : {
@@ -44325,6 +44845,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "它的防护以系统扩展方式运行。请在应用中用“帮助”>“卸载 Malwarebytes”。"
+          }
+        }
+      }
+    },
+    "Its removal couldn't be recorded, so it wasn't moved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sein Entfernen konnte nicht vermerkt werden, daher wurde es nicht bewegt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo registrar su eliminación, así que no se movió."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sa suppression n’a pas pu être enregistrée, il n’a donc pas été déplacé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसका हटाना दर्ज नहीं हो सका, इसलिए इसे नहीं ले जाया गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제거를 기록할 수 없어 이동하지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法记录它的移除，因此没有移动它。"
           }
         }
       }
@@ -55257,42 +55817,42 @@
         }
       }
     },
-    "MyMole opens in %@ the next time it starts." : {
+    "MyMole shows its windows and dialogs in this language. macOS picks the language when MyMole starts, so a change applies the next time it opens." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MyMole öffnet sich beim nächsten Start auf %1$@."
+            "value" : "MyMole zeigt seine Fenster und Dialoge in dieser Sprache. macOS wählt die Sprache beim Start von MyMole, daher gilt eine Änderung ab dem nächsten Öffnen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MyMole se abrirá en %1$@ la próxima vez que se inicie."
+            "value" : "MyMole muestra sus ventanas y diálogos en este idioma. macOS elige el idioma cuando se abre MyMole, así que un cambio se aplica la próxima vez que lo abras."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MyMole s'ouvrira en %1$@ au prochain démarrage."
+            "value" : "MyMole affiche ses fenêtres et dialogues dans cette langue. macOS choisit la langue au démarrage de MyMole : un changement s’applique donc à sa prochaine ouverture."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MyMole अगली बार शुरू होने पर %1$@ में खुलेगा।"
+            "value" : "MyMole अपनी विंडो और डायलॉग इस भाषा में दिखाता है। macOS भाषा MyMole शुरू होते समय चुनता है, इसलिए बदलाव अगली बार खोलने पर लागू होता है।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MyMole은 다음에 시작할 때 %1$@(으)로 열립니다."
+            "value" : "MyMole의 윈도우와 대화상자가 이 언어로 표시됩니다. macOS는 MyMole이 시작될 때 언어를 정하므로 변경 사항은 다음에 열 때 적용됩니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MyMole 下次启动时将显示为 %1$@。"
+            "value" : "MyMole 的窗口和对话框都使用该语言显示。macOS 会在 MyMole 启动时确定语言，因此更改会在下次启动后生效。"
           }
         }
       }
@@ -57817,6 +58377,46 @@
         }
       }
     },
+    "No private administrator staging folder is available." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein privater Bereitstellungsordner für Administratoren ist verfügbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay ninguna carpeta privada de preparación del administrador disponible."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun dossier de préparation privé pour l’administrateur n’est disponible."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कोई निजी एडमिनिस्ट्रेटर स्टेजिंग फ़ोल्डर उपलब्ध नहीं है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용할 수 있는 비공개 관리자 준비 폴더가 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有可用的私有管理员暂存文件夹。"
+          }
+        }
+      }
+    },
     "No problems found." : {
       "localizations" : {
         "de" : {
@@ -57893,6 +58493,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "当前无法读取。"
+          }
+        }
+      }
+    },
+    "No safe home folder was found for the signed-in user." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für den angemeldeten Benutzer wurde kein sicherer Benutzerordner gefunden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontró una carpeta de inicio segura para el usuario con sesión iniciada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun dossier de départ sûr n’a été trouvé pour l’utilisateur connecté."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "साइन-इन उपयोगकर्ता के लिए कोई सुरक्षित होम फ़ोल्डर नहीं मिला।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그인한 사용자의 안전한 홈 폴더를 찾을 수 없었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找不到当前登录用户的安全个人文件夹。"
+          }
+        }
+      }
+    },
+    "No safe place to remove it from." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein sicherer Ort, von dem es entfernt werden kann."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay un lugar seguro desde donde eliminarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun emplacement sûr d’où le supprimer."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसे हटाने के लिए कोई सुरक्षित स्थान नहीं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제거할 안전한 위치가 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有可以安全移除它的位置。"
           }
         }
       }
@@ -63651,6 +64331,86 @@
         }
       }
     },
+    "Part of it couldn't be removed; what was left is back in place." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Teil konnte nicht entfernt werden; was übrig war, ist wieder an seinem Platz."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo eliminar una parte; lo que quedó volvió a su sitio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une partie n’a pas pu être supprimée ; ce qui restait est revenu à sa place."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसका कुछ हिस्सा हटाया नहीं जा सका; जो बचा था वह वापस अपनी जगह है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일부를 제거할 수 없었으며 남은 것은 원래 자리로 돌아갔습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其中一部分无法移除；剩余部分已放回原位。"
+          }
+        }
+      }
+    },
+    "Part of it couldn't be removed; what was left is kept at %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Teil konnte nicht entfernt werden; was übrig war, wird unter %@ aufbewahrt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo eliminar una parte; lo que quedó se conserva en %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une partie n’a pas pu être supprimée ; ce qui restait est conservé à %@."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसका कुछ हिस्सा हटाया नहीं जा सका; जो बचा था वह %@ पर रखा गया है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일부를 제거할 수 없었으며 남은 것은 %@에 보관됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其中一部分无法移除；剩余部分保留在 %@。"
+          }
+        }
+      }
+    },
     "Part of macOS" : {
       "localizations" : {
         "de" : {
@@ -68345,46 +69105,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "由包管理器重新安装（npm install、pod install 等）。"
-          }
-        }
-      }
-    },
-    "Relaunch MyMole" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "MyMole neu starten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reiniciar MyMole"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Relancer MyMole"
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "MyMole फिर से खोलें"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "MyMole 다시 실행"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重新启动 MyMole"
           }
         }
       }
@@ -73169,6 +73889,46 @@
         }
       }
     },
+    "Running processes couldn't be checked. Nothing was moved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laufende Prozesse konnten nicht geprüft werden. Nichts wurde bewegt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron comprobar los procesos en ejecución. No se movió nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les processus en cours n’ont pas pu être vérifiés. Rien n’a été déplacé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "चल रहे प्रोसेस जाँचे नहीं जा सके। कुछ नहीं ले जाया गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실행 중인 프로세스를 확인할 수 없었습니다. 아무것도 이동되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法检查正在运行的进程。没有移动任何内容。"
+          }
+        }
+      }
+    },
     "Running. Stop it in Docker first." : {
       "localizations" : {
         "de" : {
@@ -73352,7 +74112,7 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mac जैसा"
+            "value" : "Mac के समान"
           }
         },
         "ko" : {
@@ -83353,46 +84113,6 @@
         }
       }
     },
-    "Text, menus and dialogs are drawn in this language. macOS settles it when MyMole starts, so a change takes effect the next time it opens." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text, Menüs und Dialoge werden in dieser Sprache angezeigt. macOS legt sie beim Start von MyMole fest, daher wirkt eine Änderung erst beim nächsten Öffnen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El texto, los menús y los diálogos se muestran en este idioma. macOS lo decide al iniciar MyMole, así que un cambio se aplica la próxima vez que se abra."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le texte, les menus et les dialogues s'affichent dans cette langue. macOS la fixe au démarrage de MyMole : une modification prend donc effet à la prochaine ouverture."
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "पाठ, मेन्यू और डायलॉग इस भाषा में दिखाए जाते हैं। macOS इसे MyMole के शुरू होने पर तय करता है, इसलिए बदलाव अगली बार खोलने पर लागू होगा।"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "텍스트, 메뉴 및 대화상자가 이 언어로 표시됩니다. macOS는 MyMole이 시작될 때 언어를 정하므로 변경 사항은 다음에 열 때 적용됩니다."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文字、菜单和对话框都使用该语言显示。macOS 会在 MyMole 启动时确定语言，因此更改会在下次启动后生效。"
-          }
-        }
-      }
-    },
     "That app changed or already quit. Refresh the reading before trying again." : {
       "localizations" : {
         "de" : {
@@ -83707,6 +84427,46 @@
         }
       }
     },
+    "The Applications folder changed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Ordner „Programme“ hat sich geändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La carpeta Aplicaciones cambió."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le dossier Applications a changé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप्लिकेशन फ़ोल्डर बदल गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "응용 프로그램 폴더가 변경되었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“应用程序”文件夹发生了变化。"
+          }
+        }
+      }
+    },
     "The CPU has been overloaded for minutes" : {
       "localizations" : {
         "de" : {
@@ -83827,6 +84587,46 @@
         }
       }
     },
+    "The Trash changed. Nothing was moved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Papierkorb hat sich geändert. Nichts wurde bewegt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Papelera cambió. No se movió nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Corbeille a changé. Rien n’a été déplacé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ट्रैश बदल गया। कुछ नहीं ले जाया गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "휴지통이 변경되었습니다. 아무것도 이동되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "废纸篓发生了变化。没有移动任何内容。"
+          }
+        }
+      }
+    },
     "The Trash didn't say where it went." : {
       "localizations" : {
         "de" : {
@@ -83943,6 +84743,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法核实管理员移动操作。没有移动任何应用数据。"
+          }
+        }
+      }
+    },
+    "The administrator staging folder is not private." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Bereitstellungsordner für Administratoren ist nicht privat."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La carpeta de preparación del administrador no es privada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le dossier de préparation de l’administrateur n’est pas privé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "एडमिनिस्ट्रेटर स्टेजिंग फ़ोल्डर निजी नहीं है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "관리자 준비 폴더가 비공개가 아닙니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理员暂存文件夹不是私有的。"
           }
         }
       }
@@ -84295,6 +85135,46 @@
         }
       }
     },
+    "The app changed or its metadata couldn't be verified. Nothing was moved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App hat sich geändert oder ihre Metadaten konnten nicht geprüft werden. Nichts wurde bewegt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La app cambió o no se pudieron verificar sus metadatos. No se movió nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’app a changé ou ses métadonnées n’ont pas pu être vérifiées. Rien n’a été déplacé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप बदल गया या इसका मेटाडेटा सत्यापित नहीं हो सका। कुछ नहीं ले जाया गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱이 변경되었거나 메타데이터를 확인할 수 없었습니다. 아무것도 이동되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用发生了变化，或无法核实其元数据。没有移动任何内容。"
+          }
+        }
+      }
+    },
     "The app changed, already quit, or couldn't accept the request. No other process was asked to quit." : {
       "localizations" : {
         "de" : {
@@ -84335,6 +85215,46 @@
         }
       }
     },
+    "The app changed. Nothing was moved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App hat sich geändert. Nichts wurde bewegt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La app cambió. No se movió nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’app a changé. Rien n’a été déplacé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप बदल गया। कुछ नहीं ले जाया गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱이 변경되었습니다. 아무것도 이동되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用发生了变化。没有移动任何内容。"
+          }
+        }
+      }
+    },
     "The app could not be verified at its original location. Undo can retry from its last verified location. Check in Finder before trying again." : {
       "localizations" : {
         "de" : {
@@ -84371,6 +85291,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法在原位置核实该应用。撤销可以从上次核实的位置重试。重试前请在访达中确认。"
+          }
+        }
+      }
+    },
+    "The app has a running process that isn't a verified bundled agent. Quit the app and its background processes before uninstalling." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App hat einen laufenden Prozess, der kein geprüfter mitgelieferter Agent ist. Beende die App und ihre Hintergrundprozesse vor dem Deinstallieren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La app tiene un proceso en ejecución que no es un agente incluido verificado. Cierra la app y sus procesos en segundo plano antes de desinstalarla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’app a un processus en cours qui n’est pas un agent intégré vérifié. Quittez l’app et ses processus d’arrière-plan avant de la désinstaller."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप का एक चल रहा प्रोसेस सत्यापित बंडल एजेंट नहीं है। अनइंस्टॉल करने से पहले ऐप और उसके बैकग्राउंड प्रोसेस बंद करें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱에 확인된 포함 에이전트가 아닌 실행 중인 프로세스가 있습니다. 제거하기 전에 앱과 백그라운드 프로세스를 종료하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该应用有一个正在运行的进程不是已核实的内置代理。请在卸载前退出该应用及其后台进程。"
+          }
+        }
+      }
+    },
+    "The app has too many bundled agent entries to verify safely." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App hat zu viele mitgelieferte Agent-Einträge, um sie sicher zu prüfen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La app tiene demasiadas entradas de agentes incluidos para verificarlas con seguridad."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’app a trop d’entrées d’agents intégrés pour être vérifiée sans risque."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप में सुरक्षित रूप से सत्यापित करने के लिए बहुत ज़्यादा बंडल एजेंट प्रविष्टियाँ हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱에 포함된 에이전트 항목이 너무 많아 안전하게 확인할 수 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该应用的内置代理条目太多，无法安全核实。"
           }
         }
       }
@@ -84451,6 +85451,92 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "会请求应用正常退出，以便它保存工作或先询问你。发生变化或已重启的进程会被跳过。"
+          }
+        }
+      }
+    },
+    "The app is kept at %@/%@/bundle.app; its request.json records the original location." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App wird unter %@/%@/bundle.app aufbewahrt; ihre request.json vermerkt den ursprünglichen Ort."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The app is kept at %1$@/%2$@/bundle.app; its request.json records the original location."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La app se conserva en %@/%@/bundle.app; su request.json registra la ubicación original."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’app est conservée à %@/%@/bundle.app ; son request.json indique l’emplacement d’origine."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप %@/%@/bundle.app पर रखा गया है; इसकी request.json मूल स्थान दर्ज करती है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱은 %@/%@/bundle.app에 보관되며, request.json에 원래 위치가 기록되어 있습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用保留在 %@/%@/bundle.app；其 request.json 记录了原始位置。"
+          }
+        }
+      }
+    },
+    "The app is kept, or its protection rules couldn't be read. Nothing was moved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App wird behalten, oder ihre Schutzregeln konnten nicht gelesen werden. Nichts wurde bewegt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La app se conserva, o no se pudieron leer sus reglas de protección. No se movió nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’app est conservée, ou ses règles de protection n’ont pas pu être lues. Rien n’a été déplacé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप रखा गया है, या इसके सुरक्षा नियम पढ़े नहीं जा सके। कुछ नहीं ले जाया गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱이 보관되어 있거나 보호 규칙을 읽을 수 없었습니다. 아무것도 이동되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该应用已被保留，或无法读取其保护规则。没有移动任何内容。"
           }
         }
       }
@@ -84615,6 +85701,86 @@
         }
       }
     },
+    "The app move could not be prepared." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Bewegen der App konnte nicht vorbereitet werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo preparar el traslado de la app."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le déplacement de l’app n’a pas pu être préparé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप ले जाने की तैयारी नहीं हो सकी।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 이동을 준비할 수 없었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法准备应用移动操作。"
+          }
+        }
+      }
+    },
+    "The app move could not be recorded." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Bewegen der App konnte nicht vermerkt werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo registrar el traslado de la app."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le déplacement de l’app n’a pas pu être enregistré."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप ले जाना दर्ज नहीं हो सका।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 이동을 기록할 수 없었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法记录应用移动操作。"
+          }
+        }
+      }
+    },
     "The app move could not be verified." : {
       "localizations" : {
         "de" : {
@@ -84695,6 +85861,126 @@
         }
       }
     },
+    "The app or its protections changed. %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App oder ihre Schutzregeln haben sich geändert. %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La app o sus protecciones cambiaron. %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’app ou ses protections ont changé. %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप या इसकी सुरक्षाएँ बदल गईं। %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 또는 보호 규칙이 변경되었습니다. %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用或其保护规则发生了变化。%@"
+          }
+        }
+      }
+    },
+    "The app or one of its background processes is still running. Nothing was moved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App oder einer ihrer Hintergrundprozesse läuft noch. Nichts wurde bewegt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La app o uno de sus procesos en segundo plano sigue en ejecución. No se movió nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’app ou l’un de ses processus d’arrière-plan est encore en cours. Rien n’a été déplacé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप या इसका कोई बैकग्राउंड प्रोसेस अभी चल रहा है। कुछ नहीं ले जाया गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 또는 백그라운드 프로세스 중 하나가 아직 실행 중입니다. 아무것도 이동되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用或其某个后台进程仍在运行。没有移动任何内容。"
+          }
+        }
+      }
+    },
+    "The app restarted or its protections changed. Nothing was moved. If its background agents were stopped, reopening the app restores them." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App wurde neu gestartet oder ihre Schutzregeln haben sich geändert. Nichts wurde bewegt. Wurden ihre Hintergrund-Agents gestoppt, stellt ein erneutes Öffnen der App sie wieder her."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La app se reinició o sus protecciones cambiaron. No se movió nada. Si se detuvieron sus agentes en segundo plano, volver a abrir la app los restaura."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’app a redémarré ou ses protections ont changé. Rien n’a été déplacé. Si ses agents d’arrière-plan ont été arrêtés, rouvrir l’app les rétablit."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप फिर से शुरू हुआ या इसकी सुरक्षाएँ बदल गईं। कुछ नहीं ले जाया गया। अगर इसके बैकग्राउंड एजेंट रोके गए थे, तो ऐप फिर से खोलने पर वे बहाल हो जाते हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱이 다시 시작되었거나 보호 규칙이 변경되었습니다. 아무것도 이동되지 않았습니다. 백그라운드 에이전트가 중지되었다면 앱을 다시 열면 복원됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用已重新启动，或其保护规则发生了变化。没有移动任何内容。如果其后台代理已被停止，重新打开该应用即可恢复。"
+          }
+        }
+      }
+    },
     "The app restore could not be verified." : {
       "localizations" : {
         "de" : {
@@ -84731,6 +86017,166 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法核实应用恢复操作。"
+          }
+        }
+      }
+    },
+    "The app was returned to its original location." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App wurde an ihren ursprünglichen Ort zurückgebracht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La app se devolvió a su ubicación original."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’app a été remise à son emplacement d’origine."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप अपने मूल स्थान पर लौटा दिया गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱이 원래 위치로 돌아갔습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用已放回原始位置。"
+          }
+        }
+      }
+    },
+    "The app's background agent couldn't be stopped (launchctl %d). The app stayed in place. Reopen the app if an earlier agent was stopped." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Hintergrund-Agent der App konnte nicht gestoppt werden (launchctl %d). Die App ist geblieben. Öffne die App erneut, wenn ein früherer Agent gestoppt wurde."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo detener el agente en segundo plano de la app (launchctl %d). La app se quedó donde estaba. Vuelve a abrir la app si se detuvo un agente anterior."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’agent d’arrière-plan de l’app n’a pas pu être arrêté (launchctl %d). L’app est restée en place. Rouvrez l’app si un agent précédent a été arrêté."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप का बैकग्राउंड एजेंट रोका नहीं जा सका (launchctl %d)। ऐप अपनी जगह रहा। अगर कोई पिछला एजेंट रोका गया था तो ऐप फिर से खोलें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱의 백그라운드 에이전트를 중지할 수 없었습니다(launchctl %d). 앱은 그대로 남았습니다. 이전 에이전트가 중지되었다면 앱을 다시 여세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法停止该应用的后台代理（launchctl %d）。应用保持原位。如果之前的代理已被停止，请重新打开该应用。"
+          }
+        }
+      }
+    },
+    "The app's bundled agents couldn't be read." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die mitgelieferten Agents der App konnten nicht gelesen werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron leer los agentes incluidos en la app."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les agents intégrés de l’app n’ont pas pu être lus."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप के बंडल एजेंट पढ़े नहीं जा सके।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱에 포함된 에이전트를 읽을 수 없었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取该应用的内置代理。"
+          }
+        }
+      }
+    },
+    "The app's loaded background agents couldn't be checked. Nothing was moved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die geladenen Hintergrund-Agents der App konnten nicht geprüft werden. Nichts wurde bewegt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron comprobar los agentes en segundo plano cargados de la app. No se movió nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les agents d’arrière-plan chargés de l’app n’ont pas pu être vérifiés. Rien n’a été déplacé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप के लोड किए बैकग्राउंड एजेंट जाँचे नहीं जा सके। कुछ नहीं ले जाया गया।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱의 로드된 백그라운드 에이전트를 확인할 수 없었습니다. 아무것도 이동되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法检查该应用已加载的后台代理。没有移动任何内容。"
           }
         }
       }
@@ -85079,6 +86525,92 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你保留的副本位于 %1$@ 上，该位置可能会断开连接。"
+          }
+        }
+      }
+    },
+    "The destination could not accept the app (POSIX %d). %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Ziel konnte die App nicht aufnehmen (POSIX %d). %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The destination could not accept the app (POSIX %1$d). %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El destino no pudo aceptar la app (POSIX %d). %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La destination n’a pas pu accepter l’app (POSIX %d). %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "गंतव्य ऐप स्वीकार नहीं कर सका (POSIX %d)। %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대상 위치가 앱을 받을 수 없었습니다(POSIX %d). %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目标位置无法接收该应用（POSIX %d）。%@"
+          }
+        }
+      }
+    },
+    "The destination is occupied. Nothing was overwritten." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Ziel ist belegt. Nichts wurde überschrieben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El destino está ocupado. No se sobrescribió nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La destination est occupée. Rien n’a été écrasé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "गंतव्य भरा हुआ है। कुछ भी अधिलेखित नहीं हुआ।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대상 위치가 이미 사용 중입니다. 아무것도 덮어쓰지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目标位置已被占用。没有覆盖任何内容。"
           }
         }
       }
@@ -85883,6 +87415,46 @@
         }
       }
     },
+    "The new Trash could not be assigned to its user." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der neue Papierkorb konnte seinem Benutzer nicht zugewiesen werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo asignar la nueva Papelera a su usuario."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La nouvelle Corbeille n’a pas pu être attribuée à son utilisateur."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "नया ट्रैश उसके उपयोगकर्ता को सौंपा नहीं जा सका।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새 휴지통을 해당 사용자에게 할당할 수 없었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法将新的废纸篓分配给其用户。"
+          }
+        }
+      }
+    },
     "The optional helper handles administrator tasks after macOS approval. You still review and confirm removals. App Management and Full Disk Access are separate macOS permissions; enabling the helper doesn't grant them." : {
       "localizations" : {
         "de" : {
@@ -86123,6 +87695,92 @@
         }
       }
     },
+    "The request couldn't be read." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Anfrage konnte nicht gelesen werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo leer la solicitud."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La demande n’a pas pu être lue."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अनुरोध पढ़ा नहीं जा सका।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "요청을 읽을 수 없었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取该请求。"
+          }
+        }
+      }
+    },
+    "The request was written for version %@; this tool is version %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Anfrage wurde für Version %@ geschrieben; dieses Tool ist Version %@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The request was written for version %1$@; this tool is version %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La solicitud se escribió para la versión %@; esta herramienta es la versión %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La demande a été écrite pour la version %@ ; cet outil est en version %@."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अनुरोध संस्करण %@ के लिए लिखा गया था; यह टूल संस्करण %@ है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "요청은 버전 %@용으로 작성되었으며 이 도구는 버전 %@입니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该请求是为版本 %@ 编写的；此工具为版本 %@。"
+          }
+        }
+      }
+    },
     "The scan couldn't be saved: %@" : {
       "localizations" : {
         "de" : {
@@ -86279,6 +87937,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "对 %1$@ 的搜索受限或部分无法读取。只提供已完整测量的候选项；可能仍有其他应用数据。"
+          }
+        }
+      }
+    },
+    "The signed-in user changed. Return to MyMole and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der angemeldete Benutzer hat sich geändert. Kehre zu MyMole zurück und versuche es erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El usuario con sesión iniciada cambió. Vuelve a MyMole e inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’utilisateur connecté a changé. Revenez à MyMole et réessayez."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "साइन-इन उपयोगकर्ता बदल गया। MyMole पर लौटें और फिर से कोशिश करें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그인한 사용자가 변경되었습니다. MyMole로 돌아가 다시 시도하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录用户已更改。请返回 MyMole 后重试。"
           }
         }
       }
@@ -86523,6 +88221,46 @@
         }
       }
     },
+    "The tool must run as root." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Tool muss als root laufen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La herramienta debe ejecutarse como root."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’outil doit s’exécuter en tant que root."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "टूल को root के रूप में चलना चाहिए।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도구는 root로 실행되어야 합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此工具必须以 root 身份运行。"
+          }
+        }
+      }
+    },
     "The tool stopped with code %d." : {
       "localizations" : {
         "de" : {
@@ -86599,6 +88337,206 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "生成它的工具同时记录了该项目的路径。"
+          }
+        }
+      }
+    },
+    "The user's Trash could not be created on the same volume." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Papierkorb des Benutzers konnte nicht auf demselben Volume erstellt werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo crear la Papelera del usuario en el mismo volumen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Corbeille de l’utilisateur n’a pas pu être créée sur le même volume."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "उपयोगकर्ता का ट्रैश उसी वॉल्यूम पर बनाया नहीं जा सका।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "같은 볼륨에 사용자의 휴지통을 만들 수 없었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法在同一宗卷上创建该用户的废纸篓。"
+          }
+        }
+      }
+    },
+    "The user's Trash could not be prepared." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Papierkorb des Benutzers konnte nicht vorbereitet werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo preparar la Papelera del usuario."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Corbeille de l’utilisateur n’a pas pu être préparée."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "उपयोगकर्ता का ट्रैश तैयार नहीं हो सका।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용자의 휴지통을 준비할 수 없었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法准备该用户的废纸篓。"
+          }
+        }
+      }
+    },
+    "The user's Trash is not available." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Papierkorb des Benutzers ist nicht verfügbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Papelera del usuario no está disponible."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Corbeille de l’utilisateur n’est pas disponible."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "उपयोगकर्ता का ट्रैश उपलब्ध नहीं है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용자의 휴지통을 사용할 수 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该用户的废纸篓不可用。"
+          }
+        }
+      }
+    },
+    "The user's Trash is not private to that user." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Papierkorb des Benutzers ist nicht nur für diesen Benutzer zugänglich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Papelera del usuario no es privada para ese usuario."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Corbeille de l’utilisateur ne lui est pas privée."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "उपयोगकर्ता का ट्रैश उस उपयोगकर्ता के लिए निजी नहीं है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용자의 휴지통이 해당 사용자 전용이 아닙니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该用户的废纸篓不是其私有的。"
+          }
+        }
+      }
+    },
+    "The user's Trash must be a real directory." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Papierkorb des Benutzers muss ein echter Ordner sein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Papelera del usuario debe ser una carpeta real."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Corbeille de l’utilisateur doit être un vrai dossier."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "उपयोगकर्ता का ट्रैश एक असली फ़ोल्डर होना चाहिए।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용자의 휴지통은 실제 폴더여야 합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该用户的废纸篓必须是真实的文件夹。"
           }
         }
       }
@@ -88067,6 +90005,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "此照片已保留，因此会留下。"
+          }
+        }
+      }
+    },
+    "This request does not name an eligible application." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Anfrage nennt kein geeignetes Programm."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta solicitud no indica una aplicación válida."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette demande ne désigne pas une application éligible."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "यह अनुरोध किसी योग्य ऐप्लिकेशन का नाम नहीं देता।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 요청에 해당하는 앱이 지정되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该请求没有指定符合条件的应用程序。"
           }
         }
       }
@@ -98201,6 +100179,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS 自带应用会保持安装状态；只提供重置其缓存和设置的选项。"
+          }
+        }
+      }
+    },
+    "macOS blocked the administrator move (POSIX %d). The app stayed in place." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS hat das Bewegen als Administrator blockiert (POSIX %d). Die App ist geblieben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS bloqueó el traslado como administrador (POSIX %d). La app se quedó donde estaba."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS a bloqué le déplacement par l’administrateur (POSIX %d). L’app est restée en place."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS ने एडमिनिस्ट्रेटर द्वारा ले जाना रोका (POSIX %d)। ऐप अपनी जगह रहा।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS가 관리자 이동을 차단했습니다(POSIX %d). 앱은 그대로 남았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 阻止了管理员移动操作（POSIX %d）。应用保持原位。"
           }
         }
       }

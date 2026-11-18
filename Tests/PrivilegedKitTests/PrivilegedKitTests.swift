@@ -320,6 +320,21 @@ final class FakeRunner: Sendable {
         #expect(fake.calls.withLock { $0 }.isEmpty)
     }
 
+    /// The request carries the app's languages, and a request from an app
+    /// that sent none still reads; the tool then answers in English.
+    @Test func theRequestCarriesTheAppsLanguages() throws {
+        let envelope = PrivilegedEnvelope(request: .maintenance(tasks: ["flushDNS"], dryRun: true), languages: ["fr", "en"])
+        let data = try #require(Data(base64Encoded: PrivilegedTool.argument(for: envelope)))
+        #expect(try JSONDecoder().decode(PrivilegedEnvelope.self, from: data).languages == ["fr", "en"])
+
+        let older = #"{"version":"\#(PrivilegedTool.version)","request":{"maintenance":{"tasks":["flushDNS"],"dryRun":true}}}"#
+        #expect(try JSONDecoder().decode(PrivilegedEnvelope.self, from: Data(older.utf8)).languages == nil)
+
+        let unknown = PrivilegedTool.argument(for: PrivilegedEnvelope(request: .maintenance(tasks: [], dryRun: true), languages: ["xx"]))
+        #expect(PrivilegedTool.handle(argument: unknown, isRoot: false, runner: FakeRunner().runner) == .refused("The tool must run as root."))
+        #expect(ToolLanguage.bundle == .main)
+    }
+
     @Test func asRootItRunsOnlyRootTasksThroughItsRunner() throws {
         let box = try Box()
         let fake = FakeRunner(codes: ["/usr/bin/killall": 1])

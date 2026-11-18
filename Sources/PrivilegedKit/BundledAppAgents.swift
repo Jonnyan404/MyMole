@@ -36,50 +36,50 @@ enum BundledAppAgents {
                   try agents(in: request.path, bundleID: request.bundleID, owner: owner).contains(item.agent),
                   let current = readProcesses(request.path), current.contains(item.process),
                   loaded(uid: request.uid, runner: runner)?[item.agent.label] == .running(pid: item.process.pid) else {
-                throw ApplicationTrash.Failure(.backgroundUnverified, "A background agent changed. The app stayed in place. Reopen the app if an earlier agent was stopped.")
+                throw ApplicationTrash.Failure(.backgroundUnverified, String(localized: "A background agent changed. The app stayed in place. Reopen the app if an earlier agent was stopped.", bundle: ToolLanguage.bundle))
             }
             let result = runner.run(launchctl, ["bootout", "gui/\(request.uid)/" + item.agent.label])
             guard result.code == 0 || result.code == 3 || result.code == 113 else {
-                throw ApplicationTrash.Failure(.backgroundStopFailed, "The app's background agent couldn't be stopped (launchctl \(result.code)). The app stayed in place. Reopen the app if an earlier agent was stopped.")
+                throw ApplicationTrash.Failure(.backgroundStopFailed, String(localized: "The app's background agent couldn't be stopped (launchctl \(result.code)). The app stayed in place. Reopen the app if an earlier agent was stopped.", bundle: ToolLanguage.bundle))
             }
         }
         // bootout may answer before termination finishes. This bounded wait is
         // off the main thread; no force quit or global process-name matching.
         for _ in 0..<60 {
             guard let current = readProcesses(request.path) else {
-                throw ApplicationTrash.Failure(.processUnknown, "Background processes couldn't be checked after stopping the agents. The app stayed in place.")
+                throw ApplicationTrash.Failure(.processUnknown, String(localized: "Background processes couldn't be checked after stopping the agents. The app stayed in place.", bundle: ToolLanguage.bundle))
             }
             if current.isEmpty { return }
             pause()
         }
-        throw ApplicationTrash.Failure(.backgroundStillRunning, "A background process is still running after its agent was stopped. The app stayed in place.")
+        throw ApplicationTrash.Failure(.backgroundStillRunning, String(localized: "A background process is still running after its agent was stopped. The app stayed in place.", bundle: ToolLanguage.bundle))
     }
 
     /// Planning is read-only and never stops a job.
     static func plan(_ request: ApplicationTrash.Request, owner: uid_t, runner: CommandRunner,
                      readProcesses: (String) -> [Process]?) throws -> [Plan] {
         guard Trasher.identity(of: request.path) == request.identity else {
-            throw ApplicationTrash.Failure(.appChanged, "The app changed. Nothing was moved.")
+            throw ApplicationTrash.Failure(.appChanged, String(localized: "The app changed. Nothing was moved.", bundle: ToolLanguage.bundle))
         }
         guard let current = readProcesses(request.path) else {
-            throw ApplicationTrash.Failure(.processUnknown, "Running processes couldn't be checked. Nothing was moved.")
+            throw ApplicationTrash.Failure(.processUnknown, String(localized: "Running processes couldn't be checked. Nothing was moved.", bundle: ToolLanguage.bundle))
         }
         guard !current.isEmpty else { return [] }
         let candidates = try agents(in: request.path, bundleID: request.bundleID, owner: owner)
         guard current.count <= 16, current.allSatisfy({ process in
             process.uid == request.uid && candidates.contains { $0.relativeProgram == process.relativePath }
         }) else {
-            throw ApplicationTrash.Failure(.backgroundUnverified, "The app has a running process that isn't a verified bundled agent. Quit the app and its background processes before uninstalling.")
+            throw ApplicationTrash.Failure(.backgroundUnverified, String(localized: "The app has a running process that isn't a verified bundled agent. Quit the app and its background processes before uninstalling.", bundle: ToolLanguage.bundle))
         }
         guard let loaded = loaded(uid: request.uid, runner: runner) else {
-            throw ApplicationTrash.Failure(.processUnknown, "The app's loaded background agents couldn't be checked. Nothing was moved.")
+            throw ApplicationTrash.Failure(.processUnknown, String(localized: "The app's loaded background agents couldn't be checked. Nothing was moved.", bundle: ToolLanguage.bundle))
         }
         var work: [Plan] = []
         for process in current {
             let matches = candidates.filter { $0.relativeProgram == process.relativePath && loaded[$0.label] == .running(pid: process.pid) }
             guard matches.count == 1, let agent = matches.first,
                   !work.contains(where: { $0.agent.label == agent.label }) else {
-                throw ApplicationTrash.Failure(.backgroundUnverified, "A running background process couldn't be tied to this app's loaded agent. Nothing was moved.")
+                throw ApplicationTrash.Failure(.backgroundUnverified, String(localized: "A running background process couldn't be tied to this app's loaded agent. Nothing was moved.", bundle: ToolLanguage.bundle))
             }
             work.append(Plan(agent: agent, process: process))
         }
@@ -109,7 +109,7 @@ enum BundledAppAgents {
         let folder = "Contents/Library/LaunchAgents"
         guard let jobs = safeDirectory(root, relative: folder, owner: owner) else { return [] }
         defer { close(jobs) }
-        guard let dir = fdopendir(dup(jobs)) else { throw ApplicationTrash.Failure(.backgroundUnverified, "The app's bundled agents couldn't be read.") }
+        guard let dir = fdopendir(dup(jobs)) else { throw ApplicationTrash.Failure(.backgroundUnverified, String(localized: "The app's bundled agents couldn't be read.", bundle: ToolLanguage.bundle)) }
         defer { closedir(dir) }
         var names: [String] = []
         while let entry = readdir(dir) {
@@ -118,7 +118,7 @@ enum BundledAppAgents {
             }
             if name == "." || name == ".." { continue }
             names.append(name)
-            guard names.count <= 128 else { throw ApplicationTrash.Failure(.backgroundUnverified, "The app has too many bundled agent entries to verify safely.") }
+            guard names.count <= 128 else { throw ApplicationTrash.Failure(.backgroundUnverified, String(localized: "The app has too many bundled agent entries to verify safely.", bundle: ToolLanguage.bundle)) }
         }
         var result: [Agent] = []
         for name in names.sorted() where name.hasSuffix(".plist") {

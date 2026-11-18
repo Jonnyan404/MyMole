@@ -41,7 +41,7 @@ struct Staging {
         let name = UUID().uuidString
         let note = dir + "/" + name + Self.noteSuffix
         guard FileManager.default.createFile(atPath: note, contents: Data(path.utf8), attributes: [.posixPermissions: 0o600])
-        else { return .failure(.message("Its removal couldn't be recorded, so it wasn't moved.")) }
+        else { return .failure(.message(String(localized: "Its removal couldn't be recorded, so it wasn't moved.", bundle: ToolLanguage.bundle))) }
         let staged = dir + "/" + name
         guard renamex_np(path, staged, UInt32(RENAME_EXCL)) == 0 else {
             let why = String(cString: strerror(errno))
@@ -96,7 +96,7 @@ func removeStaged(
 ) {
     let parent = (path as NSString).deletingLastPathComponent
     guard let dir = staging.folder(in: parent) else {
-        report.failed[path] = "No safe place to remove it from."
+        report.failed[path] = String(localized: "No safe place to remove it from.", bundle: ToolLanguage.bundle)
         return
     }
     let staged: String
@@ -111,7 +111,7 @@ func removeStaged(
         if staging.putBack(staged, to: path) == path {
             report.refused.append(path)
         } else {
-            report.failed[path] = "It changed while being removed and is kept at \(staged)."
+            report.failed[path] = String(localized: "It changed while being removed and is kept at \(staged).", bundle: ToolLanguage.bundle)
         }
         return
     }
@@ -124,7 +124,7 @@ func removeStaged(
     } else {
         let left = staging.putBack(staged, to: path)
         report.failed[path] = left == path
-            ? "Part of it couldn't be removed; what was left is back in place."
-            : "Part of it couldn't be removed; what was left is kept at \(left)."
+            ? String(localized: "Part of it couldn't be removed; what was left is back in place.", bundle: ToolLanguage.bundle)
+            : String(localized: "Part of it couldn't be removed; what was left is kept at \(left).", bundle: ToolLanguage.bundle)
     }
 }

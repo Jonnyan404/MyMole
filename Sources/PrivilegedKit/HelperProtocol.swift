@@ -1,6 +1,7 @@
 import Darwin
 import Foundation
 import StorageKit
+import Synchronization
 
 // MyMole's privileged tool: a program inside the app that macOS runs as root
 // for one request at a time, through an approved service or a one-shot prompt.
@@ -24,14 +25,41 @@ public enum PrivilegedRequest: Codable, Sendable, Equatable {
     case applicationTrash(ApplicationTrash.Request, restoring: Bool)
 }
 
-/// A request and the version of the tool it was written for.
+/// A request, the version of the tool it was written for and the languages
+/// the app shows, best first, so the tool answers in the app's language
+/// rather than root's. Without them the tool answers in English.
 public struct PrivilegedEnvelope: Codable, Sendable, Equatable {
     public let version: String
     public let request: PrivilegedRequest
+    public let languages: [String]?
 
-    public init(version: String = PrivilegedTool.version, request: PrivilegedRequest) {
+    public init(version: String = PrivilegedTool.version, request: PrivilegedRequest,
+                languages: [String]? = Bundle.main.preferredLocalizations) {
         self.version = version
         self.request = request
+        self.languages = languages
+    }
+}
+
+/// Where the tool's texts come from while it answers a request: the app's
+/// string catalog, in the language the request names. The app itself, and
+/// a tool between requests, use the main bundle as usual.
+public enum ToolLanguage {
+    private static let current = Mutex<Bundle?>(nil)
+
+    public static var bundle: Bundle { current.withLock { $0 } ?? .main }
+
+    /// Answers `body` in the first of `languages` the catalog has.
+    static func answering<T>(in languages: [String]?, _ body: () -> T) -> T {
+        let chosen = languages.flatMap { wanted -> Bundle? in
+            guard let language = Bundle.preferredLocalizations(from: Bundle.main.localizations, forPreferences: wanted).first,
+                let path = Bundle.main.path(forResource: language, ofType: "lproj")
+            else { return nil }
+            return Bundle(path: path)
+        }
+        current.withLock { $0 = chosen }
+        defer { current.withLock { $0 = nil } }
+        return body()
     }
 }
 
@@ -75,13 +103,17 @@ public enum PrivilegedTool {
     ) -> PrivilegedReply {
         guard let data = Data(base64Encoded: argument),
             let envelope = try? JSONDecoder().decode(PrivilegedEnvelope.self, from: data)
-        else { return .refused("The request couldn't be read.") }
+        else { return .refused(String(localized: "The request couldn't be read.", bundle: ToolLanguage.bundle)) }
+        return ToolLanguage.answering(in: envelope.languages) { answer(envelope, isRoot: isRoot, runner: runner, lockPath: lockPath) }
+    }
+
+    private static func answer(_ envelope: PrivilegedEnvelope, isRoot: Bool, runner: CommandRunner, lockPath: String) -> PrivilegedReply {
         guard envelope.version == version else {
-            return .refused("The request was written for version \(envelope.version); this tool is version \(version).")
+            return .refused(String(localized: "The request was written for version \(envelope.version); this tool is version \(version).", bundle: ToolLanguage.bundle))
         }
-        guard isRoot else { return .refused("The tool must run as root.") }
+        guard isRoot else { return .refused(String(localized: "The tool must run as root.", bundle: ToolLanguage.bundle)) }
         guard let lock = ToolLock(path: lockPath) else {
-            return .refused("Another MyMole system task is still running, so nothing was changed.")
+            return .refused(String(localized: "Another MyMole system task is still running, so nothing was changed.", bundle: ToolLanguage.bundle))
         }
         defer { lock.release() }
         switch envelope.request {

@@ -15,7 +15,6 @@ struct SettingsView: View {
     @AppStorage(AppearanceMode.key) private var mode = AppearanceMode.system.rawValue
     @AppStorage(ThemeFamily.key) private var theme = ThemeFamily.standard.rawValue
     @AppStorage(TableLines.key) private var lines = TableLines.standard.rawValue
-    @State private var language = InterfaceLanguage.choice
     @AppStorage(MenuBarSettings.showKey) private var menuBar = MenuBarSettings.showStandard
     @AppStorage(MenuBarSettings.freeKey) private var menuBarFree = false
     @AppStorage(WatchSettings.scanKey) private var backgroundScan = WatchSettings.Cadence.standard.rawValue
@@ -33,6 +32,7 @@ struct SettingsView: View {
     @State private var spilledBytes: Int64?
     @State private var confirmingClear = false
     @State private var showingSelfRemoval = false
+    @State private var language = LanguageSetting.chosen()
 
 
     private var diskAccessText: String {
@@ -131,41 +131,20 @@ struct SettingsView: View {
         }
     }
 
-    /// Says what a change will do, and that macOS applies it at the next launch.
-    private var languageHelp: String {
-        guard InterfaceLanguage.awaitingRestart else {
-            return String(localized: "Text, menus and dialogs are drawn in this language. macOS settles it when MyMole starts, so a change takes effect the next time it opens.")
-        }
-        return String(localized: "MyMole opens in \(InterfaceLanguage.name(of: InterfaceLanguage.target)) the next time it starts.")
-    }
-
     private var appearance: some View {
         DSSection("Appearance", rows: false) {
             DSFormGrid {
-                DSFormRow("Language", help: languageHelp) {
-                    HStack(spacing: DS.Space.sm) {
-                        Picker("Language", selection: Binding(
-                            get: { language },
-                            // Stored before the row redraws, so the help below
-                            // reads the choice that was just made.
-                            set: { chosen in
-                                InterfaceLanguage.choose(chosen)
-                                language = chosen
-                            })
-                        ) {
-                            Text("Same as the Mac").tag(InterfaceLanguage.system)
-                            ForEach(InterfaceLanguage.options) { option in
-                                Text(verbatim: option.name).tag(option.id)
-                            }
-                        }
-                        .labelsHidden()
-                        .fixedSize()
-                        .accessibilityIdentifier("settings.language")
-                        if InterfaceLanguage.awaitingRestart, InterfaceLanguage.canRelaunch {
-                            Button("Relaunch MyMole") { InterfaceLanguage.relaunch() }
-                                .fixedSize()
-                        }
+                DSFormRow("Language", help: "MyMole shows its windows and dialogs in this language. macOS picks the language when MyMole starts, so a change applies the next time it opens.") {
+                    Picker("Language", selection: Binding(get: { language }, set: { code in
+                        language = code
+                        LanguageSetting.choose(code)
+                    })) {
+                        Text("Same as the Mac").tag(String?.none)
+                        Divider()
+                        ForEach(LanguageSetting.available, id: \.self) { Text(verbatim: LanguageSetting.name(of: $0)).tag(String?.some($0)) }
                     }
+                    .labelsHidden()
+                    .fixedSize()
                 }
                 DSFormRow("Appearance") {
                     Picker("Appearance", selection: $mode) {
