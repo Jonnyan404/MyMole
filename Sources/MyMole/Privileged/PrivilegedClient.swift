@@ -1,5 +1,6 @@
 import Foundation
 import PrivilegedKit
+import Security
 import StorageKit
 
 /// System tasks: what's safe to do as the user runs here, and what needs
@@ -276,10 +277,31 @@ final class PrivilegedClient {
             + " with prompt \(appleScriptString(prompt)) with administrator privileges without altering line endings"
     }
 
+    /// Whether the tool at `path` is the one this app was shipped with. A
+    /// copy signed for distribution runs only a tool signed by the same
+    /// team under the helper's identifier, checked right before macOS asks
+    /// for the password: the approved service is checked by macOS as it
+    /// starts, and a tool run through the prompt has no such check of its
+    /// own. A development build has no distribution signature to hold the
+    /// tool to.
+    nonisolated static func toolIsTrusted(_ path: String, identity: HelperServiceIdentity? = .current(helper: false)) -> Bool {
+        guard let identity else { return true }
+        var code: SecStaticCode?
+        var requirement: SecRequirement?
+        guard SecStaticCodeCreateWithPath(URL(fileURLWithPath: path) as CFURL, [], &code) == errSecSuccess, let code,
+              SecRequirementCreateWithString(identity.requirement(helper: true) as CFString, [], &requirement) == errSecSuccess
+        else { return false }
+        let flags = SecCSFlags(rawValue: kSecCSStrictValidate | kSecCSCheckAllArchitectures)
+        return SecStaticCodeCheckValidity(code, flags, requirement) == errSecSuccess
+    }
+
     nonisolated static let adminPrompt: @Sendable (String, String, String) -> (code: Int32, output: String) = { tool, argument, prompt in
         #if SMOKE
         return smokeAnswer(to: argument) ?? (-1, "Administrator execution is disabled in synthetic test builds.")
         #else
+        guard toolIsTrusted(tool) else {
+            return (0, PrivilegedTool.output(.refused(String(localized: "The privileged tool didn't pass its signature check, so nothing was run. Install MyMole again."))))
+        }
         // Removal of a large cache can take a while; a stuck run is stopped.
         return CommandRunner.processes(timeLimit: 30 * 60).run(
             "/usr/bin/osascript", ["-e", script(tool: tool, argument: argument, prompt: prompt)])

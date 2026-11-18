@@ -179,7 +179,7 @@ final class DuplicatesModel {
         searchClock = requestedAt
         firstResultClock = groups.isEmpty ? requestedAt : nil
         let (roots, minimum) = (roots, minimum)
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let updates = DuplicateScanUpdates()
         let (budget, search) = (scanBudget, search)
         scanJob = Task { [self] in
@@ -200,7 +200,7 @@ final class DuplicatesModel {
                 }
             }
             let found = await Task.detached(priority: level.priority(background: background)) {
-                await budget.run(background: background, progress: p) {
+                await budget.walk(background: background, progress: p) {
                     Timings.record(.duplicateQueue, since: requestedAt)
                     let listedAt = ContinuousClock.now
                     let listingDone = Mutex(false)

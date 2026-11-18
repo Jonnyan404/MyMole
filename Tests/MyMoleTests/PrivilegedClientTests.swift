@@ -172,3 +172,16 @@ import Testing
     }
     #endif
 }
+
+#if !APPSTORE
+@Suite struct PrivilegedToolTrustTests {
+    @Test func aDistributedCopyRunsOnlyAToolSignedAsItsOwn() throws {
+        let identity = try #require(HelperServiceIdentity(appID: "example.synthetic.app", teamID: "ABCDE12345"))
+        // This source file stands in for a tool that isn't signed at all.
+        #expect(!PrivilegedClient.toolIsTrusted(#filePath, identity: identity))
+        #expect(!PrivilegedClient.toolIsTrusted(#filePath + ".missing", identity: identity))
+        // A development build has no distribution signature to hold the tool to.
+        #expect(PrivilegedClient.toolIsTrusted(#filePath, identity: nil))
+    }
+}
+#endif

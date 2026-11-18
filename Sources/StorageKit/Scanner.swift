@@ -116,13 +116,13 @@ public struct ScanResult: Sendable {
 /// moment its last folder is read, its totals are finalized and it's handed
 /// to `onSubtree`, which lets the UI fill in while the walk continues.
 public enum StorageScanner {
-    /// Walkers for a scan someone is waiting on: twice the cores, as reading
-    /// directories mostly waits on the disk. The app picks its own through
-    /// `PerformanceLevel`; these are the library's defaults.
-    public static let defaultWorkers = min(max(ProcessInfo.processInfo.activeProcessorCount * 2, 4), 24)
+    /// Walkers for a scan someone is waiting on: one per core, which is as
+    /// many as `concurrentPerform` runs at once. The app picks its own
+    /// through `PerformanceLevel`; these are the library's defaults.
+    public static let defaultWorkers = max(ProcessInfo.processInfo.activeProcessorCount, 1)
     /// Walkers for a scan started ahead of need, so it leaves room for the
     /// app and for other scans running at the same time.
-    public static let backgroundWorkers = max(ProcessInfo.processInfo.activeProcessorCount / 2, 2)
+    public static let backgroundWorkers = min(max(ProcessInfo.processInfo.activeProcessorCount / 2, 2), defaultWorkers)
 
     /// Runs on the calling thread until done; call from a background task.
     ///

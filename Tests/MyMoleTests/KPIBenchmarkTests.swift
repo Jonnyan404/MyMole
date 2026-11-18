@@ -127,6 +127,17 @@ struct KPIBenchmarkTests {
         Self.gate("scan.projects.100", Self.ms { _ = ProjectScanner.scan(roots: roots, home: box.path + "/home") })
     }
 
+    /// Many folders with little in each, as a dependency tree is: what the
+    /// walk does once per folder shows here and not among many files. One
+    /// walker, so that work isn't spread over the cores.
+    @Test func diskMapWalksManyFoldersQuickly() throws {
+        let box = try Box()
+        for branch in 0..<20 { for twig in 0..<20 { for leaf in 0..<25 { box.file("deep/branch-\(branch)/twig-\(twig)/leaf-\(leaf)/a.txt", bytes: 1) } } }
+        let tree = box.path + "/deep"
+        _ = StorageScanner.scan(path: tree)
+        Self.gate("scan.disk-map.10k-folders.one-walker", Self.ms { _ = StorageScanner.scan(path: tree, workers: 1) })
+    }
+
     /// Scans `path` with a fresh model while a plain main-queue timer
     /// records the longest gap between its ticks: how long the main thread
     /// was ever kept from drawing.

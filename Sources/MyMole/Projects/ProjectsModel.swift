@@ -301,7 +301,7 @@ final class ProjectsModel {
         measuredCount = 0
         let roots = roots
         let rules = rules
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let workers = level.workers(background: background)
         // Projects walks every project folder, so even a scan someone waits
         // on stays a step below the other panes.
@@ -372,12 +372,12 @@ final class ProjectsModel {
         contentsRefreshProgress = p
         contentsRefreshOwner = run
         let read = scanContentsForRefresh
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let workers = level.workers(background: false)
         let kind = previous?.find(path: focus.path)?.inheritedKind
         contentsRefreshJob = Task { [weak self] in
             let measured = await Task.detached(priority: level.priority(background: false)) {
-                await ScanBudget.shared.run(background: false, progress: p) {
+                await ScanBudget.shared.walk(background: false, progress: p) {
                     let result = read(focus.path, p, workers, kind)
                     guard !p.isCancelled, !result.cancelled, !result.root.unreadable, result.deniedPaths.isEmpty else { return nil as Folder? }
                     if focus.path == focus.entry { return result.root }
@@ -904,7 +904,7 @@ final class ProjectsModel {
         let measure = measureProject
         rescanTasks[project]?.cancel()
         rescanTasks[project] = Task.detached(priority: .userInitiated) { [weak self] in
-            let fresh = await ScanBudget.shared.run(background: false) { measure(f.project, all, rules) }
+            let fresh = await ScanBudget.shared.walk(background: false) { measure(f.project, all, rules) }
             guard !Task.isCancelled, let fresh else { return }
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {

@@ -6,6 +6,8 @@ import SwiftUI
 struct ScanSpeedControl: View {
     @Binding var performance: Int
     private var level: PerformanceLevel { PerformanceLevel(saved: performance) }
+    /// Low Power Mode or heat holds scans at Balanced; read again when either changes.
+    @State private var strained = PerformanceLevel.isStrained()
 
     var body: some View {
         DSFormRow("Scan speed") {
@@ -36,7 +38,17 @@ struct ScanSpeedControl: View {
                 }
                 Text(level.detail)
                 Text(PerformanceSummary.scans(level))
+                if strained, level > .balanced {
+                    Text("Held at Balanced while this Mac is in Low Power Mode or running hot.")
+                        .accessibilityIdentifier("settings.scan-speed.held")
+                }
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .NSProcessInfoPowerStateDidChange).receive(on: RunLoop.main)) { _ in
+            strained = PerformanceLevel.isStrained()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: ProcessInfo.thermalStateDidChangeNotification).receive(on: RunLoop.main)) { _ in
+            strained = PerformanceLevel.isStrained()
         }
     }
 }

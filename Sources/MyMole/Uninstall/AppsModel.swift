@@ -345,7 +345,7 @@ final class AppsModel {
         firstAppsRecorded = !apps.isEmpty
         measuredCount = -1
         let folders = folders
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let workers = level.appWorkers(background: background)
         let budget = scanBudget
         let steps = LatestOnly<AppListingStep> { [weak self] step in self?.stepped(step, run: p) }
@@ -356,7 +356,7 @@ final class AppsModel {
                 await self?.loaded(inventory, run: p)
                 return
             }
-            let found = await budget.run(background: background, progress: p) {
+            let found = await budget.walk(background: background, progress: p) {
                 AppFinder.measure(inventory, progress: p, workers: workers, onStep: { steps.send($0) })
             }
             await self?.loaded(found, run: p)
@@ -550,7 +550,7 @@ final class AppsModel {
         let runtimeRoots = runtimeRoots
         return await withTaskCancellationHandler {
             let result = await Task.detached(priority: .userInitiated) {
-                await budget.run(background: false, progress: progress) {
+                await budget.walk(background: false, progress: progress) {
                     var report = AppLeftovers.list(for: app, home: home, installed: ownership.installed, identity: ownership.identity, deep: deep, progress: progress, runtimeRoots: runtimeRoots, onStep: { items in
                         let display = ownership.verified ? items : items.map { item in
                             var item = item; item.evidence = .unverified; return item

@@ -196,13 +196,13 @@ final class DeepCleanModel {
         scanFraction = 0
         preview = []
         let home = home
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let workers = level.workers(background: background)
         let lookUpTools = runningTools
         let projectRules = projectRules
         let steps = LatestOnly<CleanScanStep> { [weak self] step in self?.stepped(step, run: p) }
         scanJob = Task.detached(priority: level.priority(background: background)) { [weak self] in
-            let found = await ScanBudget.shared.run(background: background, progress: p) {
+            let found = await ScanBudget.shared.walk(background: background, progress: p) {
                 CleanScanner.list(home: home, progress: p, workers: workers, onStep: { steps.send($0) })
             }
             // Reading every process's arguments is slow; it's done here, not on the main thread.

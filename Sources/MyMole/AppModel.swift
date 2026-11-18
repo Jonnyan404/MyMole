@@ -537,7 +537,7 @@ final class AppModel {
         if !background { smartScanStarted = requestedAt }
         prefetchChain?.cancel()
         let allowed = stepsAllowed()
-        let together = PerformanceLevel.current().runsScansTogether
+        let together = PerformanceLevel.inEffect().runsScansTogether
         let id = UUID()
         scanChainID = id
         smartScanning = true

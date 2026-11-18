@@ -20,6 +20,7 @@
   "spill.filter.1m": 5000,
   "spill.disk-mb.1m": 160,
   "scan.disk-map.20k-files": 2000,
+  "scan.disk-map.10k-folders.one-walker": 500,
   "scan.projects.100": 3000,
   "main.worst-gap.first-disk-map-scan": 100,
   "main.worst-gap.disk-map-scan": 16,

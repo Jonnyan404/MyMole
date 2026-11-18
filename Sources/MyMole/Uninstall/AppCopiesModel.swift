@@ -45,7 +45,7 @@ final class AppCopiesModel {
         stopped = false
         problem = nil
         let (folders, extra, runner, registered, budget) = (folders, extraFolders, runner, registered, budget)
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let updates = LatestOnly<AppCopies.Report> { [weak self] value in
             guard let self, self.progress === p, !p.isCancelled, self.loadedAt == nil else { return }
             self.publish(value)
@@ -56,7 +56,7 @@ final class AppCopiesModel {
             let result: AppCopies.Report?
             if extra.isEmpty { result = inventory }
             else {
-                result = await budget.run(background: false, progress: p) {
+                result = await budget.walk(background: false, progress: p) {
                     AppCopies.addingFolders(extra, to: inventory, progress: p)
                 }
             }
@@ -104,7 +104,7 @@ final class AppCopiesModel {
         let budget = budget
         let result = await withTaskCancellationHandler {
             await Task.detached(priority: .userInitiated) {
-                await budget.run(background: false, progress: p) {
+                await budget.walk(background: false, progress: p) {
                     guard copy.isCurrent() else { return nil as AppBundle? }
                     let app = AppFinder.read(copy.app.path, progress: p)
                     return copy.isCurrent() && !p.isCancelled && app?.incomplete == false ? app : nil

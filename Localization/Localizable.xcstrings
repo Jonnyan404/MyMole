@@ -35635,6 +35635,46 @@
         }
       }
     },
+    "Every core for scans you wait on, and half of them for scans started ahead." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Kerne für Scans, auf die du wartest, und die Hälfte davon für vorab gestartete Scans."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos los núcleos para los análisis que esperas, y la mitad para los iniciados por adelantado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous les cœurs pour les analyses que vous attendez, et la moitié pour celles lancées à l’avance."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "जिन स्कैन की आप प्रतीक्षा करते हैं उनके लिए सभी कोर, और पहले से शुरू किए स्कैन के लिए उनमें से आधे।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기다리는 스캔에는 모든 코어를, 미리 시작한 스캔에는 그 절반을 사용합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为你等待的扫描使用全部核心，提前启动的扫描使用其中一半。"
+          }
+        }
+      }
+    },
     "Every file of 1 MB or more from the current scan" : {
       "localizations" : {
         "de" : {
@@ -40739,6 +40779,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "大量交换到磁盘（%@）"
+          }
+        }
+      }
+    },
+    "Held at Balanced while this Mac is in Low Power Mode or running hot." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bleibt auf Ausgewogen, solange dieser Mac im Stromsparmodus ist oder heiß läuft."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se mantiene en Equilibrado mientras este Mac esté en el modo de bajo consumo o se caliente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenu sur Équilibré tant que ce Mac est en mode Économie d’énergie ou qu’il chauffe."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "जब तक यह Mac लो पावर मोड में है या गर्म चल रहा है, संतुलित पर रखा जाता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Mac이 저전력 모드이거나 뜨거운 동안에는 균형으로 유지됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这台 Mac 处于低电量模式或温度过高时，保持在均衡。"
           }
         }
       }
@@ -87535,6 +87615,46 @@
         }
       }
     },
+    "The privileged tool didn't pass its signature check, so nothing was run. Install MyMole again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das privilegierte Tool hat die Signaturprüfung nicht bestanden, daher wurde nichts ausgeführt. Installiere MyMole erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La herramienta con privilegios no superó la comprobación de firma, así que no se ejecutó nada. Vuelve a instalar MyMole."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’outil privilégié n’a pas passé la vérification de signature, donc rien n’a été exécuté. Réinstallez MyMole."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "विशेषाधिकार वाला टूल अपनी हस्ताक्षर जाँच में सफल नहीं हुआ, इसलिए कुछ भी नहीं चलाया गया। MyMole फिर से इंस्टॉल करें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "권한 있는 도구가 서명 확인을 통과하지 못해 아무것도 실행하지 않았습니다. MyMole을 다시 설치하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "特权工具未通过签名检查，因此没有运行任何操作。请重新安装 MyMole。"
+          }
+        }
+      }
+    },
     "The privileged tool gave an unexpected answer." : {
       "localizations" : {
         "de" : {
@@ -91381,46 +91501,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "关闭某个询问只对那次操作生效。你的选择、保留规则和所有文件检查仍然有效。手动选择的未核实匹配项、彻底删除、清空废纸篓、系统维护、启动项更改、相似照片移除和卸载 MyMole 始终会询问。"
-          }
-        }
-      }
-    },
-    "Twice as many threads as cores for scans you wait on." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doppelt so viele Threads wie Kerne für Scans, auf die du wartest."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El doble de hilos que núcleos para los análisis que esperas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deux fois plus de threads que de cœurs pour les analyses que vous attendez."
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "जिन स्कैन की आप प्रतीक्षा करते हैं उनके लिए कोर से दोगुने थ्रेड।"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "기다리는 스캔에 코어 수의 두 배만큼 스레드를 사용합니다."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "为你等待的扫描使用两倍于核心数的线程。"
           }
         }
       }

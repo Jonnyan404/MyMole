@@ -9,8 +9,12 @@ import Foundation
 /// How hard MyMole's scans may work, chosen in Settings. Lower levels walk
 /// with fewer threads at a lower priority, which on Apple silicon keeps them
 /// on the efficiency cores, run the cleanup scans one at a time and let fewer
-/// disk walks run at once; scans take longer and the Mac stays quiet. Each
+/// disk walks run at once; scans take longer and the Mac stays quiet. From
+/// Balanced up a scan you wait on has every core, and the levels differ in
+/// what scans started ahead get and in how many walks run at once. Each
 /// scan reads the level as it starts, so a change applies from the next scan.
+/// In Low Power Mode, or while the Mac runs hot, a scan starts at Balanced at
+/// most whatever is chosen (`inEffect`).
 public enum PerformanceLevel: Int, CaseIterable, Sendable, Comparable {
     case gentle = 1
     case light
@@ -28,6 +32,29 @@ public enum PerformanceLevel: Int, CaseIterable, Sendable, Comparable {
         PerformanceLevel(saved: defaults.integer(forKey: defaultsKey))
     }
 
+    /// The level a scan starting now runs at: the chosen one, or Balanced at
+    /// most while the Mac is in Low Power Mode or reports that it's running
+    /// hot. Settings keeps showing the level that was chosen.
+    public static func inEffect(
+        in defaults: UserDefaults = .standard, lowPower: Bool = ProcessInfo.processInfo.isLowPowerModeEnabled,
+        thermal: ProcessInfo.ThermalState = ProcessInfo.processInfo.thermalState
+    ) -> PerformanceLevel {
+        current(in: defaults).held(lowPower: lowPower, thermal: thermal)
+    }
+
+    /// Whether the Mac asks for less right now: Low Power Mode, or a
+    /// thermal state macOS calls serious or critical.
+    public static func isStrained(
+        lowPower: Bool = ProcessInfo.processInfo.isLowPowerModeEnabled,
+        thermal: ProcessInfo.ThermalState = ProcessInfo.processInfo.thermalState
+    ) -> Bool {
+        lowPower || thermal == .serious || thermal == .critical
+    }
+
+    public func held(lowPower: Bool, thermal: ProcessInfo.ThermalState) -> PerformanceLevel {
+        Self.isStrained(lowPower: lowPower, thermal: thermal) ? min(self, .balanced) : self
+    }
+
     /// A saved value; anything unknown, or nothing saved (0), is the standard level.
     public init(saved: Int) {
         self = PerformanceLevel(rawValue: saved) ?? Self.standard
@@ -42,30 +69,31 @@ public enum PerformanceLevel: Int, CaseIterable, Sendable, Comparable {
         case .gentle: String(localized: "Quietest. Two threads at the lowest priority, one scan at a time; scans take longest.")
         case .light: String(localized: "Few threads at low priority, one scan at a time.")
         case .balanced: String(localized: "Uses the cores without crowding the apps you work in.")
-        case .fast: String(localized: "Twice as many threads as cores for scans you wait on.")
+        case .fast: String(localized: "Every core for scans you wait on, and half of them for scans started ahead.")
         case .full: String(localized: "Everything the Mac has for scans you wait on, and many disk walks at a time.")
         case .hyperspeed: String(localized: "No limits: every thread and as many disk walks at once as there are scans. Can use a lot of memory and disk.")
         }
     }
 
-    /// Directory walkers for one scan. Reading folders mostly waits on the
-    /// disk, so the upper levels go past the core count.
+    /// Directory walkers for one scan: never more than the cores. The
+    /// walkers run on the system's shared threads, which carry no more than
+    /// that at once, so a higher number would only be a number.
     public func workers(background: Bool, cores: Int = ProcessInfo.processInfo.activeProcessorCount) -> Int {
         let c = max(cores, 1)
+        let wanted: Int
         switch (self, background) {
-        case (.gentle, false): return 2
-        case (.gentle, true): return 1
-        case (.light, false): return max(c / 2, 2)
-        case (.light, true): return 2
-        case (.balanced, false): return max(c, 4)
-        case (.balanced, true): return max(c / 4, 2)
-        case (.fast, false): return min(max(c * 2, 4), 24)
-        case (.fast, true): return max(c / 2, 2)
-        case (.full, false): return min(max(c * 3, 4), 48)
-        case (.full, true): return max(c, 4)
-        // No ceiling, and a scan started ahead of time walks as hard as one you wait on.
-        case (.hyperspeed, _): return max(c * 4, 8)
+        case (.gentle, false): wanted = 2
+        case (.gentle, true): wanted = 1
+        case (.light, false): wanted = max(c / 2, 2)
+        case (.light, true): wanted = 2
+        case (.balanced, false): wanted = c
+        case (.balanced, true): wanted = max(c / 4, 2)
+        case (.fast, false): wanted = c
+        case (.fast, true): wanted = max(c / 2, 2)
+        // A scan started ahead of time walks as hard as one you wait on.
+        case (.full, _), (.hyperspeed, _): wanted = c
         }
+        return min(wanted, c)
     }
 
     /// Threads for reading app bundles, which are many small folders.

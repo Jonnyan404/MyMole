@@ -165,7 +165,7 @@ extension ProjectsModel {
         let run = UUID()
         loadingContents[path] = run
         contentsVersions[path] = contentsVersions[path, default: 0]
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let workers = level.workers(background: false)
         let read = readContents
         Task.detached(priority: level.priority(background: false)) { [weak self] in

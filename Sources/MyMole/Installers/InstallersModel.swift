@@ -160,8 +160,8 @@ final class InstallersModel {
         scanning = true
         startedAt = .now
         let locations = locations
-        scanJob = Task.detached(priority: PerformanceLevel.current().priority(background: background)) { [weak self] in
-            let found = await ScanBudget.shared.run(background: background, progress: p) { InstallerFinder.list(in: locations, progress: p) }
+        scanJob = Task.detached(priority: PerformanceLevel.inEffect().priority(background: background)) { [weak self] in
+            let found = await ScanBudget.shared.walk(background: background, progress: p) { InstallerFinder.list(in: locations, progress: p) }
             await self?.finished(found, run: p)
         }
     }

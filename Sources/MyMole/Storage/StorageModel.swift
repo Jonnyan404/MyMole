@@ -542,7 +542,7 @@ final class StorageModel {
             }
         }
 
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let workers = level.workers(background: background)
         let (budget, scanFolder, collectFiles) = (scanBudget, scanFolder, collectFiles)
         let (memoryBudget, spillBase) = (largeResultBudget(), spillBase)
@@ -550,7 +550,7 @@ final class StorageModel {
         skipped = skips.full.sorted()
         scanJob = Task.detached(priority: level.priority(background: background)) { [weak self] in
             defer { session.finish() }
-            let result = await budget.run(background: background, progress: p) {
+            let result = await budget.walk(background: background, progress: p) {
                 scanFolder(path, p, workers,
                            { r in Task { @MainActor in self?.installRoot(r, run: run) } },
                            { f in Task { @MainActor in self?.subtreeDone(f, run: run) } }, skips.full)
@@ -624,7 +624,7 @@ final class StorageModel {
         let path = current.path
         let inheritedKind = current.inheritedKind
         let skips = DiskMapSkips.under(path).full
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let workers = level.workers(background: false)
         let read = scanSubfolder
         let budget = scanBudget
@@ -639,7 +639,7 @@ final class StorageModel {
         }
         scanJob = Task.detached(priority: level.priority(background: false)) { [weak self] in
             defer { session.finish() }
-            let result = await budget.run(background: false, progress: p) {
+            let result = await budget.walk(background: false, progress: p) {
                 read(path, p, workers, skips, inheritedKind)
             }
             await self?.finishFolderRefresh(result, path: path, map: root, progress: p, session: session, run: run)
@@ -743,13 +743,11 @@ final class StorageModel {
     private func addFound(_ found: [FoundFile], run: Int) {
         // While the earlier map stays, so does its list.
         guard run == epoch, scanning, !refreshing, !found.isEmpty else { return }
-        var all = largeFiles
-        all.reserveCapacity(all.count + found.count)
-        for f in found {
-            all.append(LargeFile(path: f.path, name: f.name, folder: f.folder, size: f.size, modified: f.modified, kind: f.kind,
-                                 reclaim: f.reclaim.flatMap { $0.bytes < f.size ? $0 : nil }))
-        }
-        largeFiles = all
+        // Added in place: a copy of the whole list for every batch would grow with the scan.
+        largeFiles.append(contentsOf: found.map { f in
+            LargeFile(path: f.path, name: f.name, folder: f.folder, size: f.size, modified: f.modified, kind: f.kind,
+                      reclaim: f.reclaim.flatMap { $0.bytes < f.size ? $0 : nil })
+        })
     }
 
     /// The largest files listed at the standard result size.

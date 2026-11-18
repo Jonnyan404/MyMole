@@ -9,7 +9,7 @@ import Synchronization
 public final class ScanBudget: Sendable {
     /// The app's walks, as many at once as the scan speed allows; read as
     /// each walk asks for a slot, so a change applies to the next one.
-    public static let shared = ScanBudget(slots: { PerformanceLevel.current().scanSlots() })
+    public static let shared = ScanBudget(slots: { PerformanceLevel.inEffect().scanSlots() })
 
     private final class Request: Sendable {
         let cancelled = Atomic<Bool>(false)
@@ -60,6 +60,32 @@ public final class ScanBudget: Sendable {
         }
     }
 
+    /// A disk walk, which blocks until it's done, on a thread of its own
+    /// once a slot is free. Swift's shared task threads are one per core:
+    /// a walk waiting on the disk there would hold one for as long as it
+    /// runs, and as many walks as cores would stop every other task of
+    /// their priority from starting, a filter or a sort among them.
+    public func walk<T: Sendable>(background: Bool, progress: ScanProgress? = nil, _ work: @escaping @Sendable () -> T) async -> T? {
+        await run(background: background, progress: progress) { await Self.onOwnThread(work) }
+    }
+
+    /// Runs blocking `work` on a new thread at the calling task's priority.
+    public static func onOwnThread<T: Sendable>(_ work: @escaping @Sendable () -> T) async -> T {
+        let quality: QualityOfService =
+            switch Task.currentPriority.rawValue {
+            case TaskPriority.userInitiated.rawValue...: .userInitiated
+            case TaskPriority.medium.rawValue...: .default
+            case TaskPriority.utility.rawValue...: .utility
+            default: .background
+            }
+        return await withCheckedContinuation { continuation in
+            let thread = Thread { continuation.resume(returning: work()) }
+            thread.name = "mymole.walk"
+            thread.qualityOfService = quality
+            thread.start()
+        }
+    }
+
     private func enter(background: Bool, request: Request) async -> Bool {
         await withCheckedContinuation { (c: CheckedContinuation<Bool, Never>) in
             let go = state.withLock { s -> Bool? in
@@ -93,7 +119,10 @@ public final class ScanBudget: Sendable {
 
     private func leave() {
         let next = state.withLock { s -> Waiter? in
-            guard !s.waiting.isEmpty else {
+            // Fewer slots than when this walk started: its slot closes
+            // rather than passing on, so a lowered scan speed applies to
+            // the scans already waiting too.
+            guard !s.waiting.isEmpty, s.running <= slots else {
                 s.running -= 1
                 return nil
             }
