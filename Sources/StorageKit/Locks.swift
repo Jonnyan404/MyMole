@@ -42,7 +42,7 @@ extension TrashBackend {
         let base = self
         return TrashBackend { path in
             Locks.moving(path, moved: { $0.trashed != nil }) { base.moveOne(path) }
-                ?? (nil, "Locked, and it couldn't be unlocked")
+                ?? (nil, String(localized: "Locked, and it couldn't be unlocked"))
         }
     }
 }

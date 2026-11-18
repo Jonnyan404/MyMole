@@ -17,11 +17,11 @@ public enum SystemLeftovers {
 
         public var title: String {
             switch self {
-            case .rebuildable: "Rebuilt"
-            case .appPart: "App part"
-            case .record: "Installer record"
-            case .settings: "Settings"
-            case .data: "Data"
+            case .rebuildable: String(localized: "Rebuilt")
+            case .appPart: String(localized: "App part")
+            case .record: String(localized: "Installer record")
+            case .settings: String(localized: "Settings")
+            case .data: String(localized: "Data")
             }
         }
     }

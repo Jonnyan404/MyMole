@@ -31,7 +31,10 @@ struct HistoryView: View {
                         }
                         ForEach(app.trash.otherTrashes, id: \.volume) { t in
                             DSCapsule(
-                                "Trash on \(t.name): \(t.partial ? "at least " : "")\(ByteSize.format(t.bytes))", symbol: "externaldrive"
+                                t.partial
+                                    ? "Trash on \(t.name): at least \(ByteSize.format(t.bytes))"
+                                    : "Trash on \(t.name): \(ByteSize.format(t.bytes))",
+                                symbol: "externaldrive"
                             )
                             .help(
                                 "\(t.count) items you moved to the Trash from \(t.name). MyMole only shows it; Finder's Empty Trash empties it with the rest."
@@ -69,7 +72,7 @@ struct HistoryView: View {
         HStack(spacing: DS.Space.md) {
             DSIcon(symbol: Self.symbol(r.source), large: true)
             VStack(alignment: .leading, spacing: DS.Space.xxs) {
-                DSText(r.source, .heading)
+                DSText(Self.title(r.source), .heading)
                 DSText(([r.date.formatted(date: .abbreviated, time: .shortened)] + details(r)).joined(separator: " · "), .metadata)
             }
             Spacer(minLength: DS.Space.md)
@@ -123,6 +126,27 @@ struct HistoryView: View {
 
     static func inTrashWithoutUndo(_ r: CleanupRecord, undoable: Bool) -> Bool {
         !undoable && r.items > r.restored && !["Optimize", "System Clean"].contains(r.source)
+    }
+
+    /// A run's name as shown. Runs keep the English name they were saved
+    /// with, so the history reads the same whatever the language.
+    static func title(_ source: String) -> String {
+        switch source {
+        case "Deep Clean": String(localized: "Deep Clean")
+        case "Installers": String(localized: "Installers")
+        case "Uninstall": String(localized: "Uninstall")
+        case "Projects": String(localized: "Projects")
+        case "Disk Map": String(localized: "Disk Map")
+        case "System Clean": String(localized: "System Clean")
+        case "Optimize": String(localized: "Optimize")
+        case TrashModel.source: String(localized: "Trash")
+        case StartupModel.source: String(localized: "Startup Items")
+        case DuplicatesModel.source: String(localized: "Duplicates")
+        case OrphansModel.source: String(localized: "Removed Apps")
+        case SimilarModel.source: String(localized: "Similar Photos")
+        case AppsModel.resetSource: String(localized: "Reset")
+        default: source
+        }
     }
 
     static func symbol(_ source: String) -> String {

@@ -59,34 +59,34 @@ public enum FootprintCategory: String, CaseIterable, Sendable, Codable {
 
     public var title: String {
         switch self {
-        case .source: "Source & other files"
-        case .git: "Git history"
+        case .source: String(localized: "Source & other files")
+        case .git: String(localized: "Git history")
         case .dependencies: "Dependencies"
-        case .build: "Build output"
+        case .build: String(localized: "Build output")
         case .caches: "Caches"
-        case .localData: "Local work files"
-        case .worktrees: "Agent worktrees"
-        case .agentSessions: "Agent sessions"
-        case .appData: "App data"
-        case .marked: "Blacklisted — cleanup suggestions"
-        case .kept: "Whitelisted — excluded from cleanup"
+        case .localData: String(localized: "Local work files")
+        case .worktrees: String(localized: "Agent worktrees")
+        case .agentSessions: String(localized: "Agent sessions")
+        case .appData: String(localized: "App data")
+        case .marked: String(localized: "Blacklisted — cleanup suggestions")
+        case .kept: String(localized: "Whitelisted — excluded from cleanup")
         }
     }
 
     /// Why it can go (or why it's never offered), in one line.
     public var note: String {
         switch self {
-        case .source: "Your code and files, by top-level folder. Right-click one MyMole should clean."
-        case .git: "The repository's history. Never offered for removal."
-        case .dependencies: "Reinstalled by the package manager (npm install, pod install, …)."
-        case .build: "Rebuilt on the next build."
-        case .caches: "Tools rebuild caches as needed."
-        case .localData: "Scratch output, logs and test runs kept in the project. Check before removing."
-        case .worktrees: "Extra checkouts made by coding agents. Push anything you need, then run git worktree prune."
-        case .agentSessions: "Transcripts kept by Codex and Claude Code. Removing them only loses the chat history."
-        case .appData: "Containers, caches and settings of builds of this app. Removing them resets that app's data."
-        case .marked: "Folders you added as cleanup suggestions. Nothing is removed until you choose and confirm it."
-        case .kept: "Excluded from cleanup, including everything inside. They stay even when a parent is chosen."
+        case .source: String(localized: "Your code and files, by top-level folder. Right-click one MyMole should clean.")
+        case .git: String(localized: "The repository's history. Never offered for removal.")
+        case .dependencies: String(localized: "Reinstalled by the package manager (npm install, pod install, …).")
+        case .build: String(localized: "Rebuilt on the next build.")
+        case .caches: String(localized: "Tools rebuild caches as needed.")
+        case .localData: String(localized: "Scratch output, logs and test runs kept in the project. Check before removing.")
+        case .worktrees: String(localized: "Extra checkouts made by coding agents. Push anything you need, then run git worktree prune.")
+        case .agentSessions: String(localized: "Transcripts kept by Codex and Claude Code. Removing them only loses the chat history.")
+        case .appData: String(localized: "Containers, caches and settings of builds of this app. Removing them resets that app's data.")
+        case .marked: String(localized: "Folders you added as cleanup suggestions. Nothing is removed until you choose and confirm it.")
+        case .kept: String(localized: "Excluded from cleanup, including everything inside. They stay even when a parent is chosen.")
         }
     }
 

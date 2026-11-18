@@ -370,12 +370,12 @@ extension SavedResults {
         snapshots: URL = SnapshotStore.defaultBase, fingerprints: URL = FingerprintCache.defaultURL
     ) -> [Part] {
         let list: [(String, String, [URL])] = [
-            ("deepClean", "Deep Clean's last scan", [deepClean.appending(path: "last.json")]),
+            ("deepClean", String(localized: "Deep Clean's last scan"), [deepClean.appending(path: "last.json")]),
             ("installers", "Installers' last scan", [installers.appending(path: "last.json")]),
-            ("apps", "The app list", [apps.appending(path: "last.json")]),
+            ("apps", String(localized: "The app list"), [apps.appending(path: "last.json")]),
             ("projects", "Projects' last scan and growth", [projects.appending(path: "last.json"), projects.appending(path: "history.json")]),
-            ("snapshots", "Disk Map's saved scans", [snapshots]),
-            ("fingerprints", "Similar Photos' fingerprints", [fingerprints]),
+            ("snapshots", String(localized: "Disk Map's saved scans"), [snapshots]),
+            ("fingerprints", String(localized: "Similar Photos' fingerprints"), [fingerprints]),
         ]
         return list.map { id, title, urls in
             var bytes: Int64 = 0

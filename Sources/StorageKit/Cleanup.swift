@@ -18,25 +18,25 @@ public enum CleanCategory: String, Sendable, Codable, CaseIterable, Comparable {
 
     public var title: String {
         switch self {
-        case .appCaches: "App Caches"
-        case .containerCaches: "Sandboxed App Caches"
-        case .logs: "Logs & Crash Reports"
-        case .developerCaches: "Developer Caches"
-        case .downloads: "Downloaded Attachments"
-        case .devices: "Simulators & Device Backups"
-        case .archives: "Xcode Archives"
+        case .appCaches: String(localized: "App Caches")
+        case .containerCaches: String(localized: "Sandboxed App Caches")
+        case .logs: String(localized: "Logs & Crash Reports")
+        case .developerCaches: String(localized: "Developer Caches")
+        case .downloads: String(localized: "Downloaded Attachments")
+        case .devices: String(localized: "Simulators & Device Backups")
+        case .archives: String(localized: "Xcode Archives")
         }
     }
 
     public var note: String {
         switch self {
-        case .appCaches: "Each app's cache folder. Apps rebuild them as needed."
-        case .containerCaches: "Caches inside sandboxed apps' containers. Rebuilt the same way."
-        case .logs: "Diagnostic logs and crash reports. Nothing reads them back."
-        case .developerCaches: "Package managers' download caches and simulator caches. The next install is slower once."
-        case .downloads: "Mail attachments you opened. The messages keep them."
-        case .devices: "Simulators with what's installed in them, Android emulators' saved states, and iPhone and iPad backups. They hold data, so none is ever chosen for you."
-        case .archives: "Builds you archived in Xcode, with the symbols that make their crash reports readable. None is ever chosen for you."
+        case .appCaches: String(localized: "Each app's cache folder. Apps rebuild them as needed.")
+        case .containerCaches: String(localized: "Caches inside sandboxed apps' containers. Rebuilt the same way.")
+        case .logs: String(localized: "Diagnostic logs and crash reports. Nothing reads them back.")
+        case .developerCaches: String(localized: "Package managers' download caches and simulator caches. The next install is slower once.")
+        case .downloads: String(localized: "Mail attachments you opened. The messages keep them.")
+        case .devices: String(localized: "Simulators with what's installed in them, Android emulators' saved states, and iPhone and iPad backups. They hold data, so none is ever chosen for you.")
+        case .archives: String(localized: "Builds you archived in Xcode, with the symbols that make their crash reports readable. None is ever chosen for you.")
         }
     }
 }
@@ -47,19 +47,19 @@ extension CleanCandidate {
     public var consequence: String {
         switch (category, safety) {
         case (.appCaches, .safe), (.containerCaches, .safe):
-            "The app builds it again as it needs it; it may start a little slower once."
+            String(localized: "The app builds it again as it needs it; it may start a little slower once.")
         case (.appCaches, .review), (.containerCaches, .review):
-            "May hold things the app downloads again, or a sign-in it asks for again."
+            String(localized: "May hold things the app downloads again, or a sign-in it asks for again.")
         case (.logs, _):
-            "Nothing builds old logs again; they're only read to look into a problem."
+            String(localized: "Nothing builds old logs again; they're only read to look into a problem.")
         case (.developerCaches, _):
-            "The tool downloads it again when a project needs it; the next install or build is slower once."
+            String(localized: "The tool downloads it again when a project needs it; the next install or build is slower once.")
         case (.downloads, _):
-            "The messages keep their attachments; Mail fetches one again when it's opened."
+            String(localized: "The messages keep their attachments; Mail fetches one again when it's opened.")
         case (.devices, _):
-            "Holds data: a simulator's apps and content, an emulator's saved state, or a device backup. It's gone for good once the Trash is emptied."
+            String(localized: "Holds data: a simulator's apps and content, an emulator's saved state, or a device backup. It's gone for good once the Trash is emptied.")
         case (.archives, _):
-            "Crash reports from that build can't be read without it, and it can't be uploaded again. It's gone for good once the Trash is emptied."
+            String(localized: "Crash reports from that build can't be read without it, and it can't be uploaded again. It's gone for good once the Trash is emptied.")
         }
     }
 }
@@ -159,47 +159,47 @@ public enum CleanRules {
         let lib = home + "/Library"
         return [
             Target(path: lib + "/Caches", mode: .children, category: .appCaches, safety: .safe,
-                   reason: "App cache. Rebuilt the next time the app needs it."),
+                   reason: String(localized: "App cache. Rebuilt the next time the app needs it.")),
             Target(path: lib + "/Logs", mode: .children, category: .logs, safety: .safe,
-                   reason: "Logs and crash reports."),
+                   reason: String(localized: "Logs and crash reports.")),
             Target(path: home + "/.npm/_cacache", mode: .whole, category: .developerCaches, safety: .safe,
                    reason: "npm's download cache."),
             Target(path: home + "/.yarn/berry/cache", mode: .whole, category: .developerCaches, safety: .safe,
-                   reason: "Yarn's download cache."),
+                   reason: String(localized: "Yarn's download cache.")),
             Target(path: home + "/.gradle/caches", mode: .whole, category: .developerCaches, safety: .safe,
-                   reason: "Gradle's dependency and build cache."),
+                   reason: String(localized: "Gradle's dependency and build cache.")),
             Target(path: home + "/.cargo/registry/cache", mode: .whole, category: .developerCaches, safety: .safe,
-                   reason: "Cargo's downloaded crates."),
+                   reason: String(localized: "Cargo's downloaded crates.")),
             Target(path: home + "/go/pkg/mod/cache/download", mode: .whole, category: .developerCaches, safety: .review,
-                   reason: "Go's module downloads. Offline builds need them."),
+                   reason: String(localized: "Go's module downloads. Offline builds need them.")),
             Target(path: home + "/.pnpm-store", mode: .whole, category: .developerCaches, safety: .review,
                    reason: "pnpm's package store. Projects relink from it on the next install."),
             Target(path: home + "/.bun/install/cache", mode: .whole, category: .developerCaches, safety: .safe,
-                   reason: "Bun's download cache."),
+                   reason: String(localized: "Bun's download cache.")),
             Target(path: home + "/.m2/repository", mode: .whole, category: .developerCaches, safety: .review,
-                   reason: "Maven's downloaded libraries. Fetched again on the next build, which needs the network."),
+                   reason: String(localized: "Maven's downloaded libraries. Fetched again on the next build, which needs the network.")),
             Target(path: home + "/.nuget/packages", mode: .whole, category: .developerCaches, safety: .review,
-                   reason: "NuGet's package cache. Fetched again on the next restore, which needs the network."),
+                   reason: String(localized: "NuGet's package cache. Fetched again on the next restore, which needs the network.")),
             Target(path: lib + "/Developer/Xcode/UserData/Previews", mode: .whole, category: .developerCaches, safety: .safe,
-                   reason: "Xcode's builds of SwiftUI previews. Rebuilt when a preview opens."),
+                   reason: String(localized: "Xcode's builds of SwiftUI previews. Rebuilt when a preview opens.")),
             Target(path: home + "/.cache", mode: .children, category: .developerCaches, safety: .review,
-                   reason: "A tool's cache. Some hold large downloads such as models.", screensSecrets: true),
+                   reason: String(localized: "A tool's cache. Some hold large downloads such as models."), screensSecrets: true),
             Target(path: lib + "/Developer/CoreSimulator/Caches", mode: .whole, category: .developerCaches, safety: .safe,
-                   reason: "Simulator caches."),
+                   reason: String(localized: "Simulator caches.")),
             Target(path: home + "/.gradle/wrapper/dists", mode: .children, category: .developerCaches, safety: .review,
-                   reason: "A Gradle version a project's wrapper downloaded. Fetched again when a project that names it builds, which needs the network."),
+                   reason: String(localized: "A Gradle version a project's wrapper downloaded. Fetched again when a project that names it builds, which needs the network.")),
             Target(path: home + "/.tart/cache/OCIs", mode: .whole, category: .developerCaches, safety: .review,
-                   reason: "Virtual machine images Tart pulled. Tart prunes them itself and pulls one again when it's needed, which needs the network. Your machines in ~/.tart/vms stay."),
+                   reason: String(localized: "Virtual machine images Tart pulled. Tart prunes them itself and pulls one again when it's needed, which needs the network. Your machines in ~/.tart/vms stay.")),
             Target(path: home + "/.tart/cache/IPSWs", mode: .whole, category: .developerCaches, safety: .review,
                    reason: "macOS restore images Tart downloaded to make machines. Downloaded again for the next new machine."),
         ] + deviceSupport(lib: lib) + [
             Target(path: lib + "/Containers/com.apple.mail/Data/Library/Mail Downloads", mode: .whole, category: .downloads,
-                   safety: .review, reason: "Attachments Mail saved when you opened them."),
+                   safety: .review, reason: String(localized: "Attachments Mail saved when you opened them.")),
             Target(path: lib + "/Developer/CoreSimulator/Devices", mode: .children, category: .devices, safety: .review,
-                   reason: "A simulator that is shut down, with the apps and data in it. Xcode makes a new, empty one when you add it again.",
+                   reason: String(localized: "A simulator that is shut down, with the apps and data in it. Xcode makes a new, empty one when you add it again."),
                    holds: .simulators),
             Target(path: lib + "/Application Support/MobileSync/Backup", mode: .children, category: .devices, safety: .review,
-                   reason: "A backup of an iPhone or iPad. It's gone for good unless the device is backed up again.",
+                   reason: String(localized: "A backup of an iPhone or iPad. It's gone for good unless the device is backed up again."),
                    holds: .backups),
         ] + condaCaches(home: home) + appDataCaches(home: home) + emulatorSnapshots(home: home) + archives(lib: lib)
     }
@@ -210,7 +210,7 @@ public enum CleanRules {
     static func deviceSupport(lib: String) -> [Target] {
         deviceSupportPlatforms.map {
             Target(path: lib + "/Developer/Xcode/\($0) DeviceSupport", mode: .children, category: .developerCaches,
-                   safety: .review, reason: "Debug symbols for one device's OS version. Copied again when that device connects.")
+                   safety: .review, reason: String(localized: "Debug symbols for one device's OS version. Copied again when that device connects."))
         }
     }
 
@@ -221,7 +221,7 @@ public enum CleanRules {
         let base = archiveFolder(lib: lib)
         return (DirectoryListing.names(base) ?? []).filter { !$0.hasPrefix(".") }.sorted().map {
             Target(path: base + "/" + $0, mode: .children, category: .archives, safety: .review,
-                   reason: "An archived build with its debug symbols. Keep it for every version you shipped.", holds: .archives)
+                   reason: String(localized: "An archived build with its debug symbols. Keep it for every version you shipped."), holds: .archives)
         }.filter { CleanScanner.isRealFolder($0.path) }
     }
 
@@ -242,7 +242,7 @@ public enum CleanRules {
         let base = emulatorFolder(home: home)
         return (DirectoryListing.names(base) ?? []).filter { $0.hasSuffix(".avd") && !$0.hasPrefix(".") }.sorted().map {
             Target(path: base + "/" + $0 + "/snapshots", mode: .children, category: .devices, safety: .review,
-                   reason: "A saved state of an Android emulator. It starts with a cold boot instead, keeping its apps and data.",
+                   reason: String(localized: "A saved state of an Android emulator. It starts with a cold boot instead, keeping its apps and data."),
                    holds: .emulatorSnapshots)
         }.filter { CleanScanner.isRealFolder($0.path) }
     }
@@ -270,7 +270,7 @@ public enum CleanRules {
     static func condaCaches(home: String) -> [Target] {
         condaRoots.map {
             Target(path: home + "/" + $0 + "/pkgs", mode: .whole, category: .developerCaches, safety: .review,
-                   reason: "Conda's downloaded packages. Fetched again when an environment needs one, which needs the network; environments keep what they use.")
+                   reason: String(localized: "Conda's downloaded packages. Fetched again when an environment needs one, which needs the network; environments keep what they use."))
         }
     }
 
@@ -306,7 +306,7 @@ public enum CleanRules {
         return roots.flatMap { root in
             appDataCacheNames.map { root + "/" + $0 }.filter(CleanScanner.isRealFolder).map {
                 Target(path: $0, mode: .whole, category: .appCaches, safety: .review,
-                       reason: "Cache kept in the app's own data folder. The app rebuilds it; quit the app first.",
+                       reason: String(localized: "Cache kept in the app's own data folder. The app rebuilds it; quit the app first."),
                        title: appDataTitle($0, home: home))
             }
         }
@@ -367,7 +367,7 @@ public enum CleanRules {
         switch t.holds {
         case .plain: nil
         case .simulators: simulator(path)?.title
-        case .backups: backup(path).map { "Backup of " + $0 }
+        case .backups: backup(path).map { String(localized: "Backup of \($0)") }
         case .emulatorSnapshots: emulatorSnapshotTitle(path)
         case .archives: archiveTitle(path)
         }
@@ -744,8 +744,8 @@ public enum CleanScanner {
                     path: path, bytes: r.root.size, modified: r.root.latestChange, category: .containerCaches,
                     safety: ids[i].hasPrefix("com.apple.") ? .review : .safe, owner: ids[i],
                     reason: ids[i].hasPrefix("com.apple.")
-                        ? "Cache of one of Apple's apps. Rebuilt, though some resync first."
-                        : "Cache inside the app's sandbox. Rebuilt the next time the app needs it.",
+                        ? String(localized: "Cache of one of Apple's apps. Rebuilt, though some resync first.")
+                        : String(localized: "Cache inside the app's sandbox. Rebuilt the next time the app needs it."),
                     contentsOnly: true)
                 one.incomplete = !r.deniedPaths.isEmpty || r.root.unreadable
                 c = one

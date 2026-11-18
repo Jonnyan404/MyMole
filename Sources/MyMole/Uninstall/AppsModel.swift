@@ -1094,8 +1094,8 @@ final class AppsModel {
         }.value
         guard let why = cleared.refused.first?.reason else { return nil }
         switch why {
-        case "Protected location": return String(localized: "\(app.name) is in a protected location.")
-        case "Kept": return String(localized: "\(app.name) is on one of your keep lists, or holds something that is, so it stays.")
+        case Trasher.protectedLocation: return String(localized: "\(app.name) is in a protected location.")
+        case Trasher.kept: return String(localized: "\(app.name) is on one of your keep lists, or holds something that is, so it stays.")
         case Trasher.protectionsUnreadable: return String(localized: "Your keep lists couldn't be read, so nothing was moved.")
         default: return String(localized: "\(app.name) changed since the list was made. Reload and try again.")
         }
@@ -1323,7 +1323,7 @@ final class AppsModel {
         let cleared = await Task.detached(priority: .userInitiated) { Trasher.clear([image.image], through: gate) }.value
         if let why = cleared.refused.first?.reason {
             let text: String = switch why {
-            case "Kept": String(localized: "\(image.name) is on one of your keep lists, so it stays.")
+            case Trasher.kept: String(localized: "\(image.name) is on one of your keep lists, so it stays.")
             case Trasher.protectionsUnreadable: String(localized: "Your keep lists couldn't be read, so nothing was moved.")
             default: String(localized: "\(image.name) isn't a disk image MyMole can move.")
             }

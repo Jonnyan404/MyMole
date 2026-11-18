@@ -158,9 +158,9 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
         public var title: String {
             switch self {
             case .rebuildable: "Rebuilt"
-            case .appPart: "App part"
+            case .appPart: String(localized: "App part")
             case .settings: "Settings"
-            case .data: "Your data"
+            case .data: String(localized: "Your data")
             case .shared: "Shared"
             }
         }

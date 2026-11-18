@@ -14,21 +14,29 @@ public enum MaintenanceTask: String, CaseIterable, Codable, Sendable, Identifiab
         case finder = "Finder & Apps"
         case network = "Network"
         case system = "System"
+
+        public var title: String {
+            switch self {
+            case .finder: String(localized: "Finder & Apps")
+            case .network: String(localized: "Network")
+            case .system: String(localized: "System")
+            }
+        }
     }
 
     public var id: String { rawValue }
 
     public var title: String {
         switch self {
-        case .quickLook: "Quick Look Thumbnails"
-        case .launchServices: "“Open With” Database"
-        case .savedState: "Old Window States"
-        case .brokenPreferences: "Broken Settings Files"
-        case .networkDSStore: "No .DS_Store on Network Drives"
-        case .flushDNS: "DNS Cache"
-        case .periodic: "Housekeeping Scripts"
-        case .spotlight: "Spotlight Index"
-        case .verifyDisk: "Startup Disk Check"
+        case .quickLook: String(localized: "Quick Look Thumbnails")
+        case .launchServices: String(localized: "“Open With” Database")
+        case .savedState: String(localized: "Old Window States")
+        case .brokenPreferences: String(localized: "Broken Settings Files")
+        case .networkDSStore: String(localized: "No .DS_Store on Network Drives")
+        case .flushDNS: String(localized: "DNS Cache")
+        case .periodic: String(localized: "Housekeeping Scripts")
+        case .spotlight: String(localized: "Spotlight Index")
+        case .verifyDisk: String(localized: "Startup Disk Check")
         }
     }
 
@@ -36,29 +44,29 @@ public enum MaintenanceTask: String, CaseIterable, Codable, Sendable, Identifiab
     /// is run for its problem, not as a general speed-up.
     public var effect: String {
         switch self {
-        case .quickLook: "Finder makes thumbnails again as you browse. Nothing to undo."
-        case .launchServices: "An app may ask once which app opens a kind of file. Can't be undone; macOS keeps it up to date from then on."
-        case .savedState: "Undo puts them back."
-        case .brokenPreferences: "Undo puts them back."
-        case .networkDSStore: "A Finder setting; Finder's folder views on those drives aren't remembered from then on."
-        case .flushDNS: "Sites look up their address again on the next visit. Nothing to undo."
-        case .periodic: "Runs a few minutes in the background. Trimmed logs can't be put back."
-        case .spotlight: "Search misses files until the rebuild ends, which can take hours and keeps the disk busy. Can't be undone."
-        case .verifyDisk: "Only reads; the disk is busier while it runs."
+        case .quickLook: String(localized: "Finder makes thumbnails again as you browse. Nothing to undo.")
+        case .launchServices: String(localized: "An app may ask once which app opens a kind of file. Can't be undone; macOS keeps it up to date from then on.")
+        case .savedState: String(localized: "Undo puts them back.")
+        case .brokenPreferences: String(localized: "Undo puts them back.")
+        case .networkDSStore: String(localized: "A Finder setting; Finder's folder views on those drives aren't remembered from then on.")
+        case .flushDNS: String(localized: "Sites look up their address again on the next visit. Nothing to undo.")
+        case .periodic: String(localized: "Runs a few minutes in the background. Trimmed logs can't be put back.")
+        case .spotlight: String(localized: "Search misses files until the rebuild ends, which can take hours and keeps the disk busy. Can't be undone.")
+        case .verifyDisk: String(localized: "Only reads; the disk is busier while it runs.")
         }
     }
 
     public var explanation: String {
         switch self {
-        case .quickLook: "Resets the thumbnail cache, for blank or outdated previews in Finder."
-        case .launchServices: "Rebuilds the list of which app opens what. Fixes duplicate apps in “Open With”. Takes a minute."
-        case .savedState: "Moves window states apps saved over 30 days ago to the Trash. Those apps open with fresh windows."
-        case .brokenPreferences: "Moves settings files that can no longer be read to the Trash, so their apps start from defaults."
-        case .networkDSStore: "Tells Finder not to leave .DS_Store files on network shares and USB drives. Changes a Finder setting."
-        case .flushDNS: "Clears the DNS cache, for websites that won't load or still point to an old address."
-        case .periodic: "Runs macOS's daily, weekly and monthly housekeeping scripts, which rotate and trim system logs."
-        case .spotlight: "Erases and rebuilds the Spotlight index of the startup disk. Search is incomplete for a while."
-        case .verifyDisk: "Checks the startup disk's file system for errors. Read-only; nothing is changed."
+        case .quickLook: String(localized: "Resets the thumbnail cache, for blank or outdated previews in Finder.")
+        case .launchServices: String(localized: "Rebuilds the list of which app opens what. Fixes duplicate apps in “Open With”. Takes a minute.")
+        case .savedState: String(localized: "Moves window states apps saved over 30 days ago to the Trash. Those apps open with fresh windows.")
+        case .brokenPreferences: String(localized: "Moves settings files that can no longer be read to the Trash, so their apps start from defaults.")
+        case .networkDSStore: String(localized: "Tells Finder not to leave .DS_Store files on network shares and USB drives. Changes a Finder setting.")
+        case .flushDNS: String(localized: "Clears the DNS cache, for websites that won't load or still point to an old address.")
+        case .periodic: String(localized: "Runs macOS's daily, weekly and monthly housekeeping scripts, which rotate and trim system logs.")
+        case .spotlight: String(localized: "Erases and rebuilds the Spotlight index of the startup disk. Search is incomplete for a while.")
+        case .verifyDisk: String(localized: "Checks the startup disk's file system for errors. Read-only; nothing is changed.")
         }
     }
 
@@ -188,41 +196,41 @@ public struct MaintenanceEngine: Sendable {
 
     /// What a run would do, without changing anything.
     public func check(_ t: MaintenanceTask) -> TaskReport {
-        guard allowed(t) else { return TaskReport(t, .needsHelper, "Needs the privileged helper.") }
+        guard allowed(t) else { return TaskReport(t, .needsHelper, String(localized: "Needs the privileged helper.")) }
         switch t {
         case .savedState:
             let n = oldSavedStates().count
-            return n == 0 ? TaskReport(t, .nothingToDo, "No window states older than 30 days.")
-                : TaskReport(t, .willRun, "\(n) old window state\(n == 1 ? "" : "s") to move to the Trash.")
+            return n == 0 ? TaskReport(t, .nothingToDo, String(localized: "No window states older than 30 days."))
+                : TaskReport(t, .willRun, String(localized: "\(n) old window states to move to the Trash."))
         case .brokenPreferences:
             let n = brokenPreferences().count
-            return n == 0 ? TaskReport(t, .nothingToDo, "Every settings file reads fine.")
-                : TaskReport(t, .willRun, "\(n) unreadable settings file\(n == 1 ? "" : "s") to move to the Trash.")
+            return n == 0 ? TaskReport(t, .nothingToDo, String(localized: "Every settings file reads fine."))
+                : TaskReport(t, .willRun, String(localized: "\(n) unreadable settings files to move to the Trash."))
         case .networkDSStore:
             let off = dsStoreKeysOff()
-            if off.isEmpty { return TaskReport(t, .nothingToDo, "Already turned on.") }
-            return TaskReport(t, .willRun, off.count == 2 ? "Finder still writes them." : off == ["DSDontWriteUSBStores"]
-                ? "Finder still writes them on USB drives." : "Finder still writes them on network drives.")
+            if off.isEmpty { return TaskReport(t, .nothingToDo, String(localized: "Already turned on.")) }
+            return TaskReport(t, .willRun, off.count == 2 ? String(localized: "Finder still writes them.") : off == ["DSDontWriteUSBStores"]
+                ? String(localized: "Finder still writes them on USB drives.") : String(localized: "Finder still writes them on network drives."))
         default:
             let exes = programs(t)
-            guard exes.allSatisfy(runner.exists) else { return TaskReport(t, .unavailable, "Not available on this version of macOS.") }
+            guard exes.allSatisfy(runner.exists) else { return TaskReport(t, .unavailable, String(localized: "Not available on this version of macOS.")) }
             return TaskReport(t, .willRun)
         }
     }
 
     public func run(_ t: MaintenanceTask) -> TaskReport {
-        guard allowed(t) else { return TaskReport(t, .needsHelper, "Needs the privileged helper.") }
+        guard allowed(t) else { return TaskReport(t, .needsHelper, String(localized: "Needs the privileged helper.")) }
         switch t {
         case .savedState:
-            return moveToTrash(oldSavedStates(), t, what: "window state", still: isOldSavedState)
+            return moveToTrash(oldSavedStates(), t, done: { String(localized: "Moved \($0) window states to the Trash.") }, still: isOldSavedState)
         case .brokenPreferences:
-            return moveToTrash(brokenPreferences(), t, what: "settings file", still: isBrokenPreference)
+            return moveToTrash(brokenPreferences(), t, done: { String(localized: "Moved \($0) settings files to the Trash.") }, still: isBrokenPreference)
         case .networkDSStore:
             let off = dsStoreKeysOff()
-            guard !off.isEmpty else { return TaskReport(t, .nothingToDo, "Already turned on.") }
+            guard !off.isEmpty else { return TaskReport(t, .nothingToDo, String(localized: "Already turned on.")) }
             for key in off {
                 let r = runner.run(Self.defaults, ["write", "com.apple.desktopservices", key, "-bool", "true"])
-                if r.code != 0 { return TaskReport(t, .failed, Self.lastLine(r.output) ?? "Exited with code \(r.code).") }
+                if r.code != 0 { return TaskReport(t, .failed, Self.lastLine(r.output) ?? String(localized: "Exited with code \(r.code).")) }
             }
             return TaskReport(t, .done)
         default:
@@ -232,10 +240,10 @@ public struct MaintenanceEngine: Sendable {
                 let r = runner.run(exe, args)
                 // killall exits 1 when the process isn't running, which is fine.
                 if r.code != 0 && !(exe == Self.killall && r.code == 1) {
-                    return TaskReport(t, .failed, Self.lastLine(r.output) ?? "Exited with code \(r.code).")
+                    return TaskReport(t, .failed, Self.lastLine(r.output) ?? String(localized: "Exited with code \(r.code)."))
                 }
             }
-            return TaskReport(t, .done, t == .verifyDisk ? "No problems found." : "")
+            return TaskReport(t, .done, t == .verifyDisk ? String(localized: "No problems found.") : "")
         }
     }
 
@@ -316,13 +324,13 @@ public struct MaintenanceEngine: Sendable {
         ((try? FileManager.default.contentsOfDirectory(atPath: dir)) ?? []).sorted()
     }
 
-    func moveToTrash(_ paths: [String], _ t: MaintenanceTask, what: String, still: @escaping @Sendable (String) -> Bool) -> TaskReport {
+    func moveToTrash(_ paths: [String], _ t: MaintenanceTask, done: (Int) -> String, still: @escaping @Sendable (String) -> Bool) -> TaskReport {
         guard !paths.isEmpty else { return TaskReport(t, .nothingToDo) }
         let out = self.trash(paths, TrashGate(still: still, protections: protections))
         let n = out.moved.count
         if !out.failed.isEmpty {
-            return TaskReport(t, .failed, "Moved \(n); \(out.failed.count) couldn't be moved.")
+            return TaskReport(t, .failed, String(localized: "Moved \(n); \(out.failed.count) couldn't be moved."))
         }
-        return TaskReport(t, .done, "Moved \(n) \(what)\(n == 1 ? "" : "s") to the Trash.")
+        return TaskReport(t, .done, done(n))
     }
 }

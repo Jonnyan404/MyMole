@@ -22,37 +22,37 @@ public struct PathRisk: Sendable, Hashable {
 
     static let rules: [(match: @Sendable (String) -> Bool, risk: PathRisk)] = [
         ({ within($0, ["/.aws", "/.kube", "/.azure", "/.docker/config.json", "/.netrc", "/.npmrc", "/.config/gh", "/.config/gcloud"]) },
-         PathRisk(level: .caution, reason: "Sign-in keys or tokens. Tools that use them sign you out.")),
+         PathRisk(level: .caution, reason: String(localized: "Sign-in keys or tokens. Tools that use them sign you out."))),
         ({ within($0, [
             "/Library/Safari", "/Application Support/Google/Chrome", "/Application Support/Firefox/Profiles",
             "/Application Support/BraveSoftware", "/Application Support/Microsoft Edge", "/Application Support/Arc",
         ]) },
-         PathRisk(level: .caution, reason: "A browser profile: history, bookmarks, saved passwords and sign-ins.")),
+         PathRisk(level: .caution, reason: String(localized: "A browser profile: history, bookmarks, saved passwords and sign-ins."))),
         ({ $0.contains("/.Trash/") || $0.hasSuffix("/.Trash") },
-         PathRisk(level: .caution, reason: "Already in the Trash.")),
+         PathRisk(level: .caution, reason: String(localized: "Already in the Trash."))),
         ({ $0.contains("/MobileSync/Backup") },
          PathRisk(level: .caution, reason: "iPhone/iPad backup. Can't be recreated.")),
         ({ $0.contains("/Mobile Documents/") },
          PathRisk(level: .caution, reason: "iCloud Drive files. Removing them here removes them on your other devices too.")),
         // Dropbox, Google Drive, OneDrive, Box and other File Provider services.
         ({ $0.contains("/Library/CloudStorage/") },
-         PathRisk(level: .caution, reason: "Synced with a cloud service. Removing it here removes it in the cloud and on your other devices too.")),
+         PathRisk(level: .caution, reason: String(localized: "Synced with a cloud service. Removing it here removes it in the cloud and on your other devices too."))),
         ({ within($0, [".photoslibrary"]) },
-         PathRisk(level: .caution, reason: "A Photos library: every photo, video and edit in it.")),
+         PathRisk(level: .caution, reason: String(localized: "A Photos library: every photo, video and edit in it."))),
         ({ ["/Downloads/", "/Documents/", "/Desktop/", "/Pictures/", "/Movies/", "/Music/"].contains(where: $0.contains) },
-         PathRisk(level: .caution, reason: "Your own files.")),
+         PathRisk(level: .caution, reason: String(localized: "Your own files."))),
         ({ $0.contains("/Library/Mail/") || $0.contains("/Library/Messages/") },
-         PathRisk(level: .caution, reason: "Mail or Messages data.")),
+         PathRisk(level: .caution, reason: String(localized: "Mail or Messages data."))),
         ({ $0.hasSuffix("/Docker.raw") || $0.contains("/com.docker.docker/Data/vms/") },
-         PathRisk(level: .caution, reason: "Docker's virtual disk. Holds every image, container and volume.")),
+         PathRisk(level: .caution, reason: String(localized: "Docker's virtual disk. Holds every image, container and volume."))),
         ({ p in [".vmwarevm", ".pvm", ".utm", "/VirtualBox VMs/", "/Parallels/", ".vdi", ".vmdk", ".qcow2"].contains(where: p.contains) },
-         PathRisk(level: .caution, reason: "A virtual machine and everything installed in it.")),
+         PathRisk(level: .caution, reason: String(localized: "A virtual machine and everything installed in it."))),
         ({ $0.contains("/Xcode/Archives") },
-         PathRisk(level: .caution, reason: "Xcode archives. Needed to symbolicate crash reports of shipped builds.")),
+         PathRisk(level: .caution, reason: String(localized: "Xcode archives. Needed to symbolicate crash reports of shipped builds."))),
         ({ $0.contains("/Group Containers/") },
-         PathRisk(level: .review, reason: "Data shared between apps. May include settings.")),
+         PathRisk(level: .review, reason: String(localized: "Data shared between apps. May include settings."))),
         ({ $0.contains("/CoreSimulator/Devices") },
-         PathRisk(level: .review, reason: "Simulator apps and their data.")),
+         PathRisk(level: .review, reason: String(localized: "Simulator apps and their data."))),
     ]
 
     /// The first rule that matches, if any.
@@ -74,7 +74,7 @@ public struct PathRisk: Sendable, Hashable {
     static func decoded(_ code: Int8) -> PathRisk? {
         guard code >= 0, Int(code) < rules.count else { return nil }
         let risk = rules[Int(code)].risk
-        return PathRisk(level: risk.level, reason: "Inside: " + risk.reason)
+        return PathRisk(level: risk.level, reason: String(localized: "Inside: \(risk.reason)"))
     }
 
     // Ancestor-wide rules are checked once per directory, rather than once
@@ -91,7 +91,7 @@ public struct PathRisk: Sendable, Hashable {
         return code(of: (parent == "/" ? "" : parent) + "/" + name)
     }
 
-    public static let incomplete = PathRisk(level: .caution, reason: "This folder wasn't fully scanned and may contain personal data. Check its location before moving it.")
+    public static let incomplete = PathRisk(level: .caution, reason: String(localized: "This folder wasn't fully scanned and may contain personal data. Check its location before moving it."))
 
     /// The gravest risk of anything inside `folder` as scanned, so marking a
     /// parent warns about what it holds. Looks at up to `limit` folders, and
@@ -111,6 +111,6 @@ public struct PathRisk: Sendable, Hashable {
             }
             stack += f.subfolders
         }
-        return found.map { PathRisk(level: $0.level, reason: "Inside: " + $0.reason) }
+        return found.map { PathRisk(level: $0.level, reason: String(localized: "Inside: \($0.reason)")) }
     }
 }

@@ -970,11 +970,11 @@ struct UninstallSheet: View {
 
     private var mentionText: String {
         let home = model.home
-        let places = mentions.prefix(4).map { m in
+        var places = mentions.prefix(4).map { m in
             (m.file.hasPrefix(home + "/") ? "~" + m.file.dropFirst(home.count) : m.file) + ":\(m.line)"
         }
-        let more = mentions.count > 4 ? String(localized: " and \(mentions.count - 4) more") : ""
-        return String(localized: "Named in your settings at \(places.joined(separator: ", "))\(more). MyMole doesn't change these files; edit them yourself if needed.")
+        if mentions.count > 4 { places.append(String(localized: "\(mentions.count - 4) more")) }
+        return String(localized: "Named in your settings at \(places.formatted(.list(type: .and))). MyMole doesn't change these files; edit them yourself if needed.")
     }
 
     /// What a chosen leftover would cost, when it's more than a cache.

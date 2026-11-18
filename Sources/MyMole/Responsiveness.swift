@@ -47,7 +47,7 @@ enum Responsiveness: Int, CaseIterable, Identifiable {
         switch self {
         case .automatic: String(localized: "Automatic")
         case .gentle: String(localized: "Gentle")
-        case .light: String(localized: "Light")
+        case .light: String(localized: "level.light", defaultValue: "Light", comment: "A speed or size level, between Gentle and Balanced; not the light appearance")
         case .balanced: String(localized: "Balanced")
         case .fast: String(localized: "Fast")
         case .maximum: String(localized: "Maximum")

@@ -150,8 +150,8 @@ enum ProcessGroup {
             let gone = groupGone(pid, within: grace)
             _ = read.wait(timeout: .now() + 1)
             return gone
-                ? (CommandRunner.timedOut, "Stopped after running for more than \(Int(timeLimit)) seconds.")
-                : (CommandRunner.stopUnverified, "Ran for more than \(Int(timeLimit)) seconds; part of it may still be running.")
+                ? (CommandRunner.timedOut, String(localized: "Stopped after running for more than \(Int(timeLimit)) seconds."))
+                : (CommandRunner.stopUnverified, String(localized: "Ran for more than \(Int(timeLimit)) seconds; part of it may still be running."))
         }
         // A child left holding the pipe mustn't hold the reply too: it's
         // stopped with its group, and the cut-short output isn't used.
@@ -160,12 +160,12 @@ enum ProcessGroup {
             _ = read.wait(timeout: .now() + 1)
             // Closing the pipe can precede the child's actual termination.
             guard groupGone(pid, within: grace) else {
-                return (CommandRunner.stopUnverified, "Its output stayed open; part of it may still be running.")
+                return (CommandRunner.stopUnverified, String(localized: "Its output stayed open; part of it may still be running."))
             }
-            return (CommandRunner.outputUnfinished, "Something it started kept its output open, so the output wasn't used.")
+            return (CommandRunner.outputUnfinished, String(localized: "Something it started kept its output open, so the output wasn't used."))
         }
         if output.withLock({ $0.overflow }) {
-            return (CommandRunner.outputTooLarge, "It printed more than \(outputLimit >> 20) MB, so it was stopped and its output wasn't used.")
+            return (CommandRunner.outputTooLarge, String(localized: "It printed more than \(outputLimit >> 20) MB, so it was stopped and its output wasn't used."))
         }
         let s = status.withLock { $0 } ?? 0
         let code: Int32 = (s & 0x7f) == 0 ? (s >> 8) & 0xff : -(s & 0x7f)

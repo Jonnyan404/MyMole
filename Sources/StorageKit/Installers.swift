@@ -14,9 +14,9 @@ public struct InstallerFile: Sendable, Hashable, Codable, Identifiable {
 
         public var title: String {
             switch self {
-            case .diskImage: "Disk Image"
-            case .package: "Installer Package"
-            case .archive: "Xcode Archive"
+            case .diskImage: String(localized: "Disk Image")
+            case .package: String(localized: "Installer Package")
+            case .archive: String(localized: "Xcode Archive")
             case .firmware: "iPhone or iPad Software"
             case .macOSInstaller: "macOS Installer"
             }

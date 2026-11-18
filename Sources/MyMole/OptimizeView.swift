@@ -16,7 +16,7 @@ struct OptimizeView: View {
             Divider()
             DSPage(width: .full) {
                 ForEach(MaintenanceTask.Group.allCases.filter { g in model.offered.contains { $0.group == g } }, id: \.self) { group in
-                    DSSection(group.rawValue) {
+                    DSSection(group.title) {
                         ForEach(model.offered.filter { $0.group == group }) { row($0) }
                     }
                 }

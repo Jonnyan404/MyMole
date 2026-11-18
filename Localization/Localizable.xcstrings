@@ -35,7 +35,6 @@
       }
     },
     " System items deleted for good stay deleted." : {},
-    " and %lld more" : {},
     " · %@ deleted for good" : {},
     " · %@ items" : {},
     " · %lld couldn't be moved" : {},
@@ -1350,6 +1349,7 @@
         }
       }
     },
+    "%lld more" : {},
     "%lld notices" : {},
     "%lld of %lld found · choices include hidden results" : {
       "localizations" : {
@@ -1436,6 +1436,38 @@
                     "stringUnit" : {
                       "state" : "translated",
                       "value" : "%arg of them are locked in Finder and unlocked to move."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld old window states to move to the Trash." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg old window state to move to the Trash."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg old window states to move to the Trash."
                     }
                   }
                 }
@@ -1693,6 +1725,38 @@
       }
     },
     "%lld things you left out inside them stay." : {},
+    "%lld unreadable settings files to move to the Trash." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg unreadable settings file to move to the Trash."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg unreadable settings files to move to the Trash."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld × %lld · %@" : {
       "localizations" : {
         "en" : {
@@ -1730,9 +1794,27 @@
     "1 notice" : {},
     "1 system-wide item is deleted for good and can't be undone." : {},
     "1 thing you left out inside them stays." : {},
+    "A Finder setting; Finder's folder views on those drives aren't remembered from then on." : {},
+    "A Gradle version a project's wrapper downloaded. Fetched again when a project that names it builds, which needs the network." : {},
+    "A Photos library: every photo, video and edit in it." : {},
+    "A backup of an iPhone or iPad. It's gone for good unless the device is backed up again." : {},
+    "A browser profile: history, bookmarks, saved passwords and sign-ins." : {},
     "A change to the keep list hasn't been saved." : {},
+    "A container uses it." : {},
+    "A container uses it. Remove the container first." : {},
+    "A folder inside can't be read, so it couldn't be checked." : {},
     "A folder left out isn't read or counted, and isn't compared in Changes, so it never looks deleted. It's apart from Keep, which only stops moves, and from Browse's filter, which only hides rows." : {},
     "A folder's kind is the type using most of its space." : {},
+    "A named volume: databases and other data live here. Remove it in Docker if you're sure." : {},
+    "A saved state of an Android emulator. It starts with a cold boot instead, keeping its apps and data." : {},
+    "A screen saver" : {},
+    "A simulator that is shut down, with the apps and data in it. Xcode makes a new, empty one when you add it again." : {},
+    "A tool's cache. Some hold large downloads such as models." : {},
+    "A virtual device uses it." : {},
+    "A virtual device with its apps and data. Android Studio can make a new one." : {},
+    "A virtual machine and everything installed in it." : {},
+    "A way to type, in the keyboard menu" : {},
+    "A whole computer with everything installed in it. Remove it in %@, which also handles its snapshots." : {},
     "A whole core for %lld minutes, at most once a day for each app." : {},
     "About" : {},
     "About %@" : {},
@@ -1751,10 +1833,16 @@
     "Add %@ with drag and drop, or click the + below the app list and select this copy." : {},
     "Add Folder for Cleanup…" : {},
     "Add Folder…" : {},
+    "Added by you" : {},
+    "Adds a command to the Services menu" : {},
+    "Adds a pane to System Settings" : {},
+    "Adds a picker to the Colors window" : {},
     "Adjust or clear the filters above to see more files and folders." : {},
     "Administrator" : {},
     "Administrator access" : {},
     "Administrator access was cancelled, so nothing was changed." : {},
+    "Agent sessions" : {},
+    "Agent worktrees" : {},
     "All" : {},
     "All Categories" : {},
     "All Kinds" : {},
@@ -1764,15 +1852,20 @@
     "All discovered apps" : {},
     "All projects" : {},
     "All types" : {},
+    "All users' agent" : {},
     "Allow App Removal" : {},
     "Allow Full Disk Access" : {},
     "Allow MyMole to control Finder in System Settings → Privacy & Security → Automation, then try Undo again." : {},
     "Allow MyMole to control Finder in System Settings → Privacy & Security → Automation, then try again. No app data was moved." : {},
     "Allow Uninstall" : {},
     "Allow this copy to uninstall apps. macOS keeps this permission separate from Full Disk Access." : {},
+    "Already in the Trash." : {},
+    "Already turned on." : {},
     "Always Keep" : {},
     "Always Keep Remove Try Again Discard Change protected files folders never remove safety rules" : {},
     "An app dragged to the Trash leaves its settings, caches and data in your Library. Nothing is removed until you choose it." : {},
+    "An app may ask once which app opens a kind of file. Can't be undone; macOS keeps it up to date from then on." : {},
+    "An archived build with its debug symbols. Keep it for every version you shipped." : {},
     "An earlier removal left %lld folders aside" : {
       "localizations" : {
         "en" : {
@@ -1807,7 +1900,9 @@
     },
     "An earlier system task may still be running." : {},
     "An old modification date doesn't mean a file is safe to remove." : {},
+    "An old, rotated system log archive." : {},
     "And %lld more." : {},
+    "Anonymous volume %@" : {},
     "Another system task is running." : {},
     "Another system task is still running. Wait for it to finish." : {},
     "Another uninstall is running." : {},
@@ -1816,6 +1911,7 @@
     "Any number of scans at once · %lld threads for a scan you wait on" : {},
     "Anywhere" : {},
     "App" : {},
+    "App Caches" : {},
     "App Copies & Integrations" : {},
     "App Copies & Integrations…" : {},
     "App ID, name or folder" : {},
@@ -1824,12 +1920,14 @@
     "App Store" : {},
     "App Store edition" : {},
     "App Store edition: tasks on your own files" : {},
+    "App cache. Rebuilt the next time the app needs it." : {},
     "App components" : {},
     "App data" : {},
     "App extension" : {},
     "App libraries, dependency folders, hidden folders and Git repositories are excluded. Add a folder of personal files to search there." : {},
     "App metadata is read inside this folder, including build outputs. App bundles aren't searched for nested copies; dependency and version-control folders are skipped." : {},
     "App ownership could not be revalidated after the move. System files stayed in place." : {},
+    "App part" : {},
     "App scope" : {},
     "App uninstallation to the Trash" : {},
     "Appearance" : {},
@@ -1841,12 +1939,16 @@
     "Approve MyMole's helper in System Settings → General → Login Items & Extensions, then try the action again." : {},
     "Apps" : {},
     "Apps in %@ aren't listed." : {},
+    "Apps rebuild caches as needed." : {},
     "Apps' own login items are in System Settings" : {},
+    "Archives & Installers" : {},
     "As each tool lists them. Only what the tool builds or downloads again starts chosen. What may hold your work is chosen only by you, and what's in use or holds data is only shown. Each item goes through the tool's own command and is deleted for good." : {},
     "Ask before" : {},
     "Asking each tool what it keeps…" : {},
     "At launch" : {},
     "At least %@ in one pane, at most once a week." : {},
+    "Attachments Mail saved when you opened them." : {},
+    "Audio Unit" : {},
     "Automatic" : {},
     "Automation Settings…" : {},
     "Automation…" : {},
@@ -1855,6 +1957,7 @@
     "Back to %@" : {},
     "Back to %@ (⌘↑)" : {},
     "Background scan" : {},
+    "Backup of %@" : {},
     "Balanced" : {},
     "Bars" : {},
     "Battery" : {},
@@ -1870,12 +1973,24 @@
     "Blacklist — Suggest for Cleanup" : {},
     "Blacklist — suggest for cleanup" : {},
     "Blacklist: %@" : {},
+    "Blacklisted — cleanup suggestions" : {},
     "Boxes" : {},
+    "Broken Settings Files" : {},
     "Browse" : {},
+    "Build cache · %lld records" : {},
+    "Build output" : {},
+    "Build steps no image uses now. The next build that needs one runs it again." : {},
+    "Builds you archived in Xcode, with the symbols that make their crash reports readable. None is ever chosen for you." : {},
+    "Bun's download cache." : {},
     "Bundle ID" : {},
     "CPU" : {},
     "CPU use by core" : {},
+    "Cache inside the app's sandbox. Rebuilt the next time the app needs it." : {},
+    "Cache kept in the app's own data folder. The app rebuilds it; quit the app first." : {},
+    "Cache of one of Apple's apps. Rebuilt, though some resync first." : {},
+    "Caches & Logs" : {},
     "Caches and logs" : {},
+    "Caches inside sandboxed apps' containers. Rebuilt the same way." : {},
     "Caches or Logs" : {},
     "Caches, logs and tool downloads that rebuild themselves" : {},
     "Caches, settings and data in your Library named after apps that aren't on this Mac any more. Anything an installed app, a running one or another app of the same developer could still use stays." : {},
@@ -1883,6 +1998,7 @@
     "Cancel" : {},
     "Capacity" : {},
     "Card Size" : {},
+    "Cargo's downloaded crates." : {},
     "Category" : {},
     "Category: %@" : {},
     "Change" : {},
@@ -1890,10 +2006,12 @@
     "Change type" : {},
     "Changed On or After %@" : {},
     "Changed On or Before %@" : {},
+    "Changed since it was checked" : {},
     "Changed the Same Day" : {},
     "Changes" : {},
     "Changes apply as you make them" : {},
     "Changes the surfaces and the accent. Text and warning colours stay the system's." : {},
+    "Charging" : {},
     "Check Again" : {},
     "Check All Listed" : {},
     "Check All Results" : {},
@@ -1905,12 +2023,14 @@
     "Check or uncheck eligible items in this list, including rows below the screen. Filters limit this choice. Highlighting rows is separate; nothing is removed here." : {},
     "Check the removable items listed for this project within the age filter. Protected data stays. Expanded contents go with their chosen parent; nothing is moved here." : {},
     "Checked %@" : {},
+    "Checked under other rules; check again." : {},
     "Checking %@" : {},
     "Checking Full Disk Access…" : {},
     "Checking access…" : {},
     "Checking ownership…" : {},
     "Checks %@. Identical-file comparison follows the cleanup scans. Similar Photos, Projects, Startup Items and the Disk Map scan on their own panes. Nothing is deleted until you confirm." : {},
     "Checks automatically while this page is open" : {},
+    "Checks the startup disk's file system for errors. Read-only; nothing is changed." : {},
     "Choose" : {},
     "Choose %@ (%@) to let MyMole work there. %@" : {
       "localizations" : {
@@ -1999,6 +2119,7 @@
     "Chosen: it's rebuilt by itself." : {},
     "Chrome profile folders can contain bookmarks, history and extensions. Custom profile locations outside the searched folders aren't discovered automatically." : {},
     "Classic pie with labels" : {},
+    "Claude Code sessions" : {},
     "Clean" : {},
     "Cleanup" : {},
     "Cleanups you run show up here." : {},
@@ -2012,14 +2133,17 @@
     "Clear search" : {},
     "Clear the choice" : {},
     "Clear the saved results?" : {},
+    "Clears the DNS cache, for websites that won't load or still point to an old address." : {},
     "Clear…" : {},
     "Click an app to review it. ⌘-click starts a batch choice; further clicks add or remove apps. Apps and the leftovers you review go to the Trash." : {},
     "Clone" : {},
     "Close" : {},
     "Close; MyMole stays in the menu bar" : {},
+    "Codex sessions" : {},
     "Collecting…" : {},
     "Color by Kind" : {},
     "Color by file kind instead of by folder" : {},
+    "Color picker" : {},
     "Columns" : {},
     "Command" : {},
     "Command Palette…" : {},
@@ -2039,9 +2163,12 @@
     "Comparing scans…" : {},
     "Complete app listing" : {},
     "Complete duplicate search" : {},
+    "Conda's downloaded packages. Fetched again when an environment needs one, which needs the network; environments keep what they use." : {},
     "Confirmation turned off for %@. Turn it on again in Settings → Confirmations." : {},
     "Confirmations" : {},
     "Contact Support" : {},
+    "Container · %@" : {},
+    "Containers, caches and settings of builds of this app. Removing them resets that app's data." : {},
     "Copies" : {},
     "Copies %@ and MyMole's version, to quote when asking for help. No file names or paths are included." : {},
     "Copies and test builds" : {},
@@ -2059,22 +2186,32 @@
     "Copy Timings" : {},
     "Copy Uninstall Command" : {},
     "Core detail unavailable" : {},
+    "Couldn't read memory" : {},
+    "Couldn't read memory and the startup disk" : {},
+    "Couldn't read the startup disk" : {},
     "Couldn't remove %@." : {},
     "Couldn't save the keep list: %@" : {},
     "Couldn't save your project rules: %@" : {},
     "Counted as free, as Finder does: macOS frees it by itself when space is needed, mostly caches it manages and local Time Machine snapshots." : {},
+    "Crash reports from that build can't be read without it, and it can't be uploaded again. It's gone for good once the Trash is emptied." : {},
+    "Creative Cloud's sync state. Let Creative Cloud sign out and finish syncing first." : {},
     "Critical pressure" : {},
     "Customize Live Status" : {},
     "Customize Live Status…" : {},
     "Cycles" : {},
+    "DNS Cache" : {},
     "Daily" : {},
     "Dark" : {},
     "Dashboard" : {},
+    "Data" : {},
+    "Data shared between apps. May include settings." : {},
     "Date" : {},
+    "Debug symbols for one device's OS version. Copied again when that device connects." : {},
     "Declarations identify providers. They don't prove a menu item is currently enabled." : {},
     "Declares integrations" : {},
     "Deep Clean" : {},
     "Deep Clean Keep List" : {},
+    "Deep Clean's last scan" : {},
     "Deep Clean, Projects, Installers, the disk map and app leftovers all work in it." : {},
     "Default" : {},
     "Delete %lld Items for Good" : {
@@ -2111,6 +2248,7 @@
     },
     "Delete for Good" : {},
     "Delete for Good…" : {},
+    "Delete it in Android Studio's Device Manager." : {},
     "Delete what's in the Trash for good, after a confirmation" : {},
     "Deleted %lld items (%@) for good" : {
       "localizations" : {
@@ -2150,14 +2288,18 @@
     "Desktop" : {},
     "Details" : {},
     "Details for %@" : {},
+    "Developer Caches" : {},
     "Developer Tools" : {},
     "Developer Tools…" : {},
+    "Diagnostic logs and crash reports. Nothing reads them back." : {},
     "Disable Helper" : {},
     "Discard Change" : {},
     "Discovery is still running. This early result cannot be chosen." : {},
     "Disk" : {},
     "Disk I/O" : {},
+    "Disk Image" : {},
     "Disk Map" : {},
+    "Disk Map's saved scans" : {},
     "Disk Map's saved scans stay within what Large results allows, %@; the oldest go first, and the newest of each folder always stays." : {},
     "Disk health (SMART)" : {},
     "Disk images and packages left after installing" : {},
@@ -2166,6 +2308,8 @@
     "Disks" : {},
     "Dismiss" : {},
     "Dismiss these problems" : {},
+    "Docker didn't answer, so its images, containers and volumes aren't listed. Start Docker and look again." : {},
+    "Docker's virtual disk. Holds every image, container and volume." : {},
     "Docker, simulator runtimes, Android devices and virtual machines, as each tool lists them" : {},
     "Documents" : {},
     "Don't Ask Again applies only to this action. Turn the question on again in Settings → Confirmations." : {},
@@ -2173,6 +2317,7 @@
     "Done" : {},
     "Done Arranging" : {},
     "Dormant" : {},
+    "Downloaded Attachments" : {},
     "Downloads" : {},
     "Drag %@ to App Management" : {},
     "Drag a handle to move a card. Drag its corner sideways to resize. Cards fill each row and share its height." : {},
@@ -2187,6 +2332,7 @@
     "Duplicates" : {},
     "Each" : {},
     "Each app goes to the Trash with the leftovers you choose. Only caches and logs tied by identity start chosen; settings, website data, scripts, launch configuration and name matches stay unless you choose them." : {},
+    "Each app's cache folder. Apps rebuild them as needed." : {},
     "Each control has six steps, from Gentle to Hyperspeed, and starts at Maximum. Hyperspeed removes every limit and can use a lot of memory and disk. Results are complete at every step. If MyMole makes this Mac sluggish, lower a control. Scans can always be stopped, and a change applies from the next scan." : {},
     "Each folder row includes its contents. Your data stays unless you choose it." : {},
     "Each goes through its tool's own command and can't be undone. Each tool's list is read again first; anything that started or changed since is left alone." : {},
@@ -2228,6 +2374,7 @@
     "Entire Scan" : {},
     "Entire Scan becomes available when scanning finishes." : {},
     "Entire Scan includes folders and individual files of 1 MB or more. Smaller files are counted inside folders." : {},
+    "Erases and rebuilds the Spotlight index of the startup disk. Search is incomplete for a while." : {},
     "Every Download" : {},
     "Every cleanup run on this Mac" : {},
     "Every file of 1 MB or more from the current scan" : {},
@@ -2236,9 +2383,16 @@
     "Every icon and chart kept · repaints every %lld ms · every pane prepared afresh at launch" : {},
     "Every list in memory · every saved scan · a history point for every scan" : {},
     "Every project and what it leaves on disk" : {},
+    "Every settings file reads fine." : {},
     "Everything in Downloads, oldest first. An old file isn't junk for being old: look at it first. Nothing is chosen for you." : {},
+    "Everything looks good" : {},
+    "Everything the Mac has for scans you wait on, and many disk walks at a time." : {},
+    "Excluded from cleanup, including everything inside. They stay even when a parent is chosen." : {},
+    "Exited with code %d." : {},
+    "Extra checkouts made by coding agents. Push anything you need, then run git worktree prune." : {},
     "Failed" : {},
     "Fast" : {},
+    "Few threads at low priority, one scan at a time." : {},
     "File URL" : {},
     "File kind" : {},
     "Files" : {},
@@ -2277,9 +2431,14 @@
     "Find caches, settings and data left after an app was deleted in Finder" : {},
     "Find copies and menu providers" : {},
     "Find other versions, test builds and apps that declare menu integrations" : {},
+    "Finder & Apps" : {},
     "Finder couldn't move the app to the Trash. No app data was moved." : {},
     "Finder extensions generate their menu commands while running. Their providers are shown here; the current command labels aren't enumerated." : {},
+    "Finder makes thumbnails again as you browse. Nothing to undo." : {},
     "Finder menu provider" : {},
+    "Finder still writes them on USB drives." : {},
+    "Finder still writes them on network drives." : {},
+    "Finder still writes them." : {},
     "Finding MyMole and its data…" : {},
     "Finding app copies…" : {},
     "Finding related files…" : {},
@@ -2299,6 +2458,7 @@
     "Folder View" : {},
     "Folders" : {},
     "Folders the scan can't read appear here. The result is complete when scanning finishes." : {},
+    "Folders you added as cleanup suggestions. Nothing is removed until you choose and confirm it." : {},
     "For a folder, this is the newest change anywhere inside it." : {},
     "Forward" : {},
     "Found %@" : {},
@@ -2309,18 +2469,28 @@
     "From an earlier scan" : {},
     "From an earlier scan, %@" : {},
     "Full Disk Access" : {},
+    "Games the launcher installed. Remove them in the launcher, so their saves and licenses are handled." : {},
     "Gentle" : {},
     "Get Help" : {},
     "Get every pane ready" : {},
     "Get every pane ready at launch Disk map history scans per folder Saved results Each kind Clear Saved Results Remove prefetch memory cache storage" : {},
+    "Git couldn't check it for tracked files." : {},
+    "Git couldn't check it for uncommitted work." : {},
+    "Git history" : {},
+    "Git isn't installed, so tracked files couldn't be checked." : {},
+    "Git isn't installed, so uncommitted work couldn't be checked." : {},
     "Give Access" : {},
     "Give Access…" : {},
     "Give MyMole Full Disk Access or access to those folders, then scan again." : {},
     "Give MyMole access to %@" : {},
     "Go to %@" : {},
+    "Go's module downloads. Offline builds need them." : {},
     "Good afternoon" : {},
     "Good evening" : {},
     "Good morning" : {},
+    "Gradle cache" : {},
+    "Gradle downloads and rebuilds it." : {},
+    "Gradle's dependency and build cache." : {},
     "Graphite Blue" : {},
     "Grew" : {},
     "Grew since %@" : {},
@@ -2358,8 +2528,10 @@
       }
     },
     "Has its own uninstaller" : {},
+    "Has uncommitted work." : {},
     "Health" : {},
     "Health %@" : {},
+    "Heavy swapping to disk (%@)" : {},
     "Help" : {},
     "Helper" : {},
     "Helper disabled — macOS asks for administrator approval per task." : {},
@@ -2373,11 +2545,19 @@
     "Hide the chart and give the list the whole pane" : {},
     "High pressure" : {},
     "History" : {},
+    "Holds VirtualBox's drivers. Run VirtualBox_Uninstall.tool from its installer disk image." : {},
+    "Holds a Git repository." : {},
+    "Holds data: a simulator's apps and content, an emulator's saved state, or a device backup. It's gone for good once the Trash is emptied." : {},
+    "Holds files Git tracks." : {},
+    "Holds key files." : {},
     "Holds the least. The disk map is let go a while after you leave it and isn't prepared at launch; running scans repaint less often." : {},
     "Home" : {},
+    "Homebrew cask" : {},
+    "Homebrew formula" : {},
     "Homebrew formulae and casks, and packages installers put on the Mac, read from where they're kept. Nothing is run and nothing is removed here: a package goes with its own tool, so its records stay right." : {},
     "Homebrew isn't installed in /opt/homebrew or /usr/local." : {},
     "Homebrew wasn't found, or this edition may not look where it installs: the App Sandbox keeps App Store apps out of /opt/homebrew and /usr/local." : {},
+    "Housekeeping Scripts" : {},
     "How lists, selection and status look with these choices." : {},
     "How long lists, table menus, app listings and Disk Map scans take, including the first content. Kept in memory until you quit; no file names or paths." : {},
     "How to draw the disk map" : {},
@@ -2397,6 +2577,7 @@
     "In every project" : {},
     "In progress" : {},
     "In the Background" : {},
+    "In the folder every user of this Mac shares. Other users' copies of the app may still use it." : {},
     "In the project folder" : {},
     "In the selected files, or in all when none is selected" : {},
     "In the selected visible groups, or all visible groups when none is selected: every picture but the one with the most pixels" : {},
@@ -2410,7 +2591,9 @@
     "Included with %@. Unchoose the containing folder before choosing individual items." : {},
     "Included with a chosen folder. Unchoose the containing folder before changing these items." : {},
     "Includes small downloads too. Opens a separate review; nothing is chosen for you." : {},
+    "Input method" : {},
     "Inside the project folder." : {},
+    "Inside: %@" : {},
     "Insight" : {},
     "Inspect the pictures before choosing any for removal." : {},
     "Inspection only" : {},
@@ -2419,24 +2602,37 @@
     "Installed Packages…" : {},
     "Installed apps' helper identities couldn't be read, so no leftovers were offered. Try Scan Again after checking app access." : {},
     "Installed for every user or the system. Remove it with its app's own uninstaller." : {},
+    "Installer Package" : {},
+    "Installer package" : {},
+    "Installer record" : {},
     "Installers" : {},
     "Installers in %@ aren't shown. The result isn't saved as complete." : {},
     "Integration" : {},
     "Integrations…" : {},
     "Interface" : {},
+    "Internet plug-in" : {},
     "Invert Selection" : {},
     "It has used a whole core for %lld minutes or more, and may be stuck. Look at it in Live Status, or quit it if you don't need it." : {},
     "It isn't a scan saved from MyMole." : {},
     "It left %@ of settings, caches and data in your Library. Click to look at them." : {},
+    "It printed more than %lld MB, so it was stopped and its output wasn't used." : {},
     "It starts in the menu bar, without a window, and scans when the Mac has time to spare." : {},
     "It stopped part-way, and what it had moved aside is still in %@, with a note of where each item came from. MyMole never deletes it by itself, and a new removal only deletes what it moves itself. Look at it in Finder; it needs an administrator to open." : {},
     "It was saved by a newer MyMole." : {},
+    "It's a Git repository." : {},
+    "It's a key file." : {},
     "It's already running." : {},
     "It's damaged." : {},
+    "It's gone or can't be read." : {},
     "It's larger than a saved scan can be." : {},
     "Item kind" : {},
     "Items" : {},
+    "Its Git folder couldn't be read, so it wasn't checked." : {},
+    "Its Git settings could run programs, so it wasn't checked." : {},
     "Its name or app ID has a development, preview or test label. This isn't proof it's disposable." : {},
+    "Its output stayed open; part of it may still be running." : {},
+    "Its protection runs as a system extension. Use Help > Uninstall Malwarebytes in the app." : {},
+    "Its runtime is gone, so it can't start. Its apps and data go with it." : {},
     "Its window opens at login. With the menu bar item on, it starts there instead." : {},
     "Jobs an app registers from inside itself aren't files, so they aren't listed here. Turn those off in System Settings → General → Login Items & Extensions. What each file says (starts at login, turned off) is what should happen; \"running now\" and \"not loaded now\" are what launchd has for your session." : {},
     "Keep" : {},
@@ -2445,11 +2641,17 @@
     "Keep timings of the interface" : {},
     "Keep timings of the interface Copy Timings Clear benchmark slow speed median p95 filter sort redraw menus first content" : {},
     "Keeps a few charts and icons ready, and repaints running scans about three times a second." : {},
+    "Keeps big lists in memory up to a quarter of this Mac's memory, many saved scans and a history point every hour." : {},
+    "Keeps little in memory; big lists move to disk early." : {},
     "Keeps more charts, icons and text measurements ready, and repaints running scans more often." : {},
+    "Keeps more in memory, more saved scans and a history point every few hours." : {},
+    "Keeps saved scans and history as MyMole did before this setting." : {},
     "Keeps the disk map and recent charts ready, and repaints running scans five times a second." : {},
+    "Keeps the least in memory and on disk: big lists move to disk soonest." : {},
     "Keeps the most within limits ready, repaints running scans most often, and reuses a result only minutes old at launch." : {},
     "Kept" : {},
     "Kept as the best: the most pixels, then the biggest file, then the newest" : {},
+    "Kept by you" : {},
     "Kept in Projects or on your keep list, or holds something that is; never moved from here" : {},
     "Kept in Projects, or holds something that is; never cleaned from here" : {},
     "Kept items, and anything inside them, are never offered or moved." : {},
@@ -2480,6 +2682,7 @@
     "Left unchosen: %@; tick them yourself if they can go" : {},
     "Leftover" : {},
     "Leftover category" : {},
+    "Lets Spotlight read a kind of file" : {},
     "Lets the disk map look beyond your home folder." : {},
     "License" : {},
     "Light" : {},
@@ -2490,6 +2693,7 @@
     "List width" : {},
     "Listed by macOS" : {},
     "Listing files: %@" : {},
+    "Little Snitch's rules and its network filter. Use Uninstall in Little Snitch's own menu." : {},
     "Live Status" : {},
     "Live, every 2 s" : {},
     "Load" : {},
@@ -2499,12 +2703,18 @@
     "Load · 5 minutes" : {},
     "Loading and Memory" : {},
     "Loading…" : {},
+    "Loads into music and audio apps" : {},
+    "Loads into older browsers" : {},
+    "Local work files" : {},
     "Located in a build-output folder. It may still be a copy you need." : {},
     "Location" : {},
     "Location within this scan" : {},
     "Locked" : {},
     "Locked in Finder: unlocked right before it moves, and locked again if it stays" : {},
+    "Locked, and it couldn't be unlocked" : {},
     "Login" : {},
+    "Logs & Crash Reports" : {},
+    "Logs and crash reports." : {},
     "Look Again" : {},
     "Look for installers again" : {},
     "Look for pictures that look alike again" : {},
@@ -2519,13 +2729,17 @@
     "Looking through caches and logs…" : {},
     "Looking through system caches and logs…" : {},
     "Looking through your Library…" : {},
+    "Mail attachments you opened. The messages keep them." : {},
+    "Mail or Messages data." : {},
     "Manage Finder extensions and Services in System Settings. Change Open With defaults in Finder → Get Info. This view doesn't change registrations." : {},
     "Map Another Folder…" : {},
     "Map a common folder or a disk" : {},
     "Map another folder or disk (⌘O)" : {},
     "Map your home folder in Disk Map to choose from here." : {},
     "Matched by %@" : {},
+    "Maven's downloaded libraries. Fetched again on the next build, which needs the network." : {},
     "Maximum" : {},
+    "May hold things the app downloads again, or a sign-in it asks for again." : {},
     "Measured" : {},
     "Measuring %lld of %lld projects…" : {
       "localizations" : {
@@ -2542,6 +2756,8 @@
     "Measuring the selected app…" : {},
     "Measuring…" : {},
     "Memory" : {},
+    "Memory is critically short" : {},
+    "Memory is under pressure" : {},
     "Menu Bar" : {},
     "Menu bar" : {},
     "Minimum change" : {},
@@ -3046,6 +3262,38 @@
         }
       }
     },
+    "Moved %lld settings files to the Trash." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg settings file to the Trash."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg settings files to the Trash."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Moved %lld startup items to the Trash. It takes effect at the next login" : {
       "localizations" : {
         "en" : {
@@ -3078,7 +3326,51 @@
         }
       }
     },
+    "Moved %lld window states to the Trash." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg window state to the Trash."
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Moved %arg window states to the Trash."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Moved %lld; %lld couldn't be moved." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Moved %1$lld; %2$lld couldn't be moved."
+          }
+        }
+      }
+    },
     "Moved to the Trash — you can undo." : {},
+    "Moves settings files that can no longer be read to the Trash, so their apps start from defaults." : {},
+    "Moves window states apps saved over 30 days ago to the Trash. Those apps open with fresh windows." : {},
     "Moving to the Trash" : {},
     "Moving to the Trash…" : {},
     "Moving…" : {},
@@ -3091,16 +3383,7 @@
     "MyMole can uninstall itself, including the data you choose." : {},
     "MyMole couldn't change the helper registration. Keep the signed app in Applications and try again in Settings → System Tasks." : {},
     "MyMole couldn't keep access to that folder." : {},
-    "MyMole couldn't read %@%@, so this may not be everything. " : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "MyMole couldn't read %1$@%2$@, so this may not be everything. "
-          }
-        }
-      }
-    },
+    "MyMole couldn't read %@, so this may not be everything. " : {},
     "MyMole couldn't read inside this folder" : {},
     "MyMole couldn't read the Trash." : {},
     "MyMole couldn't tell whether it has Full Disk Access: none of the folders it checks are on this Mac. It goes on as if it has; a folder it can't read is said where it shows up." : {},
@@ -3132,16 +3415,7 @@
     "Name" : {},
     "Name, A to Z" : {},
     "Name, app ID or path" : {},
-    "Named in your settings at %@%@. MyMole doesn't change these files; edit them yourself if needed." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Named in your settings at %1$@%2$@. MyMole doesn't change these files; edit them yourself if needed."
-          }
-        }
-      }
-    },
+    "Named in your settings at %@. MyMole doesn't change these files; edit them yourself if needed." : {},
     "Names" : {},
     "Names can differ; the full contents must match. Select a group to compare its copies." : {},
     "Narrow the leftovers listed below by category. This does not run another search or change your removal choices." : {},
@@ -3155,12 +3429,14 @@
     "Needs admin" : {},
     "Needs administrator rights" : {},
     "Needs folder access" : {},
+    "Needs the privileged helper." : {},
     "Network" : {},
     "Never" : {},
     "Never removed from here" : {},
     "New" : {},
     "Newest First" : {},
     "No %@ in What Could Be Read" : {},
+    "No .DS_Store on Network Drives" : {},
     "No Apps Found" : {},
     "No Big Changes" : {},
     "No Cards Visible" : {},
@@ -3187,19 +3463,29 @@
     "No Unreadable Folders" : {},
     "No apps were chosen." : {},
     "No battery reading" : {},
+    "No container uses it. A container made it without a name; it may still hold that container's data." : {},
     "No disk images or installer packages in the searched folders." : {},
     "No integrations declared in the inspected bundle locations." : {},
+    "No limits: every thread and as many disk walks at once as there are scans. Can use a lot of memory and disk." : {},
+    "No limits: keeps every list in memory, every saved scan and a history point for every scan. Can use a lot of memory and disk." : {},
     "No limits: keeps everything ready and prepares every pane afresh at each launch. Can use a lot of memory." : {},
+    "No longer there" : {},
     "No pane to go back to." : {},
     "No pane to go forward to." : {},
+    "No problems found." : {},
     "No reading available right now." : {},
+    "No simulator uses it. Xcode downloads it again when one needs it." : {},
     "No two files of %@ or more in the searched folders have the same content." : {},
     "No two pictures of 50 KB or more in the searched folders look the same." : {},
     "No verified leftovers in the inspected locations." : {},
+    "No virtual device uses it. The SDK Manager downloads it again when one needs it." : {},
+    "No window states older than 30 days." : {},
     "None" : {},
     "Normal pressure" : {},
+    "Not a plain full path" : {},
     "Not alike the best picture itself, only alike another picture of the group. Look at it closely." : {},
     "Not available" : {},
+    "Not available on this version of macOS." : {},
     "Not chosen automatically because something may still be using them." : {},
     "Not chosen automatically. Quit the app first for a clean result." : {},
     "Not chosen for you: look at it first." : {},
@@ -3216,6 +3502,7 @@
     "Not scanned" : {},
     "Not scanned before stopping. Scan Again to include this folder." : {},
     "Not shown: %@. They may be damaged; launchd ignores a list it can't read." : {},
+    "Nothing builds old logs again; they're only read to look into a problem." : {},
     "Nothing cleaned yet" : {},
     "Nothing in the launch folders starts by itself." : {},
     "Nothing kept yet. Right-click an item in Deep Clean and choose Always Keep." : {},
@@ -3289,9 +3576,11 @@
     "Notifications are turned off for MyMole in System Settings → Notifications." : {},
     "Notify me" : {},
     "Now" : {},
+    "NuGet's package cache. Fetched again on the next restore, which needs the network." : {},
     "OK" : {},
     "OK, Don't Remind Me" : {},
     "Off" : {},
+    "Old Window States" : {},
     "Older than 1 Month" : {},
     "Older than 1 Week" : {},
     "Older than 1 Year" : {},
@@ -3300,10 +3589,12 @@
     "Older than 6 Months" : {},
     "Oldest First" : {},
     "On System Clean's keep list." : {},
+    "On battery" : {},
     "On one of your keep lists, or holds something that is — will be skipped" : {},
     "On one of your keep lists, or holds something that is; it stays" : {},
     "On or After a Date…" : {},
     "On or after %@" : {},
+    "On power" : {},
     "On the Desktop" : {},
     "On your keep list; never cleaned" : {},
     "On your keep list; never moved from here" : {},
@@ -3316,6 +3607,7 @@
     "One ring, total in the middle" : {},
     "Only data last changed before this is chosen" : {},
     "Only in the Disk Map." : {},
+    "Only reads; the disk is busier while it runs." : {},
     "Only shown: %@" : {},
     "Only the MyMole app can open at login." : {},
     "Only the first %@ pictures were looked at" : {},
@@ -3356,6 +3648,7 @@
     "Ownership of %@'s leftovers couldn't be verified, so nothing was moved." : {},
     "Ownership of %@'s leftovers couldn't be verified, so nothing was reset." : {},
     "Ownership of %@'s leftovers couldn't be verified. Untick them to move only the app." : {},
+    "Package managers' download caches and simulator caches. The next install is slower once." : {},
     "Paper" : {},
     "Part of a cache couldn't be read. The result isn't saved as complete; give MyMole Full Disk Access or scan again." : {},
     "Part of a package folder couldn't be read. The result isn't saved as complete." : {},
@@ -3380,6 +3673,7 @@
     "Permanently delete %@?" : {},
     "Permission" : {},
     "Photo groups" : {},
+    "Photos, Music & Video" : {},
     "Picks a level from this Mac's memory, and goes gentle in Low Power Mode." : {},
     "Pictures" : {},
     "Pictures in Pictures, Desktop, Documents and Downloads" : {},
@@ -3410,6 +3704,8 @@
     "Preview" : {},
     "Preview of the %@ theme" : {},
     "Preview only" : {},
+    "Previews files in Finder and Quick Look" : {},
+    "Printer drivers are shared by every printer of this maker. Remove a printer in System Settings > Printers & Scanners." : {},
     "Process" : {},
     "Process details aren't available for this reading." : {},
     "Processes" : {},
@@ -3417,12 +3713,19 @@
     "Program" : {},
     "Project Folders" : {},
     "Projects" : {},
+    "Protected location" : {},
     "Protected location — will be skipped" : {},
     "Purgeable" : {},
     "Put Back from the Trash in Finder" : {},
     "Put back what this run moved to the Trash" : {},
+    "Python bytecode" : {},
+    "Python environment" : {},
+    "Python recompiles it on import." : {},
     "Question turned off; turn this on to ask again" : {},
     "Quick Look" : {},
+    "Quick Look Thumbnails" : {},
+    "Quick Look plug-in" : {},
+    "Quietest. Two threads at the lowest priority, one scan at a time; scans take longest." : {},
     "Quit" : {},
     "Quit %@ before continuing" : {},
     "Quit %@?" : {},
@@ -3431,6 +3734,7 @@
     "Quit MyMole" : {},
     "Quit it before uninstalling" : {},
     "Ran %@" : {},
+    "Ran for more than %lld seconds; part of it may still be running." : {},
     "Ranked bars" : {},
     "Read" : {},
     "Read %@" : {},
@@ -3448,11 +3752,17 @@
     "Reading your Mac's status…" : {},
     "Ready" : {},
     "Rebuildable" : {},
+    "Rebuilds the list of which app opens what. Fixes duplicate apps in “Open With”. Takes a minute." : {},
     "Rebuilt" : {},
+    "Rebuilt by cargo/maven." : {},
     "Rebuilt by itself; you unticked it." : {},
+    "Rebuilt by swift build." : {},
+    "Rebuilt by the project's build." : {},
+    "Rebuilt on the next build." : {},
     "Received" : {},
     "Recent cleanups" : {},
     "Recorded paths no longer found (%lld)" : {},
+    "Recreate with your requirements file." : {},
     "Redo" : {},
     "Redraw visible rows" : {},
     "Refresh" : {},
@@ -3465,6 +3775,8 @@
     "Refresh the open folder (⌘R), or choose Rescan Entire Map" : {},
     "Refreshing folder contents…" : {},
     "Refused by the rules." : {},
+    "Reinstalled by npm/yarn/pnpm install." : {},
+    "Reinstalled by the package manager (npm install, pod install, …)." : {},
     "Reload" : {},
     "Reload Apps" : {},
     "Reload a table" : {},
@@ -3481,6 +3793,7 @@
     "Remove from Search" : {},
     "Remove from Whitelist" : {},
     "Remove from the list" : {},
+    "Remove it in Android Studio's SDK Manager." : {},
     "Remove this protection. No files are moved." : {},
     "Removed" : {},
     "Removed %@ from %lld items" : {
@@ -3515,6 +3828,7 @@
         }
       }
     },
+    "Removed Apps" : {},
     "Removed apps" : {},
     "Removing" : {},
     "Removing this item can reset settings or remove local app data." : {},
@@ -3559,6 +3873,7 @@
     "Reset %@?" : {},
     "Reset Column Widths" : {},
     "Reset app data to the Trash" : {},
+    "Resets the thumbnail cache, for blank or outdated previews in Finder." : {},
     "Reset…" : {},
     "Resize %@" : {},
     "Responsiveness" : {},
@@ -3787,6 +4102,7 @@
         }
       }
     },
+    "Restored by pod install." : {},
     "Restoring the app was cancelled. Undo can try again." : {},
     "Restoring…" : {},
     "Results from the entire scan" : {},
@@ -3841,8 +4157,12 @@
     },
     "Running" : {},
     "Running %@" : {},
+    "Running. Stop it in Docker first." : {},
     "Runs" : {},
+    "Runs a few minutes in the background. Trimmed logs can't be put back." : {},
+    "Runs macOS's daily, weekly and monthly housekeeping scripts, which rotate and trim system logs." : {},
     "Sample row" : {},
+    "Sandboxed App Caches" : {},
     "Save Current Filter" : {},
     "Save Scan…" : {},
     "Save this scan to look at later, on this Mac or another" : {},
@@ -3898,6 +4218,8 @@
       }
     },
     "Scans run one after another in the background, at a lower priority, so each pane opens with a fresh result. Off: a pane scans when you open it." : {},
+    "Scratch output, logs and test runs kept in the project. Check before removing." : {},
+    "Screen saver" : {},
     "Search Again" : {},
     "Search Areas Excluded" : {},
     "Search Incomplete" : {},
@@ -3908,6 +4230,7 @@
     "Search details" : {},
     "Search for duplicates again" : {},
     "Search in" : {},
+    "Search misses files until the rebuild ends, which can take hours and keeps the disk busy. Can't be undone." : {},
     "Search settings" : {},
     "Search stopped. Earlier complete results remain; a first search may show only the apps found before Stop." : {},
     "Search stopped. Results from the last completed search are still shown." : {},
@@ -3941,8 +4264,10 @@
     "Settings" : {},
     "Settings are chosen. A reinstall would start from defaults." : {},
     "Settings files and window states go to the Trash; the rest refreshes in place." : {},
+    "Settings pane" : {},
     "Settings…" : {},
     "Shared" : {},
+    "Shared by Creative Cloud and every Adobe app. Use Adobe's Creative Cloud uninstaller or Cleaner Tool." : {},
     "Shared data is chosen. The developer's other apps may use it too." : {},
     "Shared updater components (%lld)" : {},
     "Shared · system Library" : {},
@@ -4019,9 +4344,19 @@
     "Shrank" : {},
     "Shrank since %@" : {},
     "Sidebar" : {},
+    "Sign-in keys or tokens. Tools that use them sign you out." : {},
     "Similar Photos" : {},
+    "Similar Photos' fingerprints" : {},
     "Similar photos" : {},
+    "Simulator apps and their data." : {},
+    "Simulator caches." : {},
+    "Simulator runtime" : {},
+    "Simulator · %@ runtime not installed" : {},
+    "Simulators & Device Backups" : {},
+    "Simulators use it. Remove them first, or keep it." : {},
+    "Simulators with what's installed in them, Android emulators' saved states, and iPhone and iPad backups. They hold data, so none is ever chosen for you." : {},
     "Since the previous reading" : {},
+    "Sites look up their address again on the next visit. Nothing to undo." : {},
     "Size" : {},
     "Size for %@" : {},
     "Sizes come from the last scan. Running status updates live; Reload measures sizes again." : {},
@@ -4038,6 +4373,7 @@
     "Some integration metadata couldn't be read or exceeded the inspection limit. This isn't a complete list." : {},
     "Some known shared-component locations couldn't be inspected. This isn't a complete installation manifest." : {},
     "Some macOS discovery sources were unavailable. Choose a folder to search build outputs directly; the results don't cover every app on the Mac." : {},
+    "Something it started kept its output open, so the output wasn't used." : {},
     "Sort" : {},
     "Sort By" : {},
     "Sort a table" : {},
@@ -4045,14 +4381,22 @@
     "Sort by" : {},
     "Sort processes by" : {},
     "Sort the results below. A folder's date is the latest change anywhere inside it." : {},
+    "Source & other files" : {},
     "Spacious" : {},
     "Spacious gives margins, rows and the gaps between columns more room. Compact fits the most on screen." : {},
+    "Spotlight Index" : {},
+    "Spotlight importer" : {},
     "Standard" : {},
     "Start Scan" : {},
     "Start Search" : {},
+    "Starts at boot" : {},
+    "Starts at login" : {},
+    "Starts when something asks for it" : {},
+    "Startup Disk Check" : {},
     "Startup Items" : {},
     "Startup items" : {},
     "Status" : {},
+    "Still running. Shut it down first." : {},
     "Stop" : {},
     "Stop Keeping" : {},
     "Stop Looking Here" : {},
@@ -4066,7 +4410,10 @@
     "Stop scanning" : {},
     "Stop scanning; the last complete result stays" : {},
     "Stop searching; the last complete result stays" : {},
+    "Stopped after running for more than %lld seconds." : {},
     "Stopped before anything was moved." : {},
+    "Stopped before it was moved." : {},
+    "Stopped. What it changed inside itself goes with it; its volumes stay." : {},
     "Stopping after the current item…" : {},
     "Stopping the scan before moving…" : {},
     "Stopping…" : {},
@@ -4088,8 +4435,12 @@
     "Swap" : {},
     "Swap %@" : {},
     "Swap allocated" : {},
+    "Swapping to disk (%@)" : {},
+    "SwiftPM build" : {},
     "Switch on the tasks you want. Check Tasks previews their effects; Optimize Now runs them after confirmation." : {},
+    "Synced with a cloud service. Removing it here removes it in the cloud and on your other devices too." : {},
     "System" : {},
+    "System & Libraries" : {},
     "System Clean" : {},
     "System Clean Keep List" : {},
     "System Clean's keep list couldn't be read, so nothing system-wide was removed." : {},
@@ -4099,14 +4450,18 @@
     "System caches and logs are already tidy." : {},
     "System caches belong to root, which App Store apps may not ask for. The direct edition of MyMole cleans them." : {},
     "System cleanup" : {},
+    "System daemon" : {},
+    "System image" : {},
     "System index" : {},
     "System overview" : {},
     "System tasks aren't part of this edition of MyMole." : {},
     "System tasks aren't part of this edition." : {},
+    "System-wide cache. Rebuilt by the service that made it." : {},
     "System-wide caches and old logs" : {},
     "System-wide caches need administrator rights; System Clean handles them" : {},
     "System-wide deletion cannot be combined with unverified manual matches." : {},
     "System-wide leftovers can't be removed in this edition. Untick them to go on." : {},
+    "System-wide logs and crash reports." : {},
     "System-wide settings or data are chosen. They're deleted for good, not moved to the Trash." : {},
     "Table lines" : {},
     "Tagged %@; other copies are tagged differently. Choose which one stays." : {},
@@ -4114,6 +4469,7 @@
     "Tags only the chosen copies have go with them: %@." : {},
     "Take Back" : {},
     "Take MyMole out of the menu bar; closing its window quits it" : {},
+    "Tells Finder not to leave .DS_Store files on network shares and USB drives. Changes a Finder setting." : {},
     "That app changed or already quit. Refresh the reading before trying again." : {},
     "That was %@, not %@. Choose %@ itself." : {
       "localizations" : {
@@ -4158,8 +4514,10 @@
       }
     },
     "The App Store edition works only in the folders you choose here. Full Disk Access in System Settings also lets it into the folders macOS protects inside them." : {},
+    "The CPU has been overloaded for minutes" : {},
     "The Finder move was cancelled. No app data was moved." : {},
     "The Photos library is left alone: remove pictures there in Photos. Nothing leaves the Mac; pictures are compared by a small fingerprint made here." : {},
+    "The Trash didn't say where it went." : {},
     "The Trash is already empty." : {},
     "The administrator move could not be verified. No app data was moved." : {},
     "The app and %lld leftovers are moved to the Trash. You can undo right after." : {
@@ -4194,6 +4552,7 @@
         }
       }
     },
+    "The app builds it again as it needs it; it may start a little slower once." : {},
     "The app changed after the review. Nothing was moved." : {},
     "The app changed before Finder could move it. Refresh the review. No app data was moved." : {},
     "The app changed before it could be unlocked. Refresh the review." : {},
@@ -4203,11 +4562,13 @@
     "The app is asked to quit normally, so it can save its work or ask you first. A changed or restarted process is left alone." : {},
     "The app is missing, unreadable or has been replaced. Close this review and reload the app list." : {},
     "The app is open. Quit it first for a clean result." : {},
+    "The app list" : {},
     "The app may rebuild or download this data again." : {},
     "The app move could not be verified." : {},
     "The app or its original folder changed, or the original location is occupied. Nothing there will be replaced. Check in Finder before trying Undo again." : {},
     "The app restore could not be verified." : {},
     "The app's move to the Trash could not be verified. No app data was moved. Check the app in Finder before trying again." : {},
+    "The battery holds %lld%% of its original charge" : {},
     "The complete folder contents couldn't be selected. Nothing was added. Check access or choose smaller groups." : {},
     "The copies of %lld files have different tags, so they're left for you to choose." : {
       "localizations" : {
@@ -4245,6 +4606,8 @@
     "The disk image file couldn't be found." : {},
     "The disk image is ejected, then moved to the Trash. You can undo right after." : {},
     "The disk, memory and what the scans found at a glance. MyMole keeps running there when its window is closed; Quit ends it." : {},
+    "The docker command's own settings, contexts and sign-ins. Docker installed another way uses it too." : {},
+    "The emulator is running it. Close the emulator first." : {},
     "The folder couldn't be read." : {},
     "The folders searched for duplicates" : {},
     "The folders searched for installers" : {},
@@ -4258,18 +4621,25 @@
     "The keep lists couldn't be read, so nothing is moved: %@" : {},
     "The last few minutes" : {},
     "The last scans found: %@." : {},
+    "The messages keep their attachments; Mail fetches one again when it's opened." : {},
     "The move was stopped or the app started. Nothing was moved." : {},
     "The optional helper handles administrator tasks after macOS approval. You still review and confirm removals. App Management and Full Disk Access are separate macOS permissions; enabling the helper doesn't grant them." : {},
     "The privileged tool didn't finish (code %d)." : {},
     "The privileged tool gave an unexpected answer." : {},
     "The program it starts isn't there any more." : {},
     "The project folder hasn't been measured yet. Rescan to see what's inside it." : {},
+    "The repository's history. Never offered for removal." : {},
     "The scan couldn't be saved: %@" : {},
     "The search reached its size or depth limit. Choose a smaller folder to inspect the remaining apps." : {},
     "The search reached its time or entry limit. Results are incomplete; only completely measured candidates are offered." : {},
     "The search was limited or partly unreadable for %@. Only completely measured candidates are offered; additional app data may remain." : {},
     "The smallest change listed" : {},
     "The startup disk" : {},
+    "The startup disk is %lld%% full" : {},
+    "The startup disk is almost full (%lld%%)" : {},
+    "The startup disk reports that it's failing. Back it up now" : {},
+    "The tool downloads it again when a project needs it; the next install or build is slower once." : {},
+    "The tool stopped with code %d." : {},
     "The tool that made it noted this project's path with it." : {},
     "Their contents aren't counted above. Most are protected by macOS; Full Disk Access lets MyMole see inside the ones that belong to you." : {},
     "Theme" : {},
@@ -4328,8 +4698,10 @@
     "This folder has no files or folders in the current map." : {},
     "This folder has no mapped contents." : {},
     "This folder isn't on this Mac, or can't be read: a saved scan only knows how many small files it had." : {},
+    "This folder wasn't fully scanned and may contain personal data. Check its location before moving it." : {},
     "This is the top of the map." : {},
     "This list couldn't be read (%@). Nothing is removed against it until it can be." : {},
+    "This location has no Trash; MyMole doesn't delete permanently." : {},
     "This match can't pass the ownership or protection checks. You can inspect it in Finder." : {},
     "This match couldn't pass the review's ownership, path or protection checks. Refresh the review or inspect it in Finder." : {},
     "This picture is kept, so it stays." : {},
@@ -4346,16 +4718,30 @@
     "Today" : {},
     "Today %@" : {},
     "Tool" : {},
+    "Tool cache" : {},
+    "Tools rebuild caches as needed." : {},
+    "Tools rebuild it as needed." : {},
     "Top processes" : {},
     "Total CPU use" : {},
+    "Transcripts kept by Codex and Claude Code. Removing them only loses the chat history." : {},
     "Transfer rates since the previous reading." : {},
     "Trash" : {},
-    "Trash on %@: %@%@" : {
+    "Trash on %@: %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Trash on %1$@: %2$@%3$@"
+            "value" : "Trash on %1$@: %2$@"
+          }
+        }
+      }
+    },
+    "Trash on %@: at least %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Trash on %1$@: at least %2$@"
           }
         }
       }
@@ -4367,7 +4753,9 @@
     "Try All discovered apps or choose a folder containing your test builds." : {},
     "Try another name, kind, date or location, or clear the filters above." : {},
     "Turn its switch on. Follow Quit & Reopen if macOS asks, then try the uninstall again." : {},
+    "Turned off in its own file" : {},
     "Turning a question off applies only to that action. Your choices, Keep rules and all file checks still apply. Manually chosen unverified matches, permanent deletion, emptying the Trash, system maintenance, startup changes, similar-photo removal and uninstalling MyMole always ask." : {},
+    "Twice as many threads as cores for scans you wait on." : {},
     "Type" : {},
     "Type a command or a pane" : {},
     "URL scheme" : {},
@@ -4382,6 +4770,7 @@
     "Undo Move to Trash" : {},
     "Undo Uninstall" : {},
     "Undo puts back the last %lld moves of each pane until you quit; after that, Finder's Put Back still works for what is in the Trash. Items moved to the Trash take space until it's emptied. History keeps only counts and sizes, never file names." : {},
+    "Undo puts them back." : {},
     "Uninstall" : {},
     "Uninstall %@?" : {},
     "Uninstall %@…" : {},
@@ -4399,13 +4788,18 @@
     "Uninstall this copy of MyMole?" : {},
     "Uninstalling…" : {},
     "Uninstall…" : {},
+    "Unity's license is kept here for every editor. Return the license in Unity Hub first." : {},
     "Unpin" : {},
     "Unreadable" : {},
+    "Untagged and unused: left over from a newer build of the same image." : {},
+    "Untagged image %@" : {},
     "Untick" : {},
     "Untick %lld Selected" : {},
     "Untick Everything Inside" : {},
     "Untouched for 3 Months" : {},
     "Untouched for a Year" : {},
+    "Unused build cache" : {},
+    "Unused, but tagged: pulled or built again only when it's needed." : {},
     "Unverified" : {},
     "Unverified match. Review its path; removal always asks for confirmation." : {},
     "Unverified matches are for inspection only. Search again before choosing data to remove." : {},
@@ -4473,10 +4867,16 @@
     "Used / total" : {},
     "Used by macOS itself. Usually rebuilt, but some services take a while." : {},
     "Used on the disk" : {},
+    "Uses the cores without crowding the apps you work in." : {},
     "Uses the newest change found in each project, not the last time you opened its app." : {},
+    "VST plug-in" : {},
+    "VST3 plug-in" : {},
     "Version" : {},
     "Version / Build" : {},
     "View" : {},
+    "Virtual Machines" : {},
+    "Virtual device" : {},
+    "Virtual machine images Tart pulled. Tart prunes them itself and pulls one again when it's needed, which needs the network. Your machines in ~/.tart/vms stay." : {},
     "Virtual machines and Android's files, with their sizes, to look at. The App Store edition can't run Docker, Xcode's or Android's tools, so it removes nothing here; the direct edition removes what you choose with each tool's own command." : {},
     "Visible files using less than 1 MB on disk, read a page at a time. Use Quick Look to inspect them; this list is for browsing." : {},
     "Wait for the current move or maintenance task to finish." : {},
@@ -4523,6 +4923,7 @@
     "Whitelist “%@” in Every Project" : {},
     "Whitelist, blacklist and pins" : {},
     "Whitelist: %@" : {},
+    "Whitelisted — excluded from cleanup" : {},
     "Whitelisted — this folder and its contents stay during cleanup." : {},
     "Why This Was Found…" : {},
     "Wide" : {},
@@ -4531,6 +4932,16 @@
     "Would run" : {},
     "Write" : {},
     "Written in the last few minutes, probably by something running in the background. Left unticked; tick it yourself if it can go." : {},
+    "Xcode Archive" : {},
+    "Xcode Archives" : {},
+    "Xcode DerivedData" : {},
+    "Xcode Simulators" : {},
+    "Xcode archives. Needed to symbolicate crash reports of shipped builds." : {},
+    "Xcode build data" : {},
+    "Xcode rebuilds it on the next build." : {},
+    "Xcode's builds of SwiftUI previews. Rebuilt when a preview opens." : {},
+    "Xcode's simulator tool didn't list everything, so some runtimes or simulators may be missing." : {},
+    "Yarn's download cache." : {},
     "Yesterday %@" : {},
     "You can also use Edit Layout on the page. Row heights stay aligned, and hidden cards remain available from the hidden-cards menu." : {},
     "You're at the top" : {},
@@ -4540,6 +4951,8 @@
     "Your change to the keep list couldn't be saved (%@). Nothing is moved until it is saved or given up." : {},
     "Your change to the keep list couldn't be saved (%@). Nothing is removed until it is saved or given up." : {},
     "Your choice" : {},
+    "Your code and files, by top-level folder. Right-click one MyMole should clean." : {},
+    "Your data" : {},
     "Your data is chosen: documents and databases the app made go with it." : {},
     "Your disk is nearly full" : {},
     "Your home folder" : {},
@@ -4550,8 +4963,12 @@
     "Your keep lists couldn't be read, so nothing is uninstalled until they can be. Look at the lists in Settings and your rules in Projects." : {},
     "Your keep lists couldn't be read, so nothing was moved." : {},
     "Your keep lists couldn't be read. Nothing is removed until they can be." : {},
+    "Your login agent" : {},
+    "Your own files." : {},
     "Your project rules couldn't be read" : {},
     "Your project rules couldn't be read (%@). Nothing is moved until they can be." : {},
+    "Your protections couldn't be read, so it wasn't moved." : {},
+    "Your protections couldn't be read, so nothing was moved." : {},
     "Your rules" : {},
     "administrator password root helper privileged enable disable approval Login Items Extensions" : {},
     "alike another picture here, not the best itself" : {},
@@ -4667,6 +5084,18 @@
       }
     },
     "kept" : {},
+    "level.light" : {
+      "comment" : "A speed or size level, between Gentle and Balanced; not the light appearance",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Light"
+          }
+        }
+      }
+    },
     "loaded now, not running" : {},
     "looks the same as the best" : {},
     "macOS approval when administrator access is needed" : {},
@@ -4680,6 +5109,7 @@
     "macOS itself, apps and other users' folders outside the mapped folder, and folders MyMole couldn't read." : {},
     "macOS protects these, or every user of this Mac shares them, so MyMole only shows them. Each says what to do instead." : {},
     "macOS reported these paths, but no app was found there. These records aren't installed copies or removal targets, and don't identify individual Siri entries." : {},
+    "macOS says the battery needs service" : {},
     "matching section" : {},
     "matching sections" : {},
     "median %@ · p95 %@ · longest %@ · %lld×" : {
@@ -4745,6 +5175,7 @@
     "undone" : {},
     "version %@" : {},
     "whole scan" : {},
+    "“Open With” Database" : {},
     "… and %lld more" : {},
     "↑ ↓ to choose · Return to open · Esc to close" : {}
   },

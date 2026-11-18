@@ -28,9 +28,9 @@ public enum DevTools {
         public var title: String {
             switch self {
             case .docker: "Docker"
-            case .simulator: "Xcode Simulators"
+            case .simulator: String(localized: "Xcode Simulators")
             case .android: "Android"
-            case .virtualMachine: "Virtual Machines"
+            case .virtualMachine: String(localized: "Virtual Machines")
             }
         }
     }
@@ -99,13 +99,13 @@ public enum DevTools {
         if let docker = tools.docker {
             let r = runner.run(docker, dockerList)
             if r.code == 0, let items = DevTools.docker(json: r.output) { out.items += items } else {
-                out.notes.append("Docker didn't answer, so its images, containers and volumes aren't listed. Start Docker and look again.")
+                out.notes.append(String(localized: "Docker didn't answer, so its images, containers and volumes aren't listed. Start Docker and look again."))
             }
         }
         if let xcrun = tools.xcrun {
             let d = runner.run(xcrun, simctlDevices), rt = runner.run(xcrun, simctlRuntimes)
             if d.code == 0, rt.code == 0, let items = simulators(devices: d.output, runtimes: rt.output) { out.items += items } else if d.code == 0 || rt.code == 0 {
-                out.notes.append("Xcode's simulator tool didn't list everything, so some runtimes or simulators may be missing.")
+                out.notes.append(String(localized: "Xcode's simulator tool didn't list everything, so some runtimes or simulators may be missing."))
             }
         }
         out.items += android(home: home, toolExists: runner.exists)
@@ -141,7 +141,7 @@ public enum DevTools {
                 report.removed.append(item.id)
             } else {
                 let last = r.output.split(separator: "\n").last.map(String.init) ?? ""
-                report.failed[item.id] = last.isEmpty ? "The tool stopped with code \(r.code)." : last
+                report.failed[item.id] = last.isEmpty ? String(localized: "The tool stopped with code \(r.code).") : last
             }
         }
         return report
@@ -192,18 +192,18 @@ public enum DevTools {
             guard isDockerRef(id) else { continue }
             let short = String((id.hasPrefix("sha256:") ? String(id.dropFirst(7)) : id).prefix(12))
             let untagged = repo == "<none>" || repo.isEmpty
-            let name = untagged ? "Untagged image \(short)" : repo + ":" + tag
+            let name = untagged ? String(localized: "Untagged image \(short)") : repo + ":" + tag
             let bytes = dockerBytes(str(image, "UniqueSize")) ?? dockerBytes(str(image, "Size"))
             let users = Int(str(image, "Containers"))
             let handling: Handling, reason: String, removal: Removal?
             if users == nil || users! > 0 {
-                (handling, reason, removal) = (.show, "A container uses it. Remove the container first.", nil)
+                (handling, reason, removal) = (.show, String(localized: "A container uses it. Remove the container first."), nil)
             } else if untagged {
-                (handling, reason, removal) = (.recommend, "Untagged and unused: left over from a newer build of the same image.", .command(["image", "rm", id]))
+                (handling, reason, removal) = (.recommend, String(localized: "Untagged and unused: left over from a newer build of the same image."), .command(["image", "rm", id]))
             } else {
                 let ref = repo + ":" + tag
                 guard isDockerRef(ref) else { continue }
-                (handling, reason, removal) = (.offer, "Unused, but tagged: pulled or built again only when it's needed.", .command(["image", "rm", ref]))
+                (handling, reason, removal) = (.offer, String(localized: "Unused, but tagged: pulled or built again only when it's needed."), .command(["image", "rm", ref]))
             }
             out.append(Item(id: "docker.image." + id, source: .docker, name: name, detail: "Image", bytes: bytes,
                             handling: handling, reason: reason, removal: removal, path: nil))
@@ -213,10 +213,10 @@ public enum DevTools {
             guard isDockerRef(id) else { continue }
             let stopped = ["exited", "created", "dead"].contains(state)
             out.append(Item(id: "docker.container." + id, source: .docker, name: str(c, "Names").isEmpty ? id : str(c, "Names"),
-                            detail: "Container · \(str(c, "Status"))", bytes: dockerBytes(str(c, "Size")),
+                            detail: String(localized: "Container · \(str(c, "Status"))"), bytes: dockerBytes(str(c, "Size")),
                             handling: stopped ? .offer : .show,
-                            reason: stopped ? "Stopped. What it changed inside itself goes with it; its volumes stay."
-                                : "Running. Stop it in Docker first.",
+                            reason: stopped ? String(localized: "Stopped. What it changed inside itself goes with it; its volumes stay.")
+                                : String(localized: "Running. Stop it in Docker first."),
                             removal: stopped ? .command(["container", "rm", id]) : nil, path: nil))
         }
         for v in list("Volumes") {
@@ -226,20 +226,20 @@ public enum DevTools {
             let links = Int(str(v, "Links"))
             let unusedAnonymous = anonymous && links == 0
             out.append(Item(id: "docker.volume." + name, source: .docker,
-                            name: anonymous ? "Anonymous volume \(String(name.prefix(12)))" : name,
+                            name: anonymous ? String(localized: "Anonymous volume \(String(name.prefix(12)))") : name,
                             detail: "Volume", bytes: dockerBytes(str(v, "Size")),
                             handling: unusedAnonymous ? .offer : .show,
-                            reason: unusedAnonymous ? "No container uses it. A container made it without a name; it may still hold that container's data."
-                                : links.map { $0 > 0 } ?? true ? "A container uses it."
-                                : "A named volume: databases and other data live here. Remove it in Docker if you're sure.",
+                            reason: unusedAnonymous ? String(localized: "No container uses it. A container made it without a name; it may still hold that container's data.")
+                                : links.map { $0 > 0 } ?? true ? String(localized: "A container uses it.")
+                                : String(localized: "A named volume: databases and other data live here. Remove it in Docker if you're sure."),
                             removal: unusedAnonymous ? .command(["volume", "rm", name]) : nil, path: nil))
         }
         let unused = list("BuildCache").filter { str($0, "InUse") == "false" && str($0, "Shared") == "false" }
         if !unused.isEmpty {
-            out.append(Item(id: "docker.buildcache", source: .docker, name: "Unused build cache",
-                            detail: "Build cache · \(unused.count) records",
+            out.append(Item(id: "docker.buildcache", source: .docker, name: String(localized: "Unused build cache"),
+                            detail: String(localized: "Build cache · \(unused.count) records"),
                             bytes: unused.compactMap { dockerBytes(str($0, "Size")) }.reduce(0, +), handling: .recommend,
-                            reason: "Build steps no image uses now. The next build that needs one runs it again.",
+                            reason: String(localized: "Build steps no image uses now. The next build that needs one runs it again."),
                             removal: .command(["builder", "prune", "--force"]), path: nil))
         }
         return out
@@ -272,10 +272,10 @@ public enum DevTools {
                 guard let udid = dev["udid"] as? String, isUUID(udid) else { continue }
                 let shutDown = (dev["state"] as? String) == "Shutdown"
                 out.append(Item(id: "simulator.device." + udid, source: .simulator, name: dev["name"] as? String ?? udid,
-                                detail: "Simulator · \(platform(runtime)) runtime not installed",
+                                detail: String(localized: "Simulator · \(platform(runtime)) runtime not installed"),
                                 bytes: (dev["dataPathSize"] as? NSNumber)?.int64Value, handling: shutDown ? .offer : .show,
-                                reason: shutDown ? "Its runtime is gone, so it can't start. Its apps and data go with it."
-                                    : "Still running. Shut it down first.",
+                                reason: shutDown ? String(localized: "Its runtime is gone, so it can't start. Its apps and data go with it.")
+                                    : String(localized: "Still running. Shut it down first."),
                                 removal: shutDown ? .xcrun(["simctl", "delete", udid]) : nil, path: nil))
             }
         }
@@ -286,10 +286,10 @@ public enum DevTools {
             let inUse = used.contains(runtime.lowercased())
             let handling: Handling = deletable && !inUse ? .offer : .show
             let reason = !deletable ? "macOS keeps this runtime; remove it in Xcode's Components settings."
-                : inUse ? "Simulators use it. Remove them first, or keep it."
-                : "No simulator uses it. Xcode downloads it again when one needs it."
+                : inUse ? String(localized: "Simulators use it. Remove them first, or keep it.")
+                : String(localized: "No simulator uses it. Xcode downloads it again when one needs it.")
             out.append(Item(id: "simulator.runtime." + identifier, source: .simulator, name: "\(platform(runtime)) \(version) runtime",
-                            detail: "Simulator runtime", bytes: (rt["sizeBytes"] as? NSNumber)?.int64Value, handling: handling,
+                            detail: String(localized: "Simulator runtime"), bytes: (rt["sizeBytes"] as? NSNumber)?.int64Value, handling: handling,
                             reason: reason, removal: handling == .offer ? .xcrun(["simctl", "runtime", "delete", identifier]) : nil, path: nil))
         }
         return out
@@ -329,11 +329,11 @@ public enum DevTools {
             // A folder that can't be read counts as one the emulator is using.
             let running = DirectoryListing.names(folder).map { $0.contains { $0.hasSuffix(".lock") } } ?? true
             let handling: Handling = running || avdmanager == nil ? .show : .offer
-            let reason = running ? "The emulator is running it. Close the emulator first."
-                : avdmanager == nil ? "Delete it in Android Studio's Device Manager."
-                : "A virtual device with its apps and data. Android Studio can make a new one."
+            let reason = running ? String(localized: "The emulator is running it. Close the emulator first.")
+                : avdmanager == nil ? String(localized: "Delete it in Android Studio's Device Manager.")
+                : String(localized: "A virtual device with its apps and data. Android Studio can make a new one.")
             out.append(Item(id: "android.avd." + name, source: .android, name: config["avd.ini.displayname"] ?? name,
-                            detail: "Virtual device", bytes: AppLeftovers.measure(folder), handling: handling, reason: reason,
+                            detail: String(localized: "Virtual device"), bytes: AppLeftovers.measure(folder), handling: handling, reason: reason,
                             removal: handling == .offer ? .tool(avdmanager!, ["delete", "avd", "-n", name]) : nil, path: folder))
         }
         let images = sdk + "/system-images"
@@ -344,11 +344,11 @@ public enum DevTools {
                     guard isFolder(path) else { continue }
                     let inUse = used.contains("system-images/\(api)/\(tag)/\(abi)")
                     let handling: Handling = inUse || sdkmanager == nil ? .show : .offer
-                    let reason = inUse ? "A virtual device uses it."
-                        : sdkmanager == nil ? "Remove it in Android Studio's SDK Manager."
-                        : "No virtual device uses it. The SDK Manager downloads it again when one needs it."
+                    let reason = inUse ? String(localized: "A virtual device uses it.")
+                        : sdkmanager == nil ? String(localized: "Remove it in Android Studio's SDK Manager.")
+                        : String(localized: "No virtual device uses it. The SDK Manager downloads it again when one needs it.")
                     out.append(Item(id: "android.image.\(api).\(tag).\(abi)", source: .android, name: "\(api) · \(tag) · \(abi)",
-                                    detail: "System image", bytes: AppLeftovers.measure(path), handling: handling, reason: reason,
+                                    detail: String(localized: "System image"), bytes: AppLeftovers.measure(path), handling: handling, reason: reason,
                                     removal: handling == .offer ? .tool(sdkmanager!, ["--uninstall", "system-images;\(api);\(tag);\(abi)"]) : nil,
                                     path: path))
                 }
@@ -390,7 +390,7 @@ public enum DevTools {
                 let isRunning = m.processes.contains { running.contains($0) }
                 out.append(Item(id: "vm." + path, source: .virtualMachine, name: name,
                                 detail: isRunning ? "\(m.app) · running" : m.app, bytes: AppLeftovers.measure(path),
-                                handling: .show, reason: "A whole computer with everything installed in it. Remove it in \(m.app), which also handles its snapshots.",
+                                handling: .show, reason: String(localized: "A whole computer with everything installed in it. Remove it in \(m.app), which also handles its snapshots."),
                                 removal: nil, path: path))
             }
         }

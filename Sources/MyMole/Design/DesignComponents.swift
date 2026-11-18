@@ -495,9 +495,9 @@ struct DSIncompleteEmpty: View {
     }
 
     static func explanation(_ unreadable: [String]) -> String {
-        let places = unreadable.prefix(3).map { ($0 as NSString).abbreviatingWithTildeInPath }.joined(separator: ", ")
-        let more = unreadable.count > 3 ? String(localized: " and \(unreadable.count - 3) more") : ""
-        return String(localized: "MyMole couldn't read \(places)\(more), so this may not be everything. ")
+        var places = unreadable.prefix(3).map { ($0 as NSString).abbreviatingWithTildeInPath }
+        if unreadable.count > 3 { places.append(String(localized: "\(unreadable.count - 3) more")) }
+        return String(localized: "MyMole couldn't read \(places.formatted(.list(type: .and))), so this may not be everything. ")
             + String(localized: "Give MyMole Full Disk Access or access to those folders, then scan again.")
     }
 }
