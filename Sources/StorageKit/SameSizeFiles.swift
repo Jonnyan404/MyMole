@@ -23,6 +23,12 @@ enum SameSizeFiles {
     /// Files a test makes findable without waiting for Spotlight's index.
     static let indexedForTests = Mutex<Set<String>>([])
 
+    /// Guarded test runs ask Spotlight nothing: its index names the Mac's
+    /// own files, outside the tests' folders, and on a build machine its
+    /// server may not answer at all. Tests name their files in
+    /// `indexedForTests` instead.
+    static let asksSpotlight = ProcessInfo.processInfo.environment["MYMOLE_GUARDED_TEST"] != "1"
+
     /// Files sharing some of their blocks, not all, on the given volume of
     /// each length (`lengths`, length to devices), passing over the paths
     /// `skip` covers; at most `limit`. `stop` ends the wait for Spotlight.
@@ -30,7 +36,8 @@ enum SameSizeFiles {
         lengths: [Int64: Set<Int32>], skip: (String) -> Bool, limit: Int, stop: () -> Bool = { false }
     ) -> [CloneOverlaps.Holder] {
         guard !lengths.isEmpty, limit > 0 else { return [] }
-        let found = answer(within: answerLimit, stop: stop) { [lengths = Set(lengths.keys)] in spotlight(lengths: lengths) }
+        let found = asksSpotlight
+            ? answer(within: answerLimit, stop: stop) { [lengths = Set(lengths.keys)] in spotlight(lengths: lengths) } : nil
         let paths = Set((found ?? []) + indexedForTests.withLock { Array($0) })
         var out: [CloneOverlaps.Holder] = []
         FileSpace.withoutDownloading {

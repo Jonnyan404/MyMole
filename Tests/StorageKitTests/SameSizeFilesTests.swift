@@ -1,9 +1,15 @@
 import Dispatch
+import Foundation
 import Testing
 
 @testable import StorageKit
 
 @Suite struct SameSizeFilesTests {
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["MYMOLE_GUARDED_TEST"] == "1"))
+    func aGuardedRunAsksSpotlightNothing() {
+        #expect(!SameSizeFiles.asksSpotlight)
+    }
+
     @Test func aQuickAnswerIsUsed() {
         #expect(SameSizeFiles.answer(within: .seconds(30)) { ["/a"] } == ["/a"])
     }
