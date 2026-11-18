@@ -35,16 +35,7 @@ public enum PerformanceLevel: Int, CaseIterable, Sendable, Comparable {
 
     public static func < (a: Self, b: Self) -> Bool { a.rawValue < b.rawValue }
 
-    public var title: String {
-        switch self {
-        case .gentle: String(localized: "Gentle")
-        case .light: String(localized: "level.light", defaultValue: "Light", comment: "A speed or size level, between Gentle and Balanced; not the light appearance")
-        case .balanced: String(localized: "Balanced")
-        case .fast: String(localized: "Fast")
-        case .full: String(localized: "Maximum")
-        case .hyperspeed: String(localized: "Hyperspeed")
-        }
-    }
+    public var title: String { StepName.title(rawValue) }
 
     public var detail: String {
         switch self {
@@ -139,16 +130,7 @@ public enum ResultSize: Int, CaseIterable, Sendable, Comparable {
 
     public static func < (a: Self, b: Self) -> Bool { a.rawValue < b.rawValue }
 
-    public var title: String {
-        switch self {
-        case .gentle: String(localized: "Gentle")
-        case .light: String(localized: "level.light", defaultValue: "Light", comment: "A speed or size level, between Gentle and Balanced; not the light appearance")
-        case .balanced: String(localized: "Balanced")
-        case .fast: String(localized: "Fast")
-        case .maximum: String(localized: "Maximum")
-        case .hyperspeed: String(localized: "Hyperspeed")
-        }
-    }
+    public var title: String { StepName.title(rawValue) }
 
     public var detail: String {
         switch self {
@@ -216,4 +198,19 @@ public enum ResultSize: Int, CaseIterable, Sendable, Comparable {
     /// Points kept of a project's growth history. Hourly points still reach
     /// a day back within them.
     public var projectSamplesKept: Int { self == .hyperspeed ? .max : ProjectStore.keep }
+}
+
+/// The six steps the speed, size and responsiveness controls share, named
+/// in one place: step 1 is Gentle, step 6 Hyperspeed.
+public enum StepName {
+    public static func title(_ step: Int) -> String {
+        switch step {
+        case 1: String(localized: "Gentle")
+        case 2: String(localized: "level.light", defaultValue: "Light", comment: "A speed or size level, between Gentle and Balanced; not the light appearance")
+        case 3: String(localized: "Balanced")
+        case 4: String(localized: "Fast")
+        case 5: String(localized: "Maximum")
+        default: String(localized: "Hyperspeed")
+        }
+    }
 }
