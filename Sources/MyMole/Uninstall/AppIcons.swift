@@ -89,7 +89,14 @@ final class AppIcons {
             NSGraphicsContext.restoreGraphicsState()
         }
         guard let image = context.makeImage() else { return icon }
-        return NSImage(cgImage: image, size: NSSize(width: pixels / 2, height: pixels / 2))
+        // A bitmap representation of its own: an image made from a CGImage
+        // directly is a snapshot for the screen, of 64 pixels on one with a
+        // pixel a point, which would blur on a Retina display.
+        let bitmap = NSBitmapImageRep(cgImage: image)
+        bitmap.size = NSSize(width: pixels / 2, height: pixels / 2)
+        let out = NSImage(size: bitmap.size)
+        out.addRepresentation(bitmap)
+        return out
     }
 
     private nonisolated static func bitmap(in space: CGColorSpace?) -> CGContext? {
