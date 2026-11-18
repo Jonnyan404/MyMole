@@ -67,20 +67,35 @@ final class AppIcons {
     }
 
     /// The app's icon drawn once into a bitmap of `pixels` a side, in the
-    /// icon's own colour space; the icon as it is when that can't be done.
+    /// icon's own colour space when a bitmap of 8 bits a channel can hold
+    /// it and in sRGB when not, as for an extended range.
     nonisolated static func render(_ path: String) -> NSImage {
-        let icon = NSWorkspace.shared.icon(forFile: path)
-        var frame = CGRect(x: 0, y: 0, width: pixels, height: pixels)
-        guard let source = icon.cgImage(forProposedRect: &frame, context: nil, hints: nil) else { return icon }
-        let space = source.colorSpace.flatMap { $0.model == .rgb && $0.supportsOutput ? $0 : nil } ?? CGColorSpace(name: CGColorSpace.sRGB)
-        guard let space,
-              let context = CGContext(data: nil, width: pixels, height: pixels, bitsPerComponent: 8, bytesPerRow: 0, space: space,
-                                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
-        else { return icon }
+        render(icon: NSWorkspace.shared.icon(forFile: path))
+    }
+
+    nonisolated static func render(icon: NSImage) -> NSImage {
+        let rect = CGRect(x: 0, y: 0, width: pixels, height: pixels)
+        var frame = rect
+        let source = icon.cgImage(forProposedRect: &frame, context: nil, hints: nil)
+        let own = source?.colorSpace.flatMap { $0.model == .rgb && $0.supportsOutput ? $0 : nil }
+        guard let context = bitmap(in: own) ?? bitmap(in: CGColorSpace(name: CGColorSpace.sRGB)) else { return icon }
         context.interpolationQuality = .high
-        context.draw(source, in: CGRect(x: 0, y: 0, width: pixels, height: pixels))
-        guard let bitmap = context.makeImage() else { return icon }
-        return NSImage(cgImage: bitmap, size: NSSize(width: pixels / 2, height: pixels / 2))
+        if let source {
+            context.draw(source, in: rect)
+        } else {
+            NSGraphicsContext.saveGraphicsState()
+            NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
+            icon.draw(in: rect)
+            NSGraphicsContext.restoreGraphicsState()
+        }
+        guard let image = context.makeImage() else { return icon }
+        return NSImage(cgImage: image, size: NSSize(width: pixels / 2, height: pixels / 2))
+    }
+
+    private nonisolated static func bitmap(in space: CGColorSpace?) -> CGContext? {
+        guard let space else { return nil }
+        return CGContext(data: nil, width: pixels, height: pixels, bitsPerComponent: 8, bytesPerRow: 0, space: space,
+                         bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
     }
 }
 

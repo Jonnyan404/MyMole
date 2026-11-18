@@ -55,4 +55,30 @@ import Testing
         #expect(image.size == NSSize(width: AppIcons.pixels / 2, height: AppIcons.pixels / 2))
         #expect(image.representations.first?.pixelsWide == AppIcons.pixels)
     }
+
+    /// An icon in an extended range, which no bitmap of 8 bits a channel
+    /// holds, is drawn in sRGB rather than handed back as it is.
+    @Test func anIconInAnExtendedRangeIsDrawnInSRGB() throws {
+        let space = try #require(CGColorSpace(name: CGColorSpace.extendedSRGB))
+        let wide = try #require(CGContext(data: nil, width: 32, height: 32, bitsPerComponent: 16, bytesPerRow: 0, space: space,
+                                          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.floatComponents.rawValue
+                                              | CGBitmapInfo.byteOrder16Little.rawValue))
+        wide.setFillColor(red: 1.2, green: 0.2, blue: 0.2, alpha: 1)
+        wide.fill(CGRect(x: 0, y: 0, width: 32, height: 32))
+        let source = try #require(wide.makeImage())
+        let image = AppIcons.render(icon: NSImage(cgImage: source, size: NSSize(width: 32, height: 32)))
+        #expect(image.representations.first?.pixelsWide == AppIcons.pixels)
+        let drawn = try #require(image.cgImage(forProposedRect: nil, context: nil, hints: nil))
+        #expect(drawn.colorSpace?.name == CGColorSpace.sRGB)
+    }
+
+    /// An icon that gives no bitmap of its own is drawn into one.
+    @Test func anIconWithoutABitmapIsDrawnIntoOne() {
+        let drawn = NSImage(size: NSSize(width: 16, height: 16), flipped: false) { rect in
+            NSColor.systemBlue.setFill()
+            rect.fill()
+            return true
+        }
+        #expect(AppIcons.render(icon: drawn).representations.first?.pixelsWide == AppIcons.pixels)
+    }
 }
