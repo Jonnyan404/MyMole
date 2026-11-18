@@ -6418,7 +6418,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld 个应用数据位置无法完整检查，或属于链接。这些内容不会被选中；因此这不是一次完整搜索。"
+            "value" : "%1$lld 个应用数据位置无法完整检查，或属于符号链接。这些内容不会被选中；因此这不是一次完整搜索。"
           }
         }
       }
@@ -10611,7 +10611,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "项自行启动"
+                      "value" : "项自启动"
                     }
                   }
                 }
@@ -16332,7 +16332,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "某个后台代理发生了变化。应用保持原位。如果之前的代理已被停止，请重新打开该应用。"
+            "value" : "某个自启动项发生了变化。应用保持原位。如果之前的自启动项已被停止，请重新打开该应用。"
           }
         }
       }
@@ -16372,7 +16372,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "代理停止后仍有后台进程在运行。应用保持原位。"
+            "value" : "自启动项停止后仍有后台进程在运行。应用保持原位。"
           }
         }
       }
@@ -16772,7 +16772,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已拒绝链接的或无法访问的文件夹。"
+            "value" : "已拒绝符号链接的或无法访问的文件夹。"
           }
         }
       }
@@ -16812,7 +16812,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已拒绝链接的或格式错误的文件夹。"
+            "value" : "已拒绝符号链接的或格式错误的文件夹。"
           }
         }
       }
@@ -16892,7 +16892,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无法将某个正在运行的后台进程对应到该应用已加载的代理。没有移动任何内容。"
+            "value" : "无法把某个正在运行的后台进程对应到该应用已加载的自启动项。没有移动任何内容。"
           }
         }
       }
@@ -18878,7 +18878,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "所有用户的代理"
+            "value" : "所有用户的自启动项"
           }
         }
       }
@@ -22106,7 +22106,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "停止代理后无法检查后台进程。应用保持原位。"
+            "value" : "停止自启动项后无法检查后台进程。应用保持原位。"
           }
         }
       }
@@ -26838,7 +26838,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "请直接在废纸篓中选择可读取的应用。链接的应用包、macOS 自带应用以及身份不明的应用不被接受。"
+            "value" : "请直接在废纸篓中选择可读取的应用。符号链接的应用包、macOS 自带应用以及身份不明的应用不被接受。"
           }
         }
       }
@@ -27118,7 +27118,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "请至少选择一项你自己的登录代理。"
+            "value" : "请至少选择一项你自己的自启动项。"
           }
         }
       }
@@ -28118,7 +28118,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "选择程序已消失的你自己的代理"
+            "value" : "选择你自己的、程序已消失的自启动项"
           }
         }
       }
@@ -51498,7 +51498,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "将所选代理的文件移到废纸篓"
+            "value" : "将所选自启动项的文件移到废纸篓"
           }
         }
       }
@@ -55692,7 +55692,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MyMole 需要管理员批准才能停止 %1$@ 内置的后台代理并把该应用移到废纸篓。"
+            "value" : "MyMole 需要管理员批准才能停止 %1$@ 内置的自启动项，并把该应用移到废纸篓。"
           }
         }
       }
@@ -85330,7 +85330,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "该应用有一个正在运行的进程不是已核实的内置代理。请在卸载前退出该应用及其后台进程。"
+            "value" : "该应用有正在运行的进程不属于已核实的内置自启动项。请在卸载前退出该应用及其后台进程。"
           }
         }
       }
@@ -85370,7 +85370,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "该应用的内置代理条目太多，无法安全核实。"
+            "value" : "该应用的内置自启动项条目太多，无法安全核实。"
           }
         }
       }
@@ -85976,7 +85976,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "应用已重新启动，或其保护规则发生了变化。没有移动任何内容。如果其后台代理已被停止，重新打开该应用即可恢复。"
+            "value" : "应用已重新启动，或其保护规则发生了变化。没有移动任何内容。如果它的自启动项已被停止，重新打开该应用即可恢复。"
           }
         }
       }
@@ -86096,7 +86096,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无法停止该应用的后台代理（launchctl %d）。应用保持原位。如果之前的代理已被停止，请重新打开该应用。"
+            "value" : "无法停止该应用的自启动项（launchctl %d）。应用保持原位。如果之前的自启动项已被停止，请重新打开该应用。"
           }
         }
       }
@@ -86136,7 +86136,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无法读取该应用的内置代理。"
+            "value" : "无法读取该应用的内置自启动项。"
           }
         }
       }
@@ -86176,7 +86176,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无法检查该应用已加载的后台代理。没有移动任何内容。"
+            "value" : "无法检查该应用已加载的自启动项。没有移动任何内容。"
           }
         }
       }
@@ -87976,7 +87976,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "登录用户已更改。请返回 MyMole 后重试。"
+            "value" : "登录用户已更改。请回到 MyMole 再试一次。"
           }
         }
       }
@@ -88496,7 +88496,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "该用户的废纸篓不是其私有的。"
+            "value" : "该用户的废纸篓不是该用户专属的。"
           }
         }
       }
@@ -88536,7 +88536,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "该用户的废纸篓必须是真实的文件夹。"
+            "value" : "该用户的废纸篓必须是一个真实的目录。"
           }
         }
       }
@@ -88656,7 +88656,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "这些组件可能还供其他 Google 产品或安装使用。它们并非专属此应用，因此在这里不作为单独的移除选项。"
+            "value" : "这些组件可能还供其他 Google 产品或安装使用。它们并非此应用专属，因此在这里不作为单独的移除选项。"
           }
         }
       }
@@ -98446,7 +98446,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你的登录代理"
+            "value" : "你的自启动项"
           }
         }
       }
