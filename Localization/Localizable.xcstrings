@@ -10611,7 +10611,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "项自行启动"
+                      "value" : "项自启动"
                     }
                   }
                 }
