@@ -3,37 +3,6 @@ import PrivilegedKit
 import StorageKit
 import SwiftUI
 
-/// `NSWorkspace.icon(forFile:)` hits Launch Services each call; grid cells
-/// re-render on every search keystroke, so icons are fetched once per path.
-@MainActor
-enum AppIcons {
-    private static var cache: [String: NSImage] = [:]
-    /// In the order they were fetched, so the oldest go first.
-    private static var order: [String] = []
-    /// More icons than any app list shows at once; Settings → Responsiveness sets it.
-    static var limit = 300
-
-    static func icon(_ path: String) -> NSImage {
-        if let i = cache[path] { return i }
-        let i = NSWorkspace.shared.icon(forFile: path)
-        cache[path] = i
-        order.append(path)
-        if order.count > limit {
-            for old in order.prefix(order.count - limit) { cache[old] = nil }
-            order.removeFirst(order.count - limit)
-        }
-        return i
-    }
-
-    static var count: Int { cache.count }
-
-    /// Lets the icons go under memory pressure; each is fetched again when shown.
-    static func release() {
-        cache = [:]
-        order = []
-    }
-}
-
 /// The apps on the Mac, as cards. Click one to uninstall it; ⌘-click,
 /// or click once some are chosen, to choose several and uninstall them
 /// together. Apps dropped on the pane or on MyMole's icon open the same
@@ -451,9 +420,7 @@ struct UninstallView: View {
     private func card(_ app: AppBundle) -> some View {
         let isPicked = picked.contains(app.path)
         return VStack(spacing: DS.Space.sm) {
-            Image(nsImage: AppIcons.icon(app.path))
-                .resizable()
-                .frame(width: DS.Size.appTileIcon, height: DS.Size.appTileIcon)
+            InstalledAppIcon(path: app.path, side: DS.Size.appTileIcon)
             DSName(app.name, .lead, lines: 2, reservesSpace: true)
                 .multilineTextAlignment(.center)
             if app.isProtected {
@@ -569,8 +536,7 @@ struct UninstallSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.md) {
                     HStack(spacing: 14) {
-                        Image(nsImage: AppIcons.icon(app.path))
-                            .resizable().frame(width: 64, height: 64)
+                        InstalledAppIcon(path: app.path, side: 64)
                         VStack(alignment: .leading, spacing: 3) {
                             Text(app.name).font(.title2.bold())
                             DSPath(app.path, .mono)

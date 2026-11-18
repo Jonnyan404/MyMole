@@ -200,7 +200,8 @@ public final class SpillTable: @unchecked Sendable {
     /// without filling the hot pages; nil if stopped or damaged.
     public func ordered(by order: Order, ascending: Bool, query: String = "", keep: (Row) -> Bool = { _ in true },
                         stop: () -> Bool = { false }) -> [UInt32]? {
-        let words = query.lowercased().split(separator: " ").map(String.init)
+        let search = WordSearch(query)
+        var scratch: [UInt8] = []
         var picked: [UInt32] = []
         var numbers: [Double] = []
         var texts: [String] = []
@@ -208,10 +209,7 @@ public final class SpillTable: @unchecked Sendable {
             if stop() { return nil }
             guard let rows = try? read(page: page) else { return nil }
             for (i, row) in rows.enumerated() {
-                if !words.isEmpty {
-                    let path = row.path.lowercased()
-                    guard words.allSatisfy({ path.contains($0) }) else { continue }
-                }
+                guard search.matches(row.path, scratch: &scratch) else { continue }
                 guard keep(row) else { continue }
                 picked.append(UInt32(page * Self.pageRows + i))
                 switch order {

@@ -355,8 +355,7 @@ struct DiskImageSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
             HStack(spacing: 14) {
-                Image(nsImage: AppIcons.icon(item.app.path))
-                    .resizable().frame(width: 64, height: 64)
+                InstalledAppIcon(path: item.app.path, side: 64)
                 VStack(alignment: .leading, spacing: 3) {
                     Text(item.app.name).font(.title2.bold())
                     DSPath(item.app.path, .mono)

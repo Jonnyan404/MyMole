@@ -3,6 +3,7 @@ import Foundation
 @testable import StorageKit
 import Synchronization
 import SwiftUI
+import SystemKit
 import Testing
 
 @testable import MyMole
@@ -84,7 +85,11 @@ struct KPIBenchmarkTests {
             let rows = Self.tableRows(n)
             Self.gate("ram.sort-size.\(label)", Self.ms { _ = FileTable.sorted(rows, by: .size, ascending: false) })
             Self.gate("ram.sort-name.\(label)", Self.ms { _ = FileTable.sorted(rows, by: .name, ascending: true) })
-            Self.gate("ram.filter.\(label)", Self.ms { _ = rows.filter { $0.name.lowercased().contains("file-12") } })
+            // The lists' own filter: prepared once, each row's name and folder looked through.
+            let query = TextQuery("file-12")
+            var matched = 0
+            Self.gate("ram.filter.\(label)", Self.ms { matched = rows.filter { query.matches($0.name, $0.location ?? "") }.count })
+            #expect(matched > 0)
         }
     }
 
@@ -136,6 +141,193 @@ struct KPIBenchmarkTests {
         let tree = box.path + "/deep"
         _ = StorageScanner.scan(path: tree)
         Self.gate("scan.disk-map.10k-folders.one-walker", Self.ms { _ = StorageScanner.scan(path: tree, workers: 1) })
+    }
+
+    /// How soon a walk under way ends once it's asked to.
+    @Test func aWalkUnderWayStopsAtOnce() throws {
+        let box = try Box()
+        for branch in 0..<20 { for twig in 0..<20 { for leaf in 0..<25 { box.file("deep/branch-\(branch)/twig-\(twig)/leaf-\(leaf)/a.txt", bytes: 1) } } }
+        let tree = box.path + "/deep"
+        _ = StorageScanner.scan(path: tree)
+        let progress = ScanProgress()
+        let ended = Mutex<ContinuousClock.Instant?>(nil)
+        let finished = DispatchSemaphore(value: 0)
+        DispatchQueue.global(qos: .userInitiated).async {
+            _ = StorageScanner.scan(path: tree, progress: progress, workers: 1)
+            ended.withLock { $0 = .now }
+            finished.signal()
+        }
+        Thread.sleep(forTimeInterval: 0.02)
+        let asked = ContinuousClock.now
+        progress.cancel()
+        finished.wait()
+        let end = try #require(ended.withLock { $0 })
+        // A walk that ended by itself before the stop says nothing about stopping.
+        try #require(end > asked && progress.folders < 10_000)
+        Self.gate("scan.stop", Double((end - asked) / .microseconds(1)) / 1_000)
+    }
+
+    /// Walks waiting on the disk hold threads of their own, so a task
+    /// started meanwhile starts at once, however many of them there are.
+    @Test func blockedWalksDoNotHoldUpOtherTasks() async throws {
+        let walks = ProcessInfo.processInfo.activeProcessorCount + 2
+        let budget = ScanBudget(slots: .max)
+        let release = DispatchSemaphore(value: 0)
+        let blocked = (0..<walks).map { _ in
+            Task.detached(priority: .userInitiated) { await budget.walk(background: false) { release.wait() } }
+        }
+        // Held up or not, the walks end: a task that never started would otherwise never be measured.
+        DispatchQueue.global().asyncAfter(deadline: .now() + 3) { for _ in 0..<walks { release.signal() } }
+        while budget.running < walks { try await Task.sleep(for: .milliseconds(2)) }
+        let asked = ContinuousClock.now
+        let started = await Task.detached(priority: .userInitiated) { ContinuousClock.now }.value
+        Self.gate("tasks.start-while-walks-block", Double((started - asked) / .microseconds(1)) / 1_000)
+        for _ in 0..<walks { release.signal() }
+        for task in blocked { _ = await task.value }
+    }
+
+    // MARK: A finished map: its lists, search, one folder read again, memory
+
+    /// A map as a scan leaves it: `chains` folders under the root, each
+    /// `depth` folders deep, every folder holding `files` listed files.
+    private static func map(chains: Int, depth: Int, files: Int) -> Folder {
+        let root = Folder(name: "synthetic", parent: nil, rootPath: "/synthetic")
+        for chain in 0..<chains {
+            var parent = root
+            for level in 0..<depth {
+                let folder = Folder(name: level == 0 ? "chain-\(chain)" : "level-\(level)", parent: parent)
+                folder.listedFiles = (0..<files).map { i in
+                    FileItem(name: "file-\(i).bin", size: Int64((chain * 31 + level * 7 + i) % 100_003) + 1_048_576, modified: .distantPast, kind: .other)
+                }
+                for item in folder.listedFiles { folder.ownBytes[.other] += item.size }
+                parent.subfolders.append(folder)
+                parent = folder
+            }
+        }
+        root.finish()
+        return root
+    }
+
+    /// Bytes the process has allocated and not freed: unlike its footprint,
+    /// unmoved by memory an earlier test gave back.
+    private static func allocated() -> Int64 {
+        var stats = malloc_statistics_t()
+        malloc_zone_statistics(nil, &stats)
+        return Int64(stats.size_in_use)
+    }
+
+    /// What follows the walk before a map is complete, and searching it whole.
+    @Test func aFinishedMapIsPreparedAndSearchedQuickly() throws {
+        let tree = Self.map(chains: 400, depth: 10, files: 50)
+        var large: [LargeFile] = []
+        var index: ScanIndex?
+        Self.gate("disk-map.prepare.200k-files", Self.ms {
+            large = StorageModel.collectLargeFiles(tree, limit: .max)
+            index = ScanIndex(tree, limit: .max)
+            _ = Snapshot(of: tree)
+        })
+        #expect(large.count == 200_000)
+        let built = try #require(index)
+        var found = 0
+        Self.gate("disk-map.search.200k-files", Self.ms { found = built.search("file-4 level-7").found.count })
+        #expect(found > 0)
+    }
+
+    /// Refresh Current Folder copies the map around the folder read again.
+    @Test func oneFolderOfALargeMapIsReadAgainQuickly() throws {
+        let tree = Self.map(chains: 1_000, depth: 100, files: 0)
+        let fresh = Folder(name: "level-50", parent: nil, rootPath: tree.path + "/chain-7" + (1...50).map { "/level-\($0)" }.joined())
+        fresh.finish()
+        var replaced: Folder?
+        Self.gate("disk-map.refresh-folder.100k-folders", Self.ms { replaced = tree.replacingSubtree(at: fresh.path, with: fresh) })
+        #expect(replaced?.find(path: fresh.path)?.subfolders.isEmpty == true)
+    }
+
+    @Test func aMapTakesLittleMemoryForEachFolder() {
+        let before = Self.allocated()
+        let tree = Self.map(chains: 2_000, depth: 50, files: 0)
+        Self.gate("memory.disk-map.bytes-per-folder", Double(Self.allocated() - before) / 100_001, unit: "B")
+        withExtendedLifetime(tree) {}
+    }
+
+    // MARK: Changes
+
+    @Test func twoSavedScansAreComparedQuickly() throws {
+        let box = try Box()
+        func snapshot(grown: Int64, at date: Date) -> Snapshot {
+            var sizes: [String: Int64] = ["": 1 << 40]
+            var files: [String: Int64] = [:]
+            for a in 0..<200 { for b in 0..<50 { sizes["a\(a)/b\(b)"] = Int64(a * 50 + b + 1) * 20_000_000 + (b % 7 == 0 ? grown : 0) } }
+            for f in 0..<10_000 { files["a\(f % 200)/b\(f % 50)/video-\(f).mov"] = 60_000_000 + (f % 11 == 0 ? grown : 0) }
+            return Snapshot(rootPath: "/synthetic", date: date, sizes: sizes, files: files)
+        }
+        let older = snapshot(grown: 0, at: Date(timeIntervalSince1970: 1_000_000))
+        let newer = snapshot(grown: 80_000_000, at: Date(timeIntervalSince1970: 1_090_000))
+        var saved: [SnapshotRef] = []
+        Self.gate("changes.save-two-scans", Self.ms { saved = [older, newer].compactMap { SnapshotStore.save($0, base: box.root) } })
+        try #require(saved.count == 2)
+        var result: StorageModel.Comparison?
+        Self.gate("changes.load-and-compare", Self.ms { result = StorageModel.comparison(SnapshotStore.load(saved[0]), SnapshotStore.load(saved[1])) })
+        #expect(result?.changes.isEmpty == false && result?.problem == nil)
+    }
+
+    // MARK: The other panes' searches
+
+    @Test func appsAndCachesAreListedQuickly() throws {
+        let box = try Box()
+        for i in 0..<100 {
+            let contents = "Applications/Canvas\(i).app/Contents"
+            box.file(contents + "/Resources/item0", bytes: 0)
+            let info: NSDictionary = ["CFBundleIdentifier": "org.example.Canvas\(i)", "CFBundleName": "Canvas\(i)"]
+            try info.write(to: box.root.appending(path: contents + "/Info.plist"))
+            for f in 1..<100 { box.file(contents + "/Resources/item\(f)", bytes: 0) }
+        }
+        let places = [box.path + "/Applications"]
+        _ = AppFinder.list(in: places)
+        // The names appear first; the listing stops where sizes would start.
+        Self.gate("apps.inventory.100", Self.ms {
+            let progress = ScanProgress()
+            _ = AppFinder.list(in: places, progress: progress) { _ in progress.cancel() }
+        })
+        var measured = 0
+        Self.gate("apps.sizes.100", Self.ms { measured = AppFinder.list(in: places).apps.count })
+        #expect(measured == 100)
+
+        for cache in 0..<200 { for f in 0..<20 { box.file("home/Library/Caches/org.example.cache\(cache)/part-\(f)", bytes: 64) } }
+        for log in 0..<50 { box.file("home/Library/Logs/Example\(log)/run.log", bytes: 64) }
+        _ = CleanScanner.list(home: box.path + "/home")
+        var candidates = 0
+        Self.gate("deep-clean.scan.250-places", Self.ms { candidates = CleanScanner.list(home: box.path + "/home").candidates.count })
+        #expect(candidates >= 250)
+    }
+
+    @Test func identicalFilesAndSimilarPicturesAreFoundQuickly() throws {
+        let box = try Box()
+        try FileManager.default.createDirectory(at: box.root.appending(path: "files"), withIntermediateDirectories: true)
+        for pair in 0..<1_000 {
+            var content = Data(repeating: UInt8(pair % 251), count: 8_192)
+            withUnsafeBytes(of: UInt64(pair)) { content.replaceSubrange(0..<8, with: $0) }
+            for copy in ["a", "b"] { FileManager.default.createFile(atPath: box.path + "/files/f\(pair)-\(copy).bin", contents: content) }
+        }
+        var groups = 0
+        Self.gate("duplicates.2k-files", Self.ms { groups = DuplicateFinder.find(in: [box.path + "/files"], minimum: 4_096, workers: 4).groups.count })
+        #expect(groups == 1_000)
+
+        var state: UInt64 = 0x9E37_79B9_7F4A_7C15
+        let prints = (0..<20_000).map { i -> (SimilarImage, UInt64) in
+            state = state &* 6_364_136_223_846_793_005 &+ 1_442_695_040_888_963_407
+            return (SimilarImage(path: "/synthetic/\(i).jpg", bytes: 1, modified: .distantPast, width: 1, height: 1, inode: 0, length: 1), state)
+        }
+        Self.gate("similar.group-20k-pictures", Self.ms { _ = SimilarImages.group(prints) })
+    }
+
+    // MARK: Live Status
+
+    /// One reading of the Mac, as Live Status takes every two seconds while it shows.
+    @Test func oneReadingOfTheMacIsQuick() {
+        let sampler = SystemSampler(warmup: .zero)
+        _ = sampler.sample()
+        Self.gate("status.reading", Self.ms { _ = sampler.sample() })
     }
 
     /// Scans `path` with a fresh model while a plain main-queue timer

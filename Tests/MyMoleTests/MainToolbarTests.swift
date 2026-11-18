@@ -66,6 +66,67 @@ struct MainToolbarTests {
         #expect(box.tab == 1)
     }
 
+    /// With room in the toolbar, a subtitle shows in full: the title's
+    /// smallest width is for a crowded toolbar, not the width it's given.
+    @Test func aSubtitleShowsInFullWhereTheToolbarHasRoom() async throws {
+        let toolbar = MainToolbar()
+        let window = window()
+        defer { window.close() }
+        window.setFrame(NSRect(x: 0, y: 0, width: 1_440, height: 700), display: false)
+        toolbar.attach(to: window)
+        let box = Box()
+        let subtitle = "Caches, logs and tool downloads that are made again"
+        toolbar.show(PaneChrome(title: "Pane", subtitle: subtitle, tools: [
+            .button("test.run", "Run", symbol: "arrow.clockwise", help: "Run it") { box.ran.append("run") },
+        ]), environment: EnvironmentValues())
+        window.orderFrontRegardless()
+        window.layoutIfNeeded()
+        // The title is fitted once the update that showed it is done.
+        try await Task.sleep(for: .milliseconds(50))
+        window.layoutIfNeeded()
+        window.displayIfNeeded()
+        let item = try #require(toolbar.toolbar.items.first { $0.itemIdentifier.rawValue == "pane.title" })
+        let labels = try #require((item.view as? NSStackView)?.arrangedSubviews.compactMap { $0 as? NSTextField })
+        let label = try #require(labels.first { $0.stringValue == subtitle })
+        #expect(label.frame.width >= label.intrinsicContentSize.width - 1, "subtitle \(label.frame.width) of \(label.intrinsicContentSize.width)")
+    }
+
+    /// In a crowded toolbar the subtitle gives way before any tool leaves
+    /// for the overflow menu, and the title stays whole.
+    @Test func aCrowdedToolbarKeepsItsToolsAndCutsTheSubtitle() async throws {
+        let toolbar = MainToolbar()
+        let window = window()
+        defer { window.close() }
+        window.setFrame(NSRect(x: 0, y: 0, width: 980, height: 700), display: false)
+        toolbar.attach(to: window)
+        let box = Box()
+        let tab = Binding(get: { box.tab }, set: { box.tab = $0 })
+        let subtitle = "Caches, logs and tool downloads that are made again"
+        let buttons = (0..<6).map { i in PaneTool.button("test.b\(i)", "Tool \(i)", symbol: "arrow.clockwise", help: "Tool \(i)") { box.ran.append("b\(i)") } }
+        let tools = [PaneTool.choice("test.tab", "Section", selection: tab, options: [(0, "Browse"), (1, "Large Files"), (2, "Changes"), (3, "Skipped (1)")])] + buttons
+        // What fits beside a title with nothing under it is what must still fit.
+        toolbar.show(PaneChrome(title: "Pane Title", subtitle: "", tools: tools), environment: EnvironmentValues())
+        window.orderFrontRegardless()
+        window.layoutIfNeeded()
+        try await Task.sleep(for: .milliseconds(50))
+        window.layoutIfNeeded()
+        let fitting = try #require(toolbar.toolbar.visibleItems).count
+        try #require(fitting < toolbar.toolbar.items.count, "the toolbar must be crowded for this to say anything")
+        toolbar.show(PaneChrome(title: "Pane Title", subtitle: subtitle, tools: tools), environment: EnvironmentValues())
+        window.layoutIfNeeded()
+        try await Task.sleep(for: .milliseconds(50))
+        window.layoutIfNeeded()
+        window.displayIfNeeded()
+        let visible = try #require(toolbar.toolbar.visibleItems)
+        #expect(visible.count == fitting, "\(visible.count) of \(fitting) items still shown")
+        let shown = try #require((toolbar.toolbar.items.first { $0.itemIdentifier.rawValue == "pane.title" }?.view as? NSStackView))
+        #expect(shown.frame.width <= MainToolbar.compactTitleWidth + 8, "title \(shown.frame.width) wide")
+        let item = try #require(toolbar.toolbar.items.first { $0.itemIdentifier.rawValue == "pane.title" })
+        let labels = try #require((item.view as? NSStackView)?.arrangedSubviews.compactMap { $0 as? NSTextField })
+        let title = try #require(labels.first { $0.stringValue == "Pane Title" })
+        #expect(title.frame.width >= title.intrinsicContentSize.width - 1)
+    }
+
     /// A pane being taken away may be drawn once more after the next one
     /// came in; its tools must not come back.
     @Test func onlyThePaneShownLastSetsTheToolbar() throws {

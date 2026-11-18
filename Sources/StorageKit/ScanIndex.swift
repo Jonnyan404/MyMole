@@ -75,19 +75,26 @@ public struct ScanIndex: Sendable {
     public func search(
         _ query: String, limit: Int = 2_000, keep: (Entry) -> Bool = { _ in true }
     ) -> (found: [Int], more: Bool) {
-        let words = query.lowercased().split(separator: " ").map(String.init)
+        let search = WordSearch(query)
         var found: [Int] = []
-        for i in entries.indices where entries[i].parent >= 0 && keep(entries[i]) {
-            let e = entries[i]
-            // The name first; the path is put together only when the name alone doesn't do.
-            // Lower-cased and compared plainly: the quickest case-blind match.
-            let name = e.name.lowercased()
-            let pending = words.filter { !name.contains($0) }
-            if !pending.isEmpty {
-                let p = path(i).lowercased()
-                guard pending.allSatisfy({ p.contains($0) }) else { continue }
+        var scratch: [UInt8] = []
+        // A word with a slash can lie across two names, so the whole path is put together for it.
+        if let every = search.every, !query.contains("/") {
+            // A path holds the words its folder's path holds and those its
+            // own name adds. Folders come before what's in them, so each
+            // entry starts from its folder's words and no path is put together.
+            var held = [UInt64](repeating: 0, count: entries.count)
+            for i in entries.indices {
+                let e = entries[i]
+                var words = e.parent >= 0 ? held[Int(e.parent)] : search.mask(of: rootPath, scratch: &scratch)
+                if e.parent >= 0, words != every { words |= search.mask(of: e.name, wanted: every & ~words, scratch: &scratch) }
+                if e.isFolder { held[i] = words }
+                if e.parent >= 0, words == every, keep(e) { found.append(i) }
             }
-            found.append(i)
+        } else {
+            for i in entries.indices where entries[i].parent >= 0 && keep(entries[i]) && search.matches(path(i), scratch: &scratch) {
+                found.append(i)
+            }
         }
         found.sort { entries[$0].size > entries[$1].size }
         return (Array(found.prefix(limit)), found.count > limit)
