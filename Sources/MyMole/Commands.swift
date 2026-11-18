@@ -82,7 +82,7 @@ extension AppModel {
                 blocker: pane != .diskMap ? String(localized: "Only in the Disk Map.") : up == nil ? String(localized: "This is the top of the map.") : nil
             ) { [self] in storage.back() }
         case .settings:
-            return AppCommand(id: id, title: String(localized: "Settings…"), symbol: "gearshape", key: ",", blocker: nil) { [self] in pane = .settings }
+            return AppCommand(id: id, title: String(localized: "Settings…"), symbol: "gearshape", key: ",", blocker: nil) { [self] in showWindow(on: .settings) }
         case .palette:
             return AppCommand(id: id, title: String(localized: "Command Palette…"), symbol: "command", key: "k", blocker: nil) { [self] in showPalette = true }
         }

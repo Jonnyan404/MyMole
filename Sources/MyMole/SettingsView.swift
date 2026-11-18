@@ -32,6 +32,7 @@ struct SettingsView: View {
     @State private var spilledBytes: Int64?
     @State private var confirmingClear = false
     @State private var showingSelfRemoval = false
+    @State private var language = LanguageSetting.chosen()
 
 
     private var diskAccessText: String {
@@ -133,6 +134,18 @@ struct SettingsView: View {
     private var appearance: some View {
         DSSection("Appearance", rows: false) {
             DSFormGrid {
+                DSFormRow("Language", help: "MyMole shows its windows and dialogs in this language. macOS picks the language when MyMole starts, so a change applies the next time it opens.") {
+                    Picker("Language", selection: Binding(get: { language }, set: { code in
+                        language = code
+                        LanguageSetting.choose(code)
+                    })) {
+                        Text("Same as the Mac").tag(String?.none)
+                        Divider()
+                        ForEach(LanguageSetting.available, id: \.self) { Text(verbatim: LanguageSetting.name(of: $0)).tag(String?.some($0)) }
+                    }
+                    .labelsHidden()
+                    .fixedSize()
+                }
                 DSFormRow("Appearance") {
                     Picker("Appearance", selection: $mode) {
                         ForEach(AppearanceMode.allCases) { Text($0.title).tag($0.rawValue) }

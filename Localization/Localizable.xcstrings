@@ -45885,6 +45885,40 @@
         }
       }
     },
+    "Language" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprache"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idioma"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Langue"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "भाषा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "언어"
+          }
+        }
+      }
+    },
     "Large Files" : {
       "localizations" : {
         "de" : {
@@ -55689,6 +55723,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "MyMole 需要管理员权限才能运行系统维护。"
+          }
+        }
+      }
+    },
+    "MyMole shows its windows and dialogs in this language. macOS picks the language when MyMole starts, so a change applies the next time it opens." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole zeigt seine Fenster und Dialoge in dieser Sprache. macOS wählt die Sprache beim Start von MyMole, daher gilt eine Änderung ab dem nächsten Öffnen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole muestra sus ventanas y diálogos en este idioma. macOS elige el idioma cuando se abre MyMole, así que un cambio se aplica la próxima vez que lo abras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole affiche ses fenêtres et dialogues dans cette langue. macOS choisit la langue au démarrage de MyMole : un changement s’applique donc à sa prochaine ouverture."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole अपनी विंडो और डायलॉग इस भाषा में दिखाता है। macOS भाषा MyMole शुरू होते समय चुनता है, इसलिए बदलाव अगली बार खोलने पर लागू होता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole의 윈도우와 대화상자가 이 언어로 표시됩니다. macOS는 MyMole이 시작될 때 언어를 정하므로 변경 사항은 다음에 열 때 적용됩니다."
           }
         }
       }
@@ -73885,6 +73953,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "运行 macOS 的每日、每周和每月维护脚本，这些脚本会轮转并裁剪系统日志。"
+          }
+        }
+      }
+    },
+    "Same as the Mac" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie der Mac"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Igual que el Mac"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comme le Mac"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac के समान"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac과 동일"
           }
         }
       }
