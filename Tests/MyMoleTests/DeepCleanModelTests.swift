@@ -72,6 +72,58 @@ private final class ToolNames: @unchecked Sendable {
         #expect(!model.candidates.isEmpty)
     }
 
+    /// The temporary folders hold far more than the caches. The scan itself
+    /// is in, and can be chosen from, before they've been looked through:
+    /// the launch's other scans wait only for `scanJob`.
+    @Test func theScanIsInBeforeTheTemporaryFoldersAreLookedThrough() async throws {
+        let home = try Home()
+        let release = DispatchSemaphore(value: 0)
+        let model = DeepCleanModel(
+            home: home.path, temporary: ["/synthetic/temp"], base: home.url.appending(path: "store"), keepURL: home.url.appending(path: "keep.json"),
+            logURL: home.url.appending(path: "history.json"), runningApps: { [] }, runningTools: { [] },
+            trash: testBin(home.url), projectRules: home.projectRules, quietFor: 0)
+        let old = Date(timeIntervalSince1970: 1_600_000_000)
+        model.findTemporary = { roots, _ in
+            release.wait()
+            return [CleanCandidate(path: roots[0] + "/old-build", bytes: 9_000, modified: old, category: .temporary, safety: .review, owner: nil, reason: "synthetic")]
+        }
+        defer { release.signal() }
+        // Started ahead of need, as at launch: the temporary folders aren't read at all.
+        model.scan(background: true)
+        await model.scanJob?.value
+        #expect(!model.scanning && !model.lookingInTemporary && model.temporaryJob == nil)
+        #expect(!model.candidates.isEmpty)
+        // Opening the pane looks through them, with the list already there to choose from.
+        model.scanIfNeeded()
+        #expect(!model.scanning && model.lookingInTemporary)
+        #expect(!model.candidates.isEmpty && !model.candidates.contains { $0.category == .temporary })
+        #expect(model.chosen.contains(home.path + "/Library/Caches/com.vendor.Player"))
+        release.signal()
+        await model.temporaryJob?.value
+        #expect(!model.lookingInTemporary)
+        let found = try #require(model.candidates.first { $0.category == .temporary })
+        // Listed, never chosen for the user, and what was chosen stays chosen.
+        #expect(found.path == "/synthetic/temp/old-build" && !model.chosen.contains(found.path))
+        #expect(model.chosen.contains(home.path + "/Library/Caches/com.vendor.Player"))
+
+        // A scan again keeps the find listed until the next look replaces it.
+        model.findTemporary = { _, _ in [] }
+        model.scan()
+        await model.scanJob?.value
+        #expect(model.candidates.contains { $0.category == .temporary } || !model.lookingInTemporary)
+        await model.temporaryJob?.value
+        #expect(!model.candidates.contains { $0.category == .temporary } && !model.lookingInTemporary)
+    }
+
+    /// Without temporary folders named there's no second look at all.
+    @Test func noSecondLookWithoutTemporaryFolders() async throws {
+        let home = try Home()
+        let model = home.model()
+        model.scan()
+        await model.scanJob?.value
+        #expect(!model.lookingInTemporary && model.temporaryJob == nil)
+    }
+
     @Test func aCacheWrittenJustNowIsLeftUnticked() async throws {
         let home = try Home()
         // Everything but the editor's cache was last written an hour ago.

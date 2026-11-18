@@ -660,8 +660,21 @@ public enum CleanScanner {
         return CleanListing(candidates: steps.found, unreadable: unreadable.sorted())
     }
 
+    /// What's offered straight inside the temporary folders `roots`, by
+    /// their real paths. A look of its own: the folders can hold hundreds of
+    /// thousands of files, far more than the caches in the home folder, so
+    /// the app runs it after the rest and lets nothing wait on it.
+    public static func temporary(in roots: [String], progress: ScanProgress = ScanProgress(), workers: Int = 2) -> [CleanCandidate] {
+        var unreadable: [String] = []
+        var found: [CleanCandidate] = []
+        for target in CleanRules.temporaryTargets(roots) where !progress.isCancelled {
+            found += candidates(in: target, progress: progress, workers: workers, unreadable: &unreadable)
+        }
+        return progress.isCancelled ? [] : ordered(found)
+    }
+
     /// Largest first, then by path.
-    static func ordered(_ c: [CleanCandidate]) -> [CleanCandidate] {
+    public static func ordered(_ c: [CleanCandidate]) -> [CleanCandidate] {
         c.sorted { $0.bytes != $1.bytes ? $0.bytes > $1.bytes : $0.path < $1.path }
     }
 

@@ -61,6 +61,18 @@ final class DeepCleanModel {
     /// Temporary folders outside the home folder to look in as well, by
     /// their real paths; none unless the app names them.
     let temporary: [String]
+    /// The temporary folders are being looked through, after the scan
+    /// itself is in: they hold far more files than the caches, so what was
+    /// found in the home folder is shown and can be chosen meanwhile, and
+    /// neither the launch's other scans nor Smart Scan wait for them.
+    private(set) var lookingInTemporary = false
+    private(set) var temporaryJob: Task<Void, Never>?
+    @ObservationIgnored private var temporaryRun: ScanProgress?
+    @ObservationIgnored private var temporaryDeferred = false
+    /// Looks through the temporary folders; tests hold it to see what waits.
+    @ObservationIgnored var findTemporary: @Sendable ([String], ScanProgress) -> [CleanCandidate] = {
+        CleanScanner.temporary(in: $0, progress: $1)
+    }
     private let base: URL
     private let keepURL: URL
     /// Where the project rules are saved.
@@ -180,6 +192,12 @@ final class DeepCleanModel {
 
     func scanIfNeeded() {
         guard !scanning else { return }
+        // A scan started ahead of need left the temporary folders for when
+        // the pane is opened: nothing at launch reads them.
+        if temporaryDeferred, !lookingInTemporary, !trashing {
+            temporaryDeferred = false
+            lookInTemporary(background: false)
+        }
         if scannedThisLaunch, !isStale, let at = scannedAt, Date().timeIntervalSince(at) < Self.freshFor { return }
         scan()
     }
@@ -191,6 +209,7 @@ final class DeepCleanModel {
             return
         }
         progress?.cancel()
+        temporaryRun?.cancel()
         let p = ScanProgress()
         progress = p
         scannedThisLaunch = true
@@ -199,7 +218,7 @@ final class DeepCleanModel {
         startedAt = .now
         scanFraction = 0
         preview = []
-        let (home, temporary) = (home, temporary)
+        let home = home
         let level = PerformanceLevel.inEffect()
         let workers = level.workers(background: background)
         let lookUpTools = runningTools
@@ -207,18 +226,49 @@ final class DeepCleanModel {
         let steps = LatestOnly<CleanScanStep> { [weak self] step in self?.stepped(step, run: p) }
         scanJob = Task.detached(priority: level.priority(background: background)) { [weak self] in
             let found = await ScanBudget.shared.walk(background: background, progress: p) {
-                CleanScanner.list(home: home, progress: p, workers: workers, temporary: temporary, onStep: { steps.send($0) })
+                CleanScanner.list(home: home, progress: p, workers: workers, onStep: { steps.send($0) })
             }
             // Reading every process's arguments is slow; it's done here, not on the main thread.
             let tools = p.isCancelled ? nil : lookUpTools()
             // Nil when the rules can't be read: what was known stays shown,
             // and a move stops on them by itself.
             let kept = p.isCancelled ? nil : (try? ProjectStore.loadRules(base: projectRules))?.keepPaths
-            await self?.finished(found, run: p, tools: tools, keptInProjects: kept)
+            await self?.finished(found, run: p, tools: tools, keptInProjects: kept, background: background)
         }
     }
 
-    func stop() { progress?.cancel() }
+    func stop() {
+        progress?.cancel()
+        temporaryRun?.cancel()
+    }
+
+    /// The second, slower look, once the scan's own result is on screen. Its
+    /// finds join the list unticked; an earlier look's stay until then.
+    private func lookInTemporary(background: Bool) {
+        temporaryRun?.cancel()
+        guard !temporary.isEmpty else { return }
+        let run = ScanProgress()
+        temporaryRun = run
+        lookingInTemporary = true
+        let (roots, find) = (temporary, findTemporary)
+        // Below the scans someone waits on, and behind them for a slot.
+        temporaryJob = Task.detached(priority: .utility) { [weak self] in
+            let found = await ScanBudget.shared.walk(background: true, progress: run) { find(roots, run) }
+            await self?.foundTemporary(found, run: run)
+        }
+    }
+
+    private func foundTemporary(_ found: [CleanCandidate]?, run: ScanProgress) {
+        guard run === temporaryRun else { return }
+        temporaryRun = nil
+        lookingInTemporary = false
+        // The list mustn't change under a move or Undo; the next scan looks again.
+        guard !run.isCancelled, let found, !trashing else { return }
+        candidates = CleanScanner.ordered(candidates.filter { $0.category != .temporary } + found)
+        let paths = Set(candidates.map(\.path))
+        chosen.formIntersection(paths)
+        selection.formIntersection(paths)
+    }
 
     private func stepped(_ step: CleanScanStep, run: ScanProgress) {
         guard run === progress, scanning else { return }
@@ -238,7 +288,8 @@ final class DeepCleanModel {
 
     /// Only a complete scan replaces the list. The first scan of a launch
     /// chooses the safe items of apps that aren't running.
-    private func finished(_ listing: CleanListing?, run: ScanProgress, tools found_tools: Set<String>?, keptInProjects kept: Set<String>?) {
+    private func finished(_ listing: CleanListing?, run: ScanProgress, tools found_tools: Set<String>?, keptInProjects kept: Set<String>?,
+                          background: Bool = false) {
         guard run === progress else { return }
         scanning = false
         progress = nil
@@ -246,7 +297,8 @@ final class DeepCleanModel {
         preview = []
         guard !run.isCancelled, let listing else { return }
         if let kept { keptInProjects = CleanKeepList(paths: kept) }
-        let found = listing.candidates
+        // What the last look in the temporary folders found stays listed until the next one is in.
+        let found = CleanScanner.ordered(listing.candidates + candidates.filter { $0.category == .temporary })
         let firstResult = scannedAt == nil || isStale
         candidates = found
         unreadablePlaces = listing.unreadable
@@ -264,7 +316,16 @@ final class DeepCleanModel {
         let home = home
         let base = base
         // In the order the scans finished, so an older one never lands last.
+        // What's in the temporary folders isn't saved: it's looked for again each time.
         StoreWrites.submit { CleanStore.save(listing, home: home, base: base) }
+        // A scan nobody waits on, as at launch, reads only the home folder:
+        // the temporary folders are looked through once the pane is opened.
+        if background {
+            temporaryDeferred = !temporary.isEmpty
+        } else {
+            temporaryDeferred = false
+            lookInTemporary(background: false)
+        }
     }
 
     func isDefaultChoice(_ c: CleanCandidate) -> Bool {

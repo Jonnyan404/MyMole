@@ -111,6 +111,9 @@ struct DeepCleanView: View {
                 DSStripButton("Stop", symbol: "stop.fill") { model.stop() }
             } else if model.trashing {
                 DSRunningCapsule(text: "Moving to the Trash", since: nil)
+            } else if model.lookingInTemporary {
+                DSRunningCapsule(text: "Updating the list", since: nil)
+                DSStripButton("Stop", symbol: "stop.fill") { model.stop() }
             } else if model.isStale {
                 if let ago {
                     DSCapsule("From an earlier scan, \(ago)", symbol: "clock", tint: .orange)
