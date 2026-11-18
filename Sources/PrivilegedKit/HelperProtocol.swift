@@ -1,7 +1,7 @@
 import Darwin
 import Foundation
 import StorageKit
-import Synchronization
+import SynchronizationCompat
 
 // MyMole's privileged tool: a program inside the app that macOS runs as root
 // for one request at a time, through an approved service or a one-shot prompt.
