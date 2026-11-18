@@ -196,41 +196,41 @@ public struct MaintenanceEngine: Sendable {
 
     /// What a run would do, without changing anything.
     public func check(_ t: MaintenanceTask) -> TaskReport {
-        guard allowed(t) else { return TaskReport(t, .needsHelper, String(localized: "Needs the privileged helper.")) }
+        guard allowed(t) else { return TaskReport(t, .needsHelper, String(localized: "Needs the privileged helper.", bundle: ToolLanguage.bundle)) }
         switch t {
         case .savedState:
             let n = oldSavedStates().count
-            return n == 0 ? TaskReport(t, .nothingToDo, String(localized: "No window states older than 30 days."))
-                : TaskReport(t, .willRun, String(localized: "\(n) old window states to move to the Trash."))
+            return n == 0 ? TaskReport(t, .nothingToDo, String(localized: "No window states older than 30 days.", bundle: ToolLanguage.bundle))
+                : TaskReport(t, .willRun, String(localized: "\(n) old window states to move to the Trash.", bundle: ToolLanguage.bundle))
         case .brokenPreferences:
             let n = brokenPreferences().count
-            return n == 0 ? TaskReport(t, .nothingToDo, String(localized: "Every settings file reads fine."))
-                : TaskReport(t, .willRun, String(localized: "\(n) unreadable settings files to move to the Trash."))
+            return n == 0 ? TaskReport(t, .nothingToDo, String(localized: "Every settings file reads fine.", bundle: ToolLanguage.bundle))
+                : TaskReport(t, .willRun, String(localized: "\(n) unreadable settings files to move to the Trash.", bundle: ToolLanguage.bundle))
         case .networkDSStore:
             let off = dsStoreKeysOff()
-            if off.isEmpty { return TaskReport(t, .nothingToDo, String(localized: "Already turned on.")) }
-            return TaskReport(t, .willRun, off.count == 2 ? String(localized: "Finder still writes them.") : off == ["DSDontWriteUSBStores"]
-                ? String(localized: "Finder still writes them on USB drives.") : String(localized: "Finder still writes them on network drives."))
+            if off.isEmpty { return TaskReport(t, .nothingToDo, String(localized: "Already turned on.", bundle: ToolLanguage.bundle)) }
+            return TaskReport(t, .willRun, off.count == 2 ? String(localized: "Finder still writes them.", bundle: ToolLanguage.bundle) : off == ["DSDontWriteUSBStores"]
+                ? String(localized: "Finder still writes them on USB drives.", bundle: ToolLanguage.bundle) : String(localized: "Finder still writes them on network drives.", bundle: ToolLanguage.bundle))
         default:
             let exes = programs(t)
-            guard exes.allSatisfy(runner.exists) else { return TaskReport(t, .unavailable, String(localized: "Not available on this version of macOS.")) }
+            guard exes.allSatisfy(runner.exists) else { return TaskReport(t, .unavailable, String(localized: "Not available on this version of macOS.", bundle: ToolLanguage.bundle)) }
             return TaskReport(t, .willRun)
         }
     }
 
     public func run(_ t: MaintenanceTask) -> TaskReport {
-        guard allowed(t) else { return TaskReport(t, .needsHelper, String(localized: "Needs the privileged helper.")) }
+        guard allowed(t) else { return TaskReport(t, .needsHelper, String(localized: "Needs the privileged helper.", bundle: ToolLanguage.bundle)) }
         switch t {
         case .savedState:
-            return moveToTrash(oldSavedStates(), t, done: { String(localized: "Moved \($0) window states to the Trash.") }, still: isOldSavedState)
+            return moveToTrash(oldSavedStates(), t, done: { String(localized: "Moved \($0) window states to the Trash.", bundle: ToolLanguage.bundle) }, still: isOldSavedState)
         case .brokenPreferences:
-            return moveToTrash(brokenPreferences(), t, done: { String(localized: "Moved \($0) settings files to the Trash.") }, still: isBrokenPreference)
+            return moveToTrash(brokenPreferences(), t, done: { String(localized: "Moved \($0) settings files to the Trash.", bundle: ToolLanguage.bundle) }, still: isBrokenPreference)
         case .networkDSStore:
             let off = dsStoreKeysOff()
-            guard !off.isEmpty else { return TaskReport(t, .nothingToDo, String(localized: "Already turned on.")) }
+            guard !off.isEmpty else { return TaskReport(t, .nothingToDo, String(localized: "Already turned on.", bundle: ToolLanguage.bundle)) }
             for key in off {
                 let r = runner.run(Self.defaults, ["write", "com.apple.desktopservices", key, "-bool", "true"])
-                if r.code != 0 { return TaskReport(t, .failed, Self.lastLine(r.output) ?? String(localized: "Exited with code \(r.code).")) }
+                if r.code != 0 { return TaskReport(t, .failed, Self.lastLine(r.output) ?? String(localized: "Exited with code \(r.code).", bundle: ToolLanguage.bundle)) }
             }
             return TaskReport(t, .done)
         default:
@@ -240,10 +240,10 @@ public struct MaintenanceEngine: Sendable {
                 let r = runner.run(exe, args)
                 // killall exits 1 when the process isn't running, which is fine.
                 if r.code != 0 && !(exe == Self.killall && r.code == 1) {
-                    return TaskReport(t, .failed, Self.lastLine(r.output) ?? String(localized: "Exited with code \(r.code)."))
+                    return TaskReport(t, .failed, Self.lastLine(r.output) ?? String(localized: "Exited with code \(r.code).", bundle: ToolLanguage.bundle))
                 }
             }
-            return TaskReport(t, .done, t == .verifyDisk ? String(localized: "No problems found.") : "")
+            return TaskReport(t, .done, t == .verifyDisk ? String(localized: "No problems found.", bundle: ToolLanguage.bundle) : "")
         }
     }
 
@@ -329,7 +329,7 @@ public struct MaintenanceEngine: Sendable {
         let out = self.trash(paths, TrashGate(still: still, protections: protections))
         let n = out.moved.count
         if !out.failed.isEmpty {
-            return TaskReport(t, .failed, String(localized: "Moved \(n); \(out.failed.count) couldn't be moved."))
+            return TaskReport(t, .failed, String(localized: "Moved \(n); \(out.failed.count) couldn't be moved.", bundle: ToolLanguage.bundle))
         }
         return TaskReport(t, .done, done(n))
     }

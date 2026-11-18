@@ -127,11 +127,11 @@ public enum ApplicationTrash {
     }
 
     public static func move(_ request: Request, restoring: Bool = false) throws -> Receipt {
-        guard geteuid() == 0 else { throw Failure.refused("Administrator approval is required.") }
+        guard geteuid() == 0 else { throw Failure.refused(String(localized: "Administrator approval is required.", bundle: ToolLanguage.bundle)) }
         var uid: uid_t = 0, gid: gid_t = 0
         guard let name = SCDynamicStoreCopyConsoleUser(nil, &uid, &gid), name as String != "loginwindow",
               uid >= 501, uid == request.uid, let account = getpwuid(uid), let home = account.pointee.pw_dir else {
-            throw Failure.refused("The signed-in user changed. Return to MyMole and try again.")
+            throw Failure.refused(String(localized: "The signed-in user changed. Return to MyMole and try again.", bundle: ToolLanguage.bundle))
         }
         // Persistent across a reboot: an interrupted move must not leave an
         // app in /var/run or another directory the system clears automatically.
@@ -140,12 +140,12 @@ public enum ApplicationTrash {
         let stageRoot = "mymole-app-moves"
         guard mkdirat(database, stageRoot, 0o700) == 0 || errno == EEXIST,
               let privateRoot = openDirectory(database, stageRoot) else {
-            throw Failure.refused("No private administrator staging folder is available.")
+            throw Failure.refused(String(localized: "No private administrator staging folder is available.", bundle: ToolLanguage.bundle))
         }
         var rootStat = stat()
         let safeRoot = fstat(privateRoot, &rootStat) == 0 && rootStat.st_uid == 0 && rootStat.st_mode & 0o077 == 0
         close(privateRoot)
-        guard safeRoot else { throw Failure.refused("The administrator staging folder is not private.") }
+        guard safeRoot else { throw Failure.refused(String(localized: "The administrator staging folder is not private.", bundle: ToolLanguage.bundle)) }
         defer { _ = unlinkat(database, stageRoot, AT_REMOVEDIR) }
         var context = Context(applications: "/Applications", home: String(cString: home), uid: uid,
                               gid: account.pointee.pw_gid, appOwner: 0, staging: "/private/var/db/" + stageRoot)
@@ -160,24 +160,24 @@ public enum ApplicationTrash {
               name.lowercased().hasSuffix(".app"), name.utf8.count <= 200,
               AppLeftovers.isWellFormed(request.bundleID), !request.bundleID.lowercased().hasPrefix("com.apple."),
               Request.acceptsTrashName(request.trashName, original: name, restoring: restoring) else {
-            throw Failure.refused("This request does not name an eligible application.")
+            throw Failure.refused(String(localized: "This request does not name an eligible application.", bundle: ToolLanguage.bundle))
         }
         let apps = try directory(context.applications)
         defer { close(apps) }
-        guard identity(apps) == request.parentIdentity else { throw Failure.refused("The Applications folder changed.") }
+        guard identity(apps) == request.parentIdentity else { throw Failure.refused(String(localized: "The Applications folder changed.", bundle: ToolLanguage.bundle)) }
         let home = try directory(context.home)
         defer { close(home) }
         var homeStat = stat()
         guard fstat(home, &homeStat) == 0, homeStat.st_uid == context.uid, homeStat.st_mode & 0o022 == 0 else {
-            throw Failure.refused("No safe home folder was found for the signed-in user.")
+            throw Failure.refused(String(localized: "No safe home folder was found for the signed-in user.", bundle: ToolLanguage.bundle))
         }
         try prepareTrash(in: home, context: context)
         let trash = openat(home, ".Trash", O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
-        guard trash >= 0 else { throw Failure.refused("The user's Trash must be a real directory.") }
+        guard trash >= 0 else { throw Failure.refused(String(localized: "The user's Trash must be a real directory.", bundle: ToolLanguage.bundle)) }
         defer { close(trash) }
         var trashStat = stat()
         guard fstat(trash, &trashStat) == 0, trashStat.st_uid == context.uid, trashStat.st_mode & 0o077 == 0 else {
-            throw Failure.refused("The user's Trash is not private to that user.")
+            throw Failure.refused(String(localized: "The user's Trash is not private to that user.", bundle: ToolLanguage.bundle))
         }
         let trashIdentity = identity(trash)
         func trashIsCurrent() -> Bool { identity(home, ".Trash") == trashIdentity }
@@ -207,69 +207,69 @@ public enum ApplicationTrash {
                 && (restoring || mayRemove(request.path, context: context))
         }
         context.beforeStage()
-        guard trashIsCurrent() else { throw Failure(.trashChanged, "The Trash changed. Nothing was moved.") }
-        guard eligible(from, fromName) else { throw Failure(.appChanged, "The app changed or its metadata couldn't be verified. Nothing was moved.") }
+        guard trashIsCurrent() else { throw Failure(.trashChanged, String(localized: "The Trash changed. Nothing was moved.", bundle: ToolLanguage.bundle)) }
+        guard eligible(from, fromName) else { throw Failure(.appChanged, String(localized: "The app changed or its metadata couldn't be verified. Nothing was moved.", bundle: ToolLanguage.bundle)) }
         guard restoring || mayRemove(request.path, context: context) else {
-            throw Failure(.protections, "The app is kept, or its protection rules couldn't be read. Nothing was moved.")
+            throw Failure(.protections, String(localized: "The app is kept, or its protection rules couldn't be read. Nothing was moved.", bundle: ToolLanguage.bundle))
         }
         guard let open = context.running(request.path) else {
-            throw Failure(.processUnknown, "Running processes couldn't be checked. Nothing was moved.")
+            throw Failure(.processUnknown, String(localized: "Running processes couldn't be checked. Nothing was moved.", bundle: ToolLanguage.bundle))
         }
         if open, !restoring, let stop = context.stopBackgroundAgents {
             try stop(request)
         } else if open {
-            throw Failure(.appOpen, "The app or one of its background processes is still running. Nothing was moved.")
+            throw Failure(.appOpen, String(localized: "The app or one of its background processes is still running. Nothing was moved.", bundle: ToolLanguage.bundle))
         }
         guard allowedNow(), eligible(from, fromName) else {
-            throw Failure(.backgroundStillRunning, "The app restarted or its protections changed. Nothing was moved. If its background agents were stopped, reopening the app restores them.")
+            throw Failure(.backgroundStillRunning, String(localized: "The app restarted or its protections changed. Nothing was moved. If its background agents were stopped, reopening the app restores them.", bundle: ToolLanguage.bundle))
         }
         var destination = stat()
         guard fstatat(to, toName, &destination, AT_SYMLINK_NOFOLLOW) != 0, errno == ENOENT else {
-            throw Failure.refused("The destination is occupied. Nothing was overwritten.")
+            throw Failure.refused(String(localized: "The destination is occupied. Nothing was overwritten.", bundle: ToolLanguage.bundle))
         }
 
         let stageParent = try directory(context.staging)
         defer { close(stageParent) }
         var stageStat = stat()
         guard fstat(stageParent, &stageStat) == 0, stageStat.st_uid == geteuid(), stageStat.st_mode & 0o022 == 0 else {
-            throw Failure.refused("No private administrator staging folder is available.")
+            throw Failure.refused(String(localized: "No private administrator staging folder is available.", bundle: ToolLanguage.bundle))
         }
         let stageName = ".mymole-app-move-" + UUID().uuidString
         guard mkdirat(stageParent, stageName, 0o700) == 0, let stage = openDirectory(stageParent, stageName) else {
-            throw Failure.refused("The app move could not be prepared.")
+            throw Failure.refused(String(localized: "The app move could not be prepared.", bundle: ToolLanguage.bundle))
         }
         defer { close(stage); _ = unlinkat(stageParent, stageName, AT_REMOVEDIR) }
         var staged = false
         defer { if !staged { _ = unlinkat(stage, "request.json", 0) } }
         let note = openat(stage, "request.json", O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, 0o600)
-        guard note >= 0 else { throw Failure.refused("The app move could not be recorded.") }
+        guard note >= 0 else { throw Failure.refused(String(localized: "The app move could not be recorded.", bundle: ToolLanguage.bundle)) }
         let trashPath = context.home + "/.Trash/" + request.trashName
         let data = try JSONEncoder().encode(Recovery(request: request, restoring: restoring,
             source: restoring ? trashPath : request.path, destination: restoring ? request.path : trashPath))
         let written = data.withUnsafeBytes { Darwin.write(note, $0.baseAddress, $0.count) }
         let synced = fsync(note) == 0
         close(note)
-        guard written == data.count, synced else { throw Failure.refused("The app move could not be recorded.") }
+        guard written == data.count, synced else { throw Failure.refused(String(localized: "The app move could not be recorded.", bundle: ToolLanguage.bundle)) }
         guard context.rename(from, fromName, stage, "bundle.app") == 0 else {
             let code = errno
-            throw Failure.refused("macOS blocked the administrator move (POSIX \(code)). The app stayed in place.")
+            throw Failure.refused(String(localized: "macOS blocked the administrator move (POSIX \(code)). The app stayed in place.", bundle: ToolLanguage.bundle))
         }
         staged = true
         func rollBack() -> String {
             if context.rename(stage, "bundle.app", from, fromName) == 0 {
                 staged = false
-                return "The app was returned to its original location."
+                return String(localized: "The app was returned to its original location.", bundle: ToolLanguage.bundle)
             }
-            return "The app is kept at \(context.staging)/\(stageName)/bundle.app; its request.json records the original location."
+            return String(localized: "The app is kept at \(context.staging)/\(stageName)/bundle.app; its request.json records the original location.", bundle: ToolLanguage.bundle)
         }
         context.beforeCommit()
         guard allowedNow(), context.running(context.staging + "/" + stageName + "/bundle.app") == false,
               eligible(stage, "bundle.app") else {
-            throw Failure.refused("The app or its protections changed. " + rollBack())
+            throw Failure.refused(String(localized: "The app or its protections changed. \(rollBack())", bundle: ToolLanguage.bundle))
         }
         guard context.rename(stage, "bundle.app", to, toName) == 0 else {
             let code = errno
-            throw Failure.refused("The destination could not accept the app (POSIX \(code)). " + rollBack())
+            throw Failure.refused(String(localized: "The destination could not accept the app (POSIX \(code)). \(rollBack())", bundle: ToolLanguage.bundle))
         }
         staged = false
         // Directory inference depends on whether the move already happened.
@@ -280,12 +280,12 @@ public enum ApplicationTrash {
     }
 
     static func directory(_ path: String) throws -> Int32 {
-        guard Trasher.isPlainPath(path) else { throw Failure.refused("A linked or malformed folder was refused.") }
+        guard Trasher.isPlainPath(path) else { throw Failure.refused(String(localized: "A linked or malformed folder was refused.", bundle: ToolLanguage.bundle)) }
         var fd = open("/", O_RDONLY | O_DIRECTORY | O_CLOEXEC)
-        guard fd >= 0 else { throw Failure.refused("A folder could not be opened.") }
+        guard fd >= 0 else { throw Failure.refused(String(localized: "A folder could not be opened.", bundle: ToolLanguage.bundle)) }
         for name in path.split(separator: "/") {
             let next = openDirectory(fd, String(name)); close(fd)
-            guard let next else { throw Failure.refused("A linked or inaccessible folder was refused.") }
+            guard let next else { throw Failure.refused(String(localized: "A linked or inaccessible folder was refused.", bundle: ToolLanguage.bundle)) }
             fd = next
         }
         return fd
@@ -299,23 +299,23 @@ public enum ApplicationTrash {
     private static func prepareTrash(in home: Int32, context: Context) throws {
         var st = stat()
         if fstatat(home, ".Trash", &st, AT_SYMLINK_NOFOLLOW) == 0 { return }
-        guard errno == ENOENT else { throw Failure.refused("The user's Trash is not available.") }
+        guard errno == ENOENT else { throw Failure.refused(String(localized: "The user's Trash is not available.", bundle: ToolLanguage.bundle)) }
         // Prepare a NEW folder under a private administrator directory before
         // publishing it. Never chown an entry in a user-writable parent: the
         // entry could have been swapped for an unrelated root-owned directory.
         let parent = try directory(context.staging)
         defer { close(parent) }
         guard fstat(parent, &st) == 0, st.st_uid == geteuid(), st.st_mode & 0o022 == 0 else {
-            throw Failure.refused("No private administrator staging folder is available.")
+            throw Failure.refused(String(localized: "No private administrator staging folder is available.", bundle: ToolLanguage.bundle))
         }
         let name = ".trash-" + UUID().uuidString
         guard mkdirat(parent, name, 0o700) == 0, let fd = openDirectory(parent, name) else {
-            throw Failure.refused("The user's Trash could not be prepared.")
+            throw Failure.refused(String(localized: "The user's Trash could not be prepared.", bundle: ToolLanguage.bundle))
         }
         defer { close(fd); _ = unlinkat(parent, name, AT_REMOVEDIR) }
-        guard fchown(fd, context.uid, context.gid) == 0 else { throw Failure.refused("The new Trash could not be assigned to its user.") }
+        guard fchown(fd, context.uid, context.gid) == 0 else { throw Failure.refused(String(localized: "The new Trash could not be assigned to its user.", bundle: ToolLanguage.bundle)) }
         guard renameatx_np(parent, name, home, ".Trash", UInt32(RENAME_EXCL)) == 0 || errno == EEXIST else {
-            throw Failure.refused("The user's Trash could not be created on the same volume.")
+            throw Failure.refused(String(localized: "The user's Trash could not be created on the same volume.", bundle: ToolLanguage.bundle))
         }
     }
     private static func identity(_ fd: Int32) -> Trasher.Identity? {
@@ -331,16 +331,16 @@ public enum ApplicationTrash {
     /// follow a user-controlled link while the helper has administrator rights.
     static func read(_ parent: Int32, _ name: String, owner: uid_t) throws -> Data {
         let fd = openat(parent, name, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC)
-        guard fd >= 0 else { throw Failure.refused("App metadata or protections could not be read.") }
+        guard fd >= 0 else { throw Failure.refused(String(localized: "App metadata or protections could not be read.", bundle: ToolLanguage.bundle)) }
         defer { close(fd) }
         var st = stat()
         guard fstat(fd, &st) == 0, st.st_mode & S_IFMT == S_IFREG, st.st_nlink == 1,
               st.st_uid == owner, st.st_mode & 0o022 == 0, st.st_size >= 0, st.st_size <= 1_048_576 else {
-            throw Failure.refused("App metadata or protections are not a bounded regular file.")
+            throw Failure.refused(String(localized: "App metadata or protections are not a bounded regular file.", bundle: ToolLanguage.bundle))
         }
         var buffer = [UInt8](repeating: 0, count: Int(st.st_size) + 1)
         let count = Darwin.read(fd, &buffer, buffer.count)
-        guard count == Int(st.st_size) else { throw Failure.refused("App metadata or protections changed while being read.") }
+        guard count == Int(st.st_size) else { throw Failure.refused(String(localized: "App metadata or protections changed while being read.", bundle: ToolLanguage.bundle)) }
         return Data(buffer.prefix(count))
     }
 
