@@ -98,7 +98,7 @@ extension Trasher {
     static func plan(_ paths: [String], through gate: TrashGate, job: UUID = UUID(), policyVersion: Int = TrashPlan.policyVersion) -> TrashPlan {
         var plan = TrashPlan(job: job, action: .moveToTrash, paths: paths, policyVersion: policyVersion)
         let (allowed, refused) = clear(paths, through: gate)
-        let refusedWhy = Dictionary(refused.map { ($0.path, $0.reason) }, uniquingKeysWith: { a, _ in a })
+        let refusedWhy = Dictionary(refused.map { ($0.path, $0.reason.text) }, uniquingKeysWith: { a, _ in a })
         let allowedSet = Set(allowed)
         for i in plan.items.indices {
             let path = plan.items[i].path
@@ -128,7 +128,7 @@ extension Trasher {
         do {
             keeps = resolving(try gate.protections())
         } catch {
-            for i in plan.items.indices { plan.set(i, .refused(protectionsUnreadable)) }
+            for i in plan.items.indices { plan.set(i, .refused(Refusal.protectionsUnreadable.text)) }
             return
         }
         var readAt = Date()
@@ -149,13 +149,13 @@ extension Trasher {
             let item = plan.items[i]
             if item.identity == nil || identity(of: item.path) != item.identity
                 || identity(of: (item.path as NSString).deletingLastPathComponent) != item.parent {
-                plan.set(i, .refused(Trasher.changedSinceChecked))
+                plan.set(i, .refused(Trasher.Refusal.changed.text))
             } else if keeps(item.path) {
-                plan.set(i, .refused(Trasher.kept))
+                plan.set(i, .refused(Trasher.Refusal.kept.text))
             } else if !gate.still(item.path) {
-                plan.set(i, .refused(Trasher.changedSinceChecked))
+                plan.set(i, .refused(Trasher.Refusal.changed.text))
             } else if isProtectedResolved(item.path) {
-                plan.set(i, .refused(Trasher.protectedLocation))
+                plan.set(i, .refused(Trasher.Refusal.protectedLocation.text))
             } else {
                 let r = backend.moveOne(item.path)
                 plan.set(i, r.trashed.map { .done($0) } ?? .failed(r.error ?? Trasher.notMoved))

@@ -562,7 +562,7 @@ func testBin(_ box: Sandbox) throws -> TrashBackend {
         let home = NSHomeDirectory()
         let cleared = Trasher.clear([home + "/.ssh", home + "/Library/Keychains", "/System"], through: TrashGate(still: { _ in true }, protections: TrashGate.keepsNothing))
         #expect(cleared.allowed.isEmpty)
-        #expect(cleared.refused.allSatisfy { $0.reason == "Protected location" })
+        #expect(cleared.refused.allSatisfy { $0.reason == .protectedLocation })
     }
 }
 

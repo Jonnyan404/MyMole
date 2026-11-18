@@ -52,7 +52,7 @@ import Testing
         try Data("broken".utf8).write(to: list)
         let old = box.url.path + "/home/old"
         let out = Trasher.moveToTrash([old], through: StorageModel.gate(folders: [old], protections: box.protections), backend: testBin(box.url))
-        #expect(out.moved.isEmpty && out.failed.first?.reason == Trasher.protectionsUnreadable)
+        #expect(out.moved.isEmpty && out.failed.first?.reason == Trasher.Refusal.protectionsUnreadable.text)
         #expect(box.exists("home/old/data"))
     }
 

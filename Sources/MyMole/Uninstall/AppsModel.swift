@@ -970,7 +970,7 @@ final class AppsModel {
         let bytes = app.bytes + leftovers.filter { moved.contains($0.path) }.reduce(0) { $0 + $1.bytes } + systemReport.bytes
         // System parts are deleted for good and kept apart: no Undo brings them back.
         let record = CleanupRecord(
-            source: "Uninstall", items: 1 + rest.moved.count, bytes: bytes,
+            source: CleanupSource.uninstall.rawValue, items: 1 + rest.moved.count, bytes: bytes,
             failed: rest.failed.count + systemFailed, deleted: systemReport.removed.count)
         // Writing our own history after its folder moved would recreate it.
         if !itself { CleanupLog.submit(record, to: logURL) }
@@ -1082,7 +1082,7 @@ final class AppsModel {
     }
 
     /// The history's name for a reset.
-    static let resetSource = "Reset"
+    static let resetSource = CleanupSource.reset.rawValue
 
     /// Why `app` can't go to the Trash as it is now, or nil: it must still
     /// be the app that was listed, outside the protected locations, and not
@@ -1094,9 +1094,9 @@ final class AppsModel {
         }.value
         guard let why = cleared.refused.first?.reason else { return nil }
         switch why {
-        case Trasher.protectedLocation: return String(localized: "\(app.name) is in a protected location.")
-        case Trasher.kept: return String(localized: "\(app.name) is on one of your keep lists, or holds something that is, so it stays.")
-        case Trasher.protectionsUnreadable: return String(localized: "Your keep lists couldn't be read, so nothing was moved.")
+        case .protectedLocation: return String(localized: "\(app.name) is in a protected location.")
+        case .kept: return String(localized: "\(app.name) is on one of your keep lists, or holds something that is, so it stays.")
+        case .protectionsUnreadable: return String(localized: "Your keep lists couldn't be read, so nothing was moved.")
         default: return String(localized: "\(app.name) changed since the list was made. Reload and try again.")
         }
     }
@@ -1323,8 +1323,8 @@ final class AppsModel {
         let cleared = await Task.detached(priority: .userInitiated) { Trasher.clear([image.image], through: gate) }.value
         if let why = cleared.refused.first?.reason {
             let text: String = switch why {
-            case Trasher.kept: String(localized: "\(image.name) is on one of your keep lists, so it stays.")
-            case Trasher.protectionsUnreadable: String(localized: "Your keep lists couldn't be read, so nothing was moved.")
+            case .kept: String(localized: "\(image.name) is on one of your keep lists, so it stays.")
+            case .protectionsUnreadable: String(localized: "Your keep lists couldn't be read, so nothing was moved.")
             default: String(localized: "\(image.name) isn't a disk image MyMole can move.")
             }
             return .refused(text)
@@ -1336,7 +1336,7 @@ final class AppsModel {
         let outcome = await Task.detached(priority: .userInitiated) {
             job.moveToTrash([image.image], through: gate, backend: backend)
         }.value
-        let record = CleanupRecord(source: "Uninstall", items: outcome.moved.count, bytes: outcome.moved.isEmpty ? 0 : bytes, failed: outcome.failed.count)
+        let record = CleanupRecord(source: CleanupSource.uninstall.rawValue, items: outcome.moved.count, bytes: outcome.moved.isEmpty ? 0 : bytes, failed: outcome.failed.count)
         CleanupLog.submit(record, to: logURL)
         guard !outcome.moved.isEmpty else {
             return .failed(outcome.failed.first.map { String(localized: "\(image.name) was ejected but not moved: \($0.reason)") }

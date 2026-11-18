@@ -61,7 +61,7 @@ import Testing
         let box = try Sandbox()
         let gate = TrashGate(still: { _ in true }, protections: TrashGate.keepsNothing)
         let cleared = Trasher.clear([box.path + "/Disconnected/a.bin"], through: gate)
-        #expect(cleared.allowed.isEmpty && cleared.refused.map(\.reason) == ["No longer there"])
+        #expect(cleared.allowed.isEmpty && cleared.refused.map(\.reason) == [.gone])
     }
 
     @Test func aProtectedFolderWrittenInAnotherCaseIsStillProtected() throws {
