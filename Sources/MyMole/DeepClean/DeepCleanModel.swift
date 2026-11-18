@@ -58,6 +58,9 @@ final class DeepCleanModel {
     var selection = Set<String>()
 
     let home: String
+    /// Temporary folders outside the home folder to look in as well, by
+    /// their real paths; none unless the app names them.
+    let temporary: [String]
     private let base: URL
     private let keepURL: URL
     /// Where the project rules are saved.
@@ -112,7 +115,7 @@ final class DeepCleanModel {
     private let quiet: TimeInterval
 
     init(
-        home: String = Home.path, base: URL = CleanStore.defaultBase, keepURL: URL = CleanKeepList.defaultURL,
+        home: String = Home.path, temporary: [String] = [], base: URL = CleanStore.defaultBase, keepURL: URL = CleanKeepList.defaultURL,
         logURL: URL = CleanupLog.defaultURL,
         runningApps: @escaping @MainActor () -> Set<String> = {
             #if SMOKE
@@ -129,6 +132,7 @@ final class DeepCleanModel {
         self.quiet = quietFor
         self.projectRules = projectRules
         self.home = home
+        self.temporary = temporary
         self.base = base
         self.keepURL = keepURL
         self.logURL = logURL
@@ -195,7 +199,7 @@ final class DeepCleanModel {
         startedAt = .now
         scanFraction = 0
         preview = []
-        let home = home
+        let (home, temporary) = (home, temporary)
         let level = PerformanceLevel.inEffect()
         let workers = level.workers(background: background)
         let lookUpTools = runningTools
@@ -203,7 +207,7 @@ final class DeepCleanModel {
         let steps = LatestOnly<CleanScanStep> { [weak self] step in self?.stepped(step, run: p) }
         scanJob = Task.detached(priority: level.priority(background: background)) { [weak self] in
             let found = await ScanBudget.shared.walk(background: background, progress: p) {
-                CleanScanner.list(home: home, progress: p, workers: workers, onStep: { steps.send($0) })
+                CleanScanner.list(home: home, progress: p, workers: workers, temporary: temporary, onStep: { steps.send($0) })
             }
             // Reading every process's arguments is slow; it's done here, not on the main thread.
             let tools = p.isCancelled ? nil : lookUpTools()
@@ -388,7 +392,7 @@ final class DeepCleanModel {
         let projectRules = projectRules
         let lookUpTools = runningTools
         let all = chosenCandidates
-        let home = home
+        let (home, temporary) = (home, temporary)
         let keepURL = keepURL
         let backend = trash
         let jobs = jobs
@@ -434,7 +438,7 @@ final class DeepCleanModel {
                     // Each path goes only while the item still meets the rules
                     // and the keep list as it is now protects none of it.
                     let gate = TrashGate(
-                        still: { _ in CleanScanner.isStillCandidate(c.path, home: home) },
+                        still: { _ in CleanScanner.isStillCandidate(c.path, home: home, temporary: temporary) },
                         protections: {
                             let kept = try UserProtections.kept(keepList: keepURL, projectBase: projectRules)
                             return { kept.protects($0) }

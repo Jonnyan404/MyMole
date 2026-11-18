@@ -325,6 +325,7 @@ extension CleanCategory {
         case .downloads: "paperclip"
         case .devices: "iphone"
         case .archives: "archivebox.fill"
+        case .temporary: "hourglass"
         }
     }
 }

@@ -311,7 +311,12 @@ struct Find: Identifiable, Equatable {
     var id: String { pane.rawValue + ":" + path }
 
     /// The folder it's in, so two finds of one name can be told apart.
-    var location: String { ((path as NSString).deletingLastPathComponent as NSString).abbreviatingWithTildeInPath }
+    var location: String { location(home: Home.path) }
+
+    func location(home: String) -> String {
+        let folder = (path as NSString).deletingLastPathComponent
+        return folder == home ? "~" : folder.hasPrefix(home + "/") ? "~" + folder.dropFirst(home.count) : folder
+    }
 
     /// The `limit` biggest. A path two panes found is listed once, where it's bigger.
     /// The biggest, each place once: a find inside or holding one already

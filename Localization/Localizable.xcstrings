@@ -3152,7 +3152,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ in %2$lld Dateien"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ in %arg Datei"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ in %arg Dateien"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -3186,19 +3208,85 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ en %2$lld archivos"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ en %arg archivo"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ en %arg archivos"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ dans %2$lld fichiers"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ dans %arg fichier"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ dans %arg fichiers"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ फ़ाइलों में %2$lld"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg फ़ाइल में %1$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ फ़ाइलों में %arg"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -3220,7 +3308,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ in %2$lld Dateien in %3$lld s"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ in %arg Datei in %3$lld s"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ in %arg Dateien in %3$lld s"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -3254,19 +3364,85 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ en %2$lld archivos en %3$lld s"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ en %arg archivo en %3$lld s"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ en %arg archivos en %3$lld s"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ dans %2$lld fichiers en %3$lld s"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ dans %arg fichier en %3$lld s"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ dans %arg fichiers en %3$lld s"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%3$lld s में %2$lld फ़ाइलों में %1$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%3$lld s में %arg फ़ाइल में %1$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%3$lld s में %arg फ़ाइलों में %1$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -4948,7 +5124,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$lld Dateien"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ · %arg Datei"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ · %arg Dateien"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -4982,19 +5180,85 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$lld archivos"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ · %arg archivo"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ · %arg archivos"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$lld fichiers"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ · %arg fichier"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ · %arg fichiers"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$lld फ़ाइलें"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ · %arg फ़ाइल"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$@ · %arg फ़ाइलें"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -6142,7 +6406,29 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld ऐप या फ़ोल्डर स्थान पढ़े नहीं जा सके। उनकी सामग्री शामिल नहीं है।"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg ऐप या फ़ोल्डर स्थान पढ़ा नहीं जा सका। उसकी सामग्री शामिल नहीं है।"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg ऐप या फ़ोल्डर स्थान पढ़े नहीं जा सके। उनकी सामग्री शामिल नहीं है।"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -6486,7 +6772,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld Apps von macOS ausgeblendet"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg App von macOS ausgeblendet"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Apps von macOS ausgeblendet"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -6606,6 +6914,12 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "App · %2$@ auf der Festplatte"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -6656,6 +6970,12 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "app · %2$@ en disco"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -6678,6 +6998,12 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "app · %2$@ sur le disque"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -7092,6 +7418,12 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "App · Größen werden gemessen …"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -7142,6 +7474,12 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "app · midiendo tamaños…"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -7164,6 +7502,12 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "app · mesure des tailles…"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -8520,7 +8864,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld Dateien"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Datei"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Dateien"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -8554,19 +8920,85 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld archivos"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg archivo"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg archivos"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld fichiers"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg fichier"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg fichiers"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld फ़ाइलें"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg फ़ाइल"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg फ़ाइलें"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -8964,7 +9396,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld Dateien bisher"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Datei bisher"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Dateien bisher"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -8998,19 +9452,85 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld archivos hasta ahora"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg archivo hasta ahora"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg archivos hasta ahora"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld fichiers pour l’instant"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg fichier pour l’instant"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg fichiers pour l’instant"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "अब तक %1$lld फ़ाइलें"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "अब तक %arg फ़ाइल"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "अब तक %arg फ़ाइलें"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -9032,7 +9552,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld Dateien · %2$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Datei · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Dateien · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -9066,19 +9608,85 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld archivos · %2$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg archivo · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg archivos · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld fichiers · %2$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg fichier · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg fichiers · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld फ़ाइलें · %2$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg फ़ाइल · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg फ़ाइलें · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -9100,7 +9708,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld Dateien · %2$@ bisher"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Datei · %2$@ bisher"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Dateien · %2$@ bisher"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -9134,19 +9764,85 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld archivos · %2$@ hasta ahora"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg archivo · %2$@ hasta ahora"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg archivos · %2$@ hasta ahora"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld fichiers · %2$@ pour l’instant"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg fichier · %2$@ pour l’instant"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg fichiers · %2$@ pour l’instant"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld फ़ाइलें · अब तक %2$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg फ़ाइल · अब तक %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg फ़ाइलें · अब तक %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -11364,7 +12060,29 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld आइटम नहीं हटाए गए।"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg आइटम नहीं हटाया गया।"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg आइटम नहीं हटाए गए।"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -12790,7 +13508,29 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld सूचनाएँ"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg सूचना"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg सूचनाएँ"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -14808,7 +15548,29 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld प्रोजेक्ट चुने गए। उनका दोबारा बनने वाला डेटा चुनने के लिए उन पर राइट-क्लिक करें।"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg प्रोजेक्ट चुना गया। उसका दोबारा बनने वाला डेटा चुनने के लिए उस पर राइट-क्लिक करें।"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg प्रोजेक्ट चुने गए। उनका दोबारा बनने वाला डेटा चुनने के लिए उन पर राइट-क्लिक करें।"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -16216,7 +16978,29 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld सिस्टम-व्यापी आइटम स्थायी रूप से हटाए जाते हैं और पहले जैसा नहीं किया जा सकता।"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg सिस्टम-व्यापी आइटम स्थायी रूप से हटाया जाता है और पहले जैसा नहीं किया जा सकता।"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg सिस्टम-व्यापी आइटम स्थायी रूप से हटाए जाते हैं और पहले जैसा नहीं किया जा सकता।"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -16538,7 +17322,29 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "उनके अंदर आपके छोड़े गए %lld आइटम बने रहते हैं।"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "उनके अंदर आपका छोड़ा गया %arg आइटम बना रहता है।"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "उनके अंदर आपके छोड़े गए %arg आइटम बने रहते हैं।"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -16880,7 +17686,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ %1$lld kleinere Dateien · %2$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "+ %arg kleinere Datei · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "+ %arg kleinere Dateien · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -16914,19 +17742,85 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ %1$lld archivos más pequeños · %2$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "+ %arg archivo más pequeño · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "+ %arg archivos más pequeños · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ %1$lld fichiers plus petits · %2$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "+ %arg fichier plus petit · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "+ %arg fichiers plus petits · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ %1$lld छोटी फ़ाइलें · %2$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "+ %arg छोटी फ़ाइल · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "+ %arg छोटी फ़ाइलें · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -17859,6 +18753,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "具名卷：数据库和其他数据存放于此。确认无误后可在 Docker 中移除。"
+          }
+        }
+      }
+    },
+    "A program that left it here and still runs may look for it. It's gone for good once the Trash is emptied." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Programm, das es hier abgelegt hat und noch läuft, sucht es möglicherweise. Nach dem Leeren des Papierkorbs ist es endgültig weg."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un programa que lo dejó aquí y sigue en ejecución podría buscarlo. Desaparece para siempre al vaciar la Papelera."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un programme qui l’a laissé ici et tourne encore peut le chercher. Il disparaît définitivement une fois la Corbeille vidée."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "जिस प्रोग्राम ने इसे यहाँ छोड़ा और जो अब भी चल रहा है, वह इसे ढूँढ सकता है। ट्रैश खाली होने पर यह हमेशा के लिए चला जाता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이것을 여기에 남기고 아직 실행 중인 프로그램이 찾을 수 있습니다. 휴지통을 비우면 영구히 사라집니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把它留在这里且仍在运行的程序可能会找它。清倒废纸篓后就彻底没有了。"
           }
         }
       }
@@ -21070,7 +22004,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beliebig viele Scans gleichzeitig · %lld Threads für einen Scan, auf den du wartest"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Beliebig viele Scans gleichzeitig · %arg Thread für einen Scan, auf den du wartest"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Beliebig viele Scans gleichzeitig · %arg Threads für einen Scan, auf den du wartest"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -21104,13 +22060,57 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cualquier número de análisis a la vez · %lld hilos para un análisis que esperas"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Cualquier número de análisis a la vez · %arg hilo para un análisis que esperas"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Cualquier número de análisis a la vez · %arg hilos para un análisis que esperas"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Autant d’analyses que voulu à la fois · %lld threads pour une analyse que vous attendez"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Autant d’analyses que voulu à la fois · %arg thread pour une analyse que vous attendez"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Autant d’analyses que voulu à la fois · %arg threads pour une analyse que vous attendez"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi" : {
@@ -48159,6 +49159,46 @@
         }
       }
     },
+    "Left in a temporary folder and unchanged for three days." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In einem temporären Ordner zurückgelassen und seit drei Tagen unverändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quedó en una carpeta temporal y lleva tres días sin cambios."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laissé dans un dossier temporaire et inchangé depuis trois jours."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अस्थायी फ़ोल्डर में छोड़ा गया और तीन दिनों से अपरिवर्तित।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "임시 폴더에 남겨져 3일 동안 변경되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "留在临时文件夹中，三天未变。"
+          }
+        }
+      }
+    },
     "Left unchosen: %@; tick them yourself if they can go" : {
       "localizations" : {
         "de" : {
@@ -65846,7 +66886,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teilkarte · %1$@ in %2$lld Dateien"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Teilkarte · %1$@ in %arg Datei"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Teilkarte · %1$@ in %arg Dateien"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -65880,19 +66942,85 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mapa parcial · %1$@ en %2$lld archivos"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Mapa parcial · %1$@ en %arg archivo"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Mapa parcial · %1$@ en %arg archivos"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Carte partielle · %1$@ dans %2$lld fichiers"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Carte partielle · %1$@ dans %arg fichier"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Carte partielle · %1$@ dans %arg fichiers"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "आंशिक मैप · %1$@ फ़ाइलों में %2$lld"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "आंशिक मैप · %arg फ़ाइल में %1$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "आंशिक मैप · %1$@ फ़ाइलों में %arg"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -76696,7 +77824,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird gescannt … %1$lld Dateien · %2$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Wird gescannt … %arg Datei · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Wird gescannt … %arg Dateien · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -76730,19 +77880,85 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Analizando… %1$lld archivos · %2$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Analizando… %arg archivo · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Analizando… %arg archivos · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Analyse… %1$lld fichiers · %2$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Analyse… %arg fichier · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Analyse… %arg fichiers · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "स्कैन हो रहा है… %1$lld फ़ाइलें · %2$@"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "स्कैन हो रहा है… %arg फ़ाइल · %2$@"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "स्कैन हो रहा है… %arg फ़ाइलें · %2$@"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
@@ -85589,6 +86805,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "让访达不在网络共享和 USB 驱动器上留下 .DS_Store 文件。会更改一项访达设置。"
+          }
+        }
+      }
+    },
+    "Temporary Files" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temporäre Dateien"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivos temporales"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fichiers temporaires"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अस्थायी फ़ाइलें"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "임시 파일"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "临时文件"
           }
         }
       }
@@ -97391,6 +98647,46 @@
         }
       }
     },
+    "What programs left in the temporary folders and haven't touched for three days. A program may still expect to find it, so none is ever chosen for you." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was Programme in den temporären Ordnern hinterlassen und seit drei Tagen nicht angerührt haben. Ein Programm könnte es noch erwarten, daher wird nie etwas für dich ausgewählt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que los programas dejaron en las carpetas temporales y no han tocado en tres días. Un programa aún podría esperar encontrarlo, así que nunca se elige nada por ti."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que des programmes ont laissé dans les dossiers temporaires sans y toucher depuis trois jours. Un programme peut encore s’attendre à le trouver, donc rien n’est jamais choisi pour vous."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "जो प्रोग्रामों ने अस्थायी फ़ोल्डरों में छोड़ा और तीन दिनों से नहीं छुआ। कोई प्रोग्राम अब भी इसे ढूँढ सकता है, इसलिए आपके लिए कुछ भी कभी नहीं चुना जाता।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "프로그램이 임시 폴더에 남기고 3일 동안 건드리지 않은 항목입니다. 프로그램이 아직 찾을 수 있으므로 어떤 것도 자동으로 선택되지 않습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "程序留在临时文件夹中、三天未改动的内容。程序可能仍会用到它，因此不会替你选择任何一项。"
+          }
+        }
+      }
+    },
     "What starts by itself, and the plug-ins apps added" : {
       "localizations" : {
         "de" : {
@@ -100770,7 +102066,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "in %1$lld Objekten gefunden"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "in %arg Objekt gefunden"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "in %arg Objekten gefunden"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -100804,13 +102122,57 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "encontrados en %1$lld elementos"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "encontrados en %arg elemento"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "encontrados en %arg elementos"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "trouvés dans %1$lld éléments"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "trouvés dans %arg élément"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "trouvés dans %arg éléments"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi" : {
@@ -100838,7 +102200,29 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "bisher in %1$lld Objekten gefunden"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "bisher in %arg Objekt gefunden"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "bisher in %arg Objekten gefunden"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
@@ -100872,13 +102256,57 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "encontrados hasta ahora en %1$lld elementos"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "encontrados hasta ahora en %arg elemento"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "encontrados hasta ahora en %arg elementos"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "trouvés jusqu’ici dans %1$lld éléments"
+            "value" : "%#@count@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "trouvés jusqu’ici dans %arg élément"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "trouvés jusqu’ici dans %arg éléments"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "hi" : {

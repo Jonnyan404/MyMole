@@ -186,7 +186,9 @@ final class AppModel {
     let storage = StorageModel()
     let projects = ProjectsModel()
     let installers = InstallersModel()
-    let deepClean = DeepCleanModel()
+    /// The App Store edition stays in what the user opened to it; the direct
+    /// edition also looks in the temporary folders outside the home folder.
+    let deepClean = DeepCleanModel(temporary: Edition.current.isSandboxed ? [] : CleanRules.temporaryRoots())
     let apps: AppsModel
     let trash = TrashModel()
     #if SMOKE

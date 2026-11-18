@@ -38,6 +38,14 @@ import Testing
         #expect(Find.biggest(finds, limit: 10).map(\.path) == ["/a", "/b", "/d"])
     }
 
+    /// Two finds of one name are told apart by where they are.
+    @Test func aFindSaysTheFolderItIsIn() {
+        let home = "/Users/synthetic"
+        #expect(Find(pane: .clean, path: home + "/Library/Caches/com.example.Editor", name: "com.example.Editor", bytes: 1).location(home: home) == "~/Library/Caches")
+        #expect(Find(pane: .installer, path: home + "/Editor.dmg", name: "Editor.dmg", bytes: 1).location(home: home) == "~")
+        #expect(Find(pane: .clean, path: "/synthetic/tmp/old-build", name: "old-build", bytes: 1).location(home: home) == "/synthetic/tmp")
+    }
+
     @Test func aFindInsideAnotherIsTheSameSpace() {
         let finds = [
             Find(pane: .projects, path: "/synthetic/App", name: "App", bytes: 9),
