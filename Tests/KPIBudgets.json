@@ -39,6 +39,7 @@
   "apps.inventory.100": 100,
   "apps.sizes.100": 150,
   "deep-clean.scan.250-places": 50,
+  "deep-clean.temporary.4k-folders": 300,
   "duplicates.2k-files": 2500,
   "similar.group-20k-pictures": 50,
   "status.reading": 50,

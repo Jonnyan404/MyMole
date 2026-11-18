@@ -1,7 +1,6 @@
 import Darwin
 import Foundation
 import StorageKit
-import Synchronization
 
 // MyMole's privileged tool: a program inside the app that macOS runs as root
 // for one request at a time, through an approved service or a one-shot prompt.
@@ -56,9 +55,11 @@ public struct PrivilegedEnvelope: Codable, Sendable, Equatable {
 /// with nowhere private to keep the copy, it answers in English from the
 /// texts compiled into it.
 public enum ToolLanguage {
-    private static let current = Mutex<Bundle?>(nil)
+    /// Held for the request being answered and for nothing else, so two
+    /// requests answered at once each keep their own language.
+    @TaskLocal private static var current: Bundle?
 
-    public static var bundle: Bundle { current.withLock { $0 } ?? .main }
+    public static var bundle: Bundle { current ?? .main }
 
     /// A translation file larger than this isn't one of MyMole's.
     static let fileLimit = 8 << 20
@@ -70,9 +71,7 @@ public enum ToolLanguage {
         let source = language.flatMap { Bundle.main.path(forResource: $0, ofType: "lproj") }
         let checked = source.flatMap { lproj in base.flatMap { CheckedTexts(from: lproj, in: $0) } }
         defer { checked?.remove() }
-        current.withLock { $0 = checked?.bundle ?? english }
-        defer { current.withLock { $0 = nil } }
-        return body()
+        return $current.withValue(checked?.bundle ?? english, operation: body)
     }
 
     /// A bundle with no texts of its own, so each text is the English one

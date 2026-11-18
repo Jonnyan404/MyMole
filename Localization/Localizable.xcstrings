@@ -3499,6 +3499,46 @@
         }
       }
     },
+    "%@ in temporary folders is in use" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ in temporären Ordnern werden verwendet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ en carpetas temporales están en uso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ dans les dossiers temporaires sont utilisés"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अस्थायी फ़ोल्डरों में %@ उपयोग में है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "임시 폴더의 %@ 사용 중"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "临时文件夹中有 %@ 正在使用"
+          }
+        }
+      }
+    },
     "%@ is in a protected location." : {
       "localizations" : {
         "de" : {
@@ -26437,6 +26477,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "同一天更改"
+          }
+        }
+      }
+    },
+    "Changed within the last three days, or a running program is at work there. It's offered here once it has been left alone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In den letzten drei Tagen geändert, oder ein laufendes Programm arbeitet dort. Es wird hier angeboten, sobald es in Ruhe gelassen wurde."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambió en los últimos tres días, o un programa en ejecución trabaja ahí. Se ofrecerá aquí cuando lleve un tiempo sin tocarse."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifié au cours des trois derniers jours, ou un programme en cours d’exécution y travaille. Il sera proposé ici une fois laissé de côté."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पिछले तीन दिनों में बदला गया, या कोई चल रहा प्रोग्राम वहाँ काम कर रहा है। जब इसे छोड़ दिया जाएगा तब यह यहाँ पेश किया जाएगा।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최근 3일 이내에 변경되었거나 실행 중인 프로그램이 그곳에서 작업 중입니다. 건드리지 않게 되면 여기에 표시됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近三天内有改动，或有正在运行的程序在那里工作。等它不再被使用后，会在这里列出。"
           }
         }
       }

@@ -70,9 +70,15 @@ final class DeepCleanModel {
     @ObservationIgnored private var temporaryRun: ScanProgress?
     @ObservationIgnored private var temporaryDeferred = false
     /// Looks through the temporary folders; tests hold it to see what waits.
-    @ObservationIgnored var findTemporary: @Sendable ([String], ScanProgress) -> [CleanCandidate] = {
-        CleanScanner.temporary(in: $0, progress: $1)
+    @ObservationIgnored var findTemporary: @Sendable ([String], ScanProgress) -> TemporaryListing = {
+        CleanScanner.temporary(in: $0, progress: $1, workers: PerformanceLevel.inEffect().workers(background: true), inUse: ProcessPaths.inUse())
     }
+    /// Where the running programs are at work, read again right before a
+    /// temporary item moves; tests give their own.
+    @ObservationIgnored var programsAtWork: @Sendable () -> Set<String>? = { ProcessPaths.inUse() }
+    /// The room taken in the temporary folders by what's still in use and
+    /// so isn't listed, so the list doesn't read as all there is.
+    private(set) var temporaryInUse: Int64 = 0
     private let base: URL
     private let keepURL: URL
     /// Where the project rules are saved.
@@ -258,13 +264,14 @@ final class DeepCleanModel {
         }
     }
 
-    private func foundTemporary(_ found: [CleanCandidate]?, run: ScanProgress) {
+    private func foundTemporary(_ found: TemporaryListing?, run: ScanProgress) {
         guard run === temporaryRun else { return }
         temporaryRun = nil
         lookingInTemporary = false
         // The list mustn't change under a move or Undo; the next scan looks again.
         guard !run.isCancelled, let found, !trashing else { return }
-        candidates = CleanScanner.ordered(candidates.filter { $0.category != .temporary } + found)
+        temporaryInUse = found.inUseBytes
+        candidates = CleanScanner.ordered(candidates.filter { $0.category != .temporary } + found.candidates)
         let paths = Set(candidates.map(\.path))
         chosen.formIntersection(paths)
         selection.formIntersection(paths)
@@ -453,7 +460,7 @@ final class DeepCleanModel {
         let projectRules = projectRules
         let lookUpTools = runningTools
         let all = chosenCandidates
-        let (home, temporary) = (home, temporary)
+        let (home, temporary, programsAtWork) = (home, temporary, programsAtWork)
         let keepURL = keepURL
         let backend = trash
         let jobs = jobs
@@ -499,7 +506,10 @@ final class DeepCleanModel {
                     // Each path goes only while the item still meets the rules
                     // and the keep list as it is now protects none of it.
                     let gate = TrashGate(
-                        still: { _ in CleanScanner.isStillCandidate(c.path, home: home, temporary: temporary) },
+                        still: { _ in
+                            CleanScanner.isStillCandidate(c.path, home: home, temporary: temporary,
+                                                          inUse: c.category == .temporary ? programsAtWork() : nil)
+                        },
                         protections: {
                             let kept = try UserProtections.kept(keepList: keepURL, projectBase: projectRules)
                             return { kept.protects($0) }

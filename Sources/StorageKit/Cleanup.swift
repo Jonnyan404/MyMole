@@ -138,9 +138,6 @@ public enum CleanRules {
         public var holds = Holds.plain
         /// What a whole target is called, when its own name says little ("Cache").
         public var title: String? = nil
-        /// A temporary folder, outside the home folder: what's in it is
-        /// offered only by the rules of `offersTemporary`.
-        public var temporary = false
     }
 
     public enum Holds: Sendable {
@@ -182,13 +179,24 @@ public enum CleanRules {
         #endif
     }
 
-    static func temporaryTargets(_ roots: [String]) -> [Target] {
-        roots.map {
-            var t = Target(path: $0, mode: .children, category: .temporary, safety: .review,
-                           reason: String(localized: "Left in a temporary folder and unchanged for three days."))
-            t.temporary = true
-            return t
-        }
+    /// How far below a temporary folder an item may lie. Tools keep a folder
+    /// for themselves there, in it one per project and in that one per run:
+    /// the top folder is never left alone while one run is under way, the
+    /// runs that ended are.
+    public static let temporaryDepth = 3
+    /// Less than this isn't worth a row: a temporary folder holds thousands
+    /// of empty leftovers that take next to nothing together.
+    public static let temporaryMinimum: Int64 = 1 << 20
+
+    /// Places macOS keeps in the temporary folders for itself, and hidden ones.
+    static func temporaryName(_ name: String) -> Bool {
+        !name.hasPrefix(".") && !name.hasPrefix("com.apple.") && name != "TemporaryItems"
+    }
+
+    /// A real folder of this user's, by the name as it's written.
+    static func temporaryFolder(_ path: String, owner: uid_t = getuid()) -> Bool {
+        var st = stat()
+        return lstat(path, &st) == 0 && st.st_uid == owner && st.st_mode & S_IFMT == S_IFDIR
     }
 
     /// Whether something in a temporary folder may be offered at all: this
@@ -197,8 +205,7 @@ public enum CleanRules {
     /// `temporaryQuiet`. Something a program is still working with has a
     /// file or an entry newer than that.
     static func offersTemporary(_ path: String, changed: Date, owner: uid_t = getuid(), now: Date = .now) -> Bool {
-        let name = (path as NSString).lastPathComponent
-        guard !name.hasPrefix("."), !name.hasPrefix("com.apple."), name != "TemporaryItems" else { return false }
+        guard temporaryName((path as NSString).lastPathComponent) else { return false }
         var st = stat()
         guard lstat(path, &st) == 0, st.st_uid == owner, st.st_mode & S_IFMT == S_IFDIR || st.st_mode & S_IFMT == S_IFREG else { return false }
         let own = Date(timeIntervalSince1970: TimeInterval(st.st_mtimespec.tv_sec))
@@ -614,6 +621,19 @@ public struct CleanListing: Sendable {
     public var isComplete: Bool { unreadable.isEmpty && !candidates.contains(where: \.incomplete) }
 }
 
+/// What a look through the temporary folders found.
+public struct TemporaryListing: Sendable {
+    public var candidates: [CleanCandidate]
+    /// The room taken by what lies there but isn't offered: changed within
+    /// `CleanRules.temporaryQuiet`, or with a running program at work in it.
+    public var inUseBytes: Int64
+
+    public init(candidates: [CleanCandidate] = [], inUseBytes: Int64 = 0) {
+        self.candidates = candidates
+        self.inUseBytes = inUseBytes
+    }
+}
+
 /// How far a Deep Clean scan has come: places measured of all it will
 /// measure, and every candidate found so far, largest first.
 public struct CleanScanStep: Sendable {
@@ -640,9 +660,9 @@ public enum CleanScanner {
     /// they're there, so a result without them isn't taken as complete.
     public static func list(
         home: String = Home.path, progress: ScanProgress = ScanProgress(),
-        workers: Int = StorageScanner.defaultWorkers, temporary: [String] = [], onStep: (@Sendable (CleanScanStep) -> Void)? = nil
+        workers: Int = StorageScanner.defaultWorkers, onStep: (@Sendable (CleanScanStep) -> Void)? = nil
     ) -> CleanListing {
-        let targets = CleanRules.targets(home: home) + CleanRules.temporaryTargets(temporary)
+        let targets = CleanRules.targets(home: home)
         let containers = containerIDs(home: home)
         let steps = StepCounter(total: targets.count + max(containers?.count ?? 0, 1), onStep: onStep)
         var unreadable: [String] = []
@@ -660,17 +680,67 @@ public enum CleanScanner {
         return CleanListing(candidates: steps.found, unreadable: unreadable.sorted())
     }
 
-    /// What's offered straight inside the temporary folders `roots`, by
-    /// their real paths. A look of its own: the folders can hold hundreds of
-    /// thousands of files, far more than the caches in the home folder, so
-    /// the app runs it after the rest and lets nothing wait on it.
-    public static func temporary(in roots: [String], progress: ScanProgress = ScanProgress(), workers: Int = 2) -> [CleanCandidate] {
-        var unreadable: [String] = []
-        var found: [CleanCandidate] = []
-        for target in CleanRules.temporaryTargets(roots) where !progress.isCancelled {
-            found += candidates(in: target, progress: progress, workers: workers, unreadable: &unreadable)
+    /// What's offered in the temporary folders `roots`, by their real
+    /// paths, and how much lies there in use. A look of its own: the folders
+    /// can hold hundreds of thousands of files, far more than the caches in
+    /// the home folder, so the app runs it after the rest and lets nothing
+    /// wait on it.
+    ///
+    /// An item is offered at the highest level where it has been left
+    /// alone: a folder that hasn't been is looked into, down to
+    /// `temporaryDepth`, unless a running program is at work in it. `inUse`
+    /// is where the running programs stand and what they have open; without
+    /// it only age speaks, and nothing is looked into.
+    public static func temporary(
+        in roots: [String], progress: ScanProgress = ScanProgress(), workers: Int = 2, inUse: Set<String>? = nil
+    ) -> TemporaryListing {
+        var listing = TemporaryListing()
+        let reason = String(localized: "Left in a temporary folder and unchanged for three days.")
+        // Asked for every folder looked at, of which there can be a hundred thousand.
+        let occupied = inUse.map(ProcessPaths.foldersInUse)
+        func busy(_ path: String) -> Bool { occupied?.contains(path) ?? false }
+        for root in roots where !progress.isCancelled && isRealFolder(root) {
+            let r = StorageScanner.scan(path: root, progress: progress, workers: workers)
+            guard !progress.isCancelled else { break }
+            func look(_ f: Folder, path: String, depth: Int) {
+                guard CleanRules.temporaryName(f.name), CleanRules.temporaryFolder(path) else { return }
+                let working = busy(path)
+                if !working, CleanRules.offersTemporary(path, changed: f.latestChange) {
+                    // What moving it frees: files here are often clones of one
+                    // another, which take their blocks once however many there are.
+                    let bytes = min(f.size, f.reclaim.bytes)
+                    // What couldn't be read whole isn't known to be left alone.
+                    let unread = f.unreadable || r.deniedPaths.contains { $0 == path || $0.hasPrefix(path + "/") }
+                    guard bytes >= CleanRules.temporaryMinimum, !unread else { return }
+                    listing.candidates.append(CleanCandidate(
+                        path: path, bytes: bytes, modified: f.latestChange, category: .temporary, safety: .review,
+                        owner: CleanRules.owner(of: f.name), reason: reason))
+                    return
+                }
+                // Not left alone as a whole. A program at work in it uses all
+                // of it; otherwise the parts that ended are told from the rest.
+                guard !working, inUse != nil, depth < CleanRules.temporaryDepth else {
+                    listing.inUseBytes += f.size
+                    return
+                }
+                listing.inUseBytes += f.looseBytes
+                for sub in f.subfolders { look(sub, path: path + "/" + sub.name, depth: depth + 1) }
+            }
+            for sub in r.root.subfolders { look(sub, path: root + "/" + sub.name, depth: 1) }
+            for file in r.root.listedFiles {
+                let path = root + "/" + file.name
+                if !busy(path), CleanRules.offersTemporary(path, changed: file.modified) {
+                    listing.candidates.append(CleanCandidate(
+                        path: path, bytes: min(file.size, Reclaim.file(at: path)?.bytes ?? file.size), modified: file.modified,
+                        category: .temporary, safety: .review, owner: nil, reason: reason))
+                } else if CleanRules.temporaryName(file.name) {
+                    listing.inUseBytes += file.size
+                }
+            }
         }
-        return progress.isCancelled ? [] : ordered(found)
+        guard !progress.isCancelled else { return TemporaryListing() }
+        listing.candidates = ordered(listing.candidates)
+        return listing
     }
 
     /// Largest first, then by path.
@@ -737,8 +807,8 @@ public enum CleanScanner {
             }
             return names.filter { CleanRules.offers(t.path + "/" + $0, in: t) }.compactMap { name in
                 let path = t.path + "/" + name
-                var bytes: Int64
-                var modified: Date
+                let bytes: Int64
+                let modified: Date
                 if let f = subfolders[name] {
                     bytes = f.size
                     modified = f.latestChange
@@ -747,12 +817,6 @@ public enum CleanScanner {
                     guard lstat(path, &st) == 0, st.st_mode & S_IFMT == S_IFREG else { return nil }
                     bytes = Int64(st.st_blocks) * 512
                     modified = Date(timeIntervalSince1970: TimeInterval(st.st_mtimespec.tv_sec))
-                }
-                if t.temporary {
-                    guard CleanRules.offersTemporary(path, changed: modified) else { return nil }
-                    // What moving it frees: files here are often clones of one
-                    // another, which take their blocks once however many there are.
-                    bytes = min(bytes, subfolders[name]?.reclaim.bytes ?? Reclaim.file(at: path)?.bytes ?? bytes)
                 }
                 guard bytes > 0 || subfolders[name]?.unreadable == true else { return nil }
                 var c = CleanCandidate(
@@ -842,16 +906,19 @@ public enum CleanScanner {
     /// Checked again right before a candidate goes to the Trash: still
     /// where a rule puts it, with no link on the way or at the end. Keep
     /// rules are applied to each path by `trashPaths`.
-    public static func isStillCandidate(_ path: String, home: String = Home.path, temporary: [String] = []) -> Bool {
+    public static func isStillCandidate(_ path: String, home: String = Home.path, temporary: [String] = [], inUse: Set<String>? = nil) -> Bool {
         let p = path
         guard Trasher.isPlainPath(p), !Trasher.isProtected(p, home: home) else { return false }
         var st = stat()
         guard lstat(p, &st) == 0, st.st_mode & S_IFMT == S_IFDIR || st.st_mode & S_IFMT == S_IFREG else { return false }
         let parent = (p as NSString).deletingLastPathComponent
-        // Straight inside a temporary folder, by its real path: still this
-        // user's and still left alone.
-        if let root = temporary.first(where: { $0 == parent }) {
-            guard Trasher.noLinksBetween(root, and: p) else { return false }
+        // In a temporary folder, by its real path, no deeper than the look
+        // goes: still this user's, still left alone, and no program at work in it.
+        if let root = temporary.first(where: { p.hasPrefix($0 + "/") }) {
+            let below = p.dropFirst(root.count + 1).split(separator: "/", omittingEmptySubsequences: false).map(String.init)
+            guard (1...CleanRules.temporaryDepth).contains(below.count), below.allSatisfy(CleanRules.temporaryName),
+                  Trasher.noLinksBetween(root, and: p), !(inUse.map { ProcessPaths.uses(p, among: $0) } ?? false)
+            else { return false }
             // Looked through again: a program may have come back to it since the scan.
             let changed = st.st_mode & S_IFMT == S_IFDIR ? StorageScanner.scan(path: p, workers: 1).root.latestChange : .distantPast
             return CleanRules.offersTemporary(p, changed: changed)

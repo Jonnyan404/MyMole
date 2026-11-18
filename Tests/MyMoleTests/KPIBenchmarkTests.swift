@@ -299,6 +299,15 @@ struct KPIBenchmarkTests {
         var candidates = 0
         Self.gate("deep-clean.scan.250-places", Self.ms { candidates = CleanScanner.list(home: box.path + "/home").candidates.count })
         #expect(candidates >= 250)
+
+        // Temporary folders as tools leave them: a folder for each tool, one
+        // in it for each project and one in that for each run.
+        for tool in 0..<20 { for project in 0..<10 { for run in 0..<20 { box.file("temp/tool\(tool)-501/project\(project)/run\(run)/out.bin", bytes: 64) } } }
+        let temp = try #require(Trasher.realPath(box.path + "/temp"))
+        _ = CleanScanner.temporary(in: [temp], inUse: [])
+        var inUse: Int64 = 0
+        Self.gate("deep-clean.temporary.4k-folders", Self.ms { inUse = CleanScanner.temporary(in: [temp], inUse: []).inUseBytes })
+        #expect(inUse > 0)
     }
 
     @Test func identicalFilesAndSimilarPicturesAreFoundQuickly() throws {

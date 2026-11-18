@@ -85,7 +85,9 @@ private final class ToolNames: @unchecked Sendable {
         let old = Date(timeIntervalSince1970: 1_600_000_000)
         model.findTemporary = { roots, _ in
             release.wait()
-            return [CleanCandidate(path: roots[0] + "/old-build", bytes: 9_000, modified: old, category: .temporary, safety: .review, owner: nil, reason: "synthetic")]
+            return TemporaryListing(
+                candidates: [CleanCandidate(path: roots[0] + "/old-build", bytes: 9_000, modified: old, category: .temporary, safety: .review, owner: nil, reason: "synthetic")],
+                inUseBytes: 5 << 30)
         }
         defer { release.signal() }
         // Started ahead of need, as at launch: the temporary folders aren't read at all.
@@ -104,10 +106,12 @@ private final class ToolNames: @unchecked Sendable {
         let found = try #require(model.candidates.first { $0.category == .temporary })
         // Listed, never chosen for the user, and what was chosen stays chosen.
         #expect(found.path == "/synthetic/temp/old-build" && !model.chosen.contains(found.path))
+        // What's there but in use is said, so the list doesn't read as all there is.
+        #expect(model.temporaryInUse == 5 << 30)
         #expect(model.chosen.contains(home.path + "/Library/Caches/com.vendor.Player"))
 
         // A scan again keeps the find listed until the next look replaces it.
-        model.findTemporary = { _, _ in [] }
+        model.findTemporary = { _, _ in TemporaryListing() }
         model.scan()
         await model.scanJob?.value
         #expect(model.candidates.contains { $0.category == .temporary } || !model.lookingInTemporary)
