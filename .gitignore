@@ -6,6 +6,7 @@
 /MyMole-AppStore.app
 /MyMole-AppStore.pkg
 /dist/
+/dist-bin/
 __pycache__/
 *.pyc
 /build/

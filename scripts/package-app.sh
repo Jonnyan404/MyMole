@@ -1,19 +1,21 @@
 #!/bin/bash
-# Assemble MyMole.app from SwiftPM products for one architecture, then zip
-# and wrap it into a disk image.
+# Assemble MyMole.app from SwiftPM products, then zip and wrap it into a disk
+# image.
 #
 #   scripts/package-app.sh <bin-dir> <arch> <output-dir> [version]
 #
 # <bin-dir> is what `swift build -c release --triple <triple> --show-bin-path`
-# prints. <arch> is arm64 or x86_64 and is only used for names and a sanity
-# check: the architectures are the binaries' own, never relabelled.
+# prints. <arch> is arm64, x86_64 or universal and is only used for names and a
+# sanity check: the architectures are the binaries' own, never relabelled. A
+# universal bin dir holds the products already merged with lipo, and the check
+# then asks for both architectures rather than one.
 #
 # The bundle is signed ad hoc. It is not notarized, so a machine that downloads
 # it sees Gatekeeper's first-run prompt; see the note printed at the end.
 set -euo pipefail
 
 BIN="${1:?bin dir}"
-ARCH="${2:?arch: arm64 or x86_64}"
+ARCH="${2:?arch: arm64, x86_64 or universal}"
 OUT="${3:?output dir}"
 VERSION="${4:-1.0}"
 
@@ -29,10 +31,14 @@ done
 # A mislabelled build is worse than a failed one: an Intel binary called
 # arm64 downloads fine and dies on launch.
 actual="$(lipo -archs "$BIN/MyMole" | tr ' ' '\n' | sort | tr '\n' ' ')"
-case " $actual " in
-  *" $ARCH "*) ;;
-  *) echo "MyMole is [$actual], expected $ARCH" >&2; exit 1 ;;
-esac
+want="$ARCH"
+[ "$ARCH" = universal ] && want="arm64 x86_64"
+for arch in $want; do
+  case " $actual " in
+    *" $arch "*) ;;
+    *) echo "MyMole is [$actual], expected $arch" >&2; exit 1 ;;
+  esac
+done
 
 mkdir -p "$OUT"
 if [ -e "$APP" ]; then
@@ -124,11 +130,15 @@ codesign --verify --strict "$APP"
 
 NAME="MyMole-$VERSION-macOS-$ARCH"
 rm -f "$OUT/$NAME.zip" "$OUT/$NAME.dmg"
-# ditto, not zip: it keeps the icon resource fork and the signature intact.
-ditto -c -k --sequesterRsrc --keepParent "$APP" "$OUT/$NAME.zip"
+# A release carries the disk image alone; the zip is for local use, where
+# unpacking a dmg is more work than it is worth.
+if [ "${MYMOLE_ARCHIVE:-both}" != dmg ]; then
+  # ditto, not zip: it keeps the icon resource fork and the signature intact.
+  ditto -c -k --sequesterRsrc --keepParent "$APP" "$OUT/$NAME.zip"
+  echo "built: $OUT/$NAME.zip"
+fi
 hdiutil create -quiet -volname "MyMole" -srcfolder "$APP" -ov -format UDZO "$OUT/$NAME.dmg"
 
-echo "built: $OUT/$NAME.zip"
 echo "built: $OUT/$NAME.dmg"
 echo "note: ad hoc signed and not notarized; first launch needs"
 echo "      System Settings > Privacy & Security > Open Anyway."
