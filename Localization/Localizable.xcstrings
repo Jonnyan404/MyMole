@@ -16328,6 +16328,12 @@
             "state" : "translated",
             "value" : "백그라운드 에이전트가 변경되었습니다. 앱은 그대로 남았습니다. 이전 에이전트가 중지되었다면 앱을 다시 여세요."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "某个后台代理发生了变化。应用保持原位。如果之前的代理已被停止，请重新打开该应用。"
+          }
         }
       }
     },
@@ -16361,6 +16367,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "에이전트를 중지한 후에도 백그라운드 프로세스가 실행 중입니다. 앱은 그대로 남았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "代理停止后仍有后台进程在运行。应用保持原位。"
           }
         }
       }
@@ -16596,6 +16608,12 @@
             "state" : "translated",
             "value" : "폴더를 열 수 없었습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法打开某个文件夹。"
+          }
         }
       }
     },
@@ -16750,6 +16768,12 @@
             "state" : "translated",
             "value" : "링크되었거나 접근할 수 없는 폴더가 거부되었습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已拒绝链接的或无法访问的文件夹。"
+          }
         }
       }
     },
@@ -16783,6 +16807,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "링크되었거나 잘못된 폴더가 거부되었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已拒绝链接的或格式错误的文件夹。"
           }
         }
       }
@@ -16857,6 +16887,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "실행 중인 백그라운드 프로세스를 이 앱의 로드된 에이전트와 연결할 수 없었습니다. 아무것도 이동되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法将某个正在运行的后台进程对应到该应用已加载的代理。没有移动任何内容。"
           }
         }
       }
@@ -18358,6 +18394,12 @@
             "state" : "translated",
             "value" : "관리자 승인이 필요합니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要管理员批准。"
+          }
         }
       }
     },
@@ -19780,6 +19822,12 @@
             "state" : "translated",
             "value" : "다른 MyMole 시스템 작업이 아직 실행 중이어서 아무것도 변경되지 않았습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "另一个 MyMole 系统任务仍在运行，因此没有做任何更改。"
+          }
         }
       }
     },
@@ -20734,6 +20782,12 @@
             "state" : "translated",
             "value" : "앱 메타데이터 또는 보호 규칙이 크기가 제한된 일반 파일이 아닙니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用元数据或保护规则不是大小受限的普通文件。"
+          }
         }
       }
     },
@@ -20768,6 +20822,12 @@
             "state" : "translated",
             "value" : "읽는 동안 앱 메타데이터 또는 보호 규칙이 변경되었습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "读取期间应用元数据或保护规则发生了变化。"
+          }
         }
       }
     },
@@ -20801,6 +20861,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "앱 메타데이터 또는 보호 규칙을 읽을 수 없었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取应用元数据或保护规则。"
           }
         }
       }
@@ -22035,6 +22101,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "에이전트를 중지한 후 백그라운드 프로세스를 확인할 수 없었습니다. 앱은 그대로 남았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止代理后无法检查后台进程。应用保持原位。"
           }
         }
       }
@@ -43902,6 +43974,12 @@
             "state" : "translated",
             "value" : "제거하는 동안 변경되어 %@에 보관됩니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "它在移除期间发生了变化，已保留在 %@。"
+          }
         }
       }
     },
@@ -44801,6 +44879,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "제거를 기록할 수 없어 이동하지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法记录它的移除，因此没有移动它。"
           }
         }
       }
@@ -45915,6 +45999,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "언어"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语言"
           }
         }
       }
@@ -55758,6 +55848,12 @@
             "state" : "translated",
             "value" : "MyMole의 윈도우와 대화상자가 이 언어로 표시됩니다. macOS는 MyMole이 시작될 때 언어를 정하므로 변경 사항은 다음에 열 때 적용됩니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole 的窗口和对话框都使用该语言显示。macOS 会在 MyMole 启动时确定语言，因此更改会在下次启动后生效。"
+          }
         }
       }
     },
@@ -58312,6 +58408,12 @@
             "state" : "translated",
             "value" : "사용할 수 있는 비공개 관리자 준비 폴더가 없습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有可用的私有管理员暂存文件夹。"
+          }
         }
       }
     },
@@ -58426,6 +58528,12 @@
             "state" : "translated",
             "value" : "로그인한 사용자의 안전한 홈 폴더를 찾을 수 없었습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找不到当前登录用户的安全个人文件夹。"
+          }
         }
       }
     },
@@ -58459,6 +58567,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "제거할 안전한 위치가 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有可以安全移除它的位置。"
           }
         }
       }
@@ -64248,6 +64362,12 @@
             "state" : "translated",
             "value" : "일부를 제거할 수 없었으며 남은 것은 원래 자리로 돌아갔습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其中一部分无法移除；剩余部分已放回原位。"
+          }
         }
       }
     },
@@ -64281,6 +64401,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "일부를 제거할 수 없었으며 남은 것은 %@에 보관됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其中一部分无法移除；剩余部分保留在 %@。"
           }
         }
       }
@@ -73794,6 +73920,12 @@
             "state" : "translated",
             "value" : "실행 중인 프로세스를 확인할 수 없었습니다. 아무것도 이동되지 않았습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法检查正在运行的进程。没有移动任何内容。"
+          }
         }
       }
     },
@@ -73987,6 +74119,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mac과 동일"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟随系统"
           }
         }
       }
@@ -84320,6 +84458,12 @@
             "state" : "translated",
             "value" : "응용 프로그램 폴더가 변경되었습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“应用程序”文件夹发生了变化。"
+          }
         }
       }
     },
@@ -84474,6 +84618,12 @@
             "state" : "translated",
             "value" : "휴지통이 변경되었습니다. 아무것도 이동되지 않았습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "废纸篓发生了变化。没有移动任何内容。"
+          }
         }
       }
     },
@@ -84627,6 +84777,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "관리자 준비 폴더가 비공개가 아닙니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理员暂存文件夹不是私有的。"
           }
         }
       }
@@ -85010,6 +85166,12 @@
             "state" : "translated",
             "value" : "앱이 변경되었거나 메타데이터를 확인할 수 없었습니다. 아무것도 이동되지 않았습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用发生了变化，或无法核实其元数据。没有移动任何内容。"
+          }
         }
       }
     },
@@ -85083,6 +85245,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "앱이 변경되었습니다. 아무것도 이동되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用发生了变化。没有移动任何内容。"
           }
         }
       }
@@ -85158,6 +85326,12 @@
             "state" : "translated",
             "value" : "앱에 확인된 포함 에이전트가 아닌 실행 중인 프로세스가 있습니다. 제거하기 전에 앱과 백그라운드 프로세스를 종료하세요."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该应用有一个正在运行的进程不是已核实的内置代理。请在卸载前退出该应用及其后台进程。"
+          }
         }
       }
     },
@@ -85191,6 +85365,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "앱에 포함된 에이전트 항목이 너무 많아 안전하게 확인할 수 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该应用的内置代理条目太多，无法安全核实。"
           }
         }
       }
@@ -85312,6 +85492,12 @@
             "state" : "translated",
             "value" : "앱은 %@/%@/bundle.app에 보관되며, request.json에 원래 위치가 기록되어 있습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用保留在 %@/%@/bundle.app；其 request.json 记录了原始位置。"
+          }
         }
       }
     },
@@ -85345,6 +85531,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "앱이 보관되어 있거나 보호 규칙을 읽을 수 없었습니다. 아무것도 이동되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该应用已被保留，或无法读取其保护规则。没有移动任何内容。"
           }
         }
       }
@@ -85540,6 +85732,12 @@
             "state" : "translated",
             "value" : "앱 이동을 준비할 수 없었습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法准备应用移动操作。"
+          }
         }
       }
     },
@@ -85573,6 +85771,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "앱 이동을 기록할 수 없었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法记录应用移动操作。"
           }
         }
       }
@@ -85688,6 +85892,12 @@
             "state" : "translated",
             "value" : "앱 또는 보호 규칙이 변경되었습니다. %@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用或其保护规则发生了变化。%@"
+          }
         }
       }
     },
@@ -85722,6 +85932,12 @@
             "state" : "translated",
             "value" : "앱 또는 백그라운드 프로세스 중 하나가 아직 실행 중입니다. 아무것도 이동되지 않았습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用或其某个后台进程仍在运行。没有移动任何内容。"
+          }
         }
       }
     },
@@ -85755,6 +85971,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "앱이 다시 시작되었거나 보호 규칙이 변경되었습니다. 아무것도 이동되지 않았습니다. 백그라운드 에이전트가 중지되었다면 앱을 다시 열면 복원됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用已重新启动，或其保护规则发生了变化。没有移动任何内容。如果其后台代理已被停止，重新打开该应用即可恢复。"
           }
         }
       }
@@ -85830,6 +86052,12 @@
             "state" : "translated",
             "value" : "앱이 원래 위치로 돌아갔습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用已放回原始位置。"
+          }
         }
       }
     },
@@ -85863,6 +86091,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "앱의 백그라운드 에이전트를 중지할 수 없었습니다(launchctl %d). 앱은 그대로 남았습니다. 이전 에이전트가 중지되었다면 앱을 다시 여세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法停止该应用的后台代理（launchctl %d）。应用保持原位。如果之前的代理已被停止，请重新打开该应用。"
           }
         }
       }
@@ -85898,6 +86132,12 @@
             "state" : "translated",
             "value" : "앱에 포함된 에이전트를 읽을 수 없었습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取该应用的内置代理。"
+          }
         }
       }
     },
@@ -85931,6 +86171,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "앱의 로드된 백그라운드 에이전트를 확인할 수 없었습니다. 아무것도 이동되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法检查该应用已加载的后台代理。没有移动任何内容。"
           }
         }
       }
@@ -86320,6 +86566,12 @@
             "state" : "translated",
             "value" : "대상 위치가 앱을 받을 수 없었습니다(POSIX %d). %@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目标位置无法接收该应用（POSIX %d）。%@"
+          }
         }
       }
     },
@@ -86353,6 +86605,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "대상 위치가 이미 사용 중입니다. 아무것도 덮어쓰지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目标位置已被占用。没有覆盖任何内容。"
           }
         }
       }
@@ -87188,6 +87446,12 @@
             "state" : "translated",
             "value" : "새 휴지통을 해당 사용자에게 할당할 수 없었습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法将新的废纸篓分配给其用户。"
+          }
         }
       }
     },
@@ -87462,6 +87726,12 @@
             "state" : "translated",
             "value" : "요청을 읽을 수 없었습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取该请求。"
+          }
         }
       }
     },
@@ -87501,6 +87771,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "요청은 버전 %@용으로 작성되었으며 이 도구는 버전 %@입니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该请求是为版本 %@ 编写的；此工具为版本 %@。"
           }
         }
       }
@@ -87695,6 +87971,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "로그인한 사용자가 변경되었습니다. MyMole로 돌아가 다시 시도하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录用户已更改。请返回 MyMole 后重试。"
           }
         }
       }
@@ -87970,6 +88252,12 @@
             "state" : "translated",
             "value" : "도구는 root로 실행되어야 합니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此工具必须以 root 身份运行。"
+          }
         }
       }
     },
@@ -88084,6 +88372,12 @@
             "state" : "translated",
             "value" : "같은 볼륨에 사용자의 휴지통을 만들 수 없었습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法在同一宗卷上创建该用户的废纸篓。"
+          }
         }
       }
     },
@@ -88117,6 +88411,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "사용자의 휴지통을 준비할 수 없었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法准备该用户的废纸篓。"
           }
         }
       }
@@ -88152,6 +88452,12 @@
             "state" : "translated",
             "value" : "사용자의 휴지통을 사용할 수 없습니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该用户的废纸篓不可用。"
+          }
         }
       }
     },
@@ -88186,6 +88492,12 @@
             "state" : "translated",
             "value" : "사용자의 휴지통이 해당 사용자 전용이 아닙니다."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该用户的废纸篓不是其私有的。"
+          }
         }
       }
     },
@@ -88219,6 +88531,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "사용자의 휴지통은 실제 폴더여야 합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该用户的废纸篓必须是真实的文件夹。"
           }
         }
       }
@@ -89721,6 +90039,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "이 요청에 해당하는 앱이 지정되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该请求没有指定符合条件的应用程序。"
           }
         }
       }
@@ -99889,6 +100213,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS가 관리자 이동을 차단했습니다(POSIX %d). 앱은 그대로 남았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 阻止了管理员移动操作（POSIX %d）。应用保持原位。"
           }
         }
       }
