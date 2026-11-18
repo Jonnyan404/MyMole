@@ -55,25 +55,6 @@ struct CloneReclaimProbeTests {
         going.compactMap { Reclaim.file(at: $0) }.reduce(Reclaim()) { $0 + $1 }.bytes
     }
 
-    /// The file's blocks as physical ranges on the device.
-    static func extents(_ path: String) -> [Range<Int64>] {
-        let fd = open(path, O_RDONLY)
-        defer { close(fd) }
-        var st = stat()
-        fstat(fd, &st)
-        var out: [Range<Int64>] = []
-        var offset: Int64 = 0
-        while offset < Int64(st.st_size) {
-            var l2p = log2phys()
-            l2p.l2p_devoffset = off_t(offset)
-            l2p.l2p_contigbytes = off_t(Int64(st.st_size) - offset)
-            guard fcntl(fd, F_LOG2PHYS_EXT, &l2p) != -1, l2p.l2p_contigbytes > 0 else { break }
-            out.append(Int64(l2p.l2p_devoffset)..<Int64(l2p.l2p_devoffset) + Int64(l2p.l2p_contigbytes))
-            offset += Int64(l2p.l2p_contigbytes)
-        }
-        return out
-    }
-
     static func union(_ ranges: [Range<Int64>]) -> [Range<Int64>] {
         var out: [Range<Int64>] = []
         for r in ranges.sorted(by: { $0.lowerBound < $1.lowerBound }) {
@@ -90,6 +71,8 @@ struct CloneReclaimProbeTests {
 
     /// The blocks of `going` that no file staying (among `known`) uses.
     static func byExtents(_ going: [String], known: [String]) -> Int64 {
+        // Read as the app reads them, so the comparison here checks that reading too.
+        func extents(_ path: String) -> [Range<Int64>] { FileSpace.extents(path) ?? [] }
         let gone = union(going.flatMap(extents))
         let kept = union(known.filter { !going.contains($0) }.flatMap(extents))
         var freed: Int64 = 0
