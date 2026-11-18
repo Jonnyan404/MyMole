@@ -11,7 +11,7 @@ import SwiftUI
 @MainActor
 @Observable
 final class OrphansModel {
-    static let source = "Removed Apps"
+    static let source = CleanupSource.removedApps.rawValue
 
     struct Notice: Equatable {
         let text: String

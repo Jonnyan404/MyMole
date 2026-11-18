@@ -10,32 +10,32 @@ public enum PluginKind: String, Sendable, CaseIterable {
 
     public var title: String {
         switch self {
-        case .quickLook: "Quick Look plug-in"
-        case .spotlight: "Spotlight importer"
-        case .preferencePane: "Settings pane"
-        case .screenSaver: "Screen saver"
-        case .internetPlugin: "Internet plug-in"
-        case .audioUnit: "Audio Unit"
-        case .vst: "VST plug-in"
-        case .vst3: "VST3 plug-in"
-        case .inputMethod: "Input method"
+        case .quickLook: String(localized: "Quick Look plug-in")
+        case .spotlight: String(localized: "Spotlight importer")
+        case .preferencePane: String(localized: "Settings pane")
+        case .screenSaver: String(localized: "Screen saver")
+        case .internetPlugin: String(localized: "Internet plug-in")
+        case .audioUnit: String(localized: "Audio Unit")
+        case .vst: String(localized: "VST plug-in")
+        case .vst3: String(localized: "VST3 plug-in")
+        case .inputMethod: String(localized: "Input method")
         case .service: "Service"
-        case .colorPicker: "Color picker"
+        case .colorPicker: String(localized: "Color picker")
         }
     }
 
     /// What it does, in a few words.
     public var detail: String {
         switch self {
-        case .quickLook: "Previews files in Finder and Quick Look"
-        case .spotlight: "Lets Spotlight read a kind of file"
-        case .preferencePane: "Adds a pane to System Settings"
-        case .screenSaver: "A screen saver"
-        case .internetPlugin: "Loads into older browsers"
-        case .audioUnit, .vst, .vst3: "Loads into music and audio apps"
-        case .inputMethod: "A way to type, in the keyboard menu"
-        case .service: "Adds a command to the Services menu"
-        case .colorPicker: "Adds a picker to the Colors window"
+        case .quickLook: String(localized: "Previews files in Finder and Quick Look")
+        case .spotlight: String(localized: "Lets Spotlight read a kind of file")
+        case .preferencePane: String(localized: "Adds a pane to System Settings")
+        case .screenSaver: String(localized: "A screen saver")
+        case .internetPlugin: String(localized: "Loads into older browsers")
+        case .audioUnit, .vst, .vst3: String(localized: "Loads into music and audio apps")
+        case .inputMethod: String(localized: "A way to type, in the keyboard menu")
+        case .service: String(localized: "Adds a command to the Services menu")
+        case .colorPicker: String(localized: "Adds a picker to the Colors window")
         }
     }
 

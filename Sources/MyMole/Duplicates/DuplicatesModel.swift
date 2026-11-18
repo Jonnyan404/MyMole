@@ -9,7 +9,7 @@ import SynchronizationCompat
 @MainActor
 @Observable
 final class DuplicatesModel {
-    static let source = "Duplicates"
+    static let source = CleanupSource.duplicates.rawValue
 
     struct Notice: Equatable {
         let text: String

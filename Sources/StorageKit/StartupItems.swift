@@ -15,9 +15,9 @@ public struct StartupItem: Sendable, Hashable, Identifiable {
 
         public var title: String {
             switch self {
-            case .user: "Your login agent"
-            case .everyUser: "All users' agent"
-            case .system: "System daemon"
+            case .user: String(localized: "Your login agent")
+            case .everyUser: String(localized: "All users' agent")
+            case .system: String(localized: "System daemon")
             }
         }
     }
@@ -49,11 +49,11 @@ public struct StartupItem: Sendable, Hashable, Identifiable {
     public var summary: String {
         if let plugin { return plugin.detail }
         var parts: [String] = []
-        if disabled { parts.append("Turned off in its own file") }
-        if runsAtLoad { parts.append(scope == .system ? "Starts at boot" : "Starts at login") }
+        if disabled { parts.append(String(localized: "Turned off in its own file")) }
+        if runsAtLoad { parts.append(scope == .system ? String(localized: "Starts at boot") : String(localized: "Starts at login")) }
         if keepsAlive { parts.append("stays running") }
         if scheduled { parts.append("runs on a schedule") }
-        if parts.isEmpty { parts.append("Starts when something asks for it") }
+        if parts.isEmpty { parts.append(String(localized: "Starts when something asks for it")) }
         return parts.joined(separator: " · ")
     }
 }

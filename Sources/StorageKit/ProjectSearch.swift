@@ -208,7 +208,7 @@ public enum ProjectArtifacts {
         }
         out.append(
             FootprintItem(
-                id: "inside:source", category: .source, title: "Source & other files", location: project.path,
+                id: "inside:source", category: .source, title: String(localized: "Source & other files"), location: project.path,
                 attribution: .inside, entries: source))
         return out
     }
@@ -230,8 +230,8 @@ public enum ProjectArtifacts {
     static func title(key: String, category: FootprintCategory) -> String {
         switch category {
         case .worktrees: "Worktrees"
-        case .marked: "Added by you"
-        case .kept: "Kept by you"
+        case .marked: String(localized: "Added by you")
+        case .kept: String(localized: "Kept by you")
         default: key
         }
     }

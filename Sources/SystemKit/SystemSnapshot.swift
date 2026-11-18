@@ -149,7 +149,7 @@ public struct SystemSnapshot: Sendable, Equatable {
         }
 
         public var state: String {
-            charging ? "Charging" : onPower ? "On power" : "On battery"
+            charging ? String(localized: "Charging") : onPower ? String(localized: "On power") : String(localized: "On battery")
         }
     }
 
@@ -233,7 +233,12 @@ public struct Health: Sendable, Equatable {
 
     public var summary: String {
         if let first = issues.first?.text { return first }
-        return unknown.isEmpty ? "Everything looks good" : "Couldn't read \(unknown.joined(separator: " and "))"
+        switch (unknown.contains("memory"), unknown.contains("the startup disk")) {
+        case (true, true): return String(localized: "Couldn't read memory and the startup disk")
+        case (true, false): return String(localized: "Couldn't read memory")
+        case (false, true): return String(localized: "Couldn't read the startup disk")
+        case (false, false): return String(localized: "Everything looks good")
+        }
     }
 
     public static func assess(
@@ -242,39 +247,39 @@ public struct Health: Sendable, Equatable {
     ) -> Health {
         var issues: [Issue] = []
         if let d = diskHealth, d.lowercased().contains("fail") {
-            issues.append(Issue(penalty: 40, text: "The startup disk reports that it's failing. Back it up now"))
+            issues.append(Issue(penalty: 40, text: String(localized: "The startup disk reports that it's failing. Back it up now")))
         }
         if let v = startup, v.total > 0 {
             let p = Int(v.usedPercent.rounded())
             if p >= 95 {
-                issues.append(Issue(penalty: 35, text: "The startup disk is almost full (\(p)%)"))
+                issues.append(Issue(penalty: 35, text: String(localized: "The startup disk is almost full (\(p)%)")))
             } else if p >= 90 {
-                issues.append(Issue(penalty: 25, text: "The startup disk is \(p)% full"))
+                issues.append(Issue(penalty: 25, text: String(localized: "The startup disk is \(p)% full")))
             } else if p >= 80 {
-                issues.append(Issue(penalty: 10, text: "The startup disk is \(p)% full"))
+                issues.append(Issue(penalty: 10, text: String(localized: "The startup disk is \(p)% full")))
             }
         }
         if let m = memory {
             switch m.pressure {
-            case .critical: issues.append(Issue(penalty: 30, text: "Memory is critically short"))
-            case .warning: issues.append(Issue(penalty: 15, text: "Memory is under pressure"))
+            case .critical: issues.append(Issue(penalty: 30, text: String(localized: "Memory is critically short")))
+            case .warning: issues.append(Issue(penalty: 15, text: String(localized: "Memory is under pressure")))
             case .normal: break
             }
             let gb: Int64 = 1_073_741_824
             if m.swapUsed >= 4 * gb {
-                issues.append(Issue(penalty: 10, text: "Heavy swapping to disk (\(format(m.swapUsed)))"))
+                issues.append(Issue(penalty: 10, text: String(localized: "Heavy swapping to disk (\(format(m.swapUsed)))")))
             } else if m.swapUsed >= gb {
-                issues.append(Issue(penalty: 5, text: "Swapping to disk (\(format(m.swapUsed)))"))
+                issues.append(Issue(penalty: 5, text: String(localized: "Swapping to disk (\(format(m.swapUsed)))")))
             }
         }
         if let c = cpu, let load = c.load, !c.perCore.isEmpty, load.five / Double(c.perCore.count) >= 1.5 {
-            issues.append(Issue(penalty: 10, text: "The CPU has been overloaded for minutes"))
+            issues.append(Issue(penalty: 10, text: String(localized: "The CPU has been overloaded for minutes")))
         }
         if let b = battery {
             if let cap = b.capacityPercent, cap < 80 {
-                issues.append(Issue(penalty: 10, text: "The battery holds \(Int(cap.rounded()))% of its original charge"))
+                issues.append(Issue(penalty: 10, text: String(localized: "The battery holds \(Int(cap.rounded()))% of its original charge")))
             } else if let h = b.health, !h.isEmpty, h != "Good" {
-                issues.append(Issue(penalty: 10, text: "macOS says the battery needs service"))
+                issues.append(Issue(penalty: 10, text: String(localized: "macOS says the battery needs service")))
             }
         }
         issues.sort { $0.penalty > $1.penalty }

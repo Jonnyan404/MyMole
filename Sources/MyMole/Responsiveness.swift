@@ -43,17 +43,7 @@ enum Responsiveness: Int, CaseIterable, Identifiable {
         return memory >= 32 * gigabyte ? .fast : .balanced
     }
 
-    var title: String {
-        switch self {
-        case .automatic: String(localized: "Automatic")
-        case .gentle: String(localized: "Gentle")
-        case .light: String(localized: "Light")
-        case .balanced: String(localized: "Balanced")
-        case .fast: String(localized: "Fast")
-        case .maximum: String(localized: "Maximum")
-        case .hyperspeed: String(localized: "Hyperspeed")
-        }
-    }
+    var title: String { self == .automatic ? String(localized: "Automatic") : StepName.title(rawValue) }
 
     var detail: String {
         switch self {

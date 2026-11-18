@@ -70,7 +70,7 @@ public struct TrashPlan: Sendable, Identifiable {
     public var waiting: [String] { items.filter { $0.status == .waiting }.map(\.path) }
 
     /// Reason given for an item stopped before its turn.
-    public static let stoppedReason = "Stopped before it was moved."
+    public static let stoppedReason = String(localized: "Stopped before it was moved.")
 
     /// The plan as the flows have always read a move: what went where, and
     /// why each of the others stayed.
@@ -98,7 +98,7 @@ extension Trasher {
     static func plan(_ paths: [String], through gate: TrashGate, job: UUID = UUID(), policyVersion: Int = TrashPlan.policyVersion) -> TrashPlan {
         var plan = TrashPlan(job: job, action: .moveToTrash, paths: paths, policyVersion: policyVersion)
         let (allowed, refused) = clear(paths, through: gate)
-        let refusedWhy = Dictionary(refused.map { ($0.path, $0.reason) }, uniquingKeysWith: { a, _ in a })
+        let refusedWhy = Dictionary(refused.map { ($0.path, $0.reason.text) }, uniquingKeysWith: { a, _ in a })
         let allowedSet = Set(allowed)
         for i in plan.items.indices {
             let path = plan.items[i].path
@@ -121,14 +121,14 @@ extension Trasher {
     static func run(_ plan: inout TrashPlan, through gate: TrashGate, backend: TrashBackend, stop: () -> Bool = { false }) {
         guard plan.action == .moveToTrash else { return }
         guard plan.policyVersion == TrashPlan.policyVersion else {
-            for i in plan.items.indices { plan.set(i, .refused("Checked under other rules; check again.")) }
+            for i in plan.items.indices { plan.set(i, .refused(String(localized: "Checked under other rules; check again."))) }
             return
         }
         var keeps: @Sendable (String) -> Bool
         do {
             keeps = resolving(try gate.protections())
         } catch {
-            for i in plan.items.indices { plan.set(i, .refused(protectionsUnreadable)) }
+            for i in plan.items.indices { plan.set(i, .refused(Refusal.protectionsUnreadable.text)) }
             return
         }
         var readAt = Date()
@@ -142,23 +142,23 @@ extension Trasher {
                     keeps = resolving(try gate.protections())
                     readAt = Date()
                 } catch {
-                    for j in plan.items.indices[i...] { plan.set(j, .refused("Your protections couldn't be read, so it wasn't moved.")) }
+                    for j in plan.items.indices[i...] { plan.set(j, .refused(String(localized: "Your protections couldn't be read, so it wasn't moved."))) }
                     return
                 }
             }
             let item = plan.items[i]
             if item.identity == nil || identity(of: item.path) != item.identity
                 || identity(of: (item.path as NSString).deletingLastPathComponent) != item.parent {
-                plan.set(i, .refused("Changed since it was checked"))
+                plan.set(i, .refused(Trasher.Refusal.changed.text))
             } else if keeps(item.path) {
-                plan.set(i, .refused("Kept"))
+                plan.set(i, .refused(Trasher.Refusal.kept.text))
             } else if !gate.still(item.path) {
-                plan.set(i, .refused("Changed since it was checked"))
+                plan.set(i, .refused(Trasher.Refusal.changed.text))
             } else if isProtectedResolved(item.path) {
-                plan.set(i, .refused("Protected location"))
+                plan.set(i, .refused(Trasher.Refusal.protectedLocation.text))
             } else {
                 let r = backend.moveOne(item.path)
-                plan.set(i, r.trashed.map { .done($0) } ?? .failed(r.error ?? "Not moved"))
+                plan.set(i, r.trashed.map { .done($0) } ?? .failed(r.error ?? Trasher.notMoved))
             }
         }
     }
@@ -220,7 +220,7 @@ public final class TrashJob: Sendable {
         var plan = TrashPlan(job: id, action: action, paths: done + failed.keys.sorted() + refused)
         for i in plan.items.indices {
             let p = plan.items[i].path
-            if i < done.count { plan.set(i, .done(nil)) } else if let why = failed[p] { plan.set(i, .failed(why)) } else { plan.set(i, .refused("Refused by the rules.")) }
+            if i < done.count { plan.set(i, .done(nil)) } else if let why = failed[p] { plan.set(i, .failed(why)) } else { plan.set(i, .refused(String(localized: "Refused by the rules."))) }
         }
         state.withLock { $0.plans.append(plan) }
     }

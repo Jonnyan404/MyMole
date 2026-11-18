@@ -56,9 +56,9 @@ public enum SystemCleanRules {
     }
 
     public static let roots: [Root] = [
-        Root(path: "/Library/Caches", reason: "System-wide cache. Rebuilt by the service that made it."),
-        Root(path: "/Library/Logs", reason: "System-wide logs and crash reports."),
-        Root(path: "/private/var/log", rotatedLogsOnly: true, reason: "An old, rotated system log archive."),
+        Root(path: "/Library/Caches", reason: String(localized: "System-wide cache. Rebuilt by the service that made it.")),
+        Root(path: "/Library/Logs", reason: String(localized: "System-wide logs and crash reports.")),
+        Root(path: "/private/var/log", rotatedLogsOnly: true, reason: String(localized: "An old, rotated system log archive.")),
     ]
 
     /// Never offered or removed: these tie into booting or the update

@@ -49,11 +49,11 @@ public enum ProjectAttribution {
             }
         }
         add(codexSessions(projects, home: home, misses: misses), id: "codex:sessions", category: .agentSessions,
-            title: "Codex sessions", location: home + "/.codex", attribution: .recorded)
+            title: String(localized: "Codex sessions"), location: home + "/.codex", attribution: .recorded)
         add(claudeSessions(projects, home: home, misses: misses), id: "claude:projects", category: .agentSessions,
-            title: "Claude Code sessions", location: home + "/.claude/projects", attribution: .recorded)
+            title: String(localized: "Claude Code sessions"), location: home + "/.claude/projects", attribution: .recorded)
         add(derivedData(projects, home: home, misses: misses), id: "xcode:deriveddata", category: .build,
-            title: "Xcode DerivedData", location: home + "/Library/Developer/Xcode/DerivedData", attribution: .recorded)
+            title: String(localized: "Xcode DerivedData"), location: home + "/Library/Developer/Xcode/DerivedData", attribution: .recorded)
         for folder in libraryFolders {
             let location = home + "/Library/" + folder
             add(nameMatches(projects, in: location, misses: misses), id: "library:\(folder)", category: .appData,
@@ -65,7 +65,7 @@ public enum ProjectAttribution {
         for (path, project) in rules.cleanPaths where paths.contains(project) && !path.hasPrefix(project + "/") {
             if let entry = measure(path, misses: misses) { added[project, default: []].append(entry) }
         }
-        add(added, id: "user:marked", category: .marked, title: "Added by you", location: home, attribution: .user)
+        add(added, id: "user:marked", category: .marked, title: String(localized: "Added by you"), location: home, attribution: .user)
         let items = rules.isEmpty ? out : out.mapValues { rules.applied(toOutside: $0, home: home) }.filter { !$0.value.isEmpty }
         return OutsideData(items: items, unreadable: misses.paths)
     }

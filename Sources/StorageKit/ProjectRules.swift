@@ -121,7 +121,7 @@ public struct ProjectRules: Sendable, Codable, Equatable {
         if !kept.isEmpty {
             out.append(
                 FootprintItem(
-                    id: "outside:kept", category: .kept, title: "Kept by you", location: home,
+                    id: "outside:kept", category: .kept, title: String(localized: "Kept by you"), location: home,
                     attribution: .user, entries: kept))
         }
         return out

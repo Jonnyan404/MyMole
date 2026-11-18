@@ -761,9 +761,13 @@ public enum DuplicateFinder {
     /// has no link on its way, and at least one copy that isn't going is
     /// still there and unchanged. Their full contents are compared again,
     /// including a check against the scanned digest. A group never loses its last copy.
+    /// A copy in a folder added outside the home folder, as on another
+    /// disk, has no link on its way when it can be opened to compare:
+    /// that opens each folder on the way without following a link.
     public static func mayGo(_ path: String, of group: DuplicateGroup, going: Set<String>, home: String = Home.path,
                              stop: () -> Bool = { false }) -> Bool {
-        guard !stop(), going.contains(path), Trasher.isPlainPath(path), !Trasher.isProtected(path, home: home), Trasher.noLinksBetween(home, and: path),
+        func noLinks(_ p: String) -> Bool { !p.hasPrefix(home + "/") || Trasher.noLinksBetween(home, and: p) }
+        guard !stop(), going.contains(path), Trasher.isPlainPath(path), !Trasher.isProtected(path, home: home), noLinks(path),
             let file = group.files.first(where: { $0.path == path }), isUnchanged(file, length: group.length)
         else { return false }
         // The copy that stays must be reached the same way: no link on its way either.
@@ -773,11 +777,9 @@ public enum DuplicateFinder {
         }
         return FileSpace.withoutDownloading { group.files.contains { keeper in
             !going.contains(keeper.path) && (file.device != keeper.device || file.inode != keeper.inode)
-                && isUnchanged(keeper, length: group.length)
-                && (!keeper.path.hasPrefix(home + "/") || Trasher.noLinksBetween(home, and: keeper.path))
+                && isUnchanged(keeper, length: group.length) && noLinks(keeper.path)
                 && identical(found(file), found(keeper), digest: group.digest, stop: stop)
-                && Trasher.noLinksBetween(home, and: path)
-                && (!keeper.path.hasPrefix(home + "/") || Trasher.noLinksBetween(home, and: keeper.path))
+                && noLinks(path) && noLinks(keeper.path)
         } }
     }
 }

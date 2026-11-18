@@ -9,9 +9,9 @@ public struct InstalledPackage: Sendable, Hashable, Identifiable {
 
         public var title: String {
             switch self {
-            case .formula: "Homebrew formula"
-            case .cask: "Homebrew cask"
-            case .receipt: "Installer package"
+            case .formula: String(localized: "Homebrew formula")
+            case .cask: String(localized: "Homebrew cask")
+            case .receipt: String(localized: "Installer package")
             }
         }
     }

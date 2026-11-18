@@ -35,25 +35,16 @@ public enum PerformanceLevel: Int, CaseIterable, Sendable, Comparable {
 
     public static func < (a: Self, b: Self) -> Bool { a.rawValue < b.rawValue }
 
-    public var title: String {
-        switch self {
-        case .gentle: "Gentle"
-        case .light: "Light"
-        case .balanced: "Balanced"
-        case .fast: "Fast"
-        case .full: "Maximum"
-        case .hyperspeed: "Hyperspeed"
-        }
-    }
+    public var title: String { StepName.title(rawValue) }
 
     public var detail: String {
         switch self {
-        case .gentle: "Quietest. Two threads at the lowest priority, one scan at a time; scans take longest."
-        case .light: "Few threads at low priority, one scan at a time."
-        case .balanced: "Uses the cores without crowding the apps you work in."
-        case .fast: "Twice as many threads as cores for scans you wait on."
-        case .full: "Everything the Mac has for scans you wait on, and many disk walks at a time."
-        case .hyperspeed: "No limits: every thread and as many disk walks at once as there are scans. Can use a lot of memory and disk."
+        case .gentle: String(localized: "Quietest. Two threads at the lowest priority, one scan at a time; scans take longest.")
+        case .light: String(localized: "Few threads at low priority, one scan at a time.")
+        case .balanced: String(localized: "Uses the cores without crowding the apps you work in.")
+        case .fast: String(localized: "Twice as many threads as cores for scans you wait on.")
+        case .full: String(localized: "Everything the Mac has for scans you wait on, and many disk walks at a time.")
+        case .hyperspeed: String(localized: "No limits: every thread and as many disk walks at once as there are scans. Can use a lot of memory and disk.")
         }
     }
 
@@ -139,25 +130,16 @@ public enum ResultSize: Int, CaseIterable, Sendable, Comparable {
 
     public static func < (a: Self, b: Self) -> Bool { a.rawValue < b.rawValue }
 
-    public var title: String {
-        switch self {
-        case .gentle: "Gentle"
-        case .light: "Light"
-        case .balanced: "Balanced"
-        case .fast: "Fast"
-        case .maximum: "Maximum"
-        case .hyperspeed: "Hyperspeed"
-        }
-    }
+    public var title: String { StepName.title(rawValue) }
 
     public var detail: String {
         switch self {
-        case .gentle: "Keeps the least in memory and on disk: big lists move to disk soonest."
-        case .light: "Keeps little in memory; big lists move to disk early."
-        case .balanced: "Keeps saved scans and history as MyMole did before this setting."
-        case .fast: "Keeps more in memory, more saved scans and a history point every few hours."
-        case .maximum: "Keeps big lists in memory up to a quarter of this Mac's memory, many saved scans and a history point every hour."
-        case .hyperspeed: "No limits: keeps every list in memory, every saved scan and a history point for every scan. Can use a lot of memory and disk."
+        case .gentle: String(localized: "Keeps the least in memory and on disk: big lists move to disk soonest.")
+        case .light: String(localized: "Keeps little in memory; big lists move to disk early.")
+        case .balanced: String(localized: "Keeps saved scans and history as MyMole did before this setting.")
+        case .fast: String(localized: "Keeps more in memory, more saved scans and a history point every few hours.")
+        case .maximum: String(localized: "Keeps big lists in memory up to a quarter of this Mac's memory, many saved scans and a history point every hour.")
+        case .hyperspeed: String(localized: "No limits: keeps every list in memory, every saved scan and a history point for every scan. Can use a lot of memory and disk.")
         }
     }
 
@@ -216,4 +198,19 @@ public enum ResultSize: Int, CaseIterable, Sendable, Comparable {
     /// Points kept of a project's growth history. Hourly points still reach
     /// a day back within them.
     public var projectSamplesKept: Int { self == .hyperspeed ? .max : ProjectStore.keep }
+}
+
+/// The six steps the speed, size and responsiveness controls share, named
+/// in one place: step 1 is Gentle, step 6 Hyperspeed.
+public enum StepName {
+    public static func title(_ step: Int) -> String {
+        switch step {
+        case 1: String(localized: "Gentle")
+        case 2: String(localized: "level.light", defaultValue: "Light", comment: "A speed or size level, between Gentle and Balanced; not the light appearance")
+        case 3: String(localized: "Balanced")
+        case 4: String(localized: "Fast")
+        case 5: String(localized: "Maximum")
+        default: String(localized: "Hyperspeed")
+        }
+    }
 }

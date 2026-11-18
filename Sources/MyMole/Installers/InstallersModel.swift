@@ -290,7 +290,7 @@ final class InstallersModel {
         files.removeAll { moved.contains($0.path) }
         chosen.subtract(picked.map(\.path))
         let record = CleanupRecord(
-            source: "Installers", items: gone.count, bytes: gone.reduce(0) { $0 + $1.bytes }, failed: outcome.failed.count)
+            source: CleanupSource.installers.rawValue, items: gone.count, bytes: gone.reduce(0) { $0 + $1.bytes }, failed: outcome.failed.count)
         if !outcome.moved.isEmpty { shelf.add(Run(id: record.id, records: outcome.moved, files: gone)) }
         CleanupLog.submit(record, to: logURL)
         let skipped = picked.count - gone.count

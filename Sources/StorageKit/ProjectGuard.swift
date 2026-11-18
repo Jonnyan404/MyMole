@@ -37,25 +37,25 @@ public enum ProjectGuard {
     /// `ownGit` lets the `.git` right inside `path` be, as a worktree's own.
     static func scan(_ path: String, ownGit: Bool = false) -> String? {
         var st = stat()
-        guard lstat(path, &st) == 0 else { return "It's gone or can't be read." }
-        if (path as NSString).lastPathComponent == ".git" { return "It's a Git repository." }
-        guard st.st_mode & S_IFMT == S_IFDIR else { return isKey((path as NSString).lastPathComponent) ? "It's a key file." : nil }
+        guard lstat(path, &st) == 0 else { return String(localized: "It's gone or can't be read.") }
+        if (path as NSString).lastPathComponent == ".git" { return String(localized: "It's a Git repository.") }
+        guard st.st_mode & S_IFMT == S_IFDIR else { return isKey((path as NSString).lastPathComponent) ? String(localized: "It's a key file.") : nil }
         var stack: [(String, Bool)] = [(path, thirdParty.contains((path as NSString).lastPathComponent))]
         while let (dir, inThirdParty) = stack.popLast() {
             guard let names = try? FileManager.default.contentsOfDirectory(atPath: dir) else {
-                return "A folder inside can't be read, so it couldn't be checked."
+                return String(localized: "A folder inside can't be read, so it couldn't be checked.")
             }
             for name in names {
                 let p = dir + "/" + name
                 if name == ".git" {
                     if ownGit && dir == path { continue }
-                    return "Holds a Git repository."
+                    return String(localized: "Holds a Git repository.")
                 }
                 guard lstat(p, &st) == 0 else { continue }
                 if st.st_mode & S_IFMT == S_IFDIR {
                     stack.append((p, inThirdParty || thirdParty.contains(name)))
                 } else if !inThirdParty, isKey(name) {
-                    return "Holds key files."
+                    return String(localized: "Holds key files.")
                 }
             }
         }
@@ -118,20 +118,20 @@ public enum ProjectGuard {
 
     /// Why Git won't be asked about `dir`, if it won't.
     static func untrusted(_ dir: String) -> String? {
-        guard let files = configFiles(of: dir) else { return "Its Git folder couldn't be read, so it wasn't checked." }
-        return runsPrograms(files) ? "Its Git settings could run programs, so it wasn't checked." : nil
+        guard let files = configFiles(of: dir) else { return String(localized: "Its Git folder couldn't be read, so it wasn't checked.") }
+        return runsPrograms(files) ? String(localized: "Its Git settings could run programs, so it wasn't checked.") : nil
     }
 
     /// Files under `path` that the enclosing repository tracks.
     static func tracked(_ path: String, project: String, runner: CommandRunner) -> String? {
         guard let repo = enclosingRepository(of: path, within: project) else { return nil }
-        guard let git = git(runner) else { return "Git isn't installed, so tracked files couldn't be checked." }
+        guard let git = git(runner) else { return String(localized: "Git isn't installed, so tracked files couldn't be checked.") }
         if let why = untrusted(repo) { return why }
         let rel = String(path.dropFirst(repo.count + 1))
         let r = runner.run(git, safety + ["-C", repo, "ls-files", "-z", "--", rel])
-        guard r.code == 0 else { return "Git couldn't check it for tracked files." }
+        guard r.code == 0 else { return String(localized: "Git couldn't check it for tracked files.") }
         // Each tracked file ends in a NUL; warnings on the same output don't.
-        return r.output.contains("\0") ? "Holds files Git tracks." : nil
+        return r.output.contains("\0") ? String(localized: "Holds files Git tracks.") : nil
     }
 
     /// The nearest folder above `path`, up to `project`, with a `.git` in it.
@@ -146,10 +146,10 @@ public enum ProjectGuard {
     }
 
     static func uncommitted(_ path: String, runner: CommandRunner) -> String? {
-        guard let git = git(runner) else { return "Git isn't installed, so uncommitted work couldn't be checked." }
+        guard let git = git(runner) else { return String(localized: "Git isn't installed, so uncommitted work couldn't be checked.") }
         if let why = untrusted(path) { return why }
         let r = runner.run(git, safety + ["--no-optional-locks", "-C", path, "status", "--porcelain", "-z", "--untracked-files=normal"])
-        guard r.code == 0 else { return "Git couldn't check it for uncommitted work." }
-        return r.output.contains("\0") ? "Has uncommitted work." : nil
+        guard r.code == 0 else { return String(localized: "Git couldn't check it for uncommitted work.") }
+        return r.output.contains("\0") ? String(localized: "Has uncommitted work.") : nil
     }
 }

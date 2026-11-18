@@ -161,7 +161,7 @@ struct DashboardView: View {
                 if let last = app.lastCleanup {
                     Metric(ByteSize.format(last.freedBytes))
                     // Moved, not yet free: the Trash holds it until it's emptied.
-                    Text(last.source == TrashModel.source || last.deleted > 0
+                    Text(last.kind == .trash || last.deleted > 0
                         ? last.date.formatted(.relative(presentation: .named))
                         : String(localized: "\(last.date.formatted(.relative(presentation: .named))) · in the Trash until it's emptied"))
                         .font(.caption).foregroundStyle(.secondary)
@@ -236,7 +236,7 @@ struct DashboardView: View {
                     app.pane = .history
                 } label: {
                     listRow(
-                        symbol: HistoryView.symbol(run.source), name: run.source,
+                        symbol: run.symbol, name: run.title,
                         detail: run.date.formatted(.relative(presentation: .named)), bytes: run.freedBytes)
                 }
             }

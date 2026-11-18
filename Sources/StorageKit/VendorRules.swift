@@ -76,8 +76,8 @@ public enum VendorRules {
     }
 
     static let protectedNote = "macOS protects it. Remove it with the vendor's uninstaller, or turn it off in System Settings > General > Login Items & Extensions."
-    static let sharedFolderNote = "In the folder every user of this Mac shares. Other users' copies of the app may still use it."
-    static let printerNote = "Printer drivers are shared by every printer of this maker. Remove a printer in System Settings > Printers & Scanners."
+    static let sharedFolderNote = String(localized: "In the folder every user of this Mac shares. Other users' copies of the app may still use it.")
+    static let printerNote = String(localized: "Printer drivers are shared by every printer of this maker. Remove a printer in System Settings > Printers & Scanners.")
 
     static let microsoft = ["com.microsoft."]
     static let google = ["com.google."]
@@ -139,10 +139,10 @@ public enum VendorRules {
         Rule("Adobe", apps: ["com.adobe."], parts: [
             Part("/Library/Internet Plug-Ins/AdobeAAMDetect.plugin", .offer, .appPart, sharedWith: ["com.adobe."]),
             Part("/Library/Application Support/Adobe", .show, .data,
-                 note: "Shared by Creative Cloud and every Adobe app. Use Adobe's Creative Cloud uninstaller or Cleaner Tool."),
+                 note: String(localized: "Shared by Creative Cloud and every Adobe app. Use Adobe's Creative Cloud uninstaller or Cleaner Tool.")),
             Part("/Users/Shared/Adobe", .show, .data, note: sharedFolderNote),
             Part("~/Library/Application Support/Adobe/CoreSync", .show, .data,
-                 note: "Creative Cloud's sync state. Let Creative Cloud sign out and finish syncing first."),
+                 note: String(localized: "Creative Cloud's sync state. Let Creative Cloud sign out and finish syncing first.")),
         ]),
         // Adobe's other apps are removed from Creative Cloud itself.
         Rule("Adobe Creative Cloud", apps: ["com.adobe.acc.AdobeCreativeCloud"], uninstallers: [
@@ -161,7 +161,7 @@ public enum VendorRules {
             Part("~/Library/Caches/Docker Desktop", .offer, .rebuildable),
             Part("~/Library/Logs/Docker Desktop", .offer, .rebuildable),
             Part("~/.docker", .show, .settings,
-                 note: "The docker command's own settings, contexts and sign-ins. Docker installed another way uses it too."),
+                 note: String(localized: "The docker command's own settings, contexts and sign-ins. Docker installed another way uses it too.")),
         ]),
         Rule("Jabra", apps: ["com.jabra.directonline"], parts: [
             Part("~/Library/Application Support/Jabra Direct", .offer, .data),
@@ -196,11 +196,11 @@ public enum VendorRules {
         ]),
         Rule("VirtualBox", apps: ["org.virtualbox.app.virtualbox"], parts: [
             Part("/Library/Application Support/VirtualBox", .show, .appPart,
-                 note: "Holds VirtualBox's drivers. Run VirtualBox_Uninstall.tool from its installer disk image."),
+                 note: String(localized: "Holds VirtualBox's drivers. Run VirtualBox_Uninstall.tool from its installer disk image.")),
             Part("~/Library/VirtualBox", .offer, .settings),
         ]),
         Rule("Little Snitch", apps: ["at.obdev.littlesnitch"], parts: [
-            Part("/Library/Little Snitch", .show, .data, note: "Little Snitch's rules and its network filter. Use Uninstall in Little Snitch's own menu."),
+            Part("/Library/Little Snitch", .show, .data, note: String(localized: "Little Snitch's rules and its network filter. Use Uninstall in Little Snitch's own menu.")),
             Part("/Library/Logs/LittleSnitchDaemon.log", .offer, .rebuildable),
             Part("/Library/Caches/at.obdev.LittleSnitchConfiguration", .offer, .rebuildable),
         ]),
@@ -217,13 +217,13 @@ public enum VendorRules {
         ]),
         Rule("Malwarebytes", apps: ["com.malwarebytes."], parts: [
             Part("/Library/Application Support/Malwarebytes", .show, .data,
-                 note: "Its protection runs as a system extension. Use Help > Uninstall Malwarebytes in the app."),
+                 note: String(localized: "Its protection runs as a system extension. Use Help > Uninstall Malwarebytes in the app.")),
         ]),
         Rule("Unity", apps: ["com.unity3d."], parts: [
-            Part("/Library/Application Support/Unity", .show, .data, note: "Unity's license is kept here for every editor. Return the license in Unity Hub first."),
+            Part("/Library/Application Support/Unity", .show, .data, note: String(localized: "Unity's license is kept here for every editor. Return the license in Unity Hub first.")),
         ]),
         Rule("Epic Games", apps: ["com.epicgames.epicgameslauncher"], parts: [
-            Part("/Users/Shared/Epic Games", .show, .data, note: "Games the launcher installed. Remove them in the launcher, so their saves and licenses are handled."),
+            Part("/Users/Shared/Epic Games", .show, .data, note: String(localized: "Games the launcher installed. Remove them in the launcher, so their saves and licenses are handled.")),
         ]),
         Rule("Autodesk", apps: ["com.autodesk."], parts: [
             Part("/Users/Shared/Autodesk", .show, .data, note: sharedFolderNote),

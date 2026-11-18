@@ -233,7 +233,7 @@ final class SystemCleanModel {
                 if kept > 0 { text += String(localized: " · \(kept) kept") }
                 lastResult = text
                 let record = CleanupRecord(
-                    source: "System Clean", items: 0, bytes: report.bytes,
+                    source: CleanupSource.systemClean.rawValue, items: 0, bytes: report.bytes,
                     failed: report.failed.count + report.refused.count, deleted: report.removed.count)
                 CleanupLog.submit(record, to: logURL)
             } catch {

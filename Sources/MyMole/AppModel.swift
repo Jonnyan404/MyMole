@@ -231,7 +231,7 @@ final class AppModel {
         self.privileged = privileged
         let knownCopies = KnownAppCopies()
         #if SMOKE
-        let appSystem = AppsModel.SystemSide(base: Home.path + "/System", isReady: { false }, remove: { _, _, _ in .init() })
+        let appSystem = AppsModel.SystemSide(base: Home.path + "/System", isReady: { false }, remove: { _, _, _, _ in .init() })
         let copies: @Sendable (AppBundle) -> [AppBundle]? = { _ in [] }
         let runtime = [RuntimeLeftovers.Root(path: Home.path + "/Runtime/Caches", kind: .caches), .init(path: Home.path + "/Runtime/Temp", kind: .temporary)]
         #else

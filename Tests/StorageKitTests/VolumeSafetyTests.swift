@@ -61,7 +61,7 @@ import Testing
         let box = try Sandbox()
         let gate = TrashGate(still: { _ in true }, protections: TrashGate.keepsNothing)
         let cleared = Trasher.clear([box.path + "/Disconnected/a.bin"], through: gate)
-        #expect(cleared.allowed.isEmpty && cleared.refused.map(\.reason) == ["No longer there"])
+        #expect(cleared.allowed.isEmpty && cleared.refused.map(\.reason) == [.gone])
     }
 
     @Test func aProtectedFolderWrittenInAnotherCaseIsStillProtected() throws {
@@ -119,6 +119,34 @@ import Testing
         #expect(g.sharedOutside(linked) == 0)
         #expect(g.freed(going: [copy]) == [copy: g.bytes])
         #expect(g.spare == g.bytes)
+    }
+
+    /// A folder added to the search outside the home folder, such as one
+    /// on an external disk, holds copies that may go like any other, as
+    /// long as no link is on the way to them.
+    @Test func aCopyInAFolderAddedOutsideTheHomeFolderMayGo() throws {
+        let box = try Sandbox()
+        let home = box.path + "/home"
+        try box.file("home/Documents/a.bin", bytes: 300_000)
+        try box.folder("External/Photos")
+        try Data(contentsOf: box.url.appending(path: "home/Documents/a.bin")).write(to: box.url.appending(path: "External/Photos/a.bin"))
+        try FileManager.default.createSymbolicLink(atPath: box.path + "/Linked", withDestinationPath: box.path + "/External")
+        let group = try #require(DuplicateFinder.find(in: [home + "/Documents", box.path + "/External/Photos"], minimum: 100_000, workers: 1).groups.first)
+        let inside = home + "/Documents/a.bin", outside = box.path + "/External/Photos/a.bin"
+        #expect(Set(group.files.map(\.path)) == [inside, outside])
+
+        #expect(DuplicateFinder.mayGo(outside, of: group, going: [outside], home: home))
+        #expect(DuplicateFinder.mayGo(inside, of: group, going: [inside], home: home))
+        #expect(!DuplicateFinder.mayGo(outside, of: group, going: [outside, inside], home: home))
+        // The same copy named through a link to its folder doesn't go.
+        var linked = group
+        linked.files = group.files.map { f in
+            guard f.path == outside else { return f }
+            var g = DuplicateFile(path: box.path + "/Linked/Photos/a.bin", modified: f.modified, inode: f.inode, device: f.device)
+            g.cloneID = f.cloneID
+            return g
+        }
+        #expect(!DuplicateFinder.mayGo(box.path + "/Linked/Photos/a.bin", of: linked, going: [box.path + "/Linked/Photos/a.bin"], home: home))
     }
 
     @Test func copiesInsideLibrariesAndPlugInsAreLeftAlone() throws {

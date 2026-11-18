@@ -145,13 +145,13 @@ public struct SystemTrash: Sendable {
             (try? url.deletingLastPathComponent().resourceValues(forKeys: [.volumeIsLocalKey]))?.volumeIsLocal
         })
 
-    public static let noTrash = "This location has no Trash; MyMole doesn't delete permanently."
+    public static let noTrash = String(localized: "This location has no Trash; MyMole doesn't delete permanently.")
 
     /// One move, tried once: a failure is reported, never retried another way.
     public func move(_ url: URL) -> Result<URL, Failure> {
         do {
             guard let trashed = try trashItem(url) else {
-                return .failure(Failure(reason: "The Trash didn't say where it went.", error: nil))
+                return .failure(Failure(reason: String(localized: "The Trash didn't say where it went."), error: nil))
             }
             return .success(trashed)
         } catch {
@@ -370,29 +370,29 @@ public enum Trasher {
 
     /// The paths the gate lets through, and why each of the others stays.
     /// Protections that can't be read stop everything.
-    public static func clear(_ paths: [String], through gate: TrashGate) -> (allowed: [String], refused: [(path: String, reason: String)]) {
+    public static func clear(_ paths: [String], through gate: TrashGate) -> (allowed: [String], refused: [(path: String, reason: Refusal)]) {
         let keeps: @Sendable (String) -> Bool
         do {
             keeps = resolving(try gate.protections())
         } catch {
-            return ([], paths.map { ($0, protectionsUnreadable) })
+            return ([], paths.map { ($0, .protectionsUnreadable) })
         }
         var allowed: [String] = []
-        var refused: [(path: String, reason: String)] = []
+        var refused: [(path: String, reason: Refusal)] = []
         for path in paths {
             if !isPlainPath(path) {
-                refused.append((path, "Not a plain full path"))
+                refused.append((path, .notPlainPath))
             } else if isProtected(path) {
-                refused.append((path, "Protected location"))
+                refused.append((path, .protectedLocation))
             } else if identity(of: path) == nil {
                 // Gone, or its disk was disconnected.
-                refused.append((path, "No longer there"))
+                refused.append((path, .gone))
             } else if isProtectedResolved(path) {
-                refused.append((path, "Protected location"))
+                refused.append((path, .protectedLocation))
             } else if keeps(path) {
-                refused.append((path, "Kept"))
+                refused.append((path, .kept))
             } else if !gate.still(path) {
-                refused.append((path, "Changed since it was checked"))
+                refused.append((path, .changed))
             } else {
                 allowed.append(path)
             }
@@ -421,8 +421,27 @@ public enum Trasher {
     /// How often a long batch reads the protections again.
     static let refreshProtections: TimeInterval = 0.5
 
-    /// Why nothing moved when the user's protections didn't load.
-    public static let protectionsUnreadable = "Your protections couldn't be read, so nothing was moved."
+    /// Why a path stays out of a move. Callers match on the case and show
+    /// its `text`.
+    public enum Refusal: Sendable, Equatable {
+        case notPlainPath, protectedLocation, gone, kept, changed
+        /// The user's protections didn't load, so nothing moves.
+        case protectionsUnreadable
+
+        public var text: String {
+            switch self {
+            case .notPlainPath: String(localized: "Not a plain full path")
+            case .protectedLocation: String(localized: "Protected location")
+            case .gone: String(localized: "No longer there")
+            case .kept: String(localized: "Kept")
+            case .changed: String(localized: "Changed since it was checked")
+            case .protectionsUnreadable: String(localized: "Your protections couldn't be read, so nothing was moved.")
+            }
+        }
+    }
+
+    /// Why a move that failed without a reason of its own failed.
+    public static var notMoved: String { String(localized: "Not moved") }
 
     /// The entry at `path` as the file system names it: kind, volume and
     /// file number. Nil when there's nothing there.
@@ -447,14 +466,14 @@ public enum Trasher {
         var failed: [(String, String)] = []
         for path in paths {
             if isProtectedResolved(path) {
-                failed.append((path, "Protected location"))
+                failed.append((path, Refusal.protectedLocation.text))
                 continue
             }
             let r = backend.moveOne(path)
             if let to = r.trashed {
                 moved.append(TrashRecord(original: URL(fileURLWithPath: path), trashed: to))
             } else {
-                failed.append((path, r.error ?? "Not moved"))
+                failed.append((path, r.error ?? notMoved))
             }
         }
         return TrashOutcome(moved: moved, failed: failed)

@@ -10,27 +10,10 @@ catalog has drifted from the code.
    key is the English source text, and looking it up depends on that text.
 3. Run `scripts/sync-strings.sh --check` before opening a pull request.
 
-## Choosing the language
-
-macOS settles a bundle's language when the process starts: `Bundle.main` reads the
-`AppleLanguages` default, picks the first localization the bundle ships for it, and
-every `String(localized:)` and `Text("…")` resolves against that. No supported call
-changes it for a process already running, so the picker in **Settings → Appearance →
-Language** stores the choice and it is applied by the next launch — with a button to
-relaunch straight away.
-
-- *Same as the Mac* removes the app's own `AppleLanguages`, handing the choice back
-  to the system language and to the per-app entry in System Settings.
-- Any other option writes `AppleLanguages` into MyMole's defaults, which is the same
-  key the per-app entry in System Settings writes. The two stay in step.
-- The list is read from the bundle's `.lproj` folders, so a new translation appears
-  in it — and in `CFBundleLocalizations`, which the packaging script derives from
-  those folders — with no code to change.
-
 ## What a translation has to preserve
 
 The key doubles as a `printf` format, so a translation must keep the same number
-and kind of specifiers. 426 of the keys carry at least one.
+and kind of specifiers. 457 of the 2,075 keys carry at least one.
 
 | In the key | Means | A translation may |
 |---|---|---|
@@ -40,27 +23,21 @@ and kind of specifiers. 426 of the keys carry at least one.
 | `%1$@` | positional, already in the key when it has two or more arguments | reorder freely, as long as every index still points at the same kind |
 
 Chinese, Japanese and Korean have no plural form, so `1 item` and `3 items` read
-the same. Where a key once padded a noun with a suffix through a separate `%@`
-argument (`%@ item%@ chosen`, `%lld file%@ couldn't be compared`), that key can't
-be translated as it stands: the suffix arrives as an argument of its own. Those
-keys are plural substitutions now, and a translation supplies the cases its
-language has — one `other` for Chinese, Japanese and Korean.
+the same. A phrase built on a count is a plural substitution, and a translation
+supplies the cases its language has — one `other` for Chinese, Japanese and
+Korean.
 
-## Not in the catalog yet
+## Checking your work
 
-Three kinds of user-visible text never reach a localizing API, so no translation
-can cover them:
-
-- `Sources/SystemKit/SystemSnapshot.swift` builds the health card's sentences as
-  plain `String` values (`Issue(text:)`), 11 of them at the time of writing.
-- `Sources/StorageKit` does the same for the clean-up rows' descriptions and the
-  project guard's blockers — 89 of them by count — so they stay in English under
-  a translated heading.
-- Cleanup history stores a `source` string that is both the row's label and its
-  identity — `HistoryView` compares it against `"Optimize"` and `"System Clean"` —
-  so history rows stay in English in every language.
-
-All three need a code change, not a catalog entry.
+- `python3 -I scripts/check-translations.py` lists phrases that are missing,
+  unfinished or use the wrong arguments. CI runs it on every change.
+- `python3 -I scripts/check-translations.py --missing <language>` lists every
+  phrase your language still needs, one per line: the work left after the
+  English text changes.
+- `scripts/sync-strings.sh --check` confirms the catalog matches the code.
+  It needs Xcode.
+- Check the result in the app on macOS 26: a text that fits in English can
+  run longer in another language.
 
 ## Compiling the catalog here
 
