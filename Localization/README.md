@@ -38,6 +38,9 @@ stays out of the catalog.
 
 - `python3 -I scripts/check-translations.py` lists phrases that are missing,
   unfinished or use the wrong arguments. CI runs it on every change.
+- `python3 -I scripts/check-translations.py --missing <language>` lists every
+  phrase your language still needs, one per line: the work left after the
+  English text changes.
 - `scripts/sync-strings.sh --check` confirms the catalog matches the code.
   It needs Xcode.
 - Check the result in the app on macOS 26: a text that fits in English can

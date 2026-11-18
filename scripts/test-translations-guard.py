@@ -35,11 +35,11 @@ def phrases(sv=None, **extra):
 failures = []
 
 
-def check(label, strings, expected, raw=None):
+def check(label, strings, expected, raw=None, options=(), output=None):
     text = raw if raw is not None else json.dumps(catalog(strings))
-    result = subprocess.run([sys.executable, "-I", str(checker), "/dev/stdin"],
+    result = subprocess.run([sys.executable, "-I", str(checker), *options, "/dev/stdin"],
                             input=text, capture_output=True, text=True)
-    if result.returncode != expected:
+    if result.returncode != expected or (output is not None and result.stdout.splitlines() != output):
         failures.append(label)
         print(f"Failed: {label} (exit {result.returncode}, expected {expected})\n{result.stderr}")
     else:
@@ -74,6 +74,11 @@ check("an English plural that fits", {"%lld runs": {"localizations": {"en": {
 check("an English plural on a missing argument", {"%lld runs": {"localizations": {"en": {
     "stringUnit": {"state": "translated", "value": "%#@n@"},
     "substitutions": {"n": {"argNum": 2, "formatSpecifier": "lld", **plural("%arg run", "%arg runs")}}}}}}, 1)
+check("the to-do list names every missing phrase", phrases(**{"Stop": {}, "Go": {}}), 1, options=["--missing", "sv"],
+      output=['"Go"\tmissing', '"Stop"\tmissing'])
+check("the to-do list is empty for a complete language", phrases(), 0, options=["--missing", "sv"], output=[])
+check("the to-do list names a wrong argument", phrases(sv={"Scan": unit("Sök %@")}), 1, options=["--missing", "sv"],
+      output=['"Scan"\ttext: argument 1 doesn\'t exist; the phrase has 0'])
 check("an unreadable catalog", {}, 2, raw="{broken")
 check("a catalog without phrases", {}, 2, raw='{"sourceLanguage": "en"}')
 

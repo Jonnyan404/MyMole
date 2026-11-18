@@ -8,7 +8,9 @@ in any order. The source language's own texts, such as its plural forms,
 are held to the same arguments. A language that isn't complete stays out of the catalog until
 it is.
 
-Usage: scripts/check-translations.py [catalog]
+Usage: scripts/check-translations.py [--missing LANGUAGE] [catalog]
+  --missing  lists every phrase LANGUAGE still lacks or gets wrong, one per
+             line, instead of the summary: the to-do list for a translator.
 Exit status: 0 when every language is complete, 1 when one isn't, 2 when the
 catalog can't be read.
 """
@@ -72,8 +74,8 @@ def problems(key, loc, translated=True):
         if translated and unit.get("state") != "translated":
             found.append(f"{path or 'text'}: state is {unit.get('state')}")
         seen = check(path or "text", unit.get("value", ""), False)
-        if not subs and "variations" not in loc and seen != set(range(1, len(args) + 1)):
-            missing = sorted(set(range(1, len(args) + 1)) - seen)
+        missing = sorted(set(range(1, len(args) + 1)) - seen)
+        if not subs and "variations" not in loc and missing:
             found.append(f"text: argument {', '.join(map(str, missing))} is left out")
     for name, sub in subs.items():
         for path, unit in leaves(sub, f"substitution {name}"):
@@ -84,7 +86,14 @@ def problems(key, loc, translated=True):
 
 
 def main(argv):
-    path = Path(argv[1] if len(argv) > 1 else "Localization/Localizable.xcstrings")
+    args = argv[1:]
+    only = None
+    if args[:1] == ["--missing"]:
+        if len(args) < 2:
+            print("check-translations: --missing needs a language", file=sys.stderr)
+            return 2
+        only, args = args[1], args[2:]
+    path = Path(args[0] if args else "Localization/Localizable.xcstrings")
     try:
         catalog = json.loads(path.read_text())
         source = catalog["sourceLanguage"]
@@ -95,6 +104,14 @@ def main(argv):
     used = {k: v for k, v in strings.items()
             if v.get("extractionState") != "stale" and v.get("shouldTranslate", True)}
     languages = sorted({lang for v in strings.values() for lang in v.get("localizations", {})} - {source})
+    if only is not None:
+        todo = [(k, ["missing"]) for k, v in used.items() if only not in v.get("localizations", {})]
+        todo += [(k, p) for k, v in used.items() if only in v.get("localizations", {})
+                 for p in [problems(k, v["localizations"][only])] if p]
+        for key, found in sorted(todo):
+            print(f"{json.dumps(key, ensure_ascii=False)}\t{'; '.join(found)}")
+        print(f"Translations: {only} needs {len(todo)} of {len(used)} phrases.", file=sys.stderr)
+        return 1 if todo else 0
     failed = False
     for key, v in strings.items():
         found = problems(key, v["localizations"][source], translated=False) if source in v.get("localizations", {}) else []
