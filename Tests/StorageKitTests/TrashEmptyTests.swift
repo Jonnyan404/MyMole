@@ -171,6 +171,28 @@ import Testing
     }
 }
 
+@Suite struct TrashHardLinkTests {
+    /// Two names of one file in the Trash take its blocks once, as a scan
+    /// of the same folder counts them, and emptying frees them once.
+    @Test func aFileWithTwoNamesInTheTrashTakesItsSpaceOnce() throws {
+        let box = try Sandbox()
+        try box.file("Trash/a/film.bin", bytes: 400_000)
+        try box.folder("Trash/b")
+        #expect(link(box.path + "/Trash/a/film.bin", box.path + "/Trash/b/film.bin") == 0)
+        #expect(link(box.path + "/Trash/a/film.bin", box.path + "/Trash/film.bin") == 0)
+        let file = box.allocated("Trash/a/film.bin")
+        let folders = box.allocated("Trash/a") + box.allocated("Trash/b")
+
+        let listing = try #require(TrashEmptier.list(box.path + "/Trash"))
+        #expect(listing.bytes == file + folders)
+        #expect(listing.bytes == StorageScanner.scan(path: box.path + "/Trash").root.size + folders)
+        #expect(listing.frees == listing.bytes)
+
+        let out = TrashEmptier.empty(listing)
+        #expect(out.removed == 3 && out.bytes == listing.bytes && out.frees == listing.bytes)
+    }
+}
+
 @Suite struct VolumeTrashTests {
     @Test func theUsersTrashOnAnotherDiskIsMeasuredOnly() throws {
         let box = try Sandbox()

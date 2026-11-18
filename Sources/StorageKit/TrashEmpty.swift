@@ -69,12 +69,13 @@ public enum TrashEmptier {
         guard let fd = openTrash(folder) else { return nil }
         defer { close(fd.fd) }
         var entries: [Entry] = []
+        var linked = Set<UInt64>()
         for name in names(fd.fd) where !kept.contains(name) {
             var st = stat()
             guard fstatat(fd.fd, name, &st, AT_SYMLINK_NOFOLLOW) == 0 else { continue }
             var whole = true
             var reclaim = Reclaim()
-            let bytes = measure(name, in: fd.fd, st, device: fd.device, depth: 0, whole: &whole, reclaim: &reclaim)
+            let bytes = measure(name, in: fd.fd, st, device: fd.device, depth: 0, whole: &whole, reclaim: &reclaim, linked: &linked)
             entries.append(Entry(name: name, bytes: bytes, inode: UInt64(st.st_ino), device: st.st_dev, partial: !whole, reclaim: reclaim))
         }
         return Listing(folder: folder, entries: entries.sorted { $0.name < $1.name })
@@ -136,14 +137,16 @@ public enum TrashEmptier {
 
     /// What `name` takes; `whole` turns false when part of it couldn't be
     /// opened or read, so the size is a lower bound. `reclaim` gathers
-    /// what deleting it frees.
+    /// what deleting it frees. A file with several names takes its blocks
+    /// once, at the first name met (`linked`), like a scan counts it.
     private static func measure(
-        _ name: String, in dir: Int32, _ st: stat, device: dev_t, depth: Int, whole: inout Bool, reclaim: inout Reclaim
+        _ name: String, in dir: Int32, _ st: stat, device: dev_t, depth: Int, whole: inout Bool, reclaim: inout Reclaim,
+        linked: inout Set<UInt64>
     ) -> Int64 {
         let own = Int64(st.st_blocks) * 512
         if st.st_mode & S_IFMT == S_IFREG {
             reclaim.add(.file(allocated: own, device: st.st_dev, sharing: FileSpace.sharing(at: dir, name), inode: UInt64(st.st_ino), links: UInt32(st.st_nlink)))
-            return own
+            return st.st_nlink > 1 && st.st_dev == device && !linked.insert(UInt64(st.st_ino)).inserted ? 0 : own
         }
         guard st.st_mode & S_IFMT == S_IFDIR, st.st_dev == device else {
             reclaim.add(Reclaim(bytes: own))
@@ -168,7 +171,7 @@ public enum TrashEmptier {
         for child in children {
             var c = stat()
             if fstatat(fd, child, &c, AT_SYMLINK_NOFOLLOW) == 0 {
-                total += measure(child, in: fd, c, device: device, depth: depth + 1, whole: &whole, reclaim: &reclaim)
+                total += measure(child, in: fd, c, device: device, depth: depth + 1, whole: &whole, reclaim: &reclaim, linked: &linked)
             } else if errno != ENOENT {
                 whole = false
             }
