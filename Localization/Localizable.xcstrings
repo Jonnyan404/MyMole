@@ -17477,16 +17477,16 @@
     },
     "%lld stayed: %@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld stayed: %2$@"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld blieben: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld stayed: %2$@"
           }
         },
         "es" : {
@@ -67661,6 +67661,46 @@
         }
       }
     },
+    "Nothing has changed since the last scan." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seit dem letzten Scan hat sich nichts geändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No ha cambiado nada desde el último análisis."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien n’a changé depuis la dernière analyse."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पिछले स्कैन के बाद से कुछ नहीं बदला।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마지막 스캔 이후 바뀐 것이 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自上次扫描以来没有任何变化。"
+          }
+        }
+      }
+    },
     "Nothing in iCloud Drive of 1 MB or more is downloaded to this Mac." : {
       "localizations" : {
         "de" : {
@@ -79567,16 +79607,16 @@
     },
     "Removed %lld downloads · %@ free on this Mac" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Removed %1$lld downloads · %2$@ free on this Mac"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld Downloads entfernt · %@ auf diesem Mac frei"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Removed %1$lld downloads · %2$@ free on this Mac"
           }
         },
         "es" : {

@@ -156,6 +156,10 @@ hidden items are in it.
 Move selected files or folders to the Trash. Use Choose All Contents to clean
 inside a folder without removing the folder itself.
 
+On this Mac's own disks, Rescan Entire Map reads again only the folders macOS's
+file system events say changed since the last complete scan. When those events
+can't say for sure, as on network and external disks, the whole map is read.
+
 The filters of Disk Map, Large Files, Deep Clean, Projects, Installers and
 Duplicates also take conditions, for example
 `size:>500MB`, `kind:media`, `ext:mov,mp4`, `age:>6m` and `hidden:no`. Put `-`

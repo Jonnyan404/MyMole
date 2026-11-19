@@ -46,6 +46,10 @@ import Testing
         m.open(app)
         m.selection = [box.mapped + "/Projects/App/a.bin"]
         let before = try #require(m.root)
+        // Something changes in the open folder, so the rescan has a folder to read.
+        try Data(repeating: 2, count: 1_000_000).write(to: box.root.appending(path: "home/Projects/App/d.bin"))
+        // As when someone presses Rescan: the change has reached the history by then.
+        try await Task.sleep(for: .seconds(1.5))
 
         m.rescan()
         // Straight away, and for as long as it runs, the earlier map stays.
@@ -55,6 +59,21 @@ import Testing
         #expect(!m.refreshing && m.root !== before)
         #expect(m.current?.path == box.mapped + "/Projects/App")
         #expect(m.selection == [box.mapped + "/Projects/App/a.bin"])
+    }
+
+    /// With nothing changed since the scan, a rescan says so and keeps the map.
+    @Test func aRescanWithNothingChangedSaysSo() async throws {
+        let box = try Box()
+        // The setup's own writes are let settle, or they'd count as changes.
+        try await Task.sleep(for: .seconds(1))
+        let m = box.model()
+        m.scan(path: box.mapped)
+        try await settle(m)
+        let before = try #require(m.root)
+        m.rescan()
+        await m.rescanJob?.value
+        #expect(!m.scanning && m.root === before)
+        #expect(m.notice?.text == String(localized: "Nothing has changed since the last scan."))
     }
 
     @Test func aStoppedRescanLeavesTheEarlierMap() async throws {
