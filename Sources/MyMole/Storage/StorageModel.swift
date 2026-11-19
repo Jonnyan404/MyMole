@@ -136,6 +136,8 @@ final class StorageModel {
     private(set) var exportProblem: String?
     /// The sheet that chooses what a report of the map holds.
     var showReport = false
+    /// The sheet that shows what macOS counts as System Data.
+    var showSystemData = false
 
     /// Writes the finished scan to a file the user picks.
     func exportScan() {

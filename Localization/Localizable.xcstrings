@@ -8259,16 +8259,16 @@
     },
     "%lld copies now share their storage · %@ is free once the Trash is emptied" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld copies now share their storage · %2$@ is free once the Trash is emptied"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld Kopien teilen jetzt ihren Speicher · %@ sind frei, sobald der Papierkorb geleert ist"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld copies now share their storage · %2$@ is free once the Trash is emptied"
           }
         },
         "es" : {
@@ -8305,16 +8305,16 @@
     },
     "%lld copies share with the copies that stay · %@ frees once the Trash is emptied" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld copies share with the copies that stay · %2$@ frees once the Trash is emptied"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld Kopien teilen sich den Speicher mit den Kopien, die bleiben · %@ werden frei, sobald der Papierkorb geleert ist"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld copies share with the copies that stay · %2$@ frees once the Trash is emptied"
           }
         },
         "es" : {
@@ -14055,6 +14055,46 @@
         }
       }
     },
+    "%lld local Time Machine snapshots are on this disk." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld lokale Time Machine-Schnappschüsse sind auf diesem Laufwerk."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hay %lld instantáneas locales de Time Machine en este disco."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld instantanés Time Machine locaux sont sur ce disque."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इस डिस्क पर %lld लोकल Time Machine स्नैपशॉट हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 디스크에 로컬 Time Machine 스냅샷이 %lld개 있습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此磁盘上有 %lld 个本地 Time Machine 快照。"
+          }
+        }
+      }
+    },
     "%lld more" : {
       "localizations" : {
         "de" : {
@@ -19035,6 +19075,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 层深"
+          }
+        }
+      }
+    },
+    "1 local Time Machine snapshot is on this disk." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 lokaler Time Machine-Schnappschuss ist auf diesem Laufwerk."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hay 1 instantánea local de Time Machine en este disco."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 instantané Time Machine local est sur ce disque."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इस डिस्क पर 1 लोकल Time Machine स्नैपशॉट है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 디스크에 로컬 Time Machine 스냅샷이 1개 있습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此磁盘上有 1 个本地 Time Machine 快照。"
           }
         }
       }
@@ -24415,6 +24495,46 @@
         }
       }
     },
+    "App containers" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App-Container"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contenedores de apps"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conteneurs d’apps"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप कंटेनर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 컨테이너"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用容器"
+          }
+        }
+      }
+    },
     "App data" : {
       "localizations" : {
         "de" : {
@@ -25255,6 +25375,46 @@
         }
       }
     },
+    "Apps' caches and logs. Apps make them again when they need them." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caches und Protokolle von Apps. Apps legen sie bei Bedarf neu an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cachés y registros de las apps. Las apps los vuelven a crear cuando los necesitan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caches et journaux des apps. Les apps les recréent quand elles en ont besoin."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप्स के कैश और लॉग। ज़रूरत पड़ने पर ऐप्स इन्हें फिर बनाते हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱의 캐시와 로그입니다. 필요할 때 앱이 다시 만듭니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用的缓存和日志。应用需要时会重新生成。"
+          }
+        }
+      }
+    },
     "Apps' own login items are in System Settings" : {
       "localizations" : {
         "de" : {
@@ -26011,6 +26171,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ 的备份"
+          }
+        }
+      }
+    },
+    "Backups made on this Mac. Remove old ones in Finder, with the device's General settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backups, die auf diesem Mac erstellt wurden. Entferne alte im Finder, in den Einstellungen „Allgemein“ des Geräts."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copias de seguridad hechas en este Mac. Elimina las antiguas en el Finder, en los ajustes Generales del dispositivo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauvegardes faites sur ce Mac. Supprimez les anciennes dans le Finder, dans les réglages Général de l’appareil."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इस Mac पर बनाए गए बैकअप। पुराने बैकअप Finder में, डिवाइस की सामान्य सेटिंग्ज़ में हटाएँ।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Mac에서 만든 백업입니다. 오래된 백업은 Finder에서 기기의 일반 설정을 통해 제거하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在这台 Mac 上制作的备份。请在访达中该设备的“通用”设置里移除旧备份。"
           }
         }
       }
@@ -27523,6 +27723,46 @@
         }
       }
     },
+    "Caches in your Library" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caches in deiner Library"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cachés de tu Biblioteca"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caches de votre Bibliothèque"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आपकी लाइब्रेरी के कैश"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보관함의 캐시"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的资源库中的缓存"
+          }
+        }
+      }
+    },
     "Caches inside sandboxed apps' containers. Rebuilt the same way." : {
       "localizations" : {
         "de" : {
@@ -27559,6 +27799,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "沙盒应用容器内的缓存。同样会重新生成。"
+          }
+        }
+      }
+    },
+    "Caches macOS manages and local Time Machine snapshots. Finder counts it as free; macOS removes it when space is needed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caches, die macOS verwaltet, und lokale Time Machine-Schnappschüsse. Der Finder zählt sie als frei; macOS entfernt sie, wenn Platz gebraucht wird."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cachés que gestiona macOS e instantáneas locales de Time Machine. El Finder lo cuenta como libre; macOS lo elimina cuando hace falta espacio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caches gérés par macOS et instantanés Time Machine locaux. Le Finder les compte comme libres ; macOS les supprime quand de l’espace est nécessaire."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS द्वारा प्रबंधित कैश और लोकल Time Machine स्नैपशॉट। Finder इसे खाली गिनता है; जगह की ज़रूरत होने पर macOS इसे हटा देता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS가 관리하는 캐시와 로컬 Time Machine 스냅샷입니다. Finder는 이를 여유 공간으로 계산하며, 공간이 필요하면 macOS가 제거합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 管理的缓存和本地 Time Machine 快照。访达将其计为可用空间；需要空间时 macOS 会将其移除。"
           }
         }
       }
@@ -27719,6 +27999,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已不在本机的应用的缓存、设置和数据"
+          }
+        }
+      }
+    },
+    "Can't be read by MyMole" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für MyMole nicht lesbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole no puede leerlo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Illisible pour MyMole"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole इसे पढ़ नहीं सकता"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole이 읽을 수 없음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole 无法读取"
           }
         }
       }
@@ -37121,6 +37441,46 @@
         }
       }
     },
+    "Developer Tools is in Deep Clean" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Entwicklertools sind in der Tiefenreinigung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herramientas de desarrollo está en Limpieza profunda"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les Outils de développement sont dans le nettoyage approfondi"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डेवलपर टूल गहरी सफ़ाई में हैं"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개발자 도구는 정밀 정리에 있습니다"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开发者工具位于深度清理中"
+          }
+        }
+      }
+    },
     "Developer Tools…" : {
       "localizations" : {
         "de" : {
@@ -37157,6 +37517,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "开发者工具…"
+          }
+        }
+      }
+    },
+    "Developer data" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entwicklerdaten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datos de desarrollo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Données de développement"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डेवलपर डेटा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개발자 데이터"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开发者数据"
           }
         }
       }
@@ -52561,6 +52961,46 @@
         }
       }
     },
+    "Largest files" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Größte Dateien"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivos más grandes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus gros fichiers"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सबसे बड़ी फ़ाइलें"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가장 큰 파일"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大的文件"
+          }
+        }
+      }
+    },
     "Last 12 Months" : {
       "localizations" : {
         "de" : {
@@ -55487,6 +55927,46 @@
         }
       }
     },
+    "Mail and Messages" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mail und Nachrichten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mail y Mensajes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mail et Messages"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mail और Messages"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mail 및 메시지"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "邮件和信息"
+          }
+        }
+      }
+    },
     "Mail attachments you opened. The messages keep them." : {
       "localizations" : {
         "de" : {
@@ -56333,6 +56813,46 @@
         }
       }
     },
+    "Memory macOS moved to the disk, and the copy of memory kept for sleep. macOS grows and shrinks them itself." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arbeitsspeicher, den macOS auf das Laufwerk ausgelagert hat, und die Kopie des Arbeitsspeichers für den Ruhezustand. macOS vergrößert und verkleinert sie selbst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memoria que macOS movió al disco y la copia de la memoria para el reposo. macOS las amplía y reduce por sí mismo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La mémoire que macOS a déplacée sur le disque, et la copie de la mémoire gardée pour la suspension. macOS les agrandit et les réduit lui-même."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "वह मेमोरी जिसे macOS ने डिस्क पर ले जाया, और स्लीप के लिए रखी मेमोरी की प्रति। macOS इन्हें खुद बढ़ाता-घटाता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS가 디스크로 옮긴 메모리와 잠자기용으로 보관한 메모리 사본입니다. macOS가 직접 늘리고 줄입니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 移到磁盘上的内存，以及为睡眠保留的内存副本。macOS 会自行增减它们。"
+          }
+        }
+      }
+    },
     "Menu Bar" : {
       "localizations" : {
         "de" : {
@@ -56409,6 +56929,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "菜单栏"
+          }
+        }
+      }
+    },
+    "Messages and their attachments. Remove them in Mail and Messages; Messages can keep them for a set time." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nachrichten und ihre Anhänge. Entferne sie in Mail und Nachrichten; Nachrichten kann sie für eine bestimmte Zeit behalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mensajes y sus adjuntos. Elimínalos en Mail y Mensajes; Mensajes puede guardarlos durante un tiempo fijado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les messages et leurs pièces jointes. Supprimez-les dans Mail et Messages ; Messages peut les garder pendant une durée choisie."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "संदेश और उनके अटैचमेंट। इन्हें Mail और Messages में हटाएँ; Messages इन्हें तय समय तक रख सकता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메시지와 첨부 파일입니다. Mail과 메시지에서 제거하세요. 메시지는 정해진 기간만 보관하도록 설정할 수 있습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "邮件、信息及其附件。请在邮件和信息中移除；信息可设为只保留一段时间。"
           }
         }
       }
@@ -66455,6 +67015,46 @@
         }
       }
     },
+    "Not on this Mac" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht auf diesem Mac"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No está en este Mac"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Absent de ce Mac"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इस Mac पर नहीं"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Mac에 없음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不在这台 Mac 上"
+          }
+        }
+      }
+    },
     "Not part of this edition." : {
       "localizations" : {
         "de" : {
@@ -70409,6 +71009,46 @@
         }
       }
     },
+    "Open Deep Clean" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiefenreinigung öffnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir Limpieza profunda"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir le nettoyage approfondi"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "गहरी सफ़ाई खोलें"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정밀 정리 열기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开深度清理"
+          }
+        }
+      }
+    },
     "Open Disk Map" : {
       "localizations" : {
         "de" : {
@@ -70805,6 +71445,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "打开“系统设置”"
+          }
+        }
+      }
+    },
+    "Open Uninstall" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deinstallieren öffnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir Desinstalar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir Désinstaller"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अनइंस्टॉल खोलें"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제거 열기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开卸载"
           }
         }
       }
@@ -72207,6 +72887,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "部分磁盘图 · %1$@ 分布在 %2$lld 个文件中"
+          }
+        }
+      }
+    },
+    "Partly read: some folders inside are closed to MyMole" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teilweise gelesen: Einige Ordner darin sind für MyMole verschlossen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leído en parte: algunas carpetas dentro están cerradas para MyMole"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lu en partie : certains dossiers à l’intérieur sont fermés à MyMole"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आंशिक रूप से पढ़ा गया: अंदर के कुछ फ़ोल्डर MyMole के लिए बंद हैं"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일부만 읽음: 안의 일부 폴더는 MyMole이 열 수 없습니다"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅部分读取：其中有些文件夹对 MyMole 关闭"
           }
         }
       }
@@ -82461,6 +83181,46 @@
         }
       }
     },
+    "Sandboxed apps' own folders, with their data, caches and shared groups." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die eigenen Ordner von Apps in der Sandbox, mit ihren Daten, Caches und gemeinsamen Gruppen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las carpetas propias de las apps en sandbox, con sus datos, cachés y grupos compartidos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les dossiers propres des apps en sandbox, avec leurs données, caches et groupes partagés."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सैंडबॉक्स ऐप्स के अपने फ़ोल्डर, उनके डेटा, कैश और साझा समूहों के साथ।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "샌드박스 앱의 자체 폴더로, 데이터, 캐시, 공유 그룹이 들어 있습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沙盒应用自己的文件夹，包含其数据、缓存和共享组。"
+          }
+        }
+      }
+    },
     "Save Current Filter" : {
       "localizations" : {
         "de" : {
@@ -89689,6 +90449,46 @@
         }
       }
     },
+    "Space macOS frees by itself" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Platz, den macOS selbst freigibt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Espacio que macOS libera por sí mismo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Espace que macOS libère lui-même"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "वह जगह जो macOS खुद खाली करता है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS가 직접 확보하는 공간"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 会自行释放的空间"
+          }
+        }
+      }
+    },
     "Spacious" : {
       "localizations" : {
         "de" : {
@@ -91589,6 +92389,46 @@
         }
       }
     },
+    "Swap and sleep image" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auslagerung und Ruhezustandsabbild"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intercambio e imagen de reposo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swap et image de suspension"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "स्वैप और स्लीप इमेज"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스왑 및 잠자기 이미지"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交换文件和睡眠映像"
+          }
+        }
+      }
+    },
     "Swapping to disk (%@)" : {
       "localizations" : {
         "de" : {
@@ -91985,6 +92825,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "系统清理、“优化”的管理员任务以及受保护应用的移动都需要管理员权限。可选的辅助程序可让 macOS 一次性批准。不启用它时，macOS 会在每次任务运行时询问。"
+          }
+        }
+      }
+    },
+    "System Data" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systemdaten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datos del sistema"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Données système"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सिस्टम डेटा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템 데이터"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统数据"
+          }
+        }
+      }
+    },
+    "System Data…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systemdaten …"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datos del sistema…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Données système…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सिस्टम डेटा…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템 데이터…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统数据…"
           }
         }
       }
@@ -99929,6 +100849,46 @@
         }
       }
     },
+    "Time Machine Settings" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time Machine-Einstellungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustes de Time Machine"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réglages Time Machine"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time Machine सेटिंग्ज़"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time Machine 설정"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time Machine 设置"
+          }
+        }
+      }
+    },
     "Timings" : {
       "localizations" : {
         "de" : {
@@ -103827,6 +104787,46 @@
         }
       }
     },
+    "Updates, voices, fonts and models macOS downloads for itself. macOS removes them when they're no longer needed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updates, Stimmen, Schriften und Modelle, die macOS für sich selbst lädt. macOS entfernt sie, wenn sie nicht mehr gebraucht werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizaciones, voces, tipos de letra y modelos que macOS descarga para sí. macOS los elimina cuando ya no hacen falta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mises à jour, voix, polices et modèles que macOS télécharge pour lui-même. macOS les supprime quand ils ne servent plus."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अपडेट, आवाज़ें, फ़ॉन्ट और मॉडल जो macOS अपने लिए डाउनलोड करता है। ज़रूरत न रहने पर macOS उन्हें हटा देता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS가 스스로 내려받는 업데이트, 음성, 서체, 모델입니다. 더 이상 필요 없으면 macOS가 제거합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 为自身下载的更新、语音、字体和模型。不再需要时 macOS 会将其移除。"
+          }
+        }
+      }
+    },
     "Updating the list" : {
       "localizations" : {
         "de" : {
@@ -105507,6 +106507,126 @@
         }
       }
     },
+    "What apps keep in Application Support. It often holds settings and work; an app's own goes with it in Uninstall." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was Apps in Application Support aufbewahren. Oft sind das Einstellungen und Arbeit; die Daten einer App gehen beim Deinstallieren mit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que las apps guardan en Application Support. A menudo contiene ajustes y trabajo; lo de cada app se va con ella en Desinstalar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que les apps gardent dans Application Support. On y trouve souvent des réglages et du travail ; ce qui appartient à une app part avec elle dans Désinstaller."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप्स Application Support में जो रखते हैं। इसमें अक्सर सेटिंग्ज़ और काम होता है; अनइंस्टॉल में किसी ऐप का अपना डेटा उसके साथ जाता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱이 Application Support에 보관하는 데이터입니다. 설정과 작업 내용이 들어 있는 경우가 많으며, 앱의 데이터는 제거할 때 함께 정리됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用在 Application Support 中保存的内容。其中常有设置和作品；卸载应用时，它自己的数据会一并移除。"
+          }
+        }
+      }
+    },
+    "What macOS counts as System Data, place by place, with where its space can be won back. Nothing is removed here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was macOS als Systemdaten zählt, Ort für Ort, und wo sich der Platz zurückgewinnen lässt. Hier wird nichts entfernt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que macOS cuenta como datos del sistema, lugar por lugar, con dónde se puede recuperar el espacio. Aquí no se elimina nada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que macOS compte comme données système, endroit par endroit, avec où regagner l’espace. Rien n’est supprimé ici."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS जिसे सिस्टम डेटा गिनता है, जगह-दर-जगह, और उसकी जगह कहाँ वापस मिल सकती है। यहाँ कुछ नहीं हटाया जाता।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS가 시스템 데이터로 계산하는 항목을 위치별로 보여 주고, 공간을 어디서 되찾을 수 있는지 알려 줍니다. 여기서는 아무것도 제거하지 않습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 计为系统数据的内容，按位置列出，并说明可在哪里收回空间。这里不会移除任何内容。"
+          }
+        }
+      }
+    },
+    "What programs keep for a while in the folders macOS gives each user for this." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was Programme eine Weile in den Ordnern aufbewahren, die macOS jedem Benutzer dafür gibt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que los programas guardan un tiempo en las carpetas que macOS da a cada usuario para ello."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que les programmes gardent un temps dans les dossiers que macOS donne à chaque utilisateur pour cela."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "प्रोग्राम कुछ समय के लिए उन फ़ोल्डरों में जो रखते हैं जो macOS हर उपयोगकर्ता को इसके लिए देता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS가 사용자마다 이 용도로 준 폴더에 프로그램이 잠시 보관하는 항목입니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "程序暂时存放在 macOS 为每位用户提供的此类文件夹中的内容。"
+          }
+        }
+      }
+    },
     "What programs left in the temporary folders and haven't touched for %@. A program may still expect to find it, so none is ever chosen for you." : {
       "localizations" : {
         "de" : {
@@ -105743,6 +106863,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ 中的内容不会列出。该结果不会保存为完整结果；请授予 MyMole“完全磁盘访问”或重新扫描。"
+          }
+        }
+      }
+    },
+    "What's in System Data…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was ist in den Systemdaten …"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qué hay en Datos del sistema…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que contiennent les données système…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सिस्टम डेटा में क्या है…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템 데이터에 있는 항목…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统数据里有什么…"
           }
         }
       }
@@ -107361,6 +108521,46 @@
         }
       }
     },
+    "Xcode's build data, simulators and device support." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Build-Daten von Xcode, Simulatoren und Geräteunterstützung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datos de compilación de Xcode, simuladores y soporte de dispositivos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Données de compilation d’Xcode, simulateurs et prise en charge des appareils."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Xcode का बिल्ड डेटा, सिम्युलेटर और डिवाइस सपोर्ट।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Xcode의 빌드 데이터, 시뮬레이터, 기기 지원 파일입니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Xcode 的构建数据、模拟器和设备支持文件。"
+          }
+        }
+      }
+    },
     "Xcode's builds of SwiftUI previews. Rebuilt when a preview opens." : {
       "localizations" : {
         "de" : {
@@ -108601,6 +109801,46 @@
         }
       }
     },
+    "Your temporary files and caches" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine temporären Dateien und Caches"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus archivos temporales y cachés"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vos fichiers temporaires et caches"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आपकी अस्थायी फ़ाइलें और कैश"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 임시 파일 및 캐시"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的临时文件和缓存"
+          }
+        }
+      }
+    },
     "administrator password root helper privileged enable disable approval Login Items Extensions" : {
       "localizations" : {
         "de" : {
@@ -109585,6 +110825,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "iCloud 云盘文件。在这里移除也会从你的其他设备上移除。"
+          }
+        }
+      }
+    },
+    "iPhone and iPad backups" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone- und iPad-Backups"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copias de seguridad de iPhone y iPad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauvegardes d’iPhone et d’iPad"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone और iPad बैकअप"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone 및 iPad 백업"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone 和 iPad 备份"
           }
         }
       }
@@ -110757,6 +112037,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS 拒绝了这些移动。文件访问权限或权限设置仍可能阻止它们。你可以使用访达；这些应用的数据会留在原处。"
+          }
+        }
+      }
+    },
+    "macOS downloads" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Downloads von macOS"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descargas de macOS"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Téléchargements de macOS"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS डाउनलोड"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 다운로드"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 下载内容"
           }
         }
       }

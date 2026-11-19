@@ -9,6 +9,8 @@ struct StorageView: View {
     @Bindable var model: StorageModel
     /// Without Full Disk Access, on a folder the user chose.
     var limited = false
+    /// Opens another pane, where a place in System Data can be cleaned.
+    var open: (Pane) -> Void = { _ in }
     @State private var places = PlacesModel()
 
     var body: some View {
@@ -38,6 +40,7 @@ struct StorageView: View {
         }
         .sheet(isPresented: $model.showReview) { ReviewSheet(model: model) }
         .sheet(isPresented: $model.showReport) { ReportExportSheet(model: model) }
+        .sheet(isPresented: $model.showSystemData) { SystemDataSheet(space: model.diskSpace, open: open) }
         .task(id: model.removalHintKey) { await model.warmRemovalHints() }
         .liveRefresh(every: .seconds(2), events: [.applications, .protections]) { await model.warmRemovalHints() }
         .onReceive(NotificationCenter.default.publisher(for: KeepChanges.name)) { _ in model.invalidateRemovalHints() }
@@ -265,7 +268,7 @@ struct PathBar: View {
                 }
             }
             if let space = model.diskSpace, let root = model.root, !model.scanning {
-                OutsideTheMap(space: space, mapped: root.size)
+                OutsideTheMap(space: space, mapped: root.size) { model.showSystemData = true }
                     .fixedSize()
             }
         }
@@ -292,6 +295,7 @@ struct PathBar: View {
 struct OutsideTheMap: View {
     let space: DiskSpace
     let mapped: Int64
+    var showSystemData: () -> Void = {}
     @State private var open = false
 
     var body: some View {
@@ -315,6 +319,11 @@ struct OutsideTheMap: View {
                 Divider()
                 row(String(localized: "Purgeable"), space.purgeable)
                 DSText(purgeableText, .metadata)
+                Divider()
+                Button("What's in System Data…") {
+                    open = false
+                    showSystemData()
+                }
             }
             .padding(DS.Space.lg)
             .frame(width: 340)

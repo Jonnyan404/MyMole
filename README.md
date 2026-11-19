@@ -140,6 +140,11 @@ View folder sizes in six chart layouts beside a file list or folder tree.
 Point at a nested box to show its name. Find large files, save scans and compare
 changes between scans.
 
+System Data… in the Disk Map menu shows what macOS counts as System Data,
+place by place: swap, temporary files, caches, app data, developer data,
+backups, Mail and macOS's own downloads, with sizes, the largest files and
+where the space can be won back. Nothing is removed from there.
+
 Export a report of the folders and largest files as CSV or PDF from the Disk
 Map menu. You choose how deep it goes, whether paths are whole and whether
 hidden items are in it.

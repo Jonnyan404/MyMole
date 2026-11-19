@@ -88,6 +88,10 @@ struct MyMoleApp: App {
                     app.storage.showReport = true
                 }
                 .disabled(app.storage.root == nil || app.storage.scanning)
+                Button("System Data…") {
+                    app.pane = .diskMap
+                    app.storage.showSystemData = true
+                }
                 Divider()
                 ForEach(Array(StorageModel.Chart.allCases.enumerated()), id: \.element) { i, chart in
                     Toggle(
@@ -385,7 +389,7 @@ struct RootView: View {
             case .systemClean: SystemCleanView(model: app.systemClean)
             case .installer: InstallersView(model: app.installers)
             case .uninstall: UninstallView(model: app.apps, orphans: app.orphans, selfRemoval: app.selfRemoval)
-            case .diskMap: StorageView(model: app.storage, limited: app.mapsLimited)
+            case .diskMap: StorageView(model: app.storage, limited: app.mapsLimited, open: { app.pane = $0 })
             case .projects: ProjectsView(app: app, model: app.projects)
             case .status: StatusView(app: app)
             case .history: HistoryView(app: app)
