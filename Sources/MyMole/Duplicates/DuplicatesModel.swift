@@ -438,6 +438,44 @@ final class DuplicatesModel {
         }
     }
 
+    // MARK: Sharing storage
+
+    /// What sharing the chosen copies' storage would do, read off the main thread.
+    func sharePlan() async -> CloneSharing.Plan {
+        let (groups, chosen) = (groups, chosen)
+        return await Task.detached(priority: .userInitiated) { CloneSharing.plan(groups, chosen: chosen) }.value
+    }
+
+    /// Makes each planned copy a clone of the copy that stays, and moves
+    /// the copies they replace to the Trash. The folders are searched again
+    /// after, so the groups show what they share now.
+    func share(_ plan: CloneSharing.Plan) {
+        refreshKept()
+        if let why = keep.blocker { show(Notice(text: why, canUndo: false)) }
+        guard trashBlocker == nil, !plan.shares.isEmpty else { return }
+        let (groups, home, backend, kept) = (groups, home, trash, keep.gate)
+        trashing = true
+        trashJob = Task {
+            let out = await jobs.perform(.moveToTrash) { job in
+                CloneSharing.share(plan, groups: groups, home: home, backend: backend, protections: kept, stop: { job.isStopped })
+            }
+            trashing = false
+            chosen.subtract(out.shared)
+            let record = CleanupRecord(source: Self.source, items: out.shared.count, bytes: out.bytes, failed: plan.shares.count - out.shared.count)
+            if !out.shared.isEmpty { CleanupLog.submit(record, to: logURL) }
+            var text = out.shared.isEmpty
+                ? String(localized: "Nothing was shared")
+                : out.shared.count == 1
+                ? String(localized: "1 copy now shares its storage · \(ByteSize.format(out.bytes)) is free once the Trash is emptied")
+                : String(localized: "\(out.shared.count) copies now share their storage · \(ByteSize.format(out.bytes)) is free once the Trash is emptied")
+            let left = plan.shares.count - out.shared.count
+            if left > 0 { text += String(localized: " · \(left) left as they were") }
+            if !out.leftBeside.isEmpty { text += String(localized: " · \(out.leftBeside.count) replaced copies stayed beside their clones") }
+            show(Notice(text: text, canUndo: false))
+            scan()
+        }
+    }
+
     private func startScanAfterTrash() {
         guard scanAfterTrash else { return }
         scanAfterTrash = false

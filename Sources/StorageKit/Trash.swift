@@ -208,6 +208,18 @@ public struct TrashOutcome: Sendable {
 
 /// Moves items to the Trash (never deletes outright) and can undo it.
 public enum Trasher {
+    /// Swaps what two names on one volume hold, in one step: neither name is
+    /// ever missing. Sharing storage puts a clone in a copy's place this way.
+    /// Returns 0, or the error number.
+    static func swapNames(_ a: String, _ b: String) -> Int32 {
+        renamex_np(a, b, UInt32(RENAME_SWAP)) == 0 ? 0 : errno
+    }
+
+    /// Renames only if nothing has the new name yet.
+    static func renameIfFree(_ from: String, to: String) -> Bool {
+        renamex_np(from, to, UInt32(RENAME_EXCL)) == 0
+    }
+
     /// A full path with no empty, "." or ".." parts, written exactly as
     /// it's checked. Unlike `standardizingPath`, which drops a leading
     /// "/private" and so changes paths under /private/var, nothing is

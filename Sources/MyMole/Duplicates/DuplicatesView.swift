@@ -8,6 +8,7 @@ import SwiftUI
 struct DuplicatesView: View {
     @Bindable var model: DuplicatesModel
     @State private var confirming = false
+    @State private var sharing = false
     /// Kept while you go to other panes and back, as the window's own state.
     @SceneStorage("duplicates.filter") private var query = ""
 
@@ -37,6 +38,9 @@ struct DuplicatesView: View {
                 DSText("\(model.chosen.count.formatted()) chosen · \(fmt(model.chosenBytes))", .lead)
             } trailing: {
                 Button("Unchoose All") { model.chosen = [] }
+                Button("Share Storage…") { sharing = true }
+                    .disabled(model.trashBlocker != nil)
+                    .help(model.trashBlocker ?? String(localized: "Keep every file, and let the chosen copies take no space of their own: each becomes a clone of the copy that stays"))
                 Button("Move to Trash…") { confirming = true }
                     .primaryAction()
                     .disabled(model.trashBlocker != nil)
@@ -53,6 +57,7 @@ struct DuplicatesView: View {
             isPresented: $confirming, action: .duplicates,
             message: confirmationMessage
         ) { model.trashChosen() }
+        .sheet(isPresented: $sharing) { ShareStorageSheet(model: model) }
     }
 
     private var confirmationMessage: String {

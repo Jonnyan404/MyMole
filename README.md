@@ -118,6 +118,12 @@ Find files with identical contents, regardless of name or extension. Compare
 copies and choose which to move to the Trash. MyMole verifies their contents
 before removal and keeps at least one copy per group.
 
+Share Storage keeps every file instead. Each chosen copy becomes an APFS clone
+of the copy that stays, with its own name, place, dates and tags, so the copies
+take the space of one. The copies they replace go to the Trash; the space is
+free once it's emptied. Copies on another disk, with other names or locked stay
+as they are, and the sheet says why.
+
 ![Duplicates comparing exact copies of a fictional document in different folders](.github/images/duplicates.png)
 
 ### Similar Photos

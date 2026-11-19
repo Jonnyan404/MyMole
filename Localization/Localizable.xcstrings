@@ -875,6 +875,46 @@
         }
       }
     },
+    " · %lld left as they were" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %lld blieben, wie sie waren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %lld se quedaron como estaban"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %lld sont restés tels quels"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %lld जैसे थे वैसे रहे"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %lld개는 그대로 남음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %lld 个保持原样"
+          }
+        }
+      }
+    },
     " · %lld protected (%@)" : {
       "localizations" : {
         "de" : {
@@ -1045,6 +1085,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "· %1$lld 项被规则阻止"
+          }
+        }
+      }
+    },
+    " · %lld replaced copies stayed beside their clones" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %lld ersetzte Kopien blieben neben ihren Klonen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %lld copias reemplazadas se quedaron junto a sus clones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %lld copies remplacées sont restées à côté de leurs clones"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %lld बदली गई प्रतियाँ अपने क्लोन के पास रहीं"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · 교체된 사본 %lld개가 클론 옆에 남음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %lld 个被替换的副本留在其克隆旁边"
           }
         }
       }
@@ -8173,6 +8253,138 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已选 %1$lld 项 · %2$@"
+          }
+        }
+      }
+    },
+    "%lld copies now share their storage · %@ is free once the Trash is emptied" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld copies now share their storage · %2$@ is free once the Trash is emptied"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Kopien teilen jetzt ihren Speicher · %@ sind frei, sobald der Papierkorb geleert ist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld copias comparten ahora su almacenamiento · %@ quedan libres al vaciar la Papelera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld copies partagent désormais leur stockage · %@ seront libérés une fois la Corbeille vidée"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld प्रतियाँ अब अपना स्टोरेज साझा करती हैं · ट्रैश खाली करने पर %@ खाली होगा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사본 %lld개가 이제 저장 공간을 공유함 · 휴지통을 비우면 %@ 확보"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个副本现已共享存储空间 · 清倒废纸篓后释放 %@"
+          }
+        }
+      }
+    },
+    "%lld copies share with the copies that stay · %@ frees once the Trash is emptied" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld copies share with the copies that stay · %2$@ frees once the Trash is emptied"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Kopien teilen sich den Speicher mit den Kopien, die bleiben · %@ werden frei, sobald der Papierkorb geleert ist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld copias comparten con las copias que se quedan · %@ quedan libres al vaciar la Papelera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld copies partagent avec les copies qui restent · %@ seront libérés une fois la Corbeille vidée"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld प्रतियाँ बनी रहने वाली प्रतियों के साथ साझा करती हैं · ट्रैश खाली करने पर %@ खाली होगा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사본 %lld개가 남는 사본과 공유 · 휴지통을 비우면 %@ 확보"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个副本与保留的副本共享 · 清倒废纸篓后释放 %@"
+          }
+        }
+      }
+    },
+    "%lld copies stay as they are:" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Kopien bleiben, wie sie sind:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld copias se quedan como están:"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld copies restent telles quelles :"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld प्रतियाँ जैसी हैं वैसी रहेंगी:"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사본 %lld개는 그대로 남습니다:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个副本保持原样："
           }
         }
       }
@@ -18467,6 +18679,126 @@
         }
       }
     },
+    "1 copy now shares its storage · %@ is free once the Trash is emptied" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Kopie teilt jetzt ihren Speicher · %@ sind frei, sobald der Papierkorb geleert ist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 copia comparte ahora su almacenamiento · %@ quedan libres al vaciar la Papelera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 copie partage désormais son stockage · %@ seront libérés une fois la Corbeille vidée"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 प्रति अब अपना स्टोरेज साझा करती है · ट्रैश खाली करने पर %@ खाली होगा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사본 1개가 이제 저장 공간을 공유함 · 휴지통을 비우면 %@ 확보"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 个副本现已共享存储空间 · 清倒废纸篓后释放 %@"
+          }
+        }
+      }
+    },
+    "1 copy shares with the copy that stays · %@ frees once the Trash is emptied" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Kopie teilt sich den Speicher mit der Kopie, die bleibt · %@ werden frei, sobald der Papierkorb geleert ist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 copia comparte con la copia que se queda · %@ quedan libres al vaciar la Papelera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 copie partage avec la copie qui reste · %@ seront libérés une fois la Corbeille vidée"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 प्रति बनी रहने वाली प्रति के साथ साझा करती है · ट्रैश खाली करने पर %@ खाली होगा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사본 1개가 남는 사본과 공유 · 휴지통을 비우면 %@ 확보"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 个副本与保留的副本共享 · 清倒废纸篓后释放 %@"
+          }
+        }
+      }
+    },
+    "1 copy stays as it is:" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Kopie bleibt, wie sie ist:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 copia se queda como está:"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 copie reste telle quelle :"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 प्रति जैसी है वैसी रहेगी:"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사본 1개는 그대로 남습니다:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 个副本保持原样："
+          }
+        }
+      }
+    },
     "1 day" : {
       "localizations" : {
         "de" : {
@@ -22437,6 +22769,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已在废纸篓中。"
+          }
+        }
+      }
+    },
+    "Already shares its storage with the copy that stays." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teilt sich den Speicher bereits mit der Kopie, die bleibt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya comparte su almacenamiento con la copia que se queda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partage déjà son stockage avec la copie qui reste."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पहले से बनी रहने वाली प्रति के साथ स्टोरेज साझा करती है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미 남는 사본과 저장 공간을 공유합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已与保留的副本共享存储空间。"
           }
         }
       }
@@ -27831,6 +28203,46 @@
         }
       }
     },
+    "Changed since it was compared, so it isn't known to be the same any more." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seit dem Vergleich geändert, daher ist nicht mehr sicher, dass sie gleich ist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambió desde que se comparó, así que ya no se sabe si es igual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifiée depuis la comparaison : on ne sait plus si elle est identique."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "तुलना के बाद बदल गई, इसलिए अब पता नहीं कि यह वैसी ही है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "비교한 뒤 변경되어 더 이상 같은지 알 수 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "比较后已改动，因此无法再确定它们相同。"
+          }
+        }
+      }
+    },
     "Changed the Same Day" : {
       "localizations" : {
         "de" : {
@@ -28707,6 +29119,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在核实归属…"
+          }
+        }
+      }
+    },
+    "Checking which copies can share…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfe, welche Kopien teilen können …"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobando qué copias pueden compartir…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérification des copies qui peuvent partager…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "जाँच रहे हैं कि कौन-सी प्रतियाँ साझा कर सकती हैं…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공유할 수 있는 사본 확인 중…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在检查哪些副本可以共享…"
           }
         }
       }
@@ -39667,6 +40119,46 @@
         }
       }
     },
+    "Every copy in its group is chosen, so none is left to share with." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jede Kopie ihrer Gruppe ist ausgewählt, also bleibt keine zum Teilen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todas las copias de su grupo están elegidas, así que no queda ninguna con la que compartir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toutes les copies de son groupe sont choisies : il n’en reste aucune avec qui partager."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसके समूह की हर प्रति चुनी गई है, इसलिए साझा करने के लिए कोई नहीं बची।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그룹의 모든 사본이 선택되어 공유할 사본이 남아 있지 않습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其所在组的所有副本都已选中，没有可共享的副本。"
+          }
+        }
+      }
+    },
     "Every core for scans you wait on, and half of them for scans started ahead." : {
       "localizations" : {
         "de" : {
@@ -39743,6 +40235,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "本次扫描中所有 1 MB 及以上的文件"
+          }
+        }
+      }
+    },
+    "Every file stays where it is, with its own name, contents, dates and tags. Nothing changes in the apps that use them." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jede Datei bleibt, wo sie ist, mit eigenem Namen, Inhalt, Datum und Tags. In den Apps, die sie nutzen, ändert sich nichts."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada archivo se queda donde está, con su propio nombre, contenido, fechas y etiquetas. Nada cambia en las apps que los usan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque fichier reste à sa place, avec son nom, son contenu, ses dates et ses tags. Rien ne change dans les apps qui les utilisent."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "हर फ़ाइल अपनी जगह रहती है, अपने नाम, सामग्री, तिथियों और टैग के साथ। उन्हें उपयोग करने वाले ऐप्स में कुछ नहीं बदलता।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 파일은 이름, 내용, 날짜, 태그를 그대로 유지한 채 제자리에 남습니다. 파일을 쓰는 앱에서도 달라지는 것은 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每个文件都留在原处，名称、内容、日期和标签不变。使用它们的应用不受影响。"
           }
         }
       }
@@ -48975,6 +49507,46 @@
         }
       }
     },
+    "Instead of removing the chosen copies, each one becomes a clone of the copy that stays." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statt die ausgewählten Kopien zu entfernen, wird jede zu einem Klon der Kopie, die bleibt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En lugar de eliminar las copias elegidas, cada una pasa a ser un clon de la copia que se queda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Au lieu de supprimer les copies choisies, chacune devient un clone de la copie qui reste."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "चुनी गई प्रतियों को हटाने के बजाय, हर एक बनी रहने वाली प्रति का क्लोन बन जाती है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택한 사본을 제거하는 대신 각각을 남는 사본의 클론으로 바꿉니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不移除所选副本，而是让每个副本成为保留副本的克隆。"
+          }
+        }
+      }
+    },
     "Integration" : {
       "localizations" : {
         "de" : {
@@ -49171,6 +49743,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "反向选择"
+          }
+        }
+      }
+    },
+    "It belongs to another user." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie gehört einem anderen Benutzer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pertenece a otro usuario."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elle appartient à un autre utilisateur."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "यह किसी दूसरे उपयोगकर्ता की है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 사용자의 파일입니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "它属于其他用户。"
           }
         }
       }
@@ -49989,6 +50601,46 @@
         }
       }
     },
+    "Its disk can't make clones. Only APFS disks can." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ihr Laufwerk kann keine Klone anlegen. Nur APFS-Laufwerke können das."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Su disco no puede crear clones. Solo los discos APFS pueden."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son disque ne peut pas créer de clones. Seuls les disques APFS le peuvent."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसकी डिस्क क्लोन नहीं बना सकती। केवल APFS डिस्क बना सकती हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 디스크는 클론을 만들 수 없습니다. APFS 디스크만 가능합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "它所在的磁盘无法创建克隆。只有 APFS 磁盘可以。"
+          }
+        }
+      }
+    },
     "Its job couldn't be stopped (launchctl %d), so it stays." : {
       "localizations" : {
         "de" : {
@@ -50225,6 +50877,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "它的输出一直没有关闭；可能仍有部分在运行。"
+          }
+        }
+      }
+    },
+    "Its place has changed since it was found." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ihr Ort hat sich seit dem Fund geändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Su ubicación cambió desde que se encontró."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son emplacement a changé depuis qu’elle a été trouvée."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "मिलने के बाद इसकी जगह बदल गई है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "찾은 뒤 위치가 바뀌었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找到后其位置已改变。"
           }
         }
       }
@@ -50545,6 +51237,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "让 MyMole 留在菜单栏？一眼即可看到磁盘、内存和扫描发现。你可以在设置中更改。"
+          }
+        }
+      }
+    },
+    "Keep every file, and let the chosen copies take no space of their own: each becomes a clone of the copy that stays" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jede Datei behalten und die ausgewählten Kopien keinen eigenen Platz belegen lassen: Jede wird zu einem Klon der Kopie, die bleibt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conserva todos los archivos y haz que las copias elegidas no ocupen espacio propio: cada una pasa a ser un clon de la copia que se queda"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garder chaque fichier, sans que les copies choisies occupent d’espace propre : chacune devient un clone de la copie qui reste"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "हर फ़ाइल रखें, और चुनी गई प्रतियों को अपनी जगह न लेने दें: हर एक बनी रहने वाली प्रति का क्लोन बनती है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 파일을 유지하면서 선택한 사본이 따로 공간을 차지하지 않게 합니다. 각각 남는 사본의 클론이 됩니다"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保留所有文件，并让所选副本不再单独占用空间：每个都成为保留副本的克隆"
           }
         }
       }
@@ -51305,6 +52037,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已保留的系统项目及其中的任何内容，都不会被选择或移除。"
+          }
+        }
+      }
+    },
+    "Kept, or the keep lists couldn't be read." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Behalten, oder die Behalten-Listen konnten nicht gelesen werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se conserva, o no se pudieron leer las listas de conservación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conservée, ou les listes de conservation n’ont pas pu être lues."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "रखी गई है, या रखें-सूचियाँ पढ़ी नहीं जा सकीं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보관 항목이거나 보관 목록을 읽을 수 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已保留，或无法读取保留清单。"
           }
         }
       }
@@ -53871,6 +54643,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已锁定"
+          }
+        }
+      }
+    },
+    "Locked in Finder, or protected by macOS." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im Finder geschützt oder von macOS geschützt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloqueado en el Finder o protegido por macOS."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verrouillée dans le Finder, ou protégée par macOS."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finder में लॉक है, या macOS द्वारा सुरक्षित है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finder에서 잠겨 있거나 macOS가 보호합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在访达中已锁定，或受 macOS 保护。"
           }
         }
       }
@@ -64123,6 +64935,46 @@
         }
       }
     },
+    "No free name for the clone beside it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein freier Name für den Klon daneben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay un nombre libre para el clon a su lado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun nom libre pour le clone à côté."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसके पास क्लोन के लिए कोई खाली नाम नहीं है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "옆에 클론을 둘 이름이 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旁边没有可用于克隆的名称。"
+          }
+        }
+      }
+    },
     "No hidden items" : {
       "localizations" : {
         "de" : {
@@ -64919,6 +65771,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无"
+          }
+        }
+      }
+    },
+    "None of the chosen copies can share their storage." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine der ausgewählten Kopien kann ihren Speicher teilen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna de las copias elegidas puede compartir su almacenamiento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune des copies choisies ne peut partager son stockage."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "चुनी गई कोई भी प्रति अपना स्टोरेज साझा नहीं कर सकती।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택한 사본 중 저장 공간을 공유할 수 있는 것이 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所选副本都无法共享存储空间。"
           }
         }
       }
@@ -67197,6 +68089,46 @@
         }
       }
     },
+    "Nothing was shared" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts wurde geteilt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se compartió nada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien n’a été partagé"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कुछ भी साझा नहीं हुआ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공유된 항목 없음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未共享任何内容"
+          }
+        }
+      }
+    },
     "Notifications are turned off for MyMole in System Settings → Notifications." : {
       "localizations" : {
         "de" : {
@@ -68073,6 +69005,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在“系统清理”的保留清单上。"
+          }
+        }
+      }
+    },
+    "On another disk than the copy that stays; clones share only on one disk." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf einem anderen Laufwerk als die Kopie, die bleibt; Klone teilen nur auf einem Laufwerk."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En otro disco que la copia que se queda; los clones solo comparten en un mismo disco."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sur un autre disque que la copie qui reste ; les clones ne partagent que sur un même disque."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बनी रहने वाली प्रति से अलग डिस्क पर; क्लोन केवल एक ही डिस्क पर साझा करते हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "남는 사본과 다른 디스크에 있습니다. 클론은 같은 디스크에서만 공유됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "与保留的副本不在同一磁盘；克隆只能在同一磁盘上共享。"
           }
         }
       }
@@ -84857,6 +85829,86 @@
         }
       }
     },
+    "Share Storage" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speicher teilen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartir almacenamiento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partager le stockage"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "स्टोरेज साझा करें"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장 공간 공유"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享存储空间"
+          }
+        }
+      }
+    },
+    "Share Storage…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speicher teilen …"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartir almacenamiento…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partager le stockage…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "स्टोरेज साझा करें…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장 공간 공유…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享存储空间…"
+          }
+        }
+      }
+    },
     "Shared" : {
       "localizations" : {
         "de" : {
@@ -94165,6 +95217,46 @@
         }
       }
     },
+    "The clone couldn't be made: %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Klon konnte nicht angelegt werden: %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo crear el clon: %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le clone n’a pas pu être créé : %@."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "क्लोन नहीं बन सका: %@।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "클론을 만들 수 없음: %@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法创建克隆：%@。"
+          }
+        }
+      }
+    },
     "The complete folder contents couldn't be selected. Nothing was added. Check access or choose smaller groups." : {
       "localizations" : {
         "de" : {
@@ -94201,6 +95293,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法选定完整的文件夹内容。没有添加任何内容。请检查访问权限，或选择更小的范围。"
+          }
+        }
+      }
+    },
+    "The copies being replaced go to the Trash, named “before sharing”. The space is free once the Trash is emptied." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die ersetzten Kopien kommen in den Papierkorb, mit dem Namenszusatz „vor dem Teilen“. Der Platz ist frei, sobald der Papierkorb geleert ist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las copias reemplazadas van a la Papelera con el añadido «antes de compartir». El espacio queda libre al vaciar la Papelera."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les copies remplacées vont dans la Corbeille, avec la mention « avant partage ». L’espace est libéré une fois la Corbeille vidée."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बदली जा रही प्रतियाँ “साझा करने से पहले” नाम के साथ ट्रैश में जाती हैं। ट्रैश खाली करने पर जगह खाली होती है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "교체되는 사본은 ‘공유 전’이라는 이름으로 휴지통에 들어갑니다. 휴지통을 비우면 공간이 확보됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "被替换的副本会移到废纸篓，名称带有“共享前”。清倒废纸篓后即可释放空间。"
           }
         }
       }
@@ -94393,6 +95525,46 @@
         }
       }
     },
+    "The copy couldn't be replaced: %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Kopie konnte nicht ersetzt werden: %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo reemplazar la copia: %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La copie n’a pas pu être remplacée : %@."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "प्रति बदली नहीं जा सकी: %@।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사본을 교체할 수 없음: %@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法替换副本：%@。"
+          }
+        }
+      }
+    },
     "The copy you keep is on %@, which can be disconnected." : {
       "localizations" : {
         "de" : {
@@ -94429,6 +95601,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你保留的副本位于 %1$@ 上，该位置可能会断开连接。"
+          }
+        }
+      }
+    },
+    "The copy's dates, permissions and tags couldn't be given to the clone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datum, Rechte und Tags der Kopie konnten nicht auf den Klon übertragen werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron pasar al clon las fechas, permisos y etiquetas de la copia."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les dates, autorisations et tags de la copie n’ont pas pu être donnés au clone."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "प्रति की तिथियाँ, अनुमतियाँ और टैग क्लोन को नहीं दिए जा सके।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사본의 날짜, 권한, 태그를 클론에 적용할 수 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法把副本的日期、权限和标签赋予克隆。"
           }
         }
       }
@@ -94715,6 +95927,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "模拟器正在运行它。请先关闭模拟器。"
+          }
+        }
+      }
+    },
+    "The file has other names (hard links), which would no longer be the same file." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Datei hat weitere Namen (harte Links), die danach nicht mehr dieselbe Datei wären."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El archivo tiene otros nombres (enlaces duros), que dejarían de ser el mismo archivo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le fichier a d’autres noms (liens physiques), qui ne seraient plus le même fichier."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़ाइल के दूसरे नाम (हार्ड लिंक) हैं, जो फिर वही फ़ाइल नहीं रहेंगे।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일에 다른 이름(하드 링크)이 있어 더 이상 같은 파일이 아니게 됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该文件还有其他名称（硬链接），之后它们将不再是同一个文件。"
           }
         }
       }
@@ -96881,6 +98133,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "它们无法完整读取，或在读取过程中发生了变化，因此无法确定是否有副本。请重新搜索以再次尝试。"
+          }
+        }
+      }
+    },
+    "They take the space of one copy on the disk, as copies made with Finder's Duplicate do. If you change one later, it gets space of its own again; the others stay as they are." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie belegen auf dem Laufwerk den Platz einer Kopie, so wie Kopien, die mit „Duplizieren“ im Finder entstehen. Änderst du später eine, bekommt sie wieder eigenen Platz; die anderen bleiben, wie sie sind."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocupan en el disco el espacio de una copia, como las copias hechas con Duplicar en el Finder. Si cambias una más adelante, vuelve a tener espacio propio; las demás se quedan como están."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elles occupent sur le disque l’espace d’une copie, comme les copies faites avec Dupliquer dans le Finder. Si vous en modifiez une plus tard, elle retrouve un espace propre ; les autres restent telles quelles."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "वे डिस्क पर एक प्रति जितनी जगह लेती हैं, जैसे Finder के डुप्लिकेट से बनी प्रतियाँ। बाद में आप किसी को बदलें, तो उसे फिर अपनी जगह मिलती है; बाकी वैसी ही रहती हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finder의 복제로 만든 사본처럼 디스크에서 사본 하나만큼의 공간을 차지합니다. 나중에 하나를 바꾸면 그 파일만 다시 자기 공간을 갖고, 나머지는 그대로입니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "它们在磁盘上只占一个副本的空间，就像在访达中用“复制”得到的副本一样。以后修改其中一个，它会重新拥有自己的空间，其他的保持不变。"
           }
         }
       }
@@ -107509,6 +108801,46 @@
         }
       }
     },
+    "before sharing" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vor dem Teilen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "antes de compartir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "avant partage"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "साझा करने से पहले"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공유 전"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享前"
+          }
+        }
+      }
+    },
     "build %@" : {
       "localizations" : {
         "de" : {
@@ -110939,6 +112271,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在扫描"
+          }
+        }
+      }
+    },
+    "shared" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "geteilt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "compartido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "partagé"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "साझा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공유됨"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已共享"
           }
         }
       }

@@ -42,6 +42,30 @@ import Testing
         return ready()
     }
 
+    /// Sharing storage keeps both files, makes them one clone family and
+    /// moves only the replaced copy to the test's Trash.
+    @Test func sharingStorageKeepsEveryFileAndTheGroupTakesTheSpaceOfOne() async throws {
+        let box = Box()
+        try box.file("Documents/a.bin", fill: 7, bytes: 200_000)
+        try box.file("Downloads/a.bin", fill: 7, bytes: 200_000)
+        let model = box.model()
+        model.scan()
+        await model.scanJob?.value
+        let g = try #require(model.groups.first)
+        let copy = try #require(g.files.last?.path)
+        model.toggle(copy)
+        let plan = await model.sharePlan()
+        try #require(!plan.shares.isEmpty, "the test folders are on APFS")
+        model.share(plan)
+        await model.trashJob?.value
+        // The notice hides itself after a few seconds; it's read before the search after.
+        #expect(model.notice?.canUndo == false && model.notice?.text.contains("1") == true)
+        await model.scanJob?.value
+        #expect(box.exists("Documents/a.bin") && box.exists("Downloads/a.bin"))
+        #expect(model.chosen.isEmpty)
+        #expect(model.groups.first?.spare == 0)
+    }
+
     @Test func firstOpeningSearchesFoldersCreatedAfterInitializationAndDoesNotRestart() async throws {
         let box = Box()
         let model = box.model(standardRoots: true)
