@@ -133,6 +133,12 @@ changes between scans.
 Move selected files or folders to the Trash. Use Choose All Contents to clean
 inside a folder without removing the folder itself.
 
+The Disk Map and Large Files filters also take conditions, for example
+`size:>500MB`, `kind:media`, `ext:mov,mp4`, `age:>6m` and `hidden:no`. Put `-`
+before a word or a condition to leave out what matches it, and quotes around
+words to keep their spaces. The line under the filter shows how it was read.
+A condition the filter doesn't know lists nothing until it's fixed.
+
 ![Disk Map with nested rings and a folder list using fictional storage data](.github/images/disk-map.png)
 
 ## Live Status

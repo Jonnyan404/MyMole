@@ -13,8 +13,13 @@ import Foundation
 /// the name of the account, or "users", is in every such path and would
 /// find every row. A word that holds a slash is a piece of a path, and is
 /// looked for in the whole of it; "~" at its start stands for the home folder.
+///
+/// Words given as excluded leave out a row that holds any of them.
 public struct WordSearch: Sendable {
+    /// The words a row must hold, then those it mustn't.
     let words: [[UInt8]]
+    /// How many of `words`, from the start, a row must hold.
+    private let required: Int
     /// For each word, whether it's a piece of a path.
     private let wholePath: [Bool]
     /// The home folder's path, lower-cased as the texts are; empty for none.
@@ -23,21 +28,38 @@ public struct WordSearch: Sendable {
     /// The words are what white space of any kind sets apart: a pasted
     /// tab or line break ends a word as a space does.
     public init(_ query: String, home: String? = nil) {
+        self.init(words: query.split(whereSeparator: \.isWhitespace).map(String.init), home: home)
+    }
+
+    /// Words already set apart, which may hold spaces of their own.
+    public init(words: [String], excluded: [String] = [], home: String? = nil) {
         var folded: [UInt8] = []
         var homeBytes: [UInt8] = []
         if let home, home.count > 1, home.hasPrefix("/") { Self.fold(home, into: &homeBytes) }
         let slash = UInt8(ascii: "/"), tilde = UInt8(ascii: "~")
-        words = query.split(whereSeparator: \.isWhitespace).map { word in
-            Self.fold(String(word), into: &folded)
+        let given = (words + excluded).filter { !$0.isEmpty }
+        self.words = given.map { word in
+            Self.fold(word, into: &folded)
             let named = folded.count == 1 || (folded.count > 1 && folded[1] == slash)
             if !homeBytes.isEmpty, folded.first == tilde, named { return homeBytes + folded.dropFirst() }
             return folded
         }
-        wholePath = words.map { $0.contains(slash) }
+        required = words.filter { !$0.isEmpty }.count
+        wholePath = self.words.map { $0.contains(slash) }
         self.home = homeBytes
     }
 
     public var isEmpty: Bool { words.isEmpty }
+    /// Some word is a piece of a path, looked for across the folders' names.
+    var hasPathWords: Bool { wholePath.contains(true) }
+
+    /// Whether the words found, as bits, are every required one and none excluded.
+    func accepts(_ found: UInt64) -> Bool {
+        let n = min(words.count, Self.maskWidth)
+        let need: UInt64 = required >= Self.maskWidth ? .max : (1 << UInt64(required)) - 1
+        let all: UInt64 = n == Self.maskWidth ? .max : (1 << UInt64(n)) - 1
+        return found & need == need && found & (all & ~need) == 0
+    }
 
     /// The most words a mask holds; a longer filter is matched word by word.
     static let maskWidth = 64
@@ -108,7 +130,7 @@ public struct WordSearch: Sendable {
         guard !words.isEmpty else { return true }
         Self.fold(text, into: &scratch)
         let past = pastHome(scratch)
-        return words.indices.allSatisfy { holds(scratch, past: past, word: $0) }
+        return words.indices.allSatisfy { holds(scratch, past: past, word: $0) == ($0 < required) }
     }
 
     /// Whether every word is in at least one of `texts`: a row's name, or
@@ -121,10 +143,10 @@ public struct WordSearch: Sendable {
                 Self.fold(text, into: &scratch)
                 return (scratch, pastHome(scratch))
             }
-            return words.indices.allSatisfy { i in folded.contains { holds($0.bytes, past: $0.past, word: i) } }
+            return words.indices.allSatisfy { i in folded.contains { holds($0.bytes, past: $0.past, word: i) } == (i < required) }
         }
         var found: UInt64 = 0
         for text in texts where found != every { found |= mask(of: text, wanted: every & ~found, scratch: &scratch) }
-        return found == every
+        return accepts(found)
     }
 }

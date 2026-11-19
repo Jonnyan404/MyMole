@@ -421,16 +421,37 @@ struct DSFilterField: View {
 
     let prompt: String
     @Binding var text: String
+    /// Whether the list checks conditions such as size: and kind: itself.
+    let conditions: Bool
     @Environment(\.palette) private var palette
     @Environment(\.findRequest) private var findRequest
     @FocusState private var focused: Bool
 
-    init(_ prompt: String, text: Binding<String>) {
+    init(_ prompt: String, text: Binding<String>, conditions: Bool = false) {
         self.prompt = prompt
         _text = text
+        self.conditions = conditions
     }
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            field
+            // How the text was read, once it's more than plain words.
+            if let line = QueryExplanation.line(for: text, conditions: conditions) {
+                Label {
+                    Text(line.text).fixedSize(horizontal: false, vertical: true)
+                } icon: {
+                    Image(systemName: line.isProblem ? "exclamationmark.triangle.fill" : "line.3.horizontal.decrease")
+                        .foregroundStyle(line.isProblem ? palette.warning : .secondary)
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .accessibilityIdentifier("filter.explanation")
+            }
+        }
+    }
+
+    private var field: some View {
         HStack(spacing: DS.Space.xs) {
             Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
             TextField(prompt, text: $text, prompt: Text(prompt))
@@ -444,6 +465,7 @@ struct DSFilterField: View {
                 }
                 .onChange(of: findRequest) { focused = true }
                 .accessibilityLabel(prompt)
+                .help(conditions ? QueryExplanation.help : "")
             if !text.isEmpty {
                 Button {
                     text = ""

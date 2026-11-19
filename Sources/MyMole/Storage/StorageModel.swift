@@ -32,12 +32,19 @@ struct BrowseFilter: Hashable, Codable {
         date = DateFilter()
     }
 
-    func matches(_ e: DiskEntry) -> Bool {
-        guard isActive else { return true }
-        guard !e.pending else { return false }
-        return (query.isEmpty || DSFilterField.matches(query, e.name))
-            && (kind == nil || e.kind == kind)
-            && date.matches(e.modified)
+    func matches(_ e: DiskEntry) -> Bool { matcher()(e) }
+
+    /// The filter with its text prepared once, for every row of a folder.
+    func matcher() -> @Sendable (DiskEntry) -> Bool {
+        guard isActive else { return { _ in true } }
+        let (search, kind, date) = (TextQuery(query), kind, date)
+        return { e in
+            guard !e.pending else { return false }
+            return (kind == nil || e.kind == kind) && date.matches(e.modified)
+                && search.matches(texts: [e.name], facts: SearchQuery.Facts(
+                    name: e.name, size: e.size, modified: e.modified, kind: e.kind, isFolder: e.folder != nil,
+                    hidden: SearchQuery.isHidden(name: e.name, folder: (e.path as NSString).deletingLastPathComponent)))
+        }
     }
 }
 

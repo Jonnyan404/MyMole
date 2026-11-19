@@ -22499,6 +22499,46 @@
         }
       }
     },
+    "Any size" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beliebige Größe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cualquier tamaño"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toute taille"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कोई भी आकार"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 크기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任意大小"
+          }
+        }
+      }
+    },
     "Anywhere" : {
       "localizations" : {
         "de" : {
@@ -32641,6 +32681,46 @@
         }
       }
     },
+    "Contains “%@”" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enthält „%@“"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contiene «%@»"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contient « %@ »"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” शामिल है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” 포함"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "包含“%@”"
+          }
+        }
+      }
+    },
     "Copies" : {
       "localizations" : {
         "de" : {
@@ -38843,6 +38923,86 @@
         }
       }
     },
+    "Except %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Außer %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excepto %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauf %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ को छोड़कर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 제외"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "排除 %@"
+          }
+        }
+      }
+    },
+    "Except “%@”" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Außer „%@“"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excepto «%@»"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauf « %@ »"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” को छोड़कर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” 제외"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "排除“%@”"
+          }
+        }
+      }
+    },
     "Excluded from cleanup, including everything inside. They stay even when a parent is chosen." : {
       "localizations" : {
         "de" : {
@@ -38919,6 +39079,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "以代码 %d 退出。"
+          }
+        }
+      }
+    },
+    "Extension: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endung: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extensión: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extension : %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "एक्सटेंशन: %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확장자: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "扩展名：%@"
           }
         }
       }
@@ -39239,6 +39439,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "项目文件夹中的直接文件"
+          }
+        }
+      }
+    },
+    "Files only" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur Dateien"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo archivos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fichiers uniquement"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "केवल फ़ाइलें"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일만"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅文件"
           }
         }
       }
@@ -41643,6 +41883,46 @@
         }
       }
     },
+    "Folders only" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur Ordner"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo carpetas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dossiers uniquement"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "केवल फ़ोल्डर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "폴더만"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅文件夹"
+          }
+        }
+      }
+    },
     "Folders the scan can't read appear here. The result is complete when scanning finishes." : {
       "localizations" : {
         "de" : {
@@ -43907,6 +44187,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你的 Mac 当前状态"
+          }
+        }
+      }
+    },
+    "Hidden items only" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur ausgeblendete Objekte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo elementos ocultos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Éléments masqués uniquement"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "केवल छिपे आइटम"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "숨겨진 항목만"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅隐藏项目"
           }
         }
       }
@@ -53091,6 +53411,86 @@
         }
       }
     },
+    "Modified more than %@ ago" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vor mehr als %@ geändert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modificado hace más de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifié il y a plus de %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ से अधिक पहले बदला गया"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 이상 전에 수정됨"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修改于 %@ 以前"
+          }
+        }
+      }
+    },
+    "Modified within the last %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In den letzten %@ geändert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modificado en los últimos %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifié au cours des derniers %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पिछले %@ में बदला गया"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최근 %@ 이내에 수정됨"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近 %@ 内修改"
+          }
+        }
+      }
+    },
     "Modified: %@" : {
       "localizations" : {
         "de" : {
@@ -61333,6 +61733,46 @@
         }
       }
     },
+    "No hidden items" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine ausgeblendeten Objekte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin elementos ocultos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun élément masqué"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कोई छिपा आइटम नहीं"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "숨겨진 항목 제외"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不含隐藏项目"
+          }
+        }
+      }
+    },
     "No integrations declared in the inspected bundle locations." : {
       "localizations" : {
         "de" : {
@@ -63049,6 +63489,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "启动文件夹中没有任何项目会自动启动。"
+          }
+        }
+      }
+    },
+    "Nothing is listed until the filter is fixed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis der Filter korrigiert ist, wird nichts aufgelistet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se muestra nada hasta que se corrija el filtro."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien n’est affiché tant que le filtre n’est pas corrigé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़िल्टर ठीक होने तक कुछ भी सूचीबद्ध नहीं होगा।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "필터를 고칠 때까지 아무것도 표시되지 않습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修正筛选条件之前不会列出任何项目。"
           }
         }
       }
@@ -83715,6 +84195,92 @@
         }
       }
     },
+    "Size %@ to %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Größe %1$@ bis %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Size %1$@ to %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamaño de %1$@ a %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taille de %1$@ à %2$@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आकार %1$@ से %2$@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "크기 %1$@~%2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大小 %1$@ 至 %2$@"
+          }
+        }
+      }
+    },
+    "Size at least %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Größe mindestens %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamaño de al menos %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taille d’au moins %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आकार कम से कम %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "크기 %@ 이상"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大小至少 %@"
+          }
+        }
+      }
+    },
     "Size for %@" : {
       "localizations" : {
         "de" : {
@@ -83751,6 +84317,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ 的大小"
+          }
+        }
+      }
+    },
+    "Size under %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Größe unter %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamaño inferior a %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taille inférieure à %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आकार %@ से कम"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "크기 %@ 미만"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大小小于 %@"
           }
         }
       }
@@ -93831,6 +94437,46 @@
         }
       }
     },
+    "This list is filtered by its text only. Conditions such as size: and kind: work in Disk Map and Large Files." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Liste wird nur nach Text gefiltert. Bedingungen wie size: und kind: funktionieren in Disk Map und Large Files."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta lista solo se filtra por texto. Las condiciones como size: y kind: funcionan en Disk Map y Large Files."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette liste n’est filtrée que par son texte. Les conditions comme size: et kind: fonctionnent dans Disk Map et Large Files."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "यह सूची केवल टेक्स्ट से फ़िल्टर होती है। size: और kind: जैसी शर्तें Disk Map और Large Files में काम करती हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 목록은 텍스트로만 필터링됩니다. size:, kind: 같은 조건은 Disk Map과 Large Files에서 사용할 수 있습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此列表只按文字筛选。size: 和 kind: 等条件可在 Disk Map 和 Large Files 中使用。"
+          }
+        }
+      }
+    },
     "This location has no Trash; MyMole doesn't delete permanently." : {
       "localizations" : {
         "de" : {
@@ -101187,6 +101833,46 @@
         }
       }
     },
+    "Words find names and folders. Put - before a word to leave out what holds it, and quotes around words to keep spaces. Conditions: size:>500MB, size:1GB-5GB, kind:media, kind:folder, ext:mov,mp4, age:>6m, age:<7d, hidden:yes. Put - before a condition to turn it around." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wörter finden Namen und Ordner. Ein - vor einem Wort lässt aus, was es enthält, und Anführungszeichen um Wörter behalten Leerzeichen. Bedingungen: size:>500MB, size:1GB-5GB, kind:media, kind:folder, ext:mov,mp4, age:>6m, age:<7d, hidden:yes. Ein - vor einer Bedingung kehrt sie um."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las palabras buscan nombres y carpetas. Pon - delante de una palabra para excluir lo que la contiene, y comillas alrededor de las palabras para mantener los espacios. Condiciones: size:>500MB, size:1GB-5GB, kind:media, kind:folder, ext:mov,mp4, age:>6m, age:<7d, hidden:yes. Pon - delante de una condición para invertirla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les mots trouvent des noms et des dossiers. Placez - devant un mot pour exclure ce qui le contient, et des guillemets autour des mots pour garder les espaces. Conditions : size:>500MB, size:1GB-5GB, kind:media, kind:folder, ext:mov,mp4, age:>6m, age:<7d, hidden:yes. Placez - devant une condition pour l’inverser."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "शब्द नाम और फ़ोल्डर ढूँढते हैं। किसी शब्द से पहले - लगाने पर उसे रखने वाले आइटम छूट जाते हैं, और शब्दों के चारों ओर उद्धरण चिह्न स्पेस बनाए रखते हैं। शर्तें: size:>500MB, size:1GB-5GB, kind:media, kind:folder, ext:mov,mp4, age:>6m, age:<7d, hidden:yes। किसी शर्त से पहले - लगाने पर वह उलट जाती है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "단어는 이름과 폴더를 찾습니다. 단어 앞에 -를 붙이면 그 단어가 들어 있는 항목을 제외하고, 단어를 따옴표로 묶으면 공백이 유지됩니다. 조건: size:>500MB, size:1GB-5GB, kind:media, kind:folder, ext:mov,mp4, age:>6m, age:<7d, hidden:yes. 조건 앞에 -를 붙이면 반대가 됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "单词用于查找名称和文件夹。在单词前加 - 可排除包含它的项目，用引号括住单词可保留空格。条件：size:>500MB、size:1GB-5GB、kind:media、kind:folder、ext:mov,mp4、age:>6m、age:<7d、hidden:yes。在条件前加 - 可将其反转。"
+          }
+        }
+      }
+    },
     "Working" : {
       "localizations" : {
         "de" : {
@@ -102907,6 +103593,46 @@
         }
       }
     },
+    "age: needs an age, such as age:>6m for older than six months or age:<7d for the last week." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "age: braucht ein Alter, etwa age:>6m für älter als sechs Monate oder age:<7d für die letzte Woche."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "age: necesita una antigüedad, como age:>6m para más de seis meses o age:<7d para la última semana."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "age: attend une ancienneté, par exemple age:>6m pour plus de six mois ou age:<7d pour la dernière semaine."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "age: को आयु चाहिए, जैसे छह महीने से पुराने के लिए age:>6m या पिछले सप्ताह के लिए age:<7d।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "age:에는 기간이 필요합니다. 예: 6개월보다 오래된 항목은 age:>6m, 최근 1주일은 age:<7d."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "age: 需要一个时长，例如 age:>6m 表示六个月以前，age:<7d 表示最近一周。"
+          }
+        }
+      }
+    },
     "alike another picture here, not the best itself" : {
       "localizations" : {
         "de" : {
@@ -103263,6 +103989,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已排除 已跳过 已扫描 文件夹 再次扫描 浏览"
+          }
+        }
+      }
+    },
+    "ext: needs an extension, such as ext:mov or ext:mov,mp4." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ext: braucht eine Endung, etwa ext:mov oder ext:mov,mp4."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ext: necesita una extensión, como ext:mov o ext:mov,mp4."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ext: attend une extension, par exemple ext:mov ou ext:mov,mp4."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ext: को एक्सटेंशन चाहिए, जैसे ext:mov या ext:mov,mp4।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ext:에는 확장자가 필요합니다. 예: ext:mov 또는 ext:mov,mp4."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ext: 需要扩展名，例如 ext:mov 或 ext:mov,mp4。"
           }
         }
       }
@@ -103651,6 +104417,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "增大"
+          }
+        }
+      }
+    },
+    "hidden: needs yes or no." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hidden: braucht yes oder no."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hidden: necesita yes o no."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hidden: attend yes ou no."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hidden: को yes या no चाहिए।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hidden:에는 yes 또는 no가 필요합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hidden: 需要 yes 或 no。"
           }
         }
       }
@@ -104375,6 +105181,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "保留"
+          }
+        }
+      }
+    },
+    "kind: needs a kind, such as kind:media, kind:archives or kind:folder." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kind: braucht eine Art, etwa kind:media, kind:archives oder kind:folder."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kind: necesita un tipo, como kind:media, kind:archives o kind:folder."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kind: attend un type, par exemple kind:media, kind:archives ou kind:folder."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kind: को प्रकार चाहिए, जैसे kind:media, kind:archives या kind:folder।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kind:에는 종류가 필요합니다. 예: kind:media, kind:archives, kind:folder."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kind: 需要类型，例如 kind:media、kind:archives 或 kind:folder。"
           }
         }
       }
@@ -106341,6 +107187,46 @@
         }
       }
     },
+    "size: needs a size, such as size:>500MB or size:1GB-5GB." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "size: braucht eine Größe, etwa size:>500MB oder size:1GB-5GB."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "size: necesita un tamaño, como size:>500MB o size:1GB-5GB."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "size: attend une taille, par exemple size:>500MB ou size:1GB-5GB."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "size: को आकार चाहिए, जैसे size:>500MB या size:1GB-5GB।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "size:에는 크기가 필요합니다. 예: size:>500MB 또는 size:1GB-5GB."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "size: 需要大小，例如 size:>500MB 或 size:1GB-5GB。"
+          }
+        }
+      }
+    },
     "the Trash was emptied since" : {
       "localizations" : {
         "de" : {
@@ -106577,6 +107463,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "整个扫描"
+          }
+        }
+      }
+    },
+    "“%@:” isn't a condition. Use size:, kind:, ext:, age: or hidden:, or put the word in quotes." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@:“ ist keine Bedingung. Verwende size:, kind:, ext:, age: oder hidden:, oder setze das Wort in Anführungszeichen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«%@:» no es una condición. Usa size:, kind:, ext:, age: o hidden:, o pon la palabra entre comillas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "« %@: » n’est pas une condition. Utilisez size:, kind:, ext:, age: ou hidden:, ou mettez le mot entre guillemets."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@:” कोई शर्त नहीं है। size:, kind:, ext:, age: या hidden: का उपयोग करें, या शब्द को उद्धरण चिह्नों में रखें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@:”은(는) 조건이 아닙니다. size:, kind:, ext:, age:, hidden: 중 하나를 쓰거나 단어를 따옴표로 묶으세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@:”不是条件。请使用 size:、kind:、ext:、age: 或 hidden:，或将该词放在引号中。"
           }
         }
       }

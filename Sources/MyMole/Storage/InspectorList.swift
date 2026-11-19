@@ -43,7 +43,7 @@ struct InspectorList: View {
                     tree(cur)
                 } else {
                     let all = entries(cur)
-                    let rows = all.filter(model.browseFilter.matches)
+                    let rows = all.filter(model.browseFilter.matcher())
                     table(rows)
                         .dsEmptyOverlay(showing: rows.isEmpty && !model.scanning || model.currentIsEmpty) {
                             if rows.isEmpty, !all.isEmpty, !model.scanning {
@@ -139,7 +139,7 @@ struct InspectorList: View {
     private var filterBar: some View {
         VStack(alignment: .leading, spacing: DS.Space.sm) {
             HStack(spacing: DS.Space.sm) {
-                DSFilterField(String(localized: "Filter files and folders by name"), text: $model.browseFilter.query)
+                DSFilterField(String(localized: "Filter files and folders by name"), text: $model.browseFilter.query, conditions: true)
                     .frame(minWidth: 100, maxWidth: .infinity)
                 DSFilterButton("Filter files and folders", detail: "Narrow the results below. The disk map and your removal choices stay the same.",
                                count: model.browseFilter.criteriaCount, clear: { model.browseFilter.clearCriteria() }) {
@@ -554,8 +554,11 @@ private struct WholeScanSearch: View {
             await result.update(count: index.entries.count) {
                 // Every match, however many; only what's still in the map
                 // after a move, checked here rather than on every redraw.
-                let r = index.search(filter.query, limit: .max) { e in
+                let search = TextQuery(filter.query)
+                let r = index.search(search.words, limit: .max) { e, hidden in
                     (filter.kind == nil || e.kind == filter.kind) && filter.date.matches(e.modified)
+                        && search.passes(SearchQuery.Facts(name: e.name, size: e.size, modified: e.modified, kind: e.kind,
+                                                           isFolder: e.isFolder, hidden: hidden))
                 }
                 let hits = r.found.compactMap { i -> ScanHit? in
                     let e = index.entries[i]

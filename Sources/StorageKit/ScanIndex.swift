@@ -75,12 +75,23 @@ public struct ScanIndex: Sendable {
     public func search(
         _ query: String, limit: Int = 2_000, home: String? = Home.path, keep: (Entry) -> Bool = { _ in true }
     ) -> (found: [Int], more: Bool) {
-        let search = WordSearch(query, home: home)
+        search(WordSearch(query, home: home), limit: limit, keep: { e, _ in keep(e) })
+    }
+
+    /// As `search(_:limit:home:keep:)` for words already prepared; `keep`
+    /// is also told whether the entry is hidden, by its name or a folder's.
+    public func search(
+        _ search: WordSearch, limit: Int = 2_000, keep: (Entry, _ hidden: Bool) -> Bool
+    ) -> (found: [Int], more: Bool) {
         var found: [Int] = []
         var scratch: [UInt8] = []
+        var hidden = [Bool](repeating: false, count: entries.count)
+        for i in entries.indices where entries[i].parent >= 0 {
+            hidden[i] = hidden[Int(entries[i].parent)] || entries[i].name.utf8.first == UInt8(ascii: ".")
+        }
         // A word with a slash can lie across two names, so the whole path is
         // put together for it; "~" stands for a path, the home folder's.
-        if let every = search.every, !query.contains("/"), !query.contains("~") {
+        if let every = search.every, !search.hasPathWords {
             // A path holds the words its folder's path holds and those its
             // own name adds. Folders come before what's in them, so each
             // entry starts from its folder's words and no path is put together.
@@ -90,10 +101,10 @@ public struct ScanIndex: Sendable {
                 var words = e.parent >= 0 ? held[Int(e.parent)] : search.mask(of: rootPath, scratch: &scratch)
                 if e.parent >= 0, words != every { words |= search.mask(of: e.name, wanted: every & ~words, scratch: &scratch) }
                 if e.isFolder { held[i] = words }
-                if e.parent >= 0, words == every, keep(e) { found.append(i) }
+                if e.parent >= 0, search.accepts(words), keep(e, hidden[i]) { found.append(i) }
             }
         } else {
-            for i in entries.indices where entries[i].parent >= 0 && keep(entries[i]) && search.matches(path(i), scratch: &scratch) {
+            for i in entries.indices where entries[i].parent >= 0 && keep(entries[i], hidden[i]) && search.matches(path(i), scratch: &scratch) {
                 found.append(i)
             }
         }
