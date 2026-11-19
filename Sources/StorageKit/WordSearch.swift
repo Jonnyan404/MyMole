@@ -85,38 +85,63 @@ public struct WordSearch: Sendable {
         out.append(contentsOf: text.lowercased().precomposedStringWithCanonicalMapping.utf8)
     }
 
-    private static func holds(_ text: [UInt8], from start: Int, _ word: [UInt8]) -> Bool {
+    /// Calls `body` with `text` lower-cased as bytes. Plain ASCII of up to
+    /// `stackLimit` bytes is folded on the stack, so a filter over a long
+    /// list allocates nothing per row; other text goes through `fold`, into
+    /// `scratch`, which the caller reuses.
+    @inline(__always)
+    static func withFolded<R>(_ text: String, scratch: inout [UInt8], _ body: (UnsafeRawBufferPointer) -> R) -> R {
+        let quick: R?? = text.utf8.withContiguousStorageIfAvailable { bytes -> R? in
+            let n = bytes.count
+            guard n <= stackLimit else { return nil }
+            return withUnsafeTemporaryAllocation(of: UInt8.self, capacity: max(n, 1)) { buffer -> R? in
+                for k in 0..<n {
+                    let byte = bytes[k]
+                    guard byte < 0x80 else { return nil }
+                    buffer[k] = byte &- 0x41 < 26 ? byte | 0x20 : byte
+                }
+                return body(UnsafeRawBufferPointer(start: buffer.baseAddress, count: n))
+            }
+        }
+        if let quick, let r = quick { return r }
+        fold(text, into: &scratch)
+        return scratch.withUnsafeBytes(body)
+    }
+
+    static let stackLimit = 1_024
+
+    private static func holds(_ text: UnsafeRawBufferPointer, from start: Int, _ word: [UInt8]) -> Bool {
         let count = text.count - start
         guard word.count <= count else { return false }
-        return text.withUnsafeBytes { bytes in
-            guard let base = bytes.baseAddress else { return false }
-            return memmem(base + start, count, word, word.count) != nil
-        }
+        guard !word.isEmpty else { return true }
+        guard let base = text.baseAddress else { return false }
+        return word.withUnsafeBytes { memmem(base + start, count, $0.baseAddress, word.count) } != nil
     }
 
     /// Where in `text` a word that is no piece of a path is looked for
     /// from: past the home folder's own path when the text is the home
     /// folder or lies inside it, else from its start.
-    private func pastHome(_ text: [UInt8]) -> Int {
+    private func pastHome(_ text: UnsafeRawBufferPointer) -> Int {
         let n = home.count
-        guard n > 0, text.count >= n, text.count == n || text[n] == UInt8(ascii: "/") else { return 0 }
-        return text.withUnsafeBytes { memcmp($0.baseAddress, home, n) == 0 } ? n : 0
+        guard n > 0, text.count >= n, text.count == n || text[n] == UInt8(ascii: "/"), let base = text.baseAddress else { return 0 }
+        return home.withUnsafeBytes { memcmp(base, $0.baseAddress, n) } == 0 ? n : 0
     }
 
     /// Whether the folded `text` holds word `i`.
-    private func holds(_ text: [UInt8], past: Int, word i: Int) -> Bool {
+    private func holds(_ text: UnsafeRawBufferPointer, past: Int, word i: Int) -> Bool {
         Self.holds(text, from: wholePath[i] ? 0 : past, words[i])
     }
 
     /// The words among `wanted` that `text` holds, as bits: word 0 is bit 0.
     func mask(of text: String, wanted: UInt64 = .max, scratch: inout [UInt8]) -> UInt64 {
-        Self.fold(text, into: &scratch)
-        let past = pastHome(scratch)
-        var found: UInt64 = 0
-        for i in 0..<min(words.count, Self.maskWidth) where wanted & (1 << UInt64(i)) != 0 && holds(scratch, past: past, word: i) {
-            found |= 1 << UInt64(i)
+        Self.withFolded(text, scratch: &scratch) { folded in
+            let past = pastHome(folded)
+            var found: UInt64 = 0
+            for i in 0..<min(words.count, Self.maskWidth) where wanted & (1 << UInt64(i)) != 0 && holds(folded, past: past, word: i) {
+                found |= 1 << UInt64(i)
+            }
+            return found
         }
-        return found
     }
 
     /// Whether `text` holds every word.
@@ -128,9 +153,10 @@ public struct WordSearch: Sendable {
     /// As `matches(_:)`, for a loop over many texts: `scratch` is reused.
     public func matches(_ text: String, scratch: inout [UInt8]) -> Bool {
         guard !words.isEmpty else { return true }
-        Self.fold(text, into: &scratch)
-        let past = pastHome(scratch)
-        return words.indices.allSatisfy { holds(scratch, past: past, word: $0) == ($0 < required) }
+        return Self.withFolded(text, scratch: &scratch) { folded in
+            let past = pastHome(folded)
+            return words.indices.allSatisfy { holds(folded, past: past, word: $0) == ($0 < required) }
+        }
     }
 
     /// Whether every word is in at least one of `texts`: a row's name, or
@@ -139,14 +165,28 @@ public struct WordSearch: Sendable {
         guard !words.isEmpty else { return true }
         var scratch: [UInt8] = []
         guard let every else {
-            let folded = texts.map { text -> (bytes: [UInt8], past: Int) in
+            // More words than a mask holds: rare, so each text is folded once and kept.
+            let folded = texts.map { text -> [UInt8] in
                 Self.fold(text, into: &scratch)
-                return (scratch, pastHome(scratch))
+                return scratch
             }
-            return words.indices.allSatisfy { i in folded.contains { holds($0.bytes, past: $0.past, word: i) } == (i < required) }
+            return words.indices.allSatisfy { i in
+                folded.contains { bytes in bytes.withUnsafeBytes { holds($0, past: pastHome($0), word: i) } } == (i < required)
+            }
         }
         var found: UInt64 = 0
         for text in texts where found != every { found |= mask(of: text, wanted: every & ~found, scratch: &scratch) }
+        return accepts(found)
+    }
+
+    /// As `matches(anyOf:)` for a row's two texts, its name and its folder,
+    /// without making a list of them for every row.
+    public func matches(_ first: String, _ second: String) -> Bool {
+        guard !words.isEmpty else { return true }
+        guard let every else { return matches(anyOf: [first, second]) }
+        var scratch: [UInt8] = []
+        var found = mask(of: first, wanted: every, scratch: &scratch)
+        if found != every { found |= mask(of: second, wanted: every & ~found, scratch: &scratch) }
         return accepts(found)
     }
 }

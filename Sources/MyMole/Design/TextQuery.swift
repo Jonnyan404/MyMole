@@ -11,7 +11,19 @@ struct TextQuery: Sendable {
     /// Paths in the home folder are searched as the lists show them, from "~" on.
     init(_ text: String) { query = SearchQuery(text, home: Home.path) }
 
-    func matches(_ texts: String...) -> Bool { matches(texts: texts) }
+    func matches() -> Bool { matches(texts: []) }
+    func matches(_ a: String, _ b: String, _ c: String) -> Bool { matches(texts: [a, b, c]) }
+    func matches(_ a: String, _ b: String, _ c: String, _ d: String) -> Bool { matches(texts: [a, b, c, d]) }
+    func matches(_ a: String, _ b: String, _ c: String, _ d: String, _ e: String) -> Bool { matches(texts: [a, b, c, d, e]) }
+
+    /// A row's name, and its folder: the common case, without a list per row.
+    func matches(_ first: String, _ second: String) -> Bool {
+        query.problems.isEmpty && !query.hasConditions && query.text.matches(first, second)
+    }
+
+    func matches(_ text: String) -> Bool {
+        query.problems.isEmpty && !query.hasConditions && query.text.matches(text, "")
+    }
 
     /// Every word is in at least one of the texts and no excluded word in
     /// any. A list whose rows are only texts lets nothing through while the

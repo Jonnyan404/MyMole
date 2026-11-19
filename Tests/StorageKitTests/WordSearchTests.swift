@@ -117,4 +117,23 @@ import Testing
         let files = index.search(query, limit: .max) { !$0.isFolder }.found
         #expect(Set(files) == Set(expected.filter { !index.entries[$0].isFolder }))
     }
+
+    /// Text folded on the stack and text folded into a buffer give the same
+    /// answers: short and long, plain and beyond ASCII, in the home folder or not.
+    @Test func everyFoldingPathAnswersTheSame() {
+        let long = String(repeating: "x", count: WordSearch.stackLimit + 10) + "Report"
+        let search = WordSearch(words: ["report"], excluded: ["draft"], home: "/synthetic/home")
+        #expect(search.matches(long, ""))
+        #expect(!search.matches(long + " DRAFT", ""))
+        #expect(search.matches("Report.pdf", "/synthetic/home/Documents"))
+        #expect(!search.matches("Report.pdf", "/synthetic/home/Drafts"))
+        #expect(search.matches("Café report", ""))
+        #expect(WordSearch("café").matches("CAFÉ.txt", ""))
+        // The home folder's own path isn't searched: "home" is in every such path.
+        #expect(!WordSearch("home", home: "/synthetic/home").matches("a.txt", "/synthetic/home/Documents"))
+        #expect(WordSearch("~/documents", home: "/synthetic/home").matches("a.txt", "/synthetic/home/Documents"))
+        for (name, folder) in [("Report.pdf", "/synthetic/home/Docs"), ("x", "y"), (long, "/tmp"), ("Café", "/synthetic/home")] {
+            #expect(search.matches(name, folder) == search.matches(anyOf: [name, folder]))
+        }
+    }
 }
