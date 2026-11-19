@@ -100,13 +100,18 @@ public enum ChangedFolders {
         }
     }
 
-    /// Each path once, and none inside another.
+    /// Each path once, and none inside another. Each path's folders above
+    /// it are looked up, so it takes time by the number of paths and their depth.
     public static func outermost(_ paths: [String]) -> [String] {
-        var out: [String] = []
-        for p in Set(paths).sorted() where !out.contains(where: { p == $0 || p.hasPrefix($0 + "/") }) {
-            out.append(p)
-        }
-        return out
+        let all = Set(paths)
+        return all.filter { p in
+            var above = Substring(p)
+            while let slash = above.lastIndex(of: "/"), slash > above.startIndex {
+                above = above[..<slash]
+                if all.contains(String(above)) { return false }
+            }
+            return true
+        }.sorted()
     }
 
     /// The folders of `map` to read again for `changed`: each changed
@@ -114,12 +119,21 @@ public enum ChangedFolders {
     /// it has (a folder made or removed since changes its parent).
     public static func toRead(_ changed: [String], in map: Folder) -> [String] {
         let rootPath = map.path
+        let prefix = rootPath == "/" ? "/" : rootPath + "/"
         var out: [String] = []
-        for var p in changed {
-            while map.find(path: p) == nil, p != rootPath, p.hasPrefix(rootPath) {
-                p = (p as NSString).deletingLastPathComponent
+        for p in changed {
+            guard p == rootPath || p.hasPrefix(prefix) else { continue }
+            // One walk down from the root, as far as the map goes; the path is the part walked.
+            var folder = map, end = p.endIndex
+            let rest = p[p.index(p.startIndex, offsetBy: min(p.count, prefix.count))...]
+            var walked = rest.startIndex
+            for name in rest.split(separator: "/", omittingEmptySubsequences: true) {
+                guard let child = folder.subfolders.first(where: { $0.name == name }) else { break }
+                folder = child
+                walked = name.endIndex
             }
-            if map.find(path: p) != nil { out.append(p) }
+            end = walked
+            out.append(folder === map ? rootPath : String(p[..<end]))
         }
         return outermost(out)
     }

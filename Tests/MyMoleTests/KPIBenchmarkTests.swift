@@ -243,6 +243,53 @@ struct KPIBenchmarkTests {
         #expect(replaced?.find(path: fresh.path)?.subfolders.isEmpty == true)
     }
 
+    /// What a rescan does before it reads: the changed folders put onto
+    /// a map of 100,000 folders, and the watcher handing them over.
+    @Test func changedFoldersAreFoundOnALargeMapQuickly() async throws {
+        let tree = Self.map(chains: 1_000, depth: 100, files: 0)
+        let changed = (0..<1_000).map { i in tree.path + "/chain-\(i)" + (1...(i % 100 + 1)).map { "/level-\($0)" }.joined() + "/new-\(i)" }
+        var read: [String] = []
+        Self.gate("disk-map.changed-folders.1k-in-100k", Self.ms { read = ChangedFolders.toRead(changed, in: tree) })
+        #expect(read.count == 1_000)
+
+        let box = try Box()
+        for i in 0..<100 { box.file("w/f\(i)/seed.bin", bytes: 1) }
+        try await Task.sleep(for: .seconds(1))
+        let watcher = try #require(ChangedFolders.Watcher(root: box.path + "/w", since: ChangedFolders.now()))
+        for i in 0..<1_000 { box.file("w/f\(i % 100)/n\(i).bin", bytes: 1) }
+        // The events reach the system's history a moment later; the flush that finds them is timed.
+        var found: [String]? = []
+        var took = 0.0
+        for _ in 0..<40 where found?.isEmpty == true {
+            try await Task.sleep(for: .milliseconds(250))
+            took = Self.ms { found = watcher.flush() }
+        }
+        Self.gate("disk-map.watcher-flush.1k-changes", took)
+        #expect(found?.isEmpty == false)
+    }
+
+    /// Two hundred pairs of copies made to share their storage: each is
+    /// compared again, cloned, given its metadata and swapped in.
+    @Test func copiesShareTheirStorageQuickly() throws {
+        let box = try Box()
+        for i in 0..<200 {
+            var bytes = Data(repeating: UInt8(i % 251), count: 1_048_576)
+            bytes[0] = UInt8(i / 251)
+            try bytes.write(to: box.root.appending(path: "a/\(i).bin").creatingFolder())
+            try bytes.write(to: box.root.appending(path: "b/\(i).bin").creatingFolder())
+        }
+        try FileManager.default.createDirectory(at: box.root.appending(path: "Bin"), withIntermediateDirectories: true)
+        let groups = DuplicateFinder.find(in: [box.path + "/a", box.path + "/b"], minimum: 100_000, workers: 2).groups
+        let chosen = Set(groups.compactMap { $0.files.last?.path })
+        let plan = CloneSharing.plan(groups, chosen: chosen)
+        try #require(plan.shares.count == 200, "the run's folder is on APFS")
+        var out = CloneSharing.Outcome()
+        Self.gate("duplicates.share-storage.200", Self.ms {
+            out = CloneSharing.share(plan, groups: groups, home: box.path, backend: .folder(box.path + "/Bin"))
+        })
+        #expect(out.shared.count == 200)
+    }
+
     @Test func aMapTakesLittleMemoryForEachFolder() {
         let before = Self.allocated()
         let tree = Self.map(chains: 2_000, depth: 50, files: 0)
@@ -474,5 +521,13 @@ struct KPIBenchmarkTests {
         var failed: [TrashRecord] = []
         Self.gate("trash.undo-2k", Self.ms { failed = Trasher.restore(moved) })
         #expect(failed.isEmpty && paths.allSatisfy { FileManager.default.fileExists(atPath: $0) })
+    }
+}
+
+private extension URL {
+    /// The URL, with the folder that holds it made first.
+    func creatingFolder() throws -> URL {
+        try FileManager.default.createDirectory(at: deletingLastPathComponent(), withIntermediateDirectories: true)
+        return self
     }
 }

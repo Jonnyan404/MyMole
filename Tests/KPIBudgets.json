@@ -47,5 +47,8 @@
   "uninstall.removed-apps.300": 500,
   "installers.scan.200": 100,
   "similar.fingerprints.save-50k": 100,
-  "similar.fingerprints.load-50k": 100
+  "similar.fingerprints.load-50k": 100,
+  "disk-map.changed-folders.1k-in-100k": 200,
+  "disk-map.watcher-flush.1k-changes": 50,
+  "duplicates.share-storage.200": 3000
 }

@@ -82,7 +82,8 @@ import Testing
         m.scan(path: box.mapped)
         try await settle(m)
         let before = try #require(m.root)
-        m.rescan()
+        // A whole-map read, stopped at once.
+        m.scan(path: box.mapped)
         m.cancelScan()
         try await settle(m)
         #expect(m.root === before && !m.refreshing)

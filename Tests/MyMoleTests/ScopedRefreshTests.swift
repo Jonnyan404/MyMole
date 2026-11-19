@@ -108,7 +108,8 @@ import Testing
         try await wait { entered.withLock { $0 } }
         model.cancelScan()
         try files.add("Map/Folder/newer.bin")
-        model.rescan()
+        // A newer whole-map read, which the old folder read must not overwrite.
+        model.scan(path: files.path("Map"))
         await model.scanJob?.value
         let newest = try #require(model.root)
         release.signal()
