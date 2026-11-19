@@ -112,6 +112,7 @@ struct SettingsView: View {
         case .systemTasks: systemTasksSection
         case .keep: keepSection
         case .systemKeep: systemKeepSection
+        case .privacy: PrivacySection()
         case .about: aboutSection
         case .uninstall: selfUninstallSection
         }

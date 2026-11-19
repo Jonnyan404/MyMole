@@ -189,6 +189,17 @@ or remove an app that requires administrator approval.
 - System Clean is not included. Optimize includes only Old Window States and
   Broken Settings Files.
 
+### What stays on your Mac
+
+MyMole makes no network connections. Website and Support open in your
+browser. The App Store edition is also sandboxed without network access.
+
+Saved scans, keep lists, project rules and picture fingerprints hold names and
+paths of your files, in MyMole's own folder in Application Support. Cleanup
+history holds only counts and sizes. Large lists set aside on disk are removed
+when they close. Settings → Privacy shows the folder and the permissions the
+edition uses.
+
 ### macOS privacy settings
 
 Full Disk Access allows scans of protected folders. App Management controls

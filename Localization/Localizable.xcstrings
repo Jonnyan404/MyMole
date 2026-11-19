@@ -42483,6 +42483,46 @@
         }
       }
     },
+    "Full Disk Access and App Management, when you turn them on in System Settings. An administrator password for system files and system tasks." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Festplattenvollzugriff und App-Verwaltung, wenn du sie in den Systemeinstellungen einschaltest. Ein Administratorpasswort für Systemdateien und Systemaufgaben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acceso total al disco y Gestión de apps, cuando los activas en Ajustes del Sistema. Una contraseña de administrador para archivos y tareas del sistema."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accès complet au disque et Gestion des apps, lorsque vous les activez dans Réglages Système. Un mot de passe administrateur pour les fichiers et tâches système."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पूर्ण डिस्क ऐक्सेस और ऐप प्रबंधन, जब आप उन्हें सिस्टम सेटिंग्ज़ में चालू करते हैं। सिस्टम फ़ाइलों और सिस्टम कार्यों के लिए व्यवस्थापक पासवर्ड।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템 설정에서 켠 경우 전체 디스크 접근 권한과 앱 관리. 시스템 파일과 시스템 작업에는 관리자 암호."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完全磁盘访问和应用管理（在系统设置中打开后）。系统文件和系统任务需要管理员密码。"
+          }
+        }
+      }
+    },
     "Games the launcher installed. Remove them in the launcher, so their saves and licenses are handled." : {
       "localizations" : {
         "de" : {
@@ -49405,6 +49445,46 @@
         }
       }
     },
+    "Kept on this Mac" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf diesem Mac gespeichert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardado en este Mac"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conservé sur ce Mac"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसी Mac पर रखा जाता है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Mac에 보관됨"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存在这台 Mac 上"
+          }
+        }
+      }
+    },
     "Kept system items, and anything inside them, are never chosen or removed." : {
       "localizations" : {
         "de" : {
@@ -49641,6 +49721,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "大文件"
+          }
+        }
+      }
+    },
+    "Large lists set aside on disk are removed when they close and at the next launch. Timings stay in memory until you quit." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Große Listen, die auf die Festplatte ausgelagert werden, werden beim Schließen und beim nächsten Start entfernt. Zeiten bleiben bis zum Beenden im Arbeitsspeicher."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las listas grandes apartadas en el disco se eliminan al cerrarse y en el siguiente inicio. Los tiempos permanecen en memoria hasta que sales."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les grandes listes mises de côté sur le disque sont supprimées à leur fermeture et au lancement suivant. Les temps restent en mémoire jusqu’à ce que vous quittiez."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डिस्क पर अलग रखी गई बड़ी सूचियाँ बंद होने पर और अगली बार खोलने पर हटा दी जाती हैं। समय तब तक मेमोरी में रहते हैं जब तक आप ऐप बंद नहीं करते।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "디스크에 따로 보관한 큰 목록은 닫을 때와 다음 실행 시 제거됩니다. 시간 측정은 종료할 때까지 메모리에만 남습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂存到磁盘上的大型列表会在关闭时和下次启动时移除。耗时数据只保存在内存中，直到你退出。"
           }
         }
       }
@@ -59013,6 +59133,46 @@
         }
       }
     },
+    "MyMole makes no network connections, so nothing about your Mac or its files leaves it. Website and Support open in your browser." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole stellt keine Netzwerkverbindungen her, daher verlässt nichts über deinen Mac oder seine Dateien das Gerät. Website und Support öffnen sich in deinem Browser."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole no establece conexiones de red, así que nada sobre tu Mac ni sus archivos sale de él. Sitio web y Soporte se abren en tu navegador."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole n’établit aucune connexion réseau : rien sur votre Mac ni sur ses fichiers ne le quitte. Site web et Assistance s’ouvrent dans votre navigateur."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole कोई नेटवर्क कनेक्शन नहीं बनाता, इसलिए आपके Mac या उसकी फ़ाइलों के बारे में कुछ भी बाहर नहीं जाता। वेबसाइट और सहायता आपके ब्राउज़र में खुलते हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole은 네트워크에 연결하지 않으므로 Mac이나 파일에 관한 어떤 정보도 Mac 밖으로 나가지 않습니다. 웹 사이트와 지원은 브라우저에서 열립니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole 不建立任何网络连接，因此有关你的 Mac 及其文件的任何信息都不会离开它。网站和支持会在浏览器中打开。"
+          }
+        }
+      }
+    },
     "MyMole needs Full Disk Access before it can scan. What's shown is from earlier scans." : {
       "localizations" : {
         "de" : {
@@ -66367,6 +66527,46 @@
         }
       }
     },
+    "Only the folders you give in Folder Access, and Downloads. Finder moves an app that needs an administrator password, once you let MyMole control it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur die Ordner, die du unter Ordnerzugriff freigibst, und Downloads. Der Finder bewegt eine App, die ein Administratorpasswort braucht, sobald du MyMole erlaubst, ihn zu steuern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo las carpetas que concedes en Acceso a carpetas, y Descargas. El Finder mueve una app que necesita contraseña de administrador, una vez que permites que MyMole lo controle."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seulement les dossiers que vous accordez dans Accès aux dossiers, et Téléchargements. Le Finder déplace une app qui demande un mot de passe administrateur, une fois que vous autorisez MyMole à le contrôler."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "केवल वे फ़ोल्डर जो आप फ़ोल्डर ऐक्सेस में देते हैं, और डाउनलोड। जिस ऐप के लिए व्यवस्थापक पासवर्ड चाहिए, उसे Finder हटाता है, जब आप MyMole को उसे नियंत्रित करने देते हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "폴더 접근에서 허용한 폴더와 다운로드만 사용합니다. 관리자 암호가 필요한 앱은 MyMole이 Finder를 제어하도록 허용하면 Finder가 옮깁니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅限你在“文件夹访问”中授予的文件夹以及“下载”。需要管理员密码的应用由访达移动，前提是你允许 MyMole 控制访达。"
+          }
+        }
+      }
+    },
     "Only the name matches, so it may be another project's or app's of the same name. Never chosen for you." : {
       "localizations" : {
         "de" : {
@@ -66483,6 +66683,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "只会清除这些已保存的扫描结果。下次扫描会重新生成它们。保留清单、项目规则和清理历史会保留。"
+          }
+        }
+      }
+    },
+    "Only while open" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur solange geöffnet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo mientras está abierto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seulement pendant l’ouverture"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "केवल खुले रहने तक"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "열려 있는 동안만"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅在打开期间"
           }
         }
       }
@@ -68723,6 +68963,46 @@
         }
       }
     },
+    "Permissions" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Berechtigungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permisos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autorisations"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अनुमतियाँ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "권한"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "权限"
+          }
+        }
+      }
+    },
     "Photo groups" : {
       "localizations" : {
         "de" : {
@@ -70079,6 +70359,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "此厂商的所有打印机共用这些驱动。请在“系统设置”>“打印机与扫描仪”中移除打印机。"
+          }
+        }
+      }
+    },
+    "Privacy" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datenschutz"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confidentialité"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "गोपनीयता"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인정보 보호"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐私"
           }
         }
       }
@@ -78745,6 +79065,46 @@
         }
       }
     },
+    "Saved scans, keep lists, project rules and picture fingerprints for Similar Photos hold names and paths of your files. Cleanup history holds only counts and sizes." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesicherte Scans, Behalten-Listen, Projektregeln und Bild-Fingerabdrücke für Ähnliche Fotos enthalten Namen und Pfade deiner Dateien. Der Bereinigungsverlauf enthält nur Anzahlen und Größen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los escaneos guardados, las listas de conservación, las reglas de proyectos y las huellas de imágenes de Fotos similares contienen nombres y rutas de tus archivos. El historial de limpieza solo contiene cantidades y tamaños."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les analyses enregistrées, les listes de conservation, les règles de projets et les empreintes d’images de Photos similaires contiennent des noms et chemins de vos fichiers. L’historique de nettoyage ne contient que des nombres et des tailles."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सहेजे गए स्कैन, रखें-सूचियाँ, प्रोजेक्ट नियम और मिलते-जुलते फ़ोटो के लिए चित्रों की पहचान आपकी फ़ाइलों के नाम और पथ रखते हैं। सफ़ाई इतिहास में केवल गिनती और आकार होते हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 스캔, 보관 목록, 프로젝트 규칙, 유사한 사진용 이미지 지문에는 파일의 이름과 경로가 들어 있습니다. 정리 기록에는 개수와 크기만 들어 있습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已保存的扫描、保留清单、项目规则以及相似照片的图片指纹包含你的文件名称和路径。清理记录只包含数量和大小。"
+          }
+        }
+      }
+    },
     "Saved the scan to %@" : {
       "localizations" : {
         "de" : {
@@ -82591,6 +82951,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在菜单栏中显示 MyMole 在图标旁显示可用空间 登录时打开 MyMole 打开登录项 登录 启动 关闭窗口 退出"
+          }
+        }
+      }
+    },
+    "Show MyMole's folder in Finder. Clear Saved Results in Loading and Memory removes the saved scans." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt den Ordner von MyMole im Finder. „Gesicherte Ergebnisse löschen“ unter „Laden und Arbeitsspeicher“ entfernt die gesicherten Scans."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra la carpeta de MyMole en el Finder. «Borrar resultados guardados», en Carga y memoria, elimina los escaneos guardados."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche le dossier de MyMole dans le Finder. « Effacer les résultats enregistrés », dans Chargement et mémoire, supprime les analyses enregistrées."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MyMole का फ़ोल्डर Finder में दिखाता है। लोडिंग और मेमोरी में “सहेजे गए परिणाम हटाएँ” सहेजे गए स्कैन हटाता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finder에서 MyMole 폴더를 보여 줍니다. 로딩 및 메모리의 ‘저장된 결과 지우기’는 저장된 스캔을 제거합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在访达中显示 MyMole 的文件夹。“加载与内存”中的“清除已保存的结果”会移除已保存的扫描。"
           }
         }
       }
@@ -94153,6 +94553,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "这份 MyMole 副本已保留。卸载前请先把它从保留清单中移除。"
+          }
+        }
+      }
+    },
+    "This edition is in the App Sandbox without network access, so macOS would also block a connection." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Ausgabe läuft in der App-Sandbox ohne Netzwerkzugriff, daher würde macOS eine Verbindung zusätzlich blockieren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta edición está en el App Sandbox sin acceso a la red, así que macOS también bloquearía una conexión."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette édition est dans l’App Sandbox sans accès au réseau : macOS bloquerait donc aussi une connexion."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "यह संस्करण बिना नेटवर्क ऐक्सेस के App Sandbox में है, इसलिए macOS भी किसी कनेक्शन को रोक देगा।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 에디션은 네트워크 접근 권한 없이 App Sandbox에서 실행되므로 macOS도 연결을 차단합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此版本在没有网络权限的 App Sandbox 中运行，因此 macOS 也会阻止任何连接。"
+          }
+        }
+      }
+    },
+    "This edition isn't in the App Sandbox, so macOS doesn't block connections for it; MyMole has no code that makes one." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Ausgabe läuft nicht in der App-Sandbox, daher blockiert macOS keine Verbindungen für sie; MyMole enthält keinen Code, der eine herstellt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta edición no está en el App Sandbox, así que macOS no le bloquea conexiones; MyMole no tiene código que establezca ninguna."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette édition n’est pas dans l’App Sandbox : macOS ne lui bloque donc pas les connexions, mais MyMole ne contient aucun code qui en établit."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "यह संस्करण App Sandbox में नहीं है, इसलिए macOS इसके कनेक्शन नहीं रोकता; MyMole में कनेक्शन बनाने वाला कोई कोड नहीं है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 에디션은 App Sandbox 밖에서 실행되므로 macOS가 연결을 차단하지 않습니다. MyMole에는 연결을 만드는 코드가 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此版本不在 App Sandbox 中，因此 macOS 不会为它阻止连接；MyMole 中没有建立连接的代码。"
           }
         }
       }
@@ -106303,6 +106783,46 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "network connections internet data stored kept saved scans history fingerprints permissions sandbox" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Netzwerk Verbindungen Internet Daten gespeichert gesichert Scans Verlauf Fingerabdrücke Berechtigungen Sandbox"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "red conexiones internet datos guardados almacenados escaneos historial huellas permisos sandbox"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "réseau connexions internet données stockées enregistrées analyses historique empreintes autorisations sandbox"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "नेटवर्क कनेक्शन इंटरनेट डेटा संग्रहीत सहेजे स्कैन इतिहास पहचान अनुमतियाँ सैंडबॉक्स"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "네트워크 연결 인터넷 데이터 저장 보관 스캔 기록 지문 권한 샌드박스"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络 连接 互联网 数据 存储 保存 扫描 记录 指纹 权限 沙盒"
           }
         }
       }
