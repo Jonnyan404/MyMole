@@ -9085,6 +9085,46 @@
         }
       }
     },
+    "%lld days" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Tage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld días"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld jours"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld दिन"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld일"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 天"
+          }
+        }
+      }
+    },
     "%lld deleted for good" : {
       "localizations" : {
         "de" : {
@@ -18427,6 +18467,46 @@
         }
       }
     },
+    "1 day" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Tag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 día"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 jour"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 दिन"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1일"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 天"
+          }
+        }
+      }
+    },
     "1 file" : {
       "localizations" : {
         "de" : {
@@ -27751,42 +27831,42 @@
         }
       }
     },
-    "Changed within the last three days, or a running program is at work there. It's offered here once it has been left alone." : {
+    "Changed within the last %@, or a running program is at work there. It's offered here once it has been left alone." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In den letzten drei Tagen geändert, oder ein laufendes Programm arbeitet dort. Es wird hier angeboten, sobald es in Ruhe gelassen wurde."
+            "value" : "Weniger als %@ unverändert, oder ein laufendes Programm arbeitet dort. Es wird hier angeboten, sobald es in Ruhe gelassen wurde."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambió en los últimos tres días, o un programa en ejecución trabaja ahí. Se ofrecerá aquí cuando lleve un tiempo sin tocarse."
+            "value" : "Cambió en los últimos %@, o un programa en ejecución trabaja ahí. Se ofrecerá aquí cuando lleve un tiempo sin tocarse."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modifié au cours des trois derniers jours, ou un programme en cours d’exécution y travaille. Il sera proposé ici une fois laissé de côté."
+            "value" : "Modifié au cours des derniers %@, ou un programme en cours d’exécution y travaille. Il sera proposé ici une fois laissé de côté."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "पिछले तीन दिनों में बदला गया, या कोई चल रहा प्रोग्राम वहाँ काम कर रहा है। जब इसे छोड़ दिया जाएगा तब यह यहाँ पेश किया जाएगा।"
+            "value" : "पिछले %@ में बदला गया, या कोई चल रहा प्रोग्राम वहाँ काम कर रहा है। जब इसे छोड़ दिया जाएगा तब यह यहाँ पेश किया जाएगा।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "최근 3일 이내에 변경되었거나 실행 중인 프로그램이 그곳에서 작업 중입니다. 건드리지 않게 되면 여기에 표시됩니다."
+            "value" : "최근 %@ 이내에 변경되었거나 실행 중인 프로그램이 그곳에서 작업 중입니다. 건드리지 않게 되면 여기에 표시됩니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最近三天内有改动，或有正在运行的程序在那里工作。等它不再被使用后，会在这里列出。"
+            "value" : "最近 %@内有改动，或有正在运行的程序在那里工作。等它不再被使用后，会在这里列出。"
           }
         }
       }
@@ -35533,6 +35613,46 @@
         }
       }
     },
+    "Deep Clean offers what programs left in the temporary folders once nothing in it has changed for this long. None of it is ever chosen for you. A change counts from the next scan." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Tiefenreinigung bietet an, was Programme in den temporären Ordnern hinterlassen haben, sobald sich so lange nichts daran geändert hat. Nichts davon wird je für dich ausgewählt. Eine Änderung gilt ab dem nächsten Scan."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limpieza profunda ofrece lo que los programas dejaron en las carpetas temporales cuando nada ha cambiado en ello durante este tiempo. Nunca se elige nada por ti. Un cambio cuenta desde el siguiente análisis."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le nettoyage approfondi propose ce que des programmes ont laissé dans les dossiers temporaires une fois que rien n’y a changé pendant cette durée. Rien n’est jamais choisi pour vous. Un changement compte à partir de la prochaine analyse."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "गहरी सफ़ाई प्रोग्रामों द्वारा अस्थायी फ़ोल्डरों में छोड़ी गई चीज़ें तब पेश करती है जब इतने समय तक उनमें कुछ नहीं बदला हो। इनमें से कुछ भी आपके लिए कभी नहीं चुना जाता। बदलाव अगले स्कैन से लागू होता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정밀 정리는 프로그램이 임시 폴더에 남긴 항목을 이 기간 동안 변경이 없으면 표시합니다. 어떤 것도 자동으로 선택되지 않습니다. 변경 사항은 다음 스캔부터 적용됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "程序留在临时文件夹中的内容，在这段时间内没有任何改动后，深度清理才会列出。不会替你选择其中任何一项。更改从下次扫描起生效。"
+          }
+        }
+      }
+    },
     "Deep Clean's last scan" : {
       "localizations" : {
         "de" : {
@@ -40503,6 +40623,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "少量低优先级线程，一次只跑一个扫描。"
+          }
+        }
+      }
+    },
+    "Fewer days offers more, including what a program started recently and may still come back to." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weniger Tage bieten mehr an, auch was ein Programm erst kürzlich begonnen hat und vielleicht noch braucht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menos días ofrece más, incluido lo que un programa empezó hace poco y puede que retome."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moins de jours propose davantage, y compris ce qu’un programme a commencé récemment et pourrait reprendre."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कम दिन ज़्यादा पेश करते हैं, उसमें वह भी शामिल है जो किसी प्रोग्राम ने हाल में शुरू किया और जिस पर वह लौट सकता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일수를 줄이면 프로그램이 최근에 시작해 다시 쓸 수도 있는 항목까지 더 많이 표시됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "天数越少，列出的越多，包括程序最近才开始、之后可能还会用到的内容。"
           }
         }
       }
@@ -52149,6 +52309,46 @@
         }
       }
     },
+    "Left alone for" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unberührt für"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin tocar durante"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laissé de côté pendant"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इतने समय से अछूता"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "건드리지 않은 기간"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未改动时长"
+          }
+        }
+      }
+    },
     "Left by Removed Apps" : {
       "localizations" : {
         "de" : {
@@ -52269,42 +52469,42 @@
         }
       }
     },
-    "Left in a temporary folder and unchanged for three days." : {
+    "Left in a temporary folder and unchanged for %@." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In einem temporären Ordner zurückgelassen und seit drei Tagen unverändert."
+            "value" : "In einem temporären Ordner zurückgelassen und %@ lang unverändert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quedó en una carpeta temporal y lleva tres días sin cambios."
+            "value" : "Quedó en una carpeta temporal y lleva %@ sin cambios."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laissé dans un dossier temporaire et inchangé depuis trois jours."
+            "value" : "Laissé dans un dossier temporaire et inchangé depuis %@."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "अस्थायी फ़ोल्डर में छोड़ा गया और तीन दिनों से अपरिवर्तित।"
+            "value" : "अस्थायी फ़ोल्डर में छोड़ा गया और %@ से अपरिवर्तित।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "임시 폴더에 남겨져 3일 동안 변경되지 않았습니다."
+            "value" : "임시 폴더에 남겨져 %@ 동안 변경되지 않았습니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "留在临时文件夹中，三天未变。"
+            "value" : "留在临时文件夹中，%@未变。"
           }
         }
       }
@@ -91697,6 +91897,46 @@
         }
       }
     },
+    "Temporary Folders" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temporäre Ordner"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carpetas temporales"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dossiers temporaires"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अस्थायी फ़ोल्डर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "임시 폴더"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "临时文件夹"
+          }
+        }
+      }
+    },
     "That app changed or already quit. Refresh the reading before trying again." : {
       "localizations" : {
         "de" : {
@@ -103895,42 +104135,42 @@
         }
       }
     },
-    "What programs left in the temporary folders and haven't touched for three days. A program may still expect to find it, so none is ever chosen for you." : {
+    "What programs left in the temporary folders and haven't touched for %@. A program may still expect to find it, so none is ever chosen for you." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Was Programme in den temporären Ordnern hinterlassen und seit drei Tagen nicht angerührt haben. Ein Programm könnte es noch erwarten, daher wird nie etwas für dich ausgewählt."
+            "value" : "Was Programme in den temporären Ordnern hinterlassen und %@ lang nicht angerührt haben. Ein Programm könnte es noch erwarten, daher wird nie etwas für dich ausgewählt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que los programas dejaron en las carpetas temporales y no han tocado en tres días. Un programa aún podría esperar encontrarlo, así que nunca se elige nada por ti."
+            "value" : "Lo que los programas dejaron en las carpetas temporales y no han tocado en %@. Un programa aún podría esperar encontrarlo, así que nunca se elige nada por ti."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce que des programmes ont laissé dans les dossiers temporaires sans y toucher depuis trois jours. Un programme peut encore s’attendre à le trouver, donc rien n’est jamais choisi pour vous."
+            "value" : "Ce que des programmes ont laissé dans les dossiers temporaires sans y toucher depuis %@. Un programme peut encore s’attendre à le trouver, donc rien n’est jamais choisi pour vous."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "जो प्रोग्रामों ने अस्थायी फ़ोल्डरों में छोड़ा और तीन दिनों से नहीं छुआ। कोई प्रोग्राम अब भी इसे ढूँढ सकता है, इसलिए आपके लिए कुछ भी कभी नहीं चुना जाता।"
+            "value" : "जो प्रोग्रामों ने अस्थायी फ़ोल्डरों में छोड़ा और %@ से नहीं छुआ। कोई प्रोग्राम अब भी इसे ढूँढ सकता है, इसलिए आपके लिए कुछ भी कभी नहीं चुना जाता।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "프로그램이 임시 폴더에 남기고 3일 동안 건드리지 않은 항목입니다. 프로그램이 아직 찾을 수 있으므로 어떤 것도 자동으로 선택되지 않습니다."
+            "value" : "프로그램이 임시 폴더에 남기고 %@ 동안 건드리지 않은 항목입니다. 프로그램이 아직 찾을 수 있으므로 어떤 것도 자동으로 선택되지 않습니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "程序留在临时文件夹中、三天未改动的内容。程序可能仍会用到它，因此不会替你选择任何一项。"
+            "value" : "程序留在临时文件夹中、%@未改动的内容。程序可能仍会用到它，因此不会替你选择任何一项。"
           }
         }
       }
@@ -110779,6 +111019,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld 个中的最佳"
+          }
+        }
+      }
+    },
+    "tmp temp temporary folders days untouched left alone age Deep Clean offered" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tmp temp temporäre Ordner Tage unberührt Alter Tiefenreinigung angeboten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tmp temp carpetas temporales días sin tocar antigüedad Limpieza profunda ofrecido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tmp temp dossiers temporaires jours intacts âge nettoyage approfondi proposé"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tmp temp अस्थायी फ़ोल्डर दिन अछूता उम्र गहरी सफ़ाई"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tmp temp 임시 폴더 일수 기간 정밀 정리"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tmp temp 临时文件夹 天数 未改动 深度清理"
           }
         }
       }

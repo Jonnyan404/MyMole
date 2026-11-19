@@ -114,9 +114,11 @@ import Testing
         #expect(CleanRules.offersTemporary(path, changed: old))
         #expect(!CleanRules.offersTemporary(path, changed: old, owner: getuid() + 1))
         #expect(!CleanRules.temporaryFolder(path, owner: getuid() + 1) && CleanRules.temporaryFolder(path))
-        #expect(!CleanRules.offersTemporary(path, changed: Date().addingTimeInterval(-2 * 86_400)))
+        #expect(!CleanRules.offersTemporary(path, changed: Date().addingTimeInterval(-2 * 86_400), quiet: 3 * 86_400))
+        // One day left alone is enough when that's what Settings says.
+        #expect(CleanRules.offersTemporary(path, changed: Date().addingTimeInterval(-2 * 86_400), quiet: CleanRules.temporaryQuiet(days: 1)))
         // Three days to the hour, from whichever moment is asked about.
-        #expect(!CleanRules.offersTemporary(path, changed: old, now: old.addingTimeInterval(CleanRules.temporaryQuiet - 1)))
+        #expect(!CleanRules.offersTemporary(path, changed: old, now: old.addingTimeInterval(CleanRules.temporaryQuiet(days: 3) - 1), quiet: CleanRules.temporaryQuiet(days: 3)))
     }
 
     /// Copies made as clones take their blocks once: what the list says an
@@ -174,5 +176,12 @@ import Testing
         #expect(!above.contains("/synthetic/tool/ru") && !above.contains("/"))
         // This program itself is left out when asked to be.
         #expect(ProcessPaths.inUse()?.contains(real) == false)
+    }
+
+    /// Days come from Settings, three when nothing is saved, and stay within 1 to 90.
+    @Test func theDaysAreASetting() {
+        #expect(CleanRules.temporaryDays(saved: 0) == 3 && CleanRules.temporaryDays(saved: 10) == 10)
+        #expect(CleanRules.temporaryDays(saved: 500) == 90 && CleanRules.temporaryDays(saved: -4) == 1)
+        #expect(CleanRules.temporaryQuiet(days: 2) == 172_800)
     }
 }

@@ -111,6 +111,7 @@ struct SettingsView: View {
         case .folderAccess: folderAccessSection
         case .systemTasks: systemTasksSection
         case .keep: keepSection
+        case .temporary: TemporaryDaysSection()
         case .systemKeep: systemKeepSection
         case .privacy: PrivacySection()
         case .about: aboutSection
@@ -723,5 +724,28 @@ private struct SavedResultsList: View {
 
     private func reload() async {
         parts = await Task.detached(priority: .utility) { SavedResults.parts() }.value
+    }
+}
+
+/// How long something in the temporary folders is left alone before Deep
+/// Clean offers it.
+private struct TemporaryDaysSection: View {
+    @AppStorage(CleanRules.temporaryDaysKey) private var days = CleanRules.temporaryDaysStandard
+
+    var body: some View {
+        DSSection("Temporary Folders", footer: "Deep Clean offers what programs left in the temporary folders once nothing in it has changed for this long. None of it is ever chosen for you. A change counts from the next scan.", rows: false) {
+            DSFormGrid {
+                DSFormRow("Left alone for", help: "Fewer days offers more, including what a program started recently and may still come back to.") {
+                    Stepper(value: Binding(
+                        get: { CleanRules.temporaryDays() },
+                        set: { days = min(max($0, CleanRules.temporaryDaysRange.lowerBound), CleanRules.temporaryDaysRange.upperBound) }),
+                        in: CleanRules.temporaryDaysRange
+                    ) {
+                        Text(CleanRules.temporaryDaysText(CleanRules.temporaryDays())).monospacedDigit()
+                    }
+                    .fixedSize()
+                }
+            }
+        }
     }
 }

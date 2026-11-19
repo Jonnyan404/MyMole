@@ -38,7 +38,7 @@ public enum CleanCategory: String, Sendable, Codable, CaseIterable, Comparable {
         case .downloads: String(localized: "Mail attachments you opened. The messages keep them.")
         case .devices: String(localized: "Simulators with what's installed in them, Android emulators' saved states, and iPhone and iPad backups. They hold data, so none is ever chosen for you.")
         case .archives: String(localized: "Builds you archived in Xcode, with the symbols that make their crash reports readable. None is ever chosen for you.")
-        case .temporary: String(localized: "What programs left in the temporary folders and haven't touched for three days. A program may still expect to find it, so none is ever chosen for you.")
+        case .temporary: String(localized: "What programs left in the temporary folders and haven't touched for \(CleanRules.temporaryDaysText()). A program may still expect to find it, so none is ever chosen for you.")
         }
     }
 }
@@ -159,8 +159,28 @@ public enum CleanRules {
     /// Never offered, even inside a target: these hold state, not cache.
     static let neverNames: Set<String> = [".DS_Store", "com.apple.containermanagerd", "com.apple.nsurlsessiond"]
 
-    /// A temporary item is offered once nothing in it has changed for this long.
-    public static let temporaryQuiet: TimeInterval = 3 * 86_400
+    /// A temporary item is offered once nothing in it has changed for this
+    /// many days, as chosen in Settings.
+    public static let temporaryDaysKey = "deepClean.temporaryDays"
+    public static let temporaryDaysRange = 1...90
+    public static let temporaryDaysStandard = 3
+
+    public static func temporaryDays(in defaults: UserDefaults = .standard) -> Int {
+        temporaryDays(saved: defaults.integer(forKey: temporaryDaysKey))
+    }
+
+    /// What's saved, within the range; nothing saved (0) is the standard three.
+    static func temporaryDays(saved: Int) -> Int {
+        saved == 0 ? temporaryDaysStandard : min(max(saved, temporaryDaysRange.lowerBound), temporaryDaysRange.upperBound)
+    }
+
+    /// The days as a time, read once per look rather than for every item.
+    public static func temporaryQuiet(days: Int = temporaryDays()) -> TimeInterval { TimeInterval(days) * 86_400 }
+
+    /// "three days", "1 day": how the reasons say it.
+    public static func temporaryDaysText(_ days: Int = temporaryDays()) -> String {
+        days == 1 ? String(localized: "1 day") : String(localized: "\(days) days")
+    }
 
     /// Where programs leave temporary files: this user's own temporary
     /// folder, as macOS names it, and the one every user shares, each by
@@ -210,12 +230,12 @@ public enum CleanRules {
     /// there for itself, and with nothing changed, in it or to it, for
     /// `temporaryQuiet`. Something a program is still working with has a
     /// file or an entry newer than that.
-    static func offersTemporary(_ path: String, changed: Date, owner: uid_t = getuid(), now: Date = .now) -> Bool {
+    static func offersTemporary(_ path: String, changed: Date, owner: uid_t = getuid(), now: Date = .now, quiet: TimeInterval = temporaryQuiet()) -> Bool {
         guard temporaryName((path as NSString).lastPathComponent) else { return false }
         var st = stat()
         guard lstat(path, &st) == 0, st.st_uid == owner, st.st_mode & S_IFMT == S_IFDIR || st.st_mode & S_IFMT == S_IFREG else { return false }
         let own = Date(timeIntervalSince1970: TimeInterval(st.st_mtimespec.tv_sec))
-        return now.timeIntervalSince(max(changed, own)) >= temporaryQuiet
+        return now.timeIntervalSince(max(changed, own)) >= quiet
     }
 
     public static func targets(home: String) -> [Target] {
@@ -701,7 +721,8 @@ public enum CleanScanner {
         in roots: [String], progress: ScanProgress = ScanProgress(), workers: Int = 2, inUse: Set<String>? = nil
     ) -> TemporaryListing {
         var listing = TemporaryListing()
-        let reason = String(localized: "Left in a temporary folder and unchanged for three days.")
+        let quiet = CleanRules.temporaryQuiet()
+        let reason = String(localized: "Left in a temporary folder and unchanged for \(CleanRules.temporaryDaysText()).")
         // Asked for every folder looked at, of which there can be a hundred thousand.
         let occupied = inUse.map(ProcessPaths.foldersInUse)
         func busy(_ path: String) -> Bool { occupied?.contains(path) ?? false }
@@ -711,7 +732,7 @@ public enum CleanScanner {
             func look(_ f: Folder, path: String, depth: Int) {
                 guard CleanRules.temporaryName(f.name), CleanRules.temporaryFolder(path) else { return }
                 let working = busy(path)
-                if !working, CleanRules.offersTemporary(path, changed: f.latestChange) {
+                if !working, CleanRules.offersTemporary(path, changed: f.latestChange, quiet: quiet) {
                     // What moving it frees: files here are often clones of one
                     // another, which take their blocks once however many there are.
                     let bytes = min(f.size, f.reclaim.bytes)
@@ -737,7 +758,7 @@ public enum CleanScanner {
             for file in r.root.listedFiles where CleanRules.temporaryName(file.name) {
                 let path = root + "/" + file.name
                 guard CleanRules.temporaryFile(path) else { continue }
-                guard !busy(path), CleanRules.offersTemporary(path, changed: file.modified) else {
+                guard !busy(path), CleanRules.offersTemporary(path, changed: file.modified, quiet: quiet) else {
                     listing.inUseBytes += file.size
                     continue
                 }
