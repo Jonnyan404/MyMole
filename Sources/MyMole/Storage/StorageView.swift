@@ -28,6 +28,7 @@ struct StorageView: View {
             NoticeToast(model: model)
         }
         .sheet(isPresented: $model.showReview) { ReviewSheet(model: model) }
+        .sheet(isPresented: $model.showReport) { ReportExportSheet(model: model) }
         .task(id: model.removalHintKey) { await model.warmRemovalHints() }
         .liveRefresh(every: .seconds(2), events: [.applications, .protections]) { await model.warmRemovalHints() }
         .onReceive(NotificationCenter.default.publisher(for: KeepChanges.name)) { _ in model.invalidateRemovalHints() }

@@ -130,6 +130,10 @@ View folder sizes in six chart layouts beside a file list or folder tree.
 Point at a nested box to show its name. Find large files, save scans and compare
 changes between scans.
 
+Export a report of the folders and largest files as CSV or PDF from the Disk
+Map menu. You choose how deep it goes, whether paths are whole and whether
+hidden items are in it.
+
 Move selected files or folders to the Trash. Use Choose All Contents to clean
 inside a folder without removing the folder itself.
 
@@ -197,8 +201,8 @@ browser. The App Store edition is also sandboxed without network access.
 Saved scans, keep lists, project rules and picture fingerprints hold names and
 paths of your files, in MyMole's own folder in Application Support. Cleanup
 history holds only counts and sizes. Large lists set aside on disk are removed
-when they close. Settings → Privacy shows the folder and the permissions the
-edition uses.
+when they close. A report is written only where you save it. Settings →
+Privacy shows the folder and the permissions the edition uses.
 
 ### macOS privacy settings
 

@@ -134,6 +134,8 @@ final class StorageModel {
     /// when it was made. Nothing can be chosen or moved while it's shown.
     private(set) var opened: (file: String, date: Date)?
     private(set) var exportProblem: String?
+    /// The sheet that chooses what a report of the map holds.
+    var showReport = false
 
     /// Writes the finished scan to a file the user picks.
     func exportScan() {
@@ -1493,6 +1495,8 @@ final class StorageModel {
 
     /// A notice with Undo stays until it's used, closed or replaced; any
     /// other passes after a few seconds.
+    func showReportNotice(_ text: String) { showNotice(Notice(text: text, canUndo: false)) }
+
     private func showNotice(_ n: Notice) {
         withAnimation(Motion.snappy) { notice = n }
         if n.canUndo {

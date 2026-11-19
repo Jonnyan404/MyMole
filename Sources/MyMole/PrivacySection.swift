@@ -47,6 +47,10 @@ struct PrivacySection: View {
                         .help("Show MyMole's folder in Finder. Clear Saved Results in Loading and Memory removes the saved scans.")
                     }
                 }
+                DSFormRow("Reports") {
+                    Text("A report of the disk map is written only where you save it, with the paths and hidden items you chose for it.")
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                 DSFormRow("Only while open") {
                     Text("Large lists set aside on disk are removed when they close and at the next launch. Timings stay in memory until you quit.")
                         .fixedSize(horizontal: false, vertical: true)

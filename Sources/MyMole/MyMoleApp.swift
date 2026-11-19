@@ -83,6 +83,11 @@ struct MyMoleApp: App {
                     app.storage.openExportedScan()
                 }
                 .disabled(app.storage.scanning || app.storage.trashing)
+                Button("Export Report…") {
+                    app.pane = .diskMap
+                    app.storage.showReport = true
+                }
+                .disabled(app.storage.root == nil || app.storage.scanning)
                 Divider()
                 ForEach(Array(StorageModel.Chart.allCases.enumerated()), id: \.element) { i, chart in
                     Toggle(
