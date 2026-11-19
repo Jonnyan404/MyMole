@@ -38,7 +38,9 @@ public enum CleanCategory: String, Sendable, Codable, CaseIterable, Comparable {
         case .downloads: String(localized: "Mail attachments you opened. The messages keep them.")
         case .devices: String(localized: "Simulators with what's installed in them, Android emulators' saved states, and iPhone and iPad backups. They hold data, so none is ever chosen for you.")
         case .archives: String(localized: "Builds you archived in Xcode, with the symbols that make their crash reports readable. None is ever chosen for you.")
-        case .temporary: String(localized: "What programs left in the temporary folders and haven't touched for \(CleanRules.temporaryDaysText()). A program may still expect to find it, so none is ever chosen for you.")
+        case .temporary: CleanRules.temporaryDays() == 0
+            ? String(localized: "What programs left in the temporary folders, other than where a running program is at work. A program may still expect to find it, so none is ever chosen for you.")
+            : String(localized: "What programs left in the temporary folders and haven't touched for \(CleanRules.temporaryDaysText()). A program may still expect to find it, so none is ever chosen for you.")
         }
     }
 }
@@ -162,16 +164,17 @@ public enum CleanRules {
     /// A temporary item is offered once nothing in it has changed for this
     /// many days, as chosen in Settings.
     public static let temporaryDaysKey = "deepClean.temporaryDays"
-    public static let temporaryDaysRange = 1...90
+    /// 0 offers it at once; what a running program works in still stays out.
+    public static let temporaryDaysRange = 0...90
     public static let temporaryDaysStandard = 3
 
     public static func temporaryDays(in defaults: UserDefaults = .standard) -> Int {
-        temporaryDays(saved: defaults.integer(forKey: temporaryDaysKey))
+        temporaryDays(saved: defaults.object(forKey: temporaryDaysKey) as? Int)
     }
 
-    /// What's saved, within the range; nothing saved (0) is the standard three.
-    static func temporaryDays(saved: Int) -> Int {
-        saved == 0 ? temporaryDaysStandard : min(max(saved, temporaryDaysRange.lowerBound), temporaryDaysRange.upperBound)
+    /// What's saved, within the range; nothing saved is the standard three.
+    static func temporaryDays(saved: Int?) -> Int {
+        saved.map { min(max($0, temporaryDaysRange.lowerBound), temporaryDaysRange.upperBound) } ?? temporaryDaysStandard
     }
 
     /// The days as a time, read once per look rather than for every item.
@@ -722,7 +725,8 @@ public enum CleanScanner {
     ) -> TemporaryListing {
         var listing = TemporaryListing()
         let quiet = CleanRules.temporaryQuiet()
-        let reason = String(localized: "Left in a temporary folder and unchanged for \(CleanRules.temporaryDaysText()).")
+        let reason = CleanRules.temporaryDays() == 0 ? String(localized: "Left in a temporary folder, and no running program is at work there.")
+            : String(localized: "Left in a temporary folder and unchanged for \(CleanRules.temporaryDaysText()).")
         // Asked for every folder looked at, of which there can be a hundred thousand.
         let occupied = inUse.map(ProcessPaths.foldersInUse)
         func busy(_ path: String) -> Bool { occupied?.contains(path) ?? false }

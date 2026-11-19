@@ -178,10 +178,11 @@ import Testing
         #expect(ProcessPaths.inUse()?.contains(real) == false)
     }
 
-    /// Days come from Settings, three when nothing is saved, and stay within 1 to 90.
+    /// Days come from Settings, three when nothing is saved, and stay within 0 to 90.
     @Test func theDaysAreASetting() {
-        #expect(CleanRules.temporaryDays(saved: 0) == 3 && CleanRules.temporaryDays(saved: 10) == 10)
-        #expect(CleanRules.temporaryDays(saved: 500) == 90 && CleanRules.temporaryDays(saved: -4) == 1)
+        #expect(CleanRules.temporaryDays(saved: nil) == 3 && CleanRules.temporaryDays(saved: 0) == 0 && CleanRules.temporaryDays(saved: 10) == 10)
+        #expect(CleanRules.temporaryDays(saved: 500) == 90 && CleanRules.temporaryDays(saved: -4) == 0)
+        #expect(CleanRules.temporaryQuiet(days: 0) == 0)
         #expect(CleanRules.temporaryQuiet(days: 2) == 172_800)
     }
 }

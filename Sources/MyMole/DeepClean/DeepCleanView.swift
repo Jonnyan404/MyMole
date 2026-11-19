@@ -126,7 +126,8 @@ struct DeepCleanView: View {
             }
             if !model.scanning, model.temporaryInUse >= 100 << 20 {
                 DSCapsule("\(fmt(model.temporaryInUse)) in temporary folders is in use", symbol: "hourglass")
-                    .help("Changed within the last \(CleanRules.temporaryDaysText()), or a running program is at work there. It's offered here once it has been left alone.")
+                    .help(CleanRules.temporaryDays() == 0 ? "A running program is at work there. It's offered here once the program has left it alone."
+                        : "Changed within the last \(CleanRules.temporaryDaysText()), or a running program is at work there. It's offered here once it has been left alone.")
             }
             let runningCount = model.candidates.filter(model.isRunning).count
             if runningCount > 0 {

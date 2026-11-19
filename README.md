@@ -33,7 +33,7 @@ Simulators, Android emulator snapshots, device backups and Xcode archives are
 listed but never chosen for you.
 
 The GitHub edition also lists what programs left in the temporary folders and
-haven't touched for three days, or as many as you set in Settings. Folders a
+haven't touched for three days, or the number of days set in Settings (0 to 90). Folders a
 running program works in are left out, and none is ever chosen for you.
 
 Developer Tools lists what Docker, Xcode's simulators, Android, virtual

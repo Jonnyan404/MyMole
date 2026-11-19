@@ -19987,6 +19987,46 @@
         }
       }
     },
+    "A running program is at work there. It's offered here once the program has left it alone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein laufendes Programm arbeitet dort. Es wird hier angeboten, sobald das Programm es in Ruhe lässt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un programa en ejecución trabaja ahí. Se ofrecerá aquí cuando el programa deje de usarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un programme en cours d’exécution y travaille. Il sera proposé ici une fois que le programme l’aura laissé de côté."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कोई चल रहा प्रोग्राम वहाँ काम कर रहा है। प्रोग्राम के इसे छोड़ देने पर यह यहाँ पेश किया जाएगा।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실행 중인 프로그램이 그곳에서 작업 중입니다. 프로그램이 더 이상 사용하지 않으면 여기에 표시됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有正在运行的程序在那里工作。等该程序不再使用后，会在这里列出。"
+          }
+        }
+      }
+    },
     "A saved state of an Android emulator. It starts with a cold boot instead, keeping its apps and data." : {
       "localizations" : {
         "de" : {
@@ -52505,6 +52545,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "留在临时文件夹中，%@未变。"
+          }
+        }
+      }
+    },
+    "Left in a temporary folder, and no running program is at work there." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In einem temporären Ordner zurückgelassen, und kein laufendes Programm arbeitet dort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quedó en una carpeta temporal y ningún programa en ejecución trabaja ahí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laissé dans un dossier temporaire, et aucun programme en cours d’exécution n’y travaille."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अस्थायी फ़ोल्डर में छोड़ा गया, और कोई चल रहा प्रोग्राम वहाँ काम नहीं कर रहा।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "임시 폴더에 남겨져 있으며 실행 중인 프로그램이 그곳에서 작업하고 있지 않습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "留在临时文件夹中，且没有正在运行的程序在那里工作。"
           }
         }
       }
@@ -104171,6 +104251,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "程序留在临时文件夹中、%@未改动的内容。程序可能仍会用到它，因此不会替你选择任何一项。"
+          }
+        }
+      }
+    },
+    "What programs left in the temporary folders, other than where a running program is at work. A program may still expect to find it, so none is ever chosen for you." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was Programme in den temporären Ordnern hinterlassen haben, außer dort, wo ein laufendes Programm arbeitet. Ein Programm könnte es noch erwarten, daher wird nie etwas für dich ausgewählt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que los programas dejaron en las carpetas temporales, salvo donde trabaja un programa en ejecución. Un programa aún podría esperar encontrarlo, así que nunca se elige nada por ti."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que des programmes ont laissé dans les dossiers temporaires, sauf là où un programme en cours d’exécution travaille. Un programme peut encore s’attendre à le trouver, donc rien n’est jamais choisi pour vous."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "जो प्रोग्रामों ने अस्थायी फ़ोल्डरों में छोड़ा, उन जगहों को छोड़कर जहाँ कोई चल रहा प्रोग्राम काम कर रहा है। कोई प्रोग्राम अब भी इसे ढूँढ सकता है, इसलिए आपके लिए कुछ भी कभी नहीं चुना जाता।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "프로그램이 임시 폴더에 남긴 항목입니다. 실행 중인 프로그램이 작업하는 곳은 제외됩니다. 프로그램이 아직 찾을 수 있으므로 어떤 것도 자동으로 선택되지 않습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "程序留在临时文件夹中的内容，正在运行的程序所在之处除外。程序可能仍会用到它，因此不会替你选择任何一项。"
           }
         }
       }
