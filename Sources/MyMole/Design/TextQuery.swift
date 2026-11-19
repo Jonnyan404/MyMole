@@ -44,7 +44,7 @@ struct TextQuery: Sendable {
             return Line(text: describe(problem) + " " + String(localized: "Nothing is listed until the filter is fixed."), isProblem: true)
         }
         if q.hasConditions, !conditions {
-            return Line(text: String(localized: "This list is filtered by its text only. Conditions such as size: and kind: work in Disk Map and Large Files."), isProblem: true)
+            return Line(text: String(localized: "This list is filtered by its text only. Conditions such as size: and kind: work in lists of files and folders."), isProblem: true)
         }
         var parts = q.words.map { String(localized: "Contains “\($0)”") }
         parts += q.excluded.map { String(localized: "Except “\($0)”") }

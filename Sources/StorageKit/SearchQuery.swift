@@ -52,10 +52,11 @@ public struct SearchQuery: Sendable {
         public var size: Int64
         public var modified: Date?
         public var kind: FileKind?
-        public var isFolder: Bool
+        /// Nil when the list doesn't know, so neither kind:folder nor kind:file passes.
+        public var isFolder: Bool?
         public var hidden: Bool
 
-        public init(name: String, size: Int64, modified: Date?, kind: FileKind?, isFolder: Bool, hidden: Bool) {
+        public init(name: String, size: Int64, modified: Date?, kind: FileKind?, isFolder: Bool?, hidden: Bool) {
             (self.name, self.size, self.modified, self.kind, self.isFolder, self.hidden) = (name, size, modified, kind, isFolder, hidden)
         }
     }
@@ -284,8 +285,8 @@ public struct SearchQuery: Sendable {
         switch c {
         case .size(let lo, let hi): return (lo.map { f.size >= $0 } ?? true) && (hi.map { f.size < $0 } ?? true)
         case .kind(let k): return f.kind == k
-        case .folder: return f.isFolder
-        case .file: return !f.isFolder
+        case .folder: return f.isFolder == true
+        case .file: return f.isFolder == false
         case .ext(let exts): return extensionOf(f.name).map(exts.contains) ?? false
         case .age(let older, _, _, let cutoff):
             guard let m = f.modified, m != .distantPast else { return false }
@@ -299,6 +300,14 @@ public struct SearchQuery: Sendable {
         guard let dot = name.lastIndex(of: "."), dot != name.startIndex else { return nil }
         let ext = name[name.index(after: dot)...]
         return ext.isEmpty ? nil : ext.lowercased()
+    }
+
+    /// The facts of a row known by its path, with its kind from its name.
+    public static func facts(path: String, size: Int64, modified: Date?, kind: FileKind? = nil, isFolder: Bool?) -> Facts {
+        let name = (path as NSString).lastPathComponent
+        let folder = (path as NSString).deletingLastPathComponent
+        let kind = kind ?? (isFolder == true ? Classifier.kind(ofFolder: name) : Classifier.kind(ofFile: name))
+        return Facts(name: name, size: size, modified: modified, kind: kind, isFolder: isFolder, hidden: isHidden(name: name, folder: folder))
     }
 
     /// Whether a name, or a folder on the path it's in, starts with a dot.

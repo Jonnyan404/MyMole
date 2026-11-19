@@ -94437,42 +94437,42 @@
         }
       }
     },
-    "This list is filtered by its text only. Conditions such as size: and kind: work in Disk Map and Large Files." : {
+    "This list is filtered by its text only. Conditions such as size: and kind: work in lists of files and folders." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Liste wird nur nach Text gefiltert. Bedingungen wie size: und kind: funktionieren in Disk Map und Large Files."
+            "value" : "Diese Liste wird nur nach Text gefiltert. Bedingungen wie size: und kind: funktionieren in Listen von Dateien und Ordnern."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta lista solo se filtra por texto. Las condiciones como size: y kind: funcionan en Disk Map y Large Files."
+            "value" : "Esta lista solo se filtra por texto. Las condiciones como size: y kind: funcionan en las listas de archivos y carpetas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette liste n’est filtrée que par son texte. Les conditions comme size: et kind: fonctionnent dans Disk Map et Large Files."
+            "value" : "Cette liste n’est filtrée que par son texte. Les conditions comme size: et kind: fonctionnent dans les listes de fichiers et de dossiers."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "यह सूची केवल टेक्स्ट से फ़िल्टर होती है। size: और kind: जैसी शर्तें Disk Map और Large Files में काम करती हैं।"
+            "value" : "यह सूची केवल टेक्स्ट से फ़िल्टर होती है। size: और kind: जैसी शर्तें फ़ाइलों और फ़ोल्डरों की सूचियों में काम करती हैं।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 목록은 텍스트로만 필터링됩니다. size:, kind: 같은 조건은 Disk Map과 Large Files에서 사용할 수 있습니다."
+            "value" : "이 목록은 텍스트로만 필터링됩니다. size:, kind: 같은 조건은 파일과 폴더 목록에서 사용할 수 있습니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此列表只按文字筛选。size: 和 kind: 等条件可在 Disk Map 和 Large Files 中使用。"
+            "value" : "此列表只按文字筛选。size: 和 kind: 等条件可在文件和文件夹列表中使用。"
           }
         }
       }

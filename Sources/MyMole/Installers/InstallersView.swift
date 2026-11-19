@@ -73,7 +73,7 @@ struct InstallersView: View {
             DSMetric(fmt(model.totalBytes), "in \(model.files.count) installers")
         } actions: {
             DSControlField("Filter installers") {
-                DSFilterField(String(localized: "Filter by name or folder"), text: $query)
+                DSFilterField(String(localized: "Filter by name or folder"), text: $query, conditions: true)
                     .frame(minWidth: 180, idealWidth: 280, maxWidth: .infinity)
                     .disabled(model.files.isEmpty)
             }
@@ -156,7 +156,9 @@ struct InstallersView: View {
             let (files, query) = (model.files, query)
             let search = TextQuery(query)
             await filtered.update(count: files.count) {
-                search.isEmpty ? files : files.filter { search.matches($0.name, $0.path) }
+                search.isEmpty ? files : files.filter {
+                    search.matches(texts: [$0.name, $0.path], facts: SearchQuery.facts(path: $0.path, size: $0.bytes, modified: $0.modified, isFolder: $0.isFolder))
+                }
             }
         }
         .dsEmptyOverlay(showing: shown.isEmpty || model.files.isEmpty) {

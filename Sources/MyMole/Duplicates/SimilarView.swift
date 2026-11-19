@@ -53,7 +53,9 @@ struct SimilarView: View {
     nonisolated static func matching(_ groups: [SimilarGroup], query: String) -> [SimilarGroup] {
         let search = TextQuery(query)
         return search.isEmpty ? groups : groups.filter { group in
-            group.images.contains { search.matches($0.name, $0.folder) }
+            group.images.contains {
+                search.matches(texts: [$0.name, $0.folder], facts: SearchQuery.facts(path: $0.path, size: $0.bytes, modified: $0.modified, kind: .media, isFolder: false))
+            }
         }
     }
 
@@ -126,7 +128,7 @@ struct SimilarView: View {
                 "in \(model.groups.count) groups of pictures that look alike")
         } actions: {
             DSControlField("Filter photo groups") {
-                DSFilterField(String(localized: "Filter by name or folder"), text: $query).frame(minWidth: 180, idealWidth: 280, maxWidth: .infinity)
+                DSFilterField(String(localized: "Filter by name or folder"), text: $query, conditions: true).frame(minWidth: 180, idealWidth: 280, maxWidth: .infinity)
             }
             DSControlField("Choose pictures for removal") {
                 Button("Choose All but the Best") {

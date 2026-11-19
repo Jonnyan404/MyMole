@@ -175,7 +175,8 @@ struct ProjectsView: View {
         let search = TextQuery(query)
         return model.footprints.filter { f in
             active.matches(f.lastActivity, now: now)
-                && search.matches(f.project.name, f.project.kind, f.id)
+                && search.matches(texts: [f.project.name, f.project.kind, f.id],
+                                  facts: SearchQuery.facts(path: f.id, size: f.bytes, modified: f.lastActivity, kind: .developer, isFolder: true))
         }
     }
 
@@ -203,7 +204,7 @@ struct ProjectsView: View {
     }
 
     private var projectSearch: some View {
-        DSFilterField(String(localized: "Filter by name, type or folder"), text: $query).frame(minWidth: 140, maxWidth: .infinity)
+        DSFilterField(String(localized: "Filter by name, type or folder"), text: $query, conditions: true).frame(minWidth: 140, maxWidth: .infinity)
     }
 
     private var projectFilterActions: some View {

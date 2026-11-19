@@ -95,7 +95,7 @@ struct DuplicatesView: View {
                 fmt(model.spareBytes), "in spare copies of \(model.displayGroups.count) files")
         } actions: {
             DSControlField("Filter duplicate groups") {
-                DSFilterField(String(localized: "Filter by name or folder"), text: $query)
+                DSFilterField(String(localized: "Filter by name or folder"), text: $query, conditions: true)
                     .frame(minWidth: 180, idealWidth: 280, maxWidth: .infinity)
                     .disabled(model.displayGroups.isEmpty)
             }
@@ -219,7 +219,11 @@ struct DuplicatesView: View {
             let (groups, query) = (model.displayGroups, query)
             let search = TextQuery(query)
             await filtered.update(count: groups.count) {
-                search.isEmpty ? groups : groups.filter { g in g.files.contains { search.matches($0.name, $0.path) } }
+                search.isEmpty ? groups : groups.filter { g in
+                    g.files.contains {
+                        search.matches(texts: [$0.name, $0.path], facts: SearchQuery.facts(path: $0.path, size: g.length, modified: $0.modified, isFolder: false))
+                    }
+                }
             }
         }
         .dsEmptyOverlay(showing: shown.isEmpty || model.displayGroups.isEmpty) {

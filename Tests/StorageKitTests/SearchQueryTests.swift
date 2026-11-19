@@ -115,6 +115,17 @@ import Testing
         #expect(!SearchQuery.isHidden(name: "a.txt", folder: "/synthetic/Documents"))
     }
 
+    /// A list that knows a row by its path: kind by the name, hidden by
+    /// the path, and folder or file only when the list says which.
+    @Test func factsFromAPath() {
+        let f = SearchQuery.facts(path: "/synthetic/.cache/Setup.DMG", size: 5, modified: now, isFolder: false)
+        #expect(f.name == "Setup.DMG" && f.kind == .archives && f.hidden && f.isFolder == false)
+        #expect(SearchQuery.facts(path: "/synthetic/Tool.app", size: 5, modified: now, isFolder: true).kind == .apps)
+        let unknown = SearchQuery.facts(path: "/synthetic/thing", size: 5, modified: now, isFolder: nil)
+        #expect(!query("kind:folder").passes(unknown) && !query("kind:file").passes(unknown))
+        #expect(query("-kind:folder").passes(unknown) && query("size:5").passes(unknown))
+    }
+
     @Test func everyConditionMustHold() {
         let q = query("clip size:>500kb kind:media ext:mov -hidden:yes")
         #expect(q.terms.count == 4 && q.problems.isEmpty)

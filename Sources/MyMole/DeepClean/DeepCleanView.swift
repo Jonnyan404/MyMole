@@ -81,7 +81,7 @@ struct DeepCleanView: View {
             }
         } actions: {
             DSControlField("Filter results") {
-                DSFilterField(String(localized: "Filter by name or folder"), text: $query)
+                DSFilterField(String(localized: "Filter by name or folder"), text: $query, conditions: true)
                     .frame(minWidth: 180, idealWidth: 280, maxWidth: .infinity)
                     .disabled(listed.isEmpty)
             }
@@ -192,7 +192,10 @@ struct DeepCleanView: View {
     /// What the filter lets through; choices it hides stay chosen.
     private var shown: [CleanCandidate] {
         let search = TextQuery(query)
-        return search.isEmpty ? listed : listed.filter { search.matches($0.name, $0.path) }
+        // Whether a find is a folder isn't kept, so kind:folder and kind:file don't pass.
+        return search.isEmpty ? listed : listed.filter {
+            search.matches(texts: [$0.name, $0.path], facts: SearchQuery.facts(path: $0.path, size: $0.bytes, modified: $0.modified, isFolder: nil))
+        }
     }
 
     private var table: some View {
