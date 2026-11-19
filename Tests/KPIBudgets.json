@@ -50,5 +50,7 @@
   "similar.fingerprints.load-50k": 100,
   "disk-map.changed-folders.1k-in-100k": 200,
   "disk-map.watcher-flush.1k-changes": 50,
-  "duplicates.share-storage.200": 3000
+  "duplicates.share-storage.200": 3000,
+  "scan.hyperspeed.300-at-once": 500,
+  "scan.hyperspeed.300-at-once.peak-threads": 400
 }

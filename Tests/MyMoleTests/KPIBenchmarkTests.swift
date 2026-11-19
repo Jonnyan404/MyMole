@@ -290,6 +290,58 @@ struct KPIBenchmarkTests {
         #expect(out.shared.count == 200)
     }
 
+    /// Hyperspeed lets every scan in at once, each walk on a thread of its
+    /// own: 300 at once finish, and how many threads that takes is measured.
+    @Test func hyperspeedRunsHundredsOfScansAtOnce() async throws {
+        let box = try Box()
+        for i in 0..<300 { for j in 0..<20 { box.file("s\(i)/f\(j).bin", bytes: 1) } }
+        let budget = ScanBudget(slots: Int.max)
+        let peak = Atomic(0)
+        let sampling = Atomic(true)
+        let sampler = Thread {
+            while sampling.load(ordering: .relaxed) {
+                let n = Self.threadCount()
+                if n > peak.load(ordering: .relaxed) { peak.store(n, ordering: .relaxed) }
+                Thread.sleep(forTimeInterval: 0.002)
+            }
+        }
+        sampler.start()
+        let base = box.path
+        var done = 0
+        let took = try await Self.msAsync {
+            done = await withTaskGroup(of: Int.self) { group in
+                for i in 0..<300 {
+                    group.addTask {
+                        await budget.walk(background: false) { StorageScanner.scan(path: base + "/s\(i)", workers: 1).root.fileCount } ?? 0
+                    }
+                }
+                var whole = 0
+                for await n in group where n == 20 { whole += 1 }
+                return whole
+            }
+        }
+        sampling.store(false, ordering: .relaxed)
+        #expect(done == 300)
+        Self.gate("scan.hyperspeed.300-at-once", took)
+        Self.gate("scan.hyperspeed.300-at-once.peak-threads", Double(peak.load(ordering: .relaxed)), unit: "threads")
+    }
+
+    private static func msAsync(_ work: () async throws -> Void) async rethrows -> Double {
+        let start = ContinuousClock.now
+        try await work()
+        return Double((ContinuousClock.now - start) / .microseconds(1)) / 1_000
+    }
+
+    /// Threads this process has now.
+    nonisolated static func threadCount() -> Int {
+        var list: thread_act_array_t?
+        var count: mach_msg_type_number_t = 0
+        guard task_threads(mach_task_self_, &list, &count) == KERN_SUCCESS, let list else { return 0 }
+        for i in 0..<Int(count) { mach_port_deallocate(mach_task_self_, list[i]) }
+        vm_deallocate(mach_task_self_, vm_address_t(UInt(bitPattern: list)), vm_size_t(Int(count) * MemoryLayout<thread_act_t>.stride))
+        return Int(count)
+    }
+
     @Test func aMapTakesLittleMemoryForEachFolder() {
         let before = Self.allocated()
         let tree = Self.map(chains: 2_000, depth: 50, files: 0)
