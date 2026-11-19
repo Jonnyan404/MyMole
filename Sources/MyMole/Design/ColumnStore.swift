@@ -14,6 +14,10 @@ final class ColumnStore {
     private weak var table: NSTableView?
     private let key: String
     private let defaults: UserDefaults
+    /// The width the list gives each column itself, before saved widths are
+    /// put back: what Reset returns to, and what tells a width the user
+    /// chose from one that was only ever the list's own.
+    let standardWidths: [String: CGFloat]
     nonisolated(unsafe) private var observers: [NSObjectProtocol] = []
     private var pending: Task<Void, Never>?
 
@@ -27,6 +31,7 @@ final class ColumnStore {
         self.table = table
         key = Self.prefix + name
         self.defaults = defaults
+        standardWidths = Dictionary(table.tableColumns.map { ($0.identifier.rawValue, $0.width) }, uniquingKeysWith: { a, _ in a })
         let center = NotificationCenter.default
         for note in [NSTableView.columnDidResizeNotification, NSTableView.columnDidMoveNotification] {
             observers.append(center.addObserver(forName: note, object: table, queue: .main) { [weak self] _ in

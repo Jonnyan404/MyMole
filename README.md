@@ -8,8 +8,10 @@ system activity. Scans do not delete files.
 **[Download for Apple silicon](https://github.com/compilererrors/MyMole/releases/latest)** ·
 [Editions and permissions](#editions-and-permissions) · [License](#license)
 
-Requires **macOS 26 or later**. The interface is in English; numbers, sizes and
-dates follow your system's locale.
+Requires **macOS 26 or later**. The interface is in English, German, Spanish,
+French, Hindi, Korean and Simplified Chinese. It follows your Mac's language,
+or the one you choose in Settings. Numbers, sizes and dates follow your
+system's locale.
 
 All screenshots below show fictional apps, files, projects, cleanup history and
 system readings.
@@ -29,6 +31,10 @@ to move to the Trash. Keep rules exclude files and folders from cleanup.
 
 Simulators, Android emulator snapshots, device backups and Xcode archives are
 listed but never chosen for you.
+
+The GitHub edition also lists what programs left in the temporary folders and
+haven't touched for three days. Folders a running program works in are left
+out, and none is ever chosen for you.
 
 Developer Tools lists what Docker, Xcode's simulators, Android and virtual
 machine apps keep, with sizes:

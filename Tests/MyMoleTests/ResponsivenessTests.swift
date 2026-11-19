@@ -96,6 +96,22 @@ import Testing
         #expect(MemoryRelief.isOn(in: defaults))
     }
 
+    /// Without a choice, relief follows Large results; a choice equal to
+    /// what the step gives is cleared, so the step leads again.
+    @Test func memoryReliefFollowsLargeResultsUntilChosen() throws {
+        let (defaults, dir) = defaults("memory-relief-steps")
+        defer { try? FileManager.default.removeItem(at: dir) }
+        for size in ResultSize.allCases {
+            defaults.set(size.rawValue, forKey: ResultSize.defaultsKey)
+            #expect(MemoryRelief.isOn(in: defaults) == (size <= .fast), "\(size)")
+        }
+        #expect(MemoryRelief.saved(true, for: .gentle) == nil && MemoryRelief.saved(false, for: .gentle) == false)
+        #expect(MemoryRelief.saved(false, for: .maximum) == nil && MemoryRelief.saved(true, for: .hyperspeed) == true)
+        defaults.set(ResultSize.hyperspeed.rawValue, forKey: ResultSize.defaultsKey)
+        defaults.set(true, forKey: MemoryRelief.defaultsKey)
+        #expect(MemoryRelief.isOn(in: defaults))
+    }
+
     @Test func eachStepUpKeepsMoreAndRepaintsNoLater() {
         let levels: [Responsiveness] = [.gentle, .light, .balanced, .fast, .maximum, .hyperspeed]
         for (lower, higher) in zip(levels, levels.dropFirst()) {

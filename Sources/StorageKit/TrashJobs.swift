@@ -206,7 +206,7 @@ public final class TrashJob: Sendable {
             if Trasher.restore(r) {
                 plan.set(i, .done(r.original))
             } else {
-                plan.set(i, .failed("Couldn't be put back"))
+                plan.set(i, .failed(String(localized: "Couldn't be put back")))
                 failed.append(r)
             }
         }

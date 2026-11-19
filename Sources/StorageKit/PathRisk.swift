@@ -53,9 +53,9 @@ public struct PathRisk: Sendable, Hashable {
         (.within(["/.Trash"]),
          PathRisk(level: .caution, reason: String(localized: "Already in the Trash."))),
         (Pattern(anywhere: ["/MobileSync/Backup"]),
-         PathRisk(level: .caution, reason: "iPhone/iPad backup. Can't be recreated.")),
+         PathRisk(level: .caution, reason: String(localized: "iPhone/iPad backup. Can't be recreated."))),
         (Pattern(anywhere: ["/Mobile Documents/"]),
-         PathRisk(level: .caution, reason: "iCloud Drive files. Removing them here removes them on your other devices too.")),
+         PathRisk(level: .caution, reason: String(localized: "iCloud Drive files. Removing them here removes them on your other devices too."))),
         // Dropbox, Google Drive, OneDrive, Box and other File Provider services.
         (Pattern(anywhere: ["/Library/CloudStorage/"]),
          PathRisk(level: .caution, reason: String(localized: "Synced with a cloud service. Removing it here removes it in the cloud and on your other devices too."))),

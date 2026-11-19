@@ -9,7 +9,7 @@ public enum RuntimeLeftovers {
         public let path: String
         public let kind: Kind
         public init(path: String, kind: Kind) { self.path = Trasher.lexical(path); self.kind = kind }
-        public var place: String { kind == .caches ? "Per-user runtime caches" : "Per-user temporary data" }
+        public var place: String { kind == .caches ? String(localized: "Per-user runtime caches") : String(localized: "Per-user temporary data") }
     }
 
     /// Resolve paths only. Tests pass their own roots; ordinary model

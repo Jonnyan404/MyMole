@@ -373,7 +373,7 @@ struct KPIBenchmarkTests {
             cache.store(FingerprintCache.key(device: 1, inode: UInt64(i), length: Int64(i) + 1, modified: Date(timeIntervalSince1970: Double(i))),
                         print: UInt64(i) &* 0x9E37_79B9_7F4A_7C15, width: 100, height: 100)
         }
-        let url = box.root.appending(path: "fingerprints/pictures.json")
+        let url = box.root.appending(path: "fingerprints/pictures.bin")
         Self.gate("similar.fingerprints.save-50k", Self.ms { cache.save(to: url) })
         var loaded = FingerprintCache()
         Self.gate("similar.fingerprints.load-50k", Self.ms { loaded = FingerprintCache.load(from: url) })

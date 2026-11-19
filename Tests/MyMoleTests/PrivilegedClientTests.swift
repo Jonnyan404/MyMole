@@ -42,6 +42,18 @@ import Testing
         #expect(throws: PrivilegedClient.Failure.self) { try PrivilegedClient.interpret(code: 0, output: "garbage") }
     }
 
+    /// The text of a cancelled prompt in a reply, as a path can hold it,
+    /// never turns what the tool did into "nothing was changed".
+    @Test func aReplyHoldingTheCancelCodeIsStillAReply() throws {
+        var report = RemovalReport()
+        report.removed = ["/Library/Caches/com.vendor.Agent (-128)"]
+        report.failed = ["/Library/Caches/com.vendor.Other": "Kept at /Library/Caches/.mymole-removing/x (-128)"]
+        #expect(try PrivilegedClient.interpret(code: 0, output: PrivilegedTool.output(.removal(report))) == .removal(report))
+        #expect(throws: PrivilegedClient.Failure.refused("Refused (-128)")) {
+            try PrivilegedClient.interpret(code: 0, output: PrivilegedTool.output(.refused("Refused (-128)")))
+        }
+    }
+
     @Test func aRunMyMoleStoppedWaitingOnIsNeverCalledStopped() {
         for code in [CommandRunner.timedOut, CommandRunner.stopUnverified] {
             #expect(throws: PrivilegedClient.Failure.outcomeUnknown) { try PrivilegedClient.interpret(code: code, output: "") }

@@ -198,9 +198,9 @@ public final class SpillTable: @unchecked Sendable {
     /// every word of `query` (lower-cased, as the app's filters match) and
     /// that pass `keep`. Reads the table through once, a page at a time,
     /// without filling the hot pages; nil if stopped or damaged.
-    public func ordered(by order: Order, ascending: Bool, query: String = "", keep: (Row) -> Bool = { _ in true },
+    public func ordered(by order: Order, ascending: Bool, query: String = "", home: String? = Home.path, keep: (Row) -> Bool = { _ in true },
                         stop: () -> Bool = { false }) -> [UInt32]? {
-        let search = WordSearch(query)
+        let search = WordSearch(query, home: home)
         var scratch: [UInt8] = []
         var picked: [UInt32] = []
         var numbers: [Double] = []

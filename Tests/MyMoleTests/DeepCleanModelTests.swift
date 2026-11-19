@@ -119,6 +119,51 @@ private final class ToolNames: @unchecked Sendable {
         #expect(!model.candidates.contains { $0.category == .temporary } && !model.lookingInTemporary)
     }
 
+    /// A look through the temporary folders that ends while a move runs is
+    /// dropped, since the list mustn't change under the move, and made
+    /// again once the move is done.
+    @Test func aLookThatEndsDuringAMoveIsMadeAgainAfterIt() async throws {
+        let home = try Home()
+        let release = DispatchSemaphore(value: 0)
+        let looks = Looks()
+        let model = DeepCleanModel(
+            home: home.path, temporary: ["/synthetic/temp"], base: home.url.appending(path: "store"), keepURL: home.url.appending(path: "keep.json"),
+            logURL: home.url.appending(path: "history.json"), runningApps: { [] }, runningTools: { [] },
+            trash: testBin(home.url), projectRules: home.projectRules, quietFor: 0)
+        let jobs = TrashJobs()
+        model.jobs = jobs
+        let old = Date(timeIntervalSince1970: 1_600_000_000)
+        model.findTemporary = { roots, _ in
+            if looks.made.add(1, ordering: .relaxed).newValue == 1 { release.wait() }
+            return TemporaryListing(candidates: [
+                CleanCandidate(path: roots[0] + "/old-build", bytes: 9_000, modified: old, category: .temporary, safety: .review, owner: nil, reason: "synthetic")
+            ])
+        }
+        defer { release.signal() }
+        model.scan()
+        await model.scanJob?.value
+        #expect(model.lookingInTemporary)
+        // Another pane's move holds the turn, so this one is under way when the look ends.
+        let other = await jobs.begin(.moveToTrash)
+        let editor = home.path + "/Library/Caches/com.vendor.Editor"
+        model.chosen = [editor]
+        model.trashChosen()
+        #expect(model.trashing)
+        release.signal()
+        await model.temporaryJob?.value
+        #expect(!model.lookingInTemporary && !model.candidates.contains { $0.category == .temporary })
+        jobs.end(other)
+        while model.trashing { try await Task.sleep(for: .milliseconds(10)) }
+        await model.temporaryJob?.value
+        let made = looks.made.load(ordering: .relaxed)
+        #expect(!model.lookingInTemporary && made == 2)
+        #expect(model.candidates.contains { $0.path == "/synthetic/temp/old-build" } && !model.candidates.contains { $0.path == editor })
+    }
+
+    private final class Looks: Sendable {
+        let made = Atomic<Int>(0)
+    }
+
     /// Without temporary folders named there's no second look at all.
     @Test func noSecondLookWithoutTemporaryFolders() async throws {
         let home = try Home()

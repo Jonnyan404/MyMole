@@ -46,7 +46,11 @@ enum SecureRemove {
     /// The names in an open folder, read before anything in it is removed.
     private static func entries(_ fd: Int32) -> [String] {
         let own = dup(fd)
-        guard own >= 0, let dir = fdopendir(own) else { return [] }
+        guard own >= 0 else { return [] }
+        guard let dir = fdopendir(own) else {
+            close(own)
+            return []
+        }
         defer { closedir(dir) }
         var names: [String] = []
         while let e = readdir(dir) {

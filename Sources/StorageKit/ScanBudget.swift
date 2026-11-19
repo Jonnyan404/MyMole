@@ -88,11 +88,11 @@ public final class ScanBudget: Sendable {
 
     private func enter(background: Bool, request: Request) async -> Bool {
         await withCheckedContinuation { (c: CheckedContinuation<Bool, Never>) in
-            let go = state.withLock { s -> Bool? in
-                guard !request.cancelled.load(ordering: .relaxed) else { return false }
-                if s.running < slots {
+            let (go, admitted) = state.withLock { s -> (Bool?, [Waiter]) in
+                guard !request.cancelled.load(ordering: .relaxed) else { return (false, []) }
+                if s.waiting.isEmpty, s.running < slots {
                     s.running += 1
-                    return true
+                    return (true, [])
                 }
                 let w = Waiter(request: request, background: background, resume: c)
                 if background {
@@ -102,10 +102,23 @@ public final class ScanBudget: Sendable {
                     let at = s.waiting.firstIndex { $0.background } ?? s.waiting.count
                     s.waiting.insert(w, at: at)
                 }
-                return nil
+                // Room the limit gained while others waited goes to them in their order.
+                return (nil, admit(&s))
             }
+            for waiter in admitted { waiter.resume.resume(returning: true) }
             if let go { c.resume(returning: go) }
         }
+    }
+
+    /// Takes as many from the front of the line as the limit has room for
+    /// now, and counts them as running.
+    private func admit(_ s: inout State) -> [Waiter] {
+        let room = min(max(0, slots - s.running), s.waiting.count)
+        guard room > 0 else { return [] }
+        let next = Array(s.waiting.prefix(room))
+        s.waiting.removeFirst(room)
+        s.running += room
+        return next
     }
 
     private func cancel(_ request: Request) {
@@ -118,17 +131,14 @@ public final class ScanBudget: Sendable {
     }
 
     private func leave() {
-        let next = state.withLock { s -> Waiter? in
-            // Fewer slots than when this walk started: its slot closes
-            // rather than passing on, so a lowered scan speed applies to
-            // the scans already waiting too.
-            guard !s.waiting.isEmpty, s.running <= slots else {
-                s.running -= 1
-                return nil
-            }
-            // The slot passes straight to the next in line.
-            return s.waiting.removeFirst()
+        let admitted = state.withLock { s -> [Waiter] in
+            // The limit as it is now decides who goes next: with fewer
+            // slots than when this walk started its slot closes, so a
+            // lowered scan speed applies to the scans already waiting, and
+            // with more, every one there is room for starts at once.
+            s.running -= 1
+            return admit(&s)
         }
-        next?.resume.resume(returning: true)
+        for waiter in admitted { waiter.resume.resume(returning: true) }
     }
 }

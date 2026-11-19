@@ -196,7 +196,7 @@ struct BatchUninstallSheet: View {
                 marked(FileRow(
                     id: $0.path, name: $0.name, size: $0.bytes, kind: "\(app.name): \($0.kind.title) · \($0.place)",
                     location: ($0.path as NSString).deletingLastPathComponent, symbol: "folder",
-                    subtitle: String(localized: "Found \($0.evidence.title)"),
+                    subtitle: $0.evidence.title,
                     badge: $0.canRemove ? nil : String(localized: "Inspection only"),
                     canChoose: $0.canRemove))
             }

@@ -51,8 +51,8 @@ public struct StartupItem: Sendable, Hashable, Identifiable {
         var parts: [String] = []
         if disabled { parts.append(String(localized: "Turned off in its own file")) }
         if runsAtLoad { parts.append(scope == .system ? String(localized: "Starts at boot") : String(localized: "Starts at login")) }
-        if keepsAlive { parts.append("stays running") }
-        if scheduled { parts.append("runs on a schedule") }
+        if keepsAlive { parts.append(String(localized: "Stays running")) }
+        if scheduled { parts.append(String(localized: "Runs on a schedule")) }
         if parts.isEmpty { parts.append(String(localized: "Starts when something asks for it")) }
         return parts.joined(separator: " · ")
     }

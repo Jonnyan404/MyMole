@@ -770,6 +770,7 @@ final class DiskOutlineView: NSOutlineView, LinedTable, UserColumnTable {
 
     var defaultHiddenColumns = Set<String>()
     var columnViewport: ColumnViewport?
+    var sizeOutOfView = false
     weak var coordinator: DiskOutline.Coordinator?
     var lines = TableLines.none
     var lineColor = NSColor.separatorColor

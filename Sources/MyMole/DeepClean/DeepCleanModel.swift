@@ -268,8 +268,13 @@ final class DeepCleanModel {
         guard run === temporaryRun else { return }
         temporaryRun = nil
         lookingInTemporary = false
-        // The list mustn't change under a move or Undo; the next scan looks again.
-        guard !run.isCancelled, let found, !trashing else { return }
+        guard !run.isCancelled, let found else { return }
+        // The list mustn't change under a move or Undo: the look is made
+        // again once that's done.
+        guard !trashing else {
+            temporaryDeferred = true
+            return
+        }
         temporaryInUse = found.inUseBytes
         candidates = CleanScanner.ordered(candidates.filter { $0.category != .temporary } + found.candidates)
         let paths = Set(candidates.map(\.path))
@@ -288,7 +293,15 @@ final class DeepCleanModel {
     private var scanAfterTrash: Bool?
 
     private func startScanAfterTrash() {
-        guard let background = scanAfterTrash else { return }
+        guard let background = scanAfterTrash else {
+            // No scan waits, which would look itself: a look through the
+            // temporary folders that ended under the move is made now.
+            if temporaryDeferred, !lookingInTemporary, !scanning {
+                temporaryDeferred = false
+                lookInTemporary(background: false)
+            }
+            return
+        }
         scanAfterTrash = nil
         scan(background: background)
     }

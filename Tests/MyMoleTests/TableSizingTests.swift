@@ -188,7 +188,8 @@ import Testing
         let state = try #require(table.columnViewport)
         state.fit()
         #expect(name.width > 1_000)
-        #expect(defaults.double(forKey: "table.flexibleWidth.v1.synthetic.width.name") == 200)
+        // The width the list starts with is no choice, and nothing is saved for it.
+        #expect(defaults.object(forKey: "table.flexibleWidth.v1.synthetic.width.name") == nil)
         // Native outlines can postpone the end-of-drag notification until
         // after the first viewport event. Fit must recognize the new width.
         NSTableView.stopFitting(&observers)
@@ -239,7 +240,135 @@ import Testing
         // Each fit fills the viewport and is kept, not undone by saved state.
         #expect(slack.count == 1)
         #expect(writes == 0, "\(writes) settings writes while the viewport resized")
-        #expect(defaults.double(forKey: "table.flexibleWidth.v1.\(table.autosaveName ?? "").name") == 200)
+        #expect(defaults.object(forKey: "table.flexibleWidth.v1.\(table.autosaveName ?? "").name") == nil)
+    }
+
+    /// A list with a name column of 280 points and a size column, as the
+    /// disk map's has, in a scroll view `width` wide.
+    private func narrowList(_ kind: Int, width: CGFloat, autosave: String, defaults: UserDefaults) -> (NSTableView, NSScrollView, NSTableColumn, NSTableColumn) {
+        let table: NSTableView = kind == 0 ? FileTableView() : kind == 1 ? DiskOutlineView() : FootprintOutlineView()
+        let name = NSTableColumn(identifier: .init("name"))
+        name.minWidth = 140
+        name.width = 280
+        table.addTableColumn(name)
+        let size = NSTableColumn(identifier: .init("size"))
+        size.width = 80
+        table.addTableColumn(size)
+        table.persistColumns(as: autosave, defaults: defaults)
+        let scroll = NSScrollView(frame: NSRect(x: 0, y: 0, width: width, height: 200))
+        scroll.documentView = table
+        table.configureUserColumns()
+        return (table, scroll, name, size)
+    }
+
+    /// The width a list starts with is the list's own, not the user's: in
+    /// a pane too narrow for it the name gives way, so the column beside
+    /// it stays in view rather than outside the pane.
+    @Test(arguments: [0, 1, 2]) func theStartingWidthGivesWayInANarrowPane(_ kind: Int) throws {
+        let box = FileManager.default.temporaryDirectory.appending(path: "table-narrow-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: box) }
+        let defaults = testDefaults(in: box)
+        let (table, scroll, name, _) = narrowList(kind, width: 300, autosave: "synthetic.narrow.\(kind).\(UUID().uuidString)", defaults: defaults)
+        var observers = table.keepFitting("name", defaults: defaults)
+        defer { NSTableView.stopFitting(&observers) }
+        let state = try #require((table as? any UserColumnTable)?.columnViewport)
+        state.fit()
+        #expect(state.userWidth == nil)
+        #expect(name.width >= ColumnViewport.unchosenFloor && name.width < 280)
+        #expect(table.rect(ofColumn: 1).maxX <= scroll.contentView.bounds.width + 1)
+        // Too narrow for both: the name stops giving way and the list scrolls.
+        scroll.setFrameSize(NSSize(width: 200, height: 200))
+        scroll.tile()
+        state.fit()
+        #expect(name.width == ColumnViewport.unchosenFloor)
+        #expect(table.frame.width > scroll.contentView.bounds.width)
+        scroll.setFrameSize(NSSize(width: 900, height: 200))
+        scroll.tile()
+        state.fit()
+        #expect(name.width > 700)
+    }
+
+    /// An earlier build saved every list's starting width as if the user
+    /// had chosen it. That value is no choice; a width that differs is one.
+    @Test func aSavedWidthEqualToTheStartingWidthIsNoChoice() throws {
+        let box = FileManager.default.temporaryDirectory.appending(path: "table-legacy-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: box) }
+        let defaults = testDefaults(in: box)
+        func fitted(saved: Double) throws -> (ColumnViewport, NSTableColumn) {
+            let autosave = "synthetic.legacy.\(UUID().uuidString)"
+            defaults.set(saved, forKey: "table.flexibleWidth.v1.\(autosave).name")
+            let (table, _, name, _) = narrowList(0, width: 300, autosave: autosave, defaults: defaults)
+            let state = ColumnViewport(table: table, id: "name", defaults: defaults)
+            state.fit()
+            return (state, name)
+        }
+        let (starting, narrowed) = try fitted(saved: 280)
+        #expect(starting.userWidth == nil && narrowed.width < 280)
+        let (chosen, kept) = try fitted(saved: 420)
+        #expect(chosen.userWidth == 420 && kept.width == 420)
+    }
+
+    /// Reset Column Widths puts every column back at the list's own width
+    /// and lets the name follow the viewport again.
+    @Test func resettingColumnWidthsForgetsTheChosenWidth() throws {
+        let box = FileManager.default.temporaryDirectory.appending(path: "table-reset-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: box) }
+        let defaults = testDefaults(in: box)
+        let autosave = "synthetic.reset.\(UUID().uuidString)"
+        let key = "table.flexibleWidth.v1.\(autosave).name"
+        let (table, scroll, name, size) = narrowList(0, width: 900, autosave: autosave, defaults: defaults)
+        var observers = table.keepFitting("name", defaults: defaults)
+        defer { NSTableView.stopFitting(&observers) }
+        let state = try #require((table as? any UserColumnTable)?.columnViewport)
+        state.fit()
+        name.width = 650
+        size.width = 300
+        NotificationCenter.default.post(name: NSTableView.columnDidResizeNotification, object: table)
+        #expect(state.userWidth == 650 && defaults.double(forKey: key) == 650)
+        table.resetColumnWidths()
+        #expect(state.userWidth == nil && defaults.object(forKey: key) == nil && size.width == 80)
+        scroll.setFrameSize(NSSize(width: 300, height: 200))
+        scroll.tile()
+        state.fit()
+        #expect(name.width < 280 && table.rect(ofColumn: 1).maxX <= scroll.contentView.bounds.width + 1)
+    }
+
+    /// When the Size column can't fit beside the name without scrolling, the
+    /// size moves under the name, and back when the pane grows again.
+    @Test(arguments: [0, 1, 2]) func theSizeMovesUnderTheNameWhenItsColumnDoesNotFit(_ kind: Int) throws {
+        let box = FileManager.default.temporaryDirectory.appending(path: "table-size-line-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: box) }
+        let defaults = testDefaults(in: box)
+        let (table, scroll, _, _) = narrowList(kind, width: 300, autosave: "synthetic.sizeline.\(kind).\(UUID().uuidString)", defaults: defaults)
+        var observers = table.keepFitting("name", defaults: defaults)
+        defer { NSTableView.stopFitting(&observers) }
+        let state = try #require((table as? any UserColumnTable)?.columnViewport)
+        let columns = try #require(table as? any UserColumnTable)
+        state.fit()
+        #expect(!columns.sizeOutOfView)
+        scroll.setFrameSize(NSSize(width: 200, height: 200))
+        scroll.tile()
+        state.fit()
+        #expect(columns.sizeOutOfView)
+        scroll.setFrameSize(NSSize(width: 900, height: 200))
+        scroll.tile()
+        state.fit()
+        #expect(!columns.sizeOutOfView)
+    }
+
+    @Test func theNameCellLeadsItsSecondLineWithTheSize() {
+        let cell = FileNameCell(identifier: .init("name"))
+        let row = FileRow(id: "/synthetic/Pictures", name: "Pictures", size: 4_200_000_000, subtitle: "340 files")
+        cell.configure(row, marked: nil) {}
+        #expect(cell.hoverHelp == "Pictures\n340 files")
+        cell.sizeInSubtitle = true
+        let size = FileCellResources.byteCount.string(fromByteCount: 4_200_000_000)
+        #expect(cell.hoverHelp == "Pictures\n\(size) · 340 files")
+        // A row without a second line gets one with the size alone.
+        cell.configure(FileRow(id: "/synthetic/a.bin", name: "a.bin", size: 2_048), marked: nil) {}
+        #expect(cell.hoverHelp == "a.bin\n\(FileCellResources.byteCount.string(fromByteCount: 2_048))")
+        cell.sizeInSubtitle = false
+        #expect(cell.hoverHelp == "a.bin")
     }
 
     /// The user's columns come back: order, widths and the hidden ones.

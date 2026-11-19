@@ -793,6 +793,7 @@ final class FootprintOutlineView: NSOutlineView, LinedTable, UserColumnTable {
 
     var defaultHiddenColumns = Set<String>()
     var columnViewport: ColumnViewport?
+    var sizeOutOfView = false
     weak var coordinator: FootprintOutline.Coordinator?
     var lines = TableLines.none
     var lineColor = NSColor.separatorColor

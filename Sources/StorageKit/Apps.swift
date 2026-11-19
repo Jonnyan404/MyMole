@@ -118,18 +118,20 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
         /// rows require separate manual review, never automatic selection.
         case unverified
 
+        /// The tie as a phrase of its own, shown as it is: a translation
+        /// can't put a fragment into another sentence.
         public var title: String {
             switch self {
-            case .bundleID: "by its bundle ID"
-            case .group: "an app group its signature names"
-            case .helper: "by a part it carries"
-            case .name: "by its name only"
-            case .vendorFolder: "in its maker's folder, by its name"
-            case .vendor: "its maker's, and no other app of the maker is left"
-            case .loose: "by a looser match of its name; look before choosing"
-            case .runtimeID: "by an app or helper ID in a per-user runtime folder; review its contents"
-            case .knownPart: "on the vendor's own list of what the app installs"
-            case .unverified: "a possible app match; ownership couldn't be verified"
+            case .bundleID: String(localized: "Found by its bundle ID")
+            case .group: String(localized: "In an app group its signature names")
+            case .helper: String(localized: "Found by a part the app carries")
+            case .name: String(localized: "Found by its name only")
+            case .vendorFolder: String(localized: "In its maker's folder, by its name")
+            case .vendor: String(localized: "Its maker's, and no other app of the maker is left")
+            case .loose: String(localized: "A looser match of its name; look before choosing")
+            case .runtimeID: String(localized: "An app or helper ID in a per-user runtime folder; review its contents")
+            case .knownPart: String(localized: "On the vendor's own list of what the app installs")
+            case .unverified: String(localized: "A possible app match; ownership couldn't be verified")
             }
         }
     }

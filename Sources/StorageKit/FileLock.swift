@@ -13,7 +13,7 @@ public final class FileLock: @unchecked Sendable {
 
         public var errorDescription: String? {
             switch self {
-            case .busy: "A removal that uses it is running. Try again once it's done."
+            case .busy: String(localized: "A removal that uses it is running. Try again once it's done.")
             case .unavailable(let why): why
             }
         }
@@ -72,4 +72,13 @@ public enum StoreWrites {
 
     /// Waits for the writes handed over so far.
     public static func flush() { queue.sync {} }
+
+    /// Waits for the writes handed over so far, for `seconds` at most.
+    /// False when they weren't done by then; they go on being written.
+    @discardableResult
+    public static func flush(within seconds: TimeInterval) -> Bool {
+        let done = DispatchSemaphore(value: 0)
+        queue.async { done.signal() }
+        return done.wait(timeout: .now() + seconds) == .success
+    }
 }

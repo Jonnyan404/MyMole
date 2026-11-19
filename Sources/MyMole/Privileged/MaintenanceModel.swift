@@ -106,7 +106,8 @@ final class MaintenanceModel {
         } else {
             for t in user {
                 current = t
-                let r = await Task.detached(priority: .userInitiated) { engine.run(t) }.value
+                // A task runs macOS's own programs, which can take minutes.
+                let r = await PrivilegedClient.waiting { engine.run(t) }
                 reports[t] = r
             }
         }

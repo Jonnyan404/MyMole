@@ -285,10 +285,10 @@ public enum DevTools {
             let deletable = rt["deletable"] as? Bool ?? false
             let inUse = used.contains(runtime.lowercased())
             let handling: Handling = deletable && !inUse ? .offer : .show
-            let reason = !deletable ? "macOS keeps this runtime; remove it in Xcode's Components settings."
+            let reason = !deletable ? String(localized: "macOS keeps this runtime; remove it in Xcode's Components settings.")
                 : inUse ? String(localized: "Simulators use it. Remove them first, or keep it.")
                 : String(localized: "No simulator uses it. Xcode downloads it again when one needs it.")
-            out.append(Item(id: "simulator.runtime." + identifier, source: .simulator, name: "\(platform(runtime)) \(version) runtime",
+            out.append(Item(id: "simulator.runtime." + identifier, source: .simulator, name: String(localized: "\(platform(runtime)) \(version) runtime"),
                             detail: String(localized: "Simulator runtime"), bytes: (rt["sizeBytes"] as? NSNumber)?.int64Value, handling: handling,
                             reason: reason, removal: handling == .offer ? .xcrun(["simctl", "runtime", "delete", identifier]) : nil, path: nil))
         }
@@ -389,7 +389,7 @@ public enum DevTools {
                 let name = m.suffix.map { entry.hasSuffix($0) ? String(entry.dropLast($0.count)) : entry } ?? entry
                 let isRunning = m.processes.contains { running.contains($0) }
                 out.append(Item(id: "vm." + path, source: .virtualMachine, name: name,
-                                detail: isRunning ? "\(m.app) · running" : m.app, bytes: AppLeftovers.measure(path),
+                                detail: isRunning ? String(localized: "\(m.app) · running") : m.app, bytes: AppLeftovers.measure(path),
                                 handling: .show, reason: String(localized: "A whole computer with everything installed in it. Remove it in \(m.app), which also handles its snapshots."),
                                 removal: nil, path: path))
             }

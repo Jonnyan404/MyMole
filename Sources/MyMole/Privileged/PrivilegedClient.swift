@@ -146,7 +146,7 @@ final class PrivilegedClient {
         #if SMOKE
         throw Failure.unavailable
         #else
-        return await Task.detached(priority: .userInitiated) { SystemCleanRules.list(progress: progress) }.value
+        return await Self.waiting { SystemCleanRules.list(progress: progress) }
         #endif
     }
 
@@ -220,10 +220,10 @@ final class PrivilegedClient {
         if usedService, let helper {
             r = await helper.perform(argument)
         } else {
-            r = await Task.detached(priority: .userInitiated) { elevate(tool, argument, prompt) }.value
+            r = await Self.waiting { elevate(tool, argument, prompt) }
         }
         #else
-        r = await Task.detached(priority: .userInitiated) { elevate(tool, argument, prompt) }.value
+        r = await Self.waiting { elevate(tool, argument, prompt) }
         #endif
         do {
             return try Self.interpret(code: r.code, output: r.output)
@@ -238,10 +238,19 @@ final class PrivilegedClient {
     private var usedService = false
     #endif
 
+    /// Runs `work` on a thread of its own. The prompt stays up until it's
+    /// answered and the tool runs for as long as its task takes, up to the
+    /// time limit: waited for on one of Swift's shared task threads, that
+    /// thread would be lost to every other task meanwhile.
+    nonisolated static func waiting<T: Sendable>(_ work: @escaping @Sendable () -> T) async -> T {
+        await ScanBudget.onOwnThread(work)
+    }
+
     /// What a run of the tool came to: its reply, or why there's none.
     nonisolated static func interpret(code: Int32, output: String) throws -> PrivilegedReply {
-        // AppleScript's "user canceled" error.
-        if output.contains("(-128)") { throw Failure.cancelled }
+        // AppleScript's "user canceled" error, which only a run that failed
+        // prints: a reply may hold the same text in a path or a reason.
+        if code != 0, output.contains("(-128)") { throw Failure.cancelled }
         // Only the prompt is stopped at the time limit; the tool runs as
         // root apart from it and may still be at work.
         if code == CommandRunner.timedOut || code == CommandRunner.stopUnverified { throw Failure.outcomeUnknown }

@@ -46,6 +46,6 @@
   "uninstall.leftovers.one-app": 500,
   "uninstall.removed-apps.300": 500,
   "installers.scan.200": 100,
-  "similar.fingerprints.save-50k": 800,
-  "similar.fingerprints.load-50k": 800
+  "similar.fingerprints.save-50k": 100,
+  "similar.fingerprints.load-50k": 100
 }

@@ -73,13 +73,14 @@ public struct ScanIndex: Sendable {
     /// The entries whose name or path holds every word of `query`, that
     /// pass `keep`, biggest first, at most `limit`; and whether more matched.
     public func search(
-        _ query: String, limit: Int = 2_000, keep: (Entry) -> Bool = { _ in true }
+        _ query: String, limit: Int = 2_000, home: String? = Home.path, keep: (Entry) -> Bool = { _ in true }
     ) -> (found: [Int], more: Bool) {
-        let search = WordSearch(query)
+        let search = WordSearch(query, home: home)
         var found: [Int] = []
         var scratch: [UInt8] = []
-        // A word with a slash can lie across two names, so the whole path is put together for it.
-        if let every = search.every, !query.contains("/") {
+        // A word with a slash can lie across two names, so the whole path is
+        // put together for it; "~" stands for a path, the home folder's.
+        if let every = search.every, !query.contains("/"), !query.contains("~") {
             // A path holds the words its folder's path holds and those its
             // own name adds. Folders come before what's in them, so each
             // entry starts from its folder's words and no path is put together.

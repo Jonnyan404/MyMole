@@ -199,6 +199,12 @@ public enum CleanRules {
         return lstat(path, &st) == 0 && st.st_uid == owner && st.st_mode & S_IFMT == S_IFDIR
     }
 
+    /// A real file of this user's, by the name as it's written.
+    static func temporaryFile(_ path: String, owner: uid_t = getuid()) -> Bool {
+        var st = stat()
+        return lstat(path, &st) == 0 && st.st_uid == owner && st.st_mode & S_IFMT == S_IFREG
+    }
+
     /// Whether something in a temporary folder may be offered at all: this
     /// user's own, a real file or folder, none of the places macOS keeps
     /// there for itself, and with nothing changed, in it or to it, for
@@ -220,7 +226,7 @@ public enum CleanRules {
             Target(path: lib + "/Logs", mode: .children, category: .logs, safety: .safe,
                    reason: String(localized: "Logs and crash reports.")),
             Target(path: home + "/.npm/_cacache", mode: .whole, category: .developerCaches, safety: .safe,
-                   reason: "npm's download cache."),
+                   reason: String(localized: "npm's download cache.")),
             Target(path: home + "/.yarn/berry/cache", mode: .whole, category: .developerCaches, safety: .safe,
                    reason: String(localized: "Yarn's download cache.")),
             Target(path: home + "/.gradle/caches", mode: .whole, category: .developerCaches, safety: .safe,
@@ -230,7 +236,7 @@ public enum CleanRules {
             Target(path: home + "/go/pkg/mod/cache/download", mode: .whole, category: .developerCaches, safety: .review,
                    reason: String(localized: "Go's module downloads. Offline builds need them.")),
             Target(path: home + "/.pnpm-store", mode: .whole, category: .developerCaches, safety: .review,
-                   reason: "pnpm's package store. Projects relink from it on the next install."),
+                   reason: String(localized: "pnpm's package store. Projects relink from it on the next install.")),
             Target(path: home + "/.bun/install/cache", mode: .whole, category: .developerCaches, safety: .safe,
                    reason: String(localized: "Bun's download cache.")),
             Target(path: home + "/.m2/repository", mode: .whole, category: .developerCaches, safety: .review,
@@ -248,7 +254,7 @@ public enum CleanRules {
             Target(path: home + "/.tart/cache/OCIs", mode: .whole, category: .developerCaches, safety: .review,
                    reason: String(localized: "Virtual machine images Tart pulled. Tart prunes them itself and pulls one again when it's needed, which needs the network. Your machines in ~/.tart/vms stay.")),
             Target(path: home + "/.tart/cache/IPSWs", mode: .whole, category: .developerCaches, safety: .review,
-                   reason: "macOS restore images Tart downloaded to make machines. Downloaded again for the next new machine."),
+                   reason: String(localized: "macOS restore images Tart downloaded to make machines. Downloaded again for the next new machine.")),
         ] + deviceSupport(lib: lib) + [
             Target(path: lib + "/Containers/com.apple.mail/Data/Library/Mail Downloads", mode: .whole, category: .downloads,
                    safety: .review, reason: String(localized: "Attachments Mail saved when you opened them.")),
@@ -727,15 +733,19 @@ public enum CleanScanner {
                 for sub in f.subfolders { look(sub, path: path + "/" + sub.name, depth: depth + 1) }
             }
             for sub in r.root.subfolders { look(sub, path: root + "/" + sub.name, depth: 1) }
-            for file in r.root.listedFiles {
+            // Another user's file is neither offered nor counted, as their folders aren't.
+            for file in r.root.listedFiles where CleanRules.temporaryName(file.name) {
                 let path = root + "/" + file.name
-                if !busy(path), CleanRules.offersTemporary(path, changed: file.modified) {
-                    listing.candidates.append(CleanCandidate(
-                        path: path, bytes: min(file.size, Reclaim.file(at: path)?.bytes ?? file.size), modified: file.modified,
-                        category: .temporary, safety: .review, owner: nil, reason: reason))
-                } else if CleanRules.temporaryName(file.name) {
+                guard CleanRules.temporaryFile(path) else { continue }
+                guard !busy(path), CleanRules.offersTemporary(path, changed: file.modified) else {
                     listing.inUseBytes += file.size
+                    continue
                 }
+                // What moving it frees, as for a folder: a clone of a file kept elsewhere frees next to nothing.
+                let bytes = min(file.size, Reclaim.file(at: path)?.bytes ?? file.size)
+                guard bytes >= CleanRules.temporaryMinimum else { continue }
+                listing.candidates.append(CleanCandidate(
+                    path: path, bytes: bytes, modified: file.modified, category: .temporary, safety: .review, owner: nil, reason: reason))
             }
         }
         guard !progress.isCancelled else { return TemporaryListing() }

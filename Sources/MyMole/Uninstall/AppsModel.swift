@@ -1139,7 +1139,7 @@ final class AppsModel {
                 job.record(.putBack, done: [finderMove.record.original.path], failed: [:], refused: [])
             } else {
                 failed.append(finderMove.record)
-                job.record(.putBack, done: [], failed: [finderMove.record.original.path: "Couldn't be put back"], refused: [])
+                job.record(.putBack, done: [], failed: [finderMove.record.original.path: String(localized: "Couldn't be put back")], refused: [])
             }
         }
         if let receipt = administratorMove, failed.contains(receipt.record), let restore = system.restoreApp {

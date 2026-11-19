@@ -97,7 +97,7 @@ extension RelatedComponents {
     }
 
     public static let systemExtensionsTool = "/usr/bin/systemextensionsctl"
-    static let kernelNote = "A kernel extension. macOS protects it: remove it with the vendor's uninstaller, then restart."
+    static let kernelNote = String(localized: "A kernel extension. macOS protects it: remove it with the vendor's uninstaller, then restart.")
 
     /// The app's protected and shared parts, by the vendor's list, by the
     /// bundle ID of each kernel extension, and by the system extensions

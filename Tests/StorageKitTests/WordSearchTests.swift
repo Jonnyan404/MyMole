@@ -24,6 +24,66 @@ import Testing
         #expect(WordSearch("ÅNGSTRÖM").matches("A\u{30A}ngstro\u{308}m.txt"))
     }
 
+    /// A filter pasted with a tab, a line break or a non-breaking space
+    /// between its words asks for the same words as one typed with spaces.
+    @Test(arguments: ["annual\treport", "annual\nreport", "annual\u{A0}report", " \tannual \r\n report\n"])
+    func anyWhiteSpaceSetsWordsApart(_ query: String) {
+        let search = WordSearch(query)
+        #expect(search.words.count == 2 && search.matches("Annual Report.pdf") && !search.matches("Annual Summary.pdf"))
+        #expect(WordSearch(" \t\n").isEmpty)
+    }
+
+    /// A path in the home folder is searched as the lists show it, from
+    /// "~" on: the account's name and "users" are in every such path, and
+    /// would find every row.
+    @Test func theHomeFoldersOwnPathFindsNothingByItself() {
+        let home = "/Users/synthetic"
+        let rows = [("report.pdf", home + "/Documents"), ("synthetic-notes.txt", home + "/Desktop"), ("users.csv", "/Volumes/Disk/Exports")]
+        func found(_ query: String) -> [String] {
+            let search = WordSearch(query, home: home)
+            return rows.filter { search.matches(anyOf: [$0.0, $0.1]) }.map(\.0)
+        }
+        #expect(found("users") == ["users.csv"])
+        #expect(found("synthetic") == ["synthetic-notes.txt"])
+        #expect(found("documents") == ["report.pdf"] && found("DESKTOP notes") == ["synthetic-notes.txt"])
+        // Without a home folder every word is looked for in the whole path.
+        #expect(WordSearch("users").matches(home + "/Documents"))
+        // A piece of a path is looked for in the whole of it, and "~" is the home folder.
+        #expect(found("/users/synthetic/doc") == ["report.pdf"])
+        #expect(found("~/Desktop") == ["synthetic-notes.txt"])
+        #expect(found("~") == ["report.pdf", "synthetic-notes.txt"])
+        #expect(found("~/Documents report") == ["report.pdf"] && found("~/Documents notes").isEmpty)
+        // The home folder itself, and a folder whose name only begins like its name.
+        #expect(!WordSearch("synthetic", home: home).matches(home))
+        #expect(WordSearch("synthetic", home: home).matches(home + "-other/file"))
+        // A name that begins with "~" is a name.
+        #expect(WordSearch("~$draft", home: home).matches("~$draft.docx"))
+        // More words than a mask holds follow the same rule.
+        let many = (0..<70).map { "w\($0)" }.joined(separator: " ")
+        #expect(!WordSearch(many + " users", home: home).matches(anyOf: [many, home + "/Documents"]))
+        #expect(WordSearch(many + " documents", home: home).matches(anyOf: [many, home + "/Documents"]))
+    }
+
+    /// The search of a whole scan follows the same rule, whether it reads
+    /// each entry's words off its folder or puts the path together.
+    @Test func aScanOfTheHomeFolderIsntFoundWholeByItsOwnPath() {
+        let home = "/Users/synthetic"
+        let root = Folder(name: "synthetic", parent: nil, rootPath: home)
+        let documents = Folder(name: "Documents", parent: root)
+        documents.listedFiles = [
+            FileItem(name: "synthetic-plan.bin", size: 2 << 20, modified: .distantPast, kind: .other),
+            FileItem(name: "other.bin", size: 1 << 20, modified: .distantPast, kind: .other),
+        ]
+        root.subfolders = [documents]
+        root.finish()
+        let index = ScanIndex(root)
+        #expect(index.search("synthetic", home: home).found.map(index.path) == [home + "/Documents/synthetic-plan.bin"])
+        #expect(index.search("users", home: home).found.isEmpty)
+        #expect(index.search("users", home: nil).found.count == 3)
+        #expect(index.search("~/documents other", home: home).found.map(index.path) == [home + "/Documents/other.bin"])
+        #expect(index.search("~", home: home).found.count == 3)
+    }
+
     @Test func everyWordMustBeInOneOfSeveralTexts() {
         let search = WordSearch("notes archive")
         #expect(search.matches(anyOf: ["Project notes.txt", "/synthetic/Archive"]))

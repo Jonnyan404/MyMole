@@ -134,6 +134,29 @@ import Testing
         if FileSpace.sharing(first.path)?.cloneID != nil { #expect(found.bytes < total / 3, "\(found.bytes) of \(total)") }
     }
 
+    /// A file at the top of a temporary folder is held to the same rules
+    /// as a folder there: this user's own, and worth a row by what moving
+    /// it frees.
+    @Test func aFileAtTheTopFollowsTheFoldersRules() throws {
+        let box = try Sandbox()
+        let (_, temp) = try roots(box)
+        let kept = try box.file("elsewhere/original.bin", bytes: Self.big)
+        try FileManager.default.copyItem(at: kept, to: box.url.appending(path: "temp/copy.bin"))
+        try box.file("temp/alone.bin", bytes: Self.big)
+        try age(box, ["temp/copy.bin", "temp/alone.bin"], days: 5)
+        let found = CleanScanner.temporary(in: [temp], workers: 1, inUse: [])
+        #expect(found.candidates.contains { $0.name == "alone.bin" && $0.bytes >= CleanRules.temporaryMinimum })
+        // On a disk that clones a copy, the copy shares its blocks with the
+        // file kept elsewhere: moving it frees next to nothing, so it's no row.
+        if FileSpace.sharing(temp + "/copy.bin")?.cloneID != nil {
+            #expect(!found.candidates.contains { $0.name == "copy.bin" })
+        }
+        #expect(found.candidates.allSatisfy { $0.bytes >= CleanRules.temporaryMinimum })
+        let path = temp + "/alone.bin"
+        #expect(CleanRules.temporaryFile(path) && !CleanRules.temporaryFile(path, owner: getuid() + 1))
+        #expect(!CleanRules.temporaryFile(temp))
+    }
+
     /// A file this test holds open is among what the programs have open.
     @Test func whatAProgramHasOpenIsRead() throws {
         let box = try Sandbox()

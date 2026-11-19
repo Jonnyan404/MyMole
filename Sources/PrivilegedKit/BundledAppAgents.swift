@@ -109,7 +109,11 @@ enum BundledAppAgents {
         let folder = "Contents/Library/LaunchAgents"
         guard let jobs = safeDirectory(root, relative: folder, owner: owner) else { return [] }
         defer { close(jobs) }
-        guard let dir = fdopendir(dup(jobs)) else { throw ApplicationTrash.Failure(.backgroundUnverified, String(localized: "The app's bundled agents couldn't be read.", bundle: ToolLanguage.bundle)) }
+        let listing = dup(jobs)
+        guard listing >= 0, let dir = fdopendir(listing) else {
+            if listing >= 0 { close(listing) }
+            throw ApplicationTrash.Failure(.backgroundUnverified, String(localized: "The app's bundled agents couldn't be read.", bundle: ToolLanguage.bundle))
+        }
         defer { closedir(dir) }
         var names: [String] = []
         while let entry = readdir(dir) {

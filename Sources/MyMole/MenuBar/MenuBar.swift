@@ -70,11 +70,15 @@ enum MenuBarText {
     /// The disk is this full before the icon warns.
     static let nearlyFull = 90.0
 
-    /// "103 GB", "8,4 GB": whole gigabytes from ten up, one decimal below.
-    static func free(_ bytes: Int64) -> String {
+    /// "103 GB", "8,4 GB": whole gigabytes from ten up, one decimal below,
+    /// with the unit as the language writes it ("Go" in French), like the
+    /// sizes everywhere else.
+    static func free(_ bytes: Int64, locale: Locale = .current) -> String {
         let gb = Double(bytes) / 1_000_000_000
         guard gb >= 1 else { return ByteSize.format(bytes) }
-        return gb.formatted(.number.precision(.fractionLength(gb >= 10 ? 0 : 1))) + " GB"
+        let number = FloatingPointFormatStyle<Double>(locale: locale).precision(.fractionLength(gb >= 10 ? 0 : 1))
+        return Measurement(value: gb, unit: UnitInformationStorage.gigabytes)
+            .formatted(.measurement(width: .abbreviated, usage: .asProvided, numberFormatStyle: number).locale(locale))
     }
 
     static func symbol(usedPercent: Double?) -> String {

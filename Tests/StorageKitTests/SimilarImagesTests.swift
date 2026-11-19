@@ -141,13 +141,50 @@ import UniformTypeIdentifiers
         #expect(c.look(FingerprintCache.key(device: 9, inode: 2, length: 3, modified: Date(timeIntervalSince1970: 4))) == nil)
 
         let box = try Sandbox()
-        let url = box.url.appending(path: "prints.json")
+        let url = box.url.appending(path: "prints.bin")
         c.save(to: url)
         var read = FingerprintCache.load(from: url)
-        #expect(read.look(key)?.1 == 10)
-        // A damaged file is an empty cache.
+        #expect(read.look(key)?.1 == 10 && read.look(key)?.2 == 20)
+        // A damaged file, or one cut short, is an empty cache.
+        let saved = try Data(contentsOf: url)
+        try saved.dropLast().write(to: url)
+        #expect(FingerprintCache.load(from: url).count == 0)
         try Data("garbage".utf8).write(to: url)
         #expect(FingerprintCache.load(from: url).count == 0)
+    }
+
+    /// Every field comes back exactly, including fractions of a second.
+    @Test func theFileKeepsEveryFieldExactly() throws {
+        var c = FingerprintCache()
+        let changed = Date(timeIntervalSince1970: 1_790_000_000.123_456_789)
+        for i in 0..<300 {
+            c.store(FingerprintCache.key(device: Int32(-i), inode: UInt64.max - UInt64(i), length: Int64(i) << 40, modified: changed),
+                    print: UInt64(i) &* 0x9E37_79B9_7F4A_7C15, width: i, height: 4_096 - i, now: Date(timeIntervalSince1970: Double(i) + 0.5))
+        }
+        let box = try Sandbox()
+        let url = box.url.appending(path: "prints.bin")
+        c.save(to: url)
+        let read = FingerprintCache.load(from: url)
+        #expect(read.count == 300)
+        for (key, entry) in c.entries {
+            let back = try #require(read.entries[key])
+            #expect(back.print == entry.print && back.width == entry.width && back.height == entry.height && back.used == entry.used)
+        }
+    }
+
+    /// The JSON an earlier build saved is read once, and the next save replaces it.
+    @Test func theEarlierJSONFileIsReadAndReplaced() throws {
+        let box = try Sandbox()
+        let url = box.url.appending(path: "pictures.bin")
+        let earlier = try #require(FingerprintCache.earlierFile(of: url))
+        let key = FingerprintCache.key(device: 1, inode: 2, length: 3, modified: Date(timeIntervalSince1970: 4))
+        let json = #"{"algorithm":\#(FingerprintCache.algorithm),"entries":[{"device":1,"inode":2,"length":3,"modified":4},{"print":2748,"width":10,"height":20,"used":5}]}"#
+        try Data(json.utf8).write(to: earlier)
+        var read = FingerprintCache.load(from: url)
+        #expect(read.look(key)?.0 == 0xABC)
+        read.save(to: url)
+        #expect(!FileManager.default.fileExists(atPath: earlier.path) && FileManager.default.fileExists(atPath: url.path))
+        #expect(FingerprintCache.load(from: url).count == 1)
     }
 
     @Test func aSecondSearchUsesTheCacheAndSeesARewrittenPicture() throws {

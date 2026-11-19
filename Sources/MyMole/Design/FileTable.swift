@@ -657,6 +657,7 @@ final class FileTableView: NSTableView, LinedTable, UserColumnTable {
 
     var defaultHiddenColumns = Set<String>()
     var columnViewport: ColumnViewport?
+    var sizeOutOfView = false
     weak var coordinator: FileTable.Coordinator?
     var lines = TableLines.none
     var lineColor = NSColor.separatorColor
@@ -806,6 +807,12 @@ final class FileNameCell: NSTableCellView, ColumnWidthProviding {
     private var longestNamePart: CGFloat = 0
     private var nameWidth: CGFloat = 0
     private var subtitleWidth: CGFloat = 0
+    private var subtitle: String?
+    private var sizeText: String?
+    /// The table's Size column is out of view, so the size leads the second line.
+    var sizeInSubtitle = false {
+        didSet { if sizeInSubtitle != oldValue { showSubtitle() } }
+    }
     private var badgeWidth: CGFloat = 0
     private var wrapsName: Bool?
     private var measuredTextSize: NSSize?
@@ -876,12 +883,9 @@ final class FileNameCell: NSTableCellView, ColumnWidthProviding {
                 .map { FileCellResources.namePartWidth(String($0)) }.max() ?? 0
             wrapsName = nil
         }
-        sub.stringValue = r.subtitle ?? ""
-        subtitleWidth = (sub.stringValue as NSString).size(withAttributes: [.font: sub.font as Any]).width
-        sub.hoverHelp = r.subtitle
-        hoverHelp = [r.name, r.subtitle].compactMap { $0 }.joined(separator: "\n")
-        sub.isHidden = r.subtitle == nil
-        setNameWrapping(sub.isHidden && (wrapsName ?? true))
+        subtitle = r.subtitle
+        sizeText = r.size.map { FileCellResources.byteCount.string(fromByteCount: $0) }
+        showSubtitle()
         measuredTextSize = nil
         label.textColor = dimUnmeasured && r.size == nil ? .secondaryLabelColor : .labelColor
         label.hoverHelp = r.name
@@ -894,6 +898,30 @@ final class FileNameCell: NSTableCellView, ColumnWidthProviding {
         lock.isHidden = !r.locked
         lock.hoverHelp = r.locked ? String(localized: "MyMole couldn't read inside this folder") : nil
         needsLayout = true
+    }
+
+    private func showSubtitle() {
+        let size = sizeInSubtitle ? sizeText : nil
+        let line = size.map { size in subtitle.map { String(localized: "\(size) · \($0)") } ?? size } ?? subtitle
+        sub.stringValue = line ?? ""
+        subtitleWidth = (sub.stringValue as NSString).size(withAttributes: [.font: sub.font as Any]).width
+        sub.hoverHelp = line
+        hoverHelp = [name, line].compactMap { $0 }.joined(separator: "\n")
+        sub.isHidden = line == nil
+        setNameWrapping(sub.isHidden && (wrapsName ?? true))
+        measuredTextSize = nil
+        needsLayout = true
+    }
+
+    override func viewDidMoveToSuperview() {
+        super.viewDidMoveToSuperview()
+        sizeInSubtitle = (enclosingTable as? any UserColumnTable)?.sizeOutOfView ?? false
+    }
+
+    private var enclosingTable: NSTableView? {
+        var view = superview
+        while let v = view, !(v is NSTableView) { view = v.superview }
+        return view as? NSTableView
     }
 
     var preferredColumnWidth: CGFloat {

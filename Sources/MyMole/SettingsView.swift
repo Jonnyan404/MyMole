@@ -10,7 +10,7 @@ struct SettingsView: View {
     @AppStorage(PerformanceLevel.defaultsKey) private var performance = PerformanceLevel.standard.rawValue
     @AppStorage(ResultSize.defaultsKey) private var results = ResultSize.byDefault.rawValue
     @AppStorage(Responsiveness.defaultsKey) private var responsiveness = Responsiveness.byDefault.rawValue
-    @AppStorage(MemoryRelief.defaultsKey) private var memoryRelief = false
+    @AppStorage(MemoryRelief.defaultsKey) private var memoryRelief: Bool?
     @AppStorage(Density.key) private var density = Density.standard.rawValue
     @AppStorage(AppearanceMode.key) private var mode = AppearanceMode.system.rawValue
     @AppStorage(ThemeFamily.key) private var theme = ThemeFamily.standard.rawValue
@@ -309,8 +309,10 @@ struct SettingsView: View {
                         Text(PerformanceSummary.responsiveness(Responsiveness(rawValue: responsiveness) ?? Responsiveness.byDefault))
                     }
                 }
-                DSFormRow("Memory", checkbox: true, help: "When macOS warns that memory is short, scans started ahead of time stop and icon and chart caches empty; when it's critical, a disk map that isn't on screen goes too. Nothing you're looking at, have chosen or can undo is touched.") {
-                    Toggle("Free memory when macOS runs low", isOn: $memoryRelief)
+                DSFormRow("Memory", checkbox: true, help: "When macOS warns that memory is short, scans started ahead of time stop and icon and chart caches empty; when it's critical, a disk map that isn't on screen goes too. Nothing you're looking at, have chosen or can undo is touched. Until you choose, it follows Large results: on up to Fast, off at Maximum and Hyperspeed.") {
+                    Toggle("Free memory when macOS runs low", isOn: Binding(
+                        get: { memoryRelief ?? MemoryRelief.byDefault(ResultSize(saved: results)) },
+                        set: { memoryRelief = MemoryRelief.saved($0, for: ResultSize(saved: results)) }))
                         .accessibilityIdentifier("settings.memory-relief")
                 }
             }

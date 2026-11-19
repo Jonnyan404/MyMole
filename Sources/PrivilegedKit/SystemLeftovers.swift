@@ -94,11 +94,11 @@ public enum SystemLeftovers {
 
         public var title: String {
             switch self {
-            case .vendorList: "on the vendor's own list of what the app installs"
-            case .maker: "its maker's, and no other app of the maker is left"
-            case .record: "the installer's record of this app alone"
-            case .installedWith: "installed by the app's own installer, and by no other"
-            case .component: "a driver or plug-in that carries the app's ID"
+            case .vendorList: String(localized: "On the vendor's own list of what the app installs")
+            case .maker: String(localized: "Its maker's, and no other app of the maker is left")
+            case .record: String(localized: "The installer's record of this app alone")
+            case .installedWith: String(localized: "Installed by the app's own installer, and by no other")
+            case .component: String(localized: "A driver or plug-in that carries the app's ID")
             }
         }
     }
@@ -459,7 +459,7 @@ public enum SystemLeftovers {
                 // Only a job named after the app or its maker is stopped: the
                 // tool never stops one by a name that just happens to be in the file.
                 guard AppLeftovers.isWellFormed(label), labelOK(label) else {
-                    report.failed[path] = "Its job isn't named after the app, so it stays."
+                    report.failed[path] = String(localized: "Its job isn't named after the app, so it stays.", bundle: ToolLanguage.bundle)
                     continue
                 }
                 if let why = stop(label, runner: runner) {
@@ -480,8 +480,8 @@ public enum SystemLeftovers {
         let r = runner.run(launchctl, ["bootout", "system/" + label])
         // 3: no such process; 113: no such service. Both mean not loaded.
         if r.code == 0 || r.code == 3 || r.code == 113 { return nil }
-        if r.code == CommandRunner.timedOut { return "Its job didn't stop in time, so it stays." }
-        return "Its job couldn't be stopped (launchctl \(r.code)), so it stays."
+        if r.code == CommandRunner.timedOut { return String(localized: "Its job didn't stop in time, so it stays.", bundle: ToolLanguage.bundle) }
+        return String(localized: "Its job couldn't be stopped (launchctl \(r.code)), so it stays.", bundle: ToolLanguage.bundle)
     }
 
     /// The label a launchd job's file gives it. Nil when it has none: it

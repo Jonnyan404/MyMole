@@ -7,13 +7,34 @@ import Foundation
 /// character by character took most of that time. A name with letters
 /// beyond ASCII is compared in its composed form, so an "é" typed as one
 /// letter finds one stored as two.
+///
+/// With a home folder given, a path inside it is searched as the lists
+/// show it, with the home folder's own path left out ("~/Library/Caches"):
+/// the name of the account, or "users", is in every such path and would
+/// find every row. A word that holds a slash is a piece of a path, and is
+/// looked for in the whole of it; "~" at its start stands for the home folder.
 public struct WordSearch: Sendable {
     let words: [[UInt8]]
+    /// For each word, whether it's a piece of a path.
+    private let wholePath: [Bool]
+    /// The home folder's path, lower-cased as the texts are; empty for none.
+    private let home: [UInt8]
 
-    public init(_ query: String) {
+    /// The words are what white space of any kind sets apart: a pasted
+    /// tab or line break ends a word as a space does.
+    public init(_ query: String, home: String? = nil) {
         var folded: [UInt8] = []
-        Self.fold(query, into: &folded)
-        words = folded.split(separator: UInt8(ascii: " ")).map(Array.init)
+        var homeBytes: [UInt8] = []
+        if let home, home.count > 1, home.hasPrefix("/") { Self.fold(home, into: &homeBytes) }
+        let slash = UInt8(ascii: "/"), tilde = UInt8(ascii: "~")
+        words = query.split(whereSeparator: \.isWhitespace).map { word in
+            Self.fold(String(word), into: &folded)
+            let named = folded.count == 1 || (folded.count > 1 && folded[1] == slash)
+            if !homeBytes.isEmpty, folded.first == tilde, named { return homeBytes + folded.dropFirst() }
+            return folded
+        }
+        wholePath = words.map { $0.contains(slash) }
+        self.home = homeBytes
     }
 
     public var isEmpty: Bool { words.isEmpty }
@@ -42,16 +63,35 @@ public struct WordSearch: Sendable {
         out.append(contentsOf: text.lowercased().precomposedStringWithCanonicalMapping.utf8)
     }
 
-    private static func holds(_ text: [UInt8], _ word: [UInt8]) -> Bool {
-        guard word.count <= text.count else { return false }
-        return text.withUnsafeBytes { memmem($0.baseAddress, text.count, word, word.count) != nil }
+    private static func holds(_ text: [UInt8], from start: Int, _ word: [UInt8]) -> Bool {
+        let count = text.count - start
+        guard word.count <= count else { return false }
+        return text.withUnsafeBytes { bytes in
+            guard let base = bytes.baseAddress else { return false }
+            return memmem(base + start, count, word, word.count) != nil
+        }
+    }
+
+    /// Where in `text` a word that is no piece of a path is looked for
+    /// from: past the home folder's own path when the text is the home
+    /// folder or lies inside it, else from its start.
+    private func pastHome(_ text: [UInt8]) -> Int {
+        let n = home.count
+        guard n > 0, text.count >= n, text.count == n || text[n] == UInt8(ascii: "/") else { return 0 }
+        return text.withUnsafeBytes { memcmp($0.baseAddress, home, n) == 0 } ? n : 0
+    }
+
+    /// Whether the folded `text` holds word `i`.
+    private func holds(_ text: [UInt8], past: Int, word i: Int) -> Bool {
+        Self.holds(text, from: wholePath[i] ? 0 : past, words[i])
     }
 
     /// The words among `wanted` that `text` holds, as bits: word 0 is bit 0.
     func mask(of text: String, wanted: UInt64 = .max, scratch: inout [UInt8]) -> UInt64 {
         Self.fold(text, into: &scratch)
+        let past = pastHome(scratch)
         var found: UInt64 = 0
-        for (i, word) in words.prefix(Self.maskWidth).enumerated() where wanted & (1 << UInt64(i)) != 0 && Self.holds(scratch, word) {
+        for i in 0..<min(words.count, Self.maskWidth) where wanted & (1 << UInt64(i)) != 0 && holds(scratch, past: past, word: i) {
             found |= 1 << UInt64(i)
         }
         return found
@@ -67,7 +107,8 @@ public struct WordSearch: Sendable {
     public func matches(_ text: String, scratch: inout [UInt8]) -> Bool {
         guard !words.isEmpty else { return true }
         Self.fold(text, into: &scratch)
-        return words.allSatisfy { Self.holds(scratch, $0) }
+        let past = pastHome(scratch)
+        return words.indices.allSatisfy { holds(scratch, past: past, word: $0) }
     }
 
     /// Whether every word is in at least one of `texts`: a row's name, or
@@ -76,11 +117,11 @@ public struct WordSearch: Sendable {
         guard !words.isEmpty else { return true }
         var scratch: [UInt8] = []
         guard let every else {
-            let folded = texts.map { text -> [UInt8] in
+            let folded = texts.map { text -> (bytes: [UInt8], past: Int) in
                 Self.fold(text, into: &scratch)
-                return scratch
+                return (scratch, pastHome(scratch))
             }
-            return words.allSatisfy { word in folded.contains { Self.holds($0, word) } }
+            return words.indices.allSatisfy { i in folded.contains { holds($0.bytes, past: $0.past, word: i) } }
         }
         var found: UInt64 = 0
         for text in texts where found != every { found |= mask(of: text, wanted: every & ~found, scratch: &scratch) }

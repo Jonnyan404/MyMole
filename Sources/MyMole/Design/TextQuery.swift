@@ -6,7 +6,8 @@ struct TextQuery: Sendable {
     private let search: WordSearch
     var isEmpty: Bool { search.isEmpty }
 
-    init(_ text: String) { search = WordSearch(text) }
+    /// Paths in the home folder are searched as the lists show them, from "~" on.
+    init(_ text: String) { search = WordSearch(text, home: Home.path) }
 
     func matches(_ texts: String...) -> Bool { matches(texts: texts) }
 

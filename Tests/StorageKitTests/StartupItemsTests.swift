@@ -36,7 +36,7 @@ import Testing
 
         let helper = try #require(listing.items.first { $0.label == "com.vendor.notes.helper" })
         #expect(helper.app == "Notes Helper" && !helper.programMissing && helper.runsAtLoad && helper.keepsAlive)
-        #expect(helper.summary == "Starts at login · stays running")
+        #expect(helper.summary == "Starts at login · Stays running")
 
         let gone = try #require(listing.items.first { $0.label == "com.vendor.gone" })
         #expect(gone.programMissing && gone.scheduled && gone.program == "/opt/vendor/bin/gone-tool" && gone.app == nil)
@@ -46,7 +46,7 @@ import Testing
         #expect(script.disabled && !script.programMissing && script.summary.hasPrefix("Turned off"))
 
         let daemon = try #require(listing.items.first { $0.scope == .system })
-        #expect(daemon.keepsAlive && daemon.summary == "stays running")
+        #expect(daemon.keepsAlive && daemon.summary == "Stays running")
     }
 
     @Test func onlyTheUsersOwnAgentsMayGoToTheTrash() throws {

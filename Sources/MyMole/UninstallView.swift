@@ -37,6 +37,12 @@ struct UninstallView: View {
     @State private var projected = OffMain<AppPresentation>(AppPresentation())
     @State private var pins = PinnedItems.shared
     @State private var presentedFilter: FilterKey?
+    /// Tall enough for the panel to repeat the toolbar's two searches.
+    @State private var roomy = true
+
+    /// Below this pane height the panel leaves Left by Removed Apps and App
+    /// Copies & Integrations to the toolbar, so the grid keeps its rows.
+    static let roomyHeight: CGFloat = 700
 
     static let showMacOSKey = "uninstall.showMacOS"
 
@@ -124,13 +130,15 @@ struct UninstallView: View {
                     .fixedSize()
                     .help("macOS apps stay installed; only resetting their caches and settings is offered.")
             }
-            DSControlField("Removed apps") {
-                Button("Left by Removed Apps…", systemImage: "folder.badge.questionmark") { showOrphans = true }
-                    .help("Find caches, settings and data left after an app was deleted in Finder")
-            }
-            DSControlField("Copies and test builds") {
-                Button("App Copies & Integrations…", systemImage: "square.on.square") { showCopies = true }
-                    .help("Find other versions, test builds and apps that declare menu integrations")
+            if roomy {
+                DSControlField("Removed apps") {
+                    Button("Left by Removed Apps…", systemImage: "folder.badge.questionmark") { showOrphans = true }
+                        .help("Find caches, settings and data left after an app was deleted in Finder")
+                }
+                DSControlField("Copies and test builds") {
+                    Button("App Copies & Integrations…", systemImage: "square.on.square") { showCopies = true }
+                        .help("Find other versions, test builds and apps that declare menu integrations")
+                }
             }
         } strip: {
             if model.loading {
@@ -210,6 +218,7 @@ struct UninstallView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .onGeometryChange(for: Bool.self) { [tall = Self.roomyHeight] in $0.size.height >= tall } action: { roomy = $0 }
         .overlay {
             if dropTargeted {
                 RoundedRectangle(cornerRadius: Theme.radius, style: .continuous)
@@ -227,6 +236,8 @@ struct UninstallView: View {
         .paneToolbar("Uninstall", subtitle: "\(filtered.count) apps · leftovers go to the Trash too") {
             PaneTool.button("uninstall.orphans", "Left by Removed Apps…", symbol: "folder.badge.questionmark",
                             help: "Caches, settings and data of apps that aren't on this Mac any more") { showOrphans = true }
+            PaneTool.button("uninstall.copies", "App Copies & Integrations…", symbol: "square.on.square",
+                            help: "Find other versions, test builds and apps that declare menu integrations") { showCopies = true }
             PaneTool.button("uninstall.packages", "Installed Packages…", symbol: "shippingbox",
                             help: "What Homebrew and installer packages put on the Mac, to look at") { showPackages = true }
             PaneTool.button("uninstall.reload", "Reload", symbol: "arrow.clockwise", help: "Reload the app list",
@@ -1067,7 +1078,7 @@ struct UninstallSheet: View {
                     FileRow(
                         id: $0.path, name: $0.name, size: $0.bytes, kind: "\($0.kind.title) · \($0.place)",
                         location: ($0.path as NSString).deletingLastPathComponent,
-                        symbol: "folder", subtitle: $0.canRemove ? String(localized: "Found \($0.evidence.title)") : String(localized: "Ownership not verified"),
+                        symbol: "folder", subtitle: $0.canRemove ? $0.evidence.title : String(localized: "Ownership not verified"),
                         badge: $0.canRemove ? nil : (canChoose($0) ? String(localized: "Unverified") : String(localized: "Inspection only")),
                         badgeTint: canChoose($0) && !$0.canRemove ? .systemOrange : .secondaryLabelColor,
                         canChoose: canChoose($0) && self.leftovers != nil && checking == nil && !model.uninstalling,

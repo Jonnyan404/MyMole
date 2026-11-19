@@ -1879,6 +1879,52 @@
         }
       }
     },
+    "%@ %@ runtime" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laufzeit %1$@ %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ runtime"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entorno de %1$@ %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Environnement %1$@ %2$@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@ रनटाइम"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@ 런타임"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@ 运行时"
+          }
+        }
+      }
+    },
     "%@ (latest)" : {
       "localizations" : {
         "de" : {
@@ -5671,6 +5717,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ · 进程 %2$d"
+          }
+        }
+      }
+    },
+    "%@ · running" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · läuft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · en ejecución"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · en cours d’exécution"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · चल रहा है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · 실행 중"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · 运行中"
           }
         }
       }
@@ -18517,6 +18603,46 @@
         }
       }
     },
+    "A driver or plug-in that carries the app's ID" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Treiber oder Plug-in, das die ID der App trägt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un controlador o complemento que lleva el ID de la app"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un pilote ou un module qui porte l’identifiant de l’app"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐसा ड्राइवर या प्लग-इन जिस पर ऐप की ID है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱의 ID가 붙은 드라이버 또는 플러그인"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "带有该应用 ID 的驱动程序或插件"
+          }
+        }
+      }
+    },
     "A folder could not be opened." : {
       "localizations" : {
         "de" : {
@@ -18677,6 +18803,46 @@
         }
       }
     },
+    "A kernel extension. macOS protects it: remove it with the vendor's uninstaller, then restart." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Kernel-Erweiterung. macOS schützt sie: Entferne sie mit dem Deinstallationsprogramm des Herstellers und starte dann neu."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una extensión del kernel. macOS la protege: elimínala con el desinstalador del fabricante y luego reinicia."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une extension du noyau. macOS la protège : supprimez-la avec le programme de désinstallation de l’éditeur, puis redémarrez."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "एक कर्नेल एक्सटेंशन। macOS इसकी रक्षा करता है: इसे निर्माता के अनइंस्टॉलर से हटाएँ, फिर रीस्टार्ट करें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "커널 확장 프로그램입니다. macOS가 보호하므로 개발사의 제거 프로그램으로 제거한 다음 재시동하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内核扩展。它受 macOS 保护：请用厂商的卸载程序移除，然后重新启动。"
+          }
+        }
+      }
+    },
     "A linked or inaccessible folder was refused." : {
       "localizations" : {
         "de" : {
@@ -18757,6 +18923,46 @@
         }
       }
     },
+    "A looser match of its name; look before choosing" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein lockerer Treffer nach dem Namen; vor dem Auswählen ansehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una coincidencia menos estricta con su nombre; míralo antes de elegirlo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une correspondance plus large avec son nom ; regardez avant de choisir"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "नाम से ढीला मिलान; चुनने से पहले देख लें"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름과 느슨하게 일치함. 선택하기 전에 확인하세요"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "与其名称的宽松匹配；选择前请先查看"
+          }
+        }
+      }
+    },
     "A named volume: databases and other data live here. Remove it in Docker if you're sure." : {
       "localizations" : {
         "de" : {
@@ -18797,6 +19003,46 @@
         }
       }
     },
+    "A possible app match; ownership couldn't be verified" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein möglicher Treffer für die App; die Zugehörigkeit konnte nicht geprüft werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una posible coincidencia con la app; no se pudo verificar a quién pertenece"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une correspondance possible avec l’app ; l’appartenance n’a pas pu être vérifiée"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप से संभावित मिलान; स्वामित्व सत्यापित नहीं हो सका"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱과 일치할 가능성이 있음. 소유권을 확인할 수 없었습니다"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可能与该应用匹配；归属无法核实"
+          }
+        }
+      }
+    },
     "A program that left it here and still runs may look for it. It's gone for good once the Trash is emptied." : {
       "localizations" : {
         "de" : {
@@ -18833,6 +19079,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "把它留在这里且仍在运行的程序可能会找它。清倒废纸篓后就彻底没有了。"
+          }
+        }
+      }
+    },
+    "A removal that uses it is running. Try again once it's done." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Entfernen, das sie verwendet, läuft gerade. Versuche es erneut, wenn es fertig ist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hay una eliminación en curso que lo usa. Vuelve a intentarlo cuando termine."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une suppression qui l’utilise est en cours. Réessayez une fois qu’elle est terminée."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसका उपयोग करने वाला एक हटाना चल रहा है। उसके पूरा होने पर फिर से आज़माएँ।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이를 사용하는 제거 작업이 실행 중입니다. 완료된 후 다시 시도하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有一项使用它的移除正在进行。请在完成后重试。"
           }
         }
       }
@@ -21367,6 +21653,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "应用可能会询问一次用哪个应用打开某类文件。此操作无法撤销；此后 macOS 会自行保持更新。"
+          }
+        }
+      }
+    },
+    "An app or helper ID in a per-user runtime folder; review its contents" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine App- oder Helfer-ID in einem benutzereigenen Laufzeitordner; prüfe den Inhalt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un ID de app o de asistente en una carpeta de ejecución del usuario; revisa su contenido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un identifiant d’app ou d’assistant dans un dossier d’exécution de l’utilisateur ; examinez son contenu"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "प्रति-उपयोगकर्ता रनटाइम फ़ोल्डर में ऐप या हेल्पर ID; इसकी सामग्री देख लें"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용자별 런타임 폴더에 있는 앱 또는 도우미 ID. 내용을 검토하세요"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户专属运行时文件夹中的应用或辅助程序 ID；请检查其内容"
           }
         }
       }
@@ -25677,6 +26003,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apple 某个应用的缓存。会重新生成，但有些会先重新同步。"
+          }
+        }
+      }
+    },
+    "Caches" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caches"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cachés"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caches"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कैश"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "캐시"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "缓存"
           }
         }
       }
@@ -33143,6 +33509,46 @@
         }
       }
     },
+    "Couldn't be put back" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konnte nicht zurückgelegt werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo recuperar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N’a pas pu être remis"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "वापस नहीं रखा जा सका"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "되돌려 놓을 수 없음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法放回"
+          }
+        }
+      }
+    },
     "Couldn't read memory" : {
       "localizations" : {
         "de" : {
@@ -35955,6 +36361,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Docker、模拟器运行时、Android 设备和虚拟机，按各工具自己的列表"
+          }
+        }
+      }
+    },
+    "Document handler" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dokument-Handler"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestor de documentos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestionnaire de documents"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "दस्तावेज़ हैंडलर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문서 핸들러"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文档处理程序"
           }
         }
       }
@@ -41357,42 +41803,122 @@
         }
       }
     },
-    "Found %@" : {
+    "Found by a part the app carries" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ gefunden"
+            "value" : "Über einen Teil gefunden, den die App mitbringt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ encontrados"
+            "value" : "Encontrado por una parte que incluye la app"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ trouvés"
+            "value" : "Trouvé par un élément que l’app contient"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ मिला"
+            "value" : "ऐप के साथ आने वाले एक हिस्से से मिला"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 발견"
+            "value" : "앱에 포함된 구성 요소로 찾음"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "找到 %1$@"
+            "value" : "通过该应用携带的部件找到"
+          }
+        }
+      }
+    },
+    "Found by its bundle ID" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Über die Bundle-ID gefunden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encontrado por su ID de paquete"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trouvé par son identifiant de bundle"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसकी बंडल ID से मिला"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "번들 ID로 찾음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通过其 Bundle ID 找到"
+          }
+        }
+      }
+    },
+    "Found by its name only" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur nach Namen gefunden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encontrado solo por su nombre"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trouvé par son nom seulement"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "केवल इसके नाम से मिला"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름으로만 찾음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅通过名称找到"
           }
         }
       }
@@ -44825,6 +45351,46 @@
         }
       }
     },
+    "In an app group its signature names" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In einer App-Gruppe, die ihre Signatur nennt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En un grupo de apps que nombra su firma"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans un groupe d’apps que sa signature désigne"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐसे ऐप समूह में जिसका नाम इसके हस्ताक्षर में है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 서명에 명시된 앱 그룹에 있음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位于其签名指明的应用组中"
+          }
+        }
+      }
+    },
     "In every project" : {
       "localizations" : {
         "de" : {
@@ -44861,6 +45427,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在每个项目中"
+          }
+        }
+      }
+    },
+    "In its maker's folder, by its name" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im Ordner des Herstellers, nach dem Namen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En la carpeta de su fabricante, por su nombre"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans le dossier de son éditeur, par son nom"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसके निर्माता के फ़ोल्डर में, नाम से"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개발사 폴더에서 이름으로 찾음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在其厂商的文件夹中，按名称匹配"
           }
         }
       }
@@ -45905,6 +46511,46 @@
         }
       }
     },
+    "Installed by the app's own installer, and by no other" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vom eigenen Installationsprogramm der App installiert, und von keinem anderen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instalado por el propio instalador de la app, y por ningún otro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installé par le programme d’installation de l’app, et par aucun autre"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप के अपने इंस्टॉलर ने इंस्टॉल किया, किसी और ने नहीं"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 자체의 설치 프로그램만 설치함"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由该应用自己的安装程序安装，且仅此一个"
+          }
+        }
+      }
+    },
     "Installed for every user or the system. Remove it with its app's own uninstaller." : {
       "localizations" : {
         "de" : {
@@ -46141,6 +46787,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ 中的安装包不会显示。该结果不会保存为完整结果。"
+          }
+        }
+      }
+    },
+    "Installers' last scan" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letzter Scan der Installationsprogramme"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El último análisis de Instaladores"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La dernière analyse des installeurs"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इंस्टॉलर का पिछला स्कैन"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설치 프로그램의 마지막 스캔"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安装包上次的扫描"
           }
         }
       }
@@ -47155,6 +47841,166 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "它的 Git 设置可能执行程序，因此未检查。"
+          }
+        }
+      }
+    },
+    "Its job couldn't be stopped (launchctl %d), so it stays." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sein Job konnte nicht gestoppt werden (launchctl %d), daher bleibt es."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo detener su tarea (launchctl %d), así que se queda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sa tâche n’a pas pu être arrêtée (launchctl %d), il reste donc en place."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसका जॉब रोका नहीं जा सका (launchctl %d), इसलिए यह बना रहता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "작업을 중지할 수 없어(launchctl %d) 그대로 남습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法停止它的任务（launchctl %d），因此予以保留。"
+          }
+        }
+      }
+    },
+    "Its job didn't stop in time, so it stays." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sein Job wurde nicht rechtzeitig beendet, daher bleibt es."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Su tarea no se detuvo a tiempo, así que se queda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sa tâche ne s’est pas arrêtée à temps, il reste donc en place."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसका जॉब समय पर नहीं रुका, इसलिए यह बना रहता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "작업이 제시간에 중지되지 않아 그대로 남습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "它的任务未能及时停止，因此予以保留。"
+          }
+        }
+      }
+    },
+    "Its job isn't named after the app, so it stays." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sein Job ist nicht nach der App benannt, daher bleibt es."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Su tarea no lleva el nombre de la app, así que se queda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sa tâche ne porte pas le nom de l’app, il reste donc en place."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसके जॉब का नाम ऐप के नाम पर नहीं है, इसलिए यह बना रहता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "작업 이름이 앱 이름을 따르지 않아 그대로 남습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "它的任务不是以该应用命名的，因此予以保留。"
+          }
+        }
+      }
+    },
+    "Its maker's, and no other app of the maker is left" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gehört dem Hersteller, und keine andere App des Herstellers ist mehr da"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es de su fabricante, y no queda ninguna otra app del fabricante"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appartient à son éditeur, et il ne reste aucune autre app de cet éditeur"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसके निर्माता का है, और निर्माता का कोई और ऐप नहीं बचा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개발사의 것이며 개발사의 다른 앱이 남아 있지 않음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "属于其厂商，且该厂商已没有其他应用"
           }
         }
       }
@@ -51555,46 +52401,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "请先在“磁盘图”中绘制你的个人文件夹，才能在这里选择。"
-          }
-        }
-      }
-    },
-    "Matched by %@" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Übereinstimmung über %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coincide por %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trouvé par %@"
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ से मेल"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@(으)로 일치"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "匹配依据：%1$@"
           }
         }
       }
@@ -64441,6 +65247,46 @@
         }
       }
     },
+    "On the vendor's own list of what the app installs" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf der Liste des Herstellers, was die App installiert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En la lista del propio fabricante de lo que instala la app"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sur la liste de l’éditeur de ce que l’app installe"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "निर्माता की अपनी सूची में कि ऐप क्या इंस्टॉल करता है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱이 설치하는 항목에 대한 개발사 자체 목록에 있음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在厂商自己列出的该应用安装内容清单上"
+          }
+        }
+      }
+    },
     "On your keep list; never cleaned" : {
       "localizations" : {
         "de" : {
@@ -67157,6 +68003,86 @@
         }
       }
     },
+    "Per-user runtime caches" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laufzeit-Caches pro Benutzer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cachés de ejecución del usuario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caches d’exécution de l’utilisateur"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "प्रति-उपयोगकर्ता रनटाइम कैश"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용자별 런타임 캐시"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户专属运行时缓存"
+          }
+        }
+      }
+    },
+    "Per-user temporary data" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temporäre Daten pro Benutzer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datos temporales del usuario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Données temporaires de l’utilisateur"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "प्रति-उपयोगकर्ता अस्थायी डेटा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용자별 임시 데이터"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户专属临时数据"
+          }
+        }
+      }
+    },
     "Performance" : {
       "localizations" : {
         "de" : {
@@ -68953,6 +69879,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "项目"
+          }
+        }
+      }
+    },
+    "Projects' last scan and growth" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letzter Scan und Wachstum der Projekte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El último análisis de Proyectos y su crecimiento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La dernière analyse des projets et leur croissance"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "प्रोजेक्ट का पिछला स्कैन और वृद्धि"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "프로젝트의 마지막 스캔 및 증가량"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "项目上次的扫描和增长记录"
           }
         }
       }
@@ -76727,6 +77693,46 @@
         }
       }
     },
+    "Runs on a schedule" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Läuft nach Zeitplan"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ejecuta según un horario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S’exécute selon un calendrier"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "तय समय पर चलता है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일정에 따라 실행"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按计划运行"
+          }
+        }
+      }
+    },
     "Same as the Mac" : {
       "localizations" : {
         "de" : {
@@ -79691,6 +80697,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "发送"
+          }
+        }
+      }
+    },
+    "Service" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dienst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servicio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सेवा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서비스"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务"
           }
         }
       }
@@ -84185,6 +85231,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "状态"
+          }
+        }
+      }
+    },
+    "Stays running" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Läuft dauerhaft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se mantiene en ejecución"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reste en cours d’exécution"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "चलता रहता है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계속 실행"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保持运行"
           }
         }
       }
@@ -89911,6 +90997,46 @@
         }
       }
     },
+    "The installer's record of this app alone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Eintrag des Installationsprogramms nur für diese App"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El registro del instalador solo de esta app"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’enregistrement du programme d’installation pour cette seule app"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इंस्टॉलर का रिकॉर्ड, केवल इसी ऐप का"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 앱만을 위한 설치 프로그램 기록"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安装程序仅针对该应用的记录"
+          }
+        }
+      }
+    },
     "The keep list couldn't be read" : {
       "localizations" : {
         "de" : {
@@ -94317,6 +95443,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "输入命令或面板名称"
+          }
+        }
+      }
+    },
+    "URL handler" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL-Handler"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestor de URL"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestionnaire d’URL"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL हैंडलर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL 핸들러"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL 处理程序"
           }
         }
       }
@@ -99167,42 +100333,42 @@
         }
       }
     },
-    "When macOS warns that memory is short, scans started ahead of time stop and icon and chart caches empty; when it's critical, a disk map that isn't on screen goes too. Nothing you're looking at, have chosen or can undo is touched." : {
+    "When macOS warns that memory is short, scans started ahead of time stop and icon and chart caches empty; when it's critical, a disk map that isn't on screen goes too. Nothing you're looking at, have chosen or can undo is touched. Until you choose, it follows Large results: on up to Fast, off at Maximum and Hyperspeed." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn macOS warnt, dass der Arbeitsspeicher knapp ist, stoppen vorab gestartete Scans und Symbol- und Diagramm-Caches werden geleert; ist es kritisch, geht auch eine nicht sichtbare Festplattenkarte. Nichts, was du ansiehst, ausgewählt hast oder widerrufen kannst, wird angetastet."
+            "value" : "Wenn macOS warnt, dass der Arbeitsspeicher knapp ist, stoppen vorab gestartete Scans und Symbol- und Diagramm-Caches werden geleert; ist es kritisch, geht auch eine nicht sichtbare Festplattenkarte. Nichts, was du ansiehst, ausgewählt hast oder widerrufen kannst, wird angetastet. Bis du selbst wählst, folgt es Große Ergebnisse: an bis Schnell, aus bei Maximum und Hypertempo."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuando macOS avisa de que falta memoria, los análisis iniciados por adelantado se detienen y las cachés de iconos y gráficos se vacían; cuando es crítico, también se va un mapa del disco que no esté en pantalla. No se toca nada de lo que estás mirando, has elegido o puedes deshacer."
+            "value" : "Cuando macOS avisa de que falta memoria, los análisis iniciados por adelantado se detienen y las cachés de iconos y gráficos se vacían; cuando es crítico, también se va un mapa del disco que no esté en pantalla. No se toca nada de lo que estás mirando, has elegido o puedes deshacer. Hasta que elijas, sigue a Resultados grandes: activado hasta Rápido, desactivado en Máximo e Hipervelocidad."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quand macOS signale que la mémoire manque, les analyses lancées à l’avance s’arrêtent et les caches d’icônes et de graphiques se vident ; quand c’est critique, une carte du disque qui n’est pas à l’écran part aussi. Rien de ce que vous regardez, avez choisi ou pouvez annuler n’est touché."
+            "value" : "Quand macOS signale que la mémoire manque, les analyses lancées à l’avance s’arrêtent et les caches d’icônes et de graphiques se vident ; quand c’est critique, une carte du disque qui n’est pas à l’écran part aussi. Rien de ce que vous regardez, avez choisi ou pouvez annuler n’est touché. Tant que vous ne choisissez pas, cela suit Grands résultats : activé jusqu’à Rapide, désactivé à Maximum et Hypervitesse."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "जब macOS मेमोरी कम होने की चेतावनी देता है, तो पहले से शुरू किए स्कैन रुक जाते हैं और आइकन व चार्ट कैश खाली हो जाते हैं; गंभीर होने पर स्क्रीन पर न दिख रहा डिस्क मैप भी जाता है। आप जो देख रहे हैं, चुन चुके हैं या पहले जैसा कर सकते हैं, उसे छुआ नहीं जाता।"
+            "value" : "जब macOS मेमोरी कम होने की चेतावनी देता है, तो पहले से शुरू किए स्कैन रुक जाते हैं और आइकन व चार्ट कैश खाली हो जाते हैं; गंभीर होने पर स्क्रीन पर न दिख रहा डिस्क मैप भी जाता है। आप जो देख रहे हैं, चुन चुके हैं या पहले जैसा कर सकते हैं, उसे छुआ नहीं जाता। जब तक आप खुद न चुनें, यह बड़े परिणाम के अनुसार चलता है: तेज़ तक चालू, अधिकतम और हाइपरस्पीड पर बंद।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "macOS가 메모리 부족을 경고하면 미리 시작한 스캔이 중지되고 아이콘과 차트 캐시가 비워집니다. 심각하면 화면에 없는 디스크 맵도 해제됩니다. 보고 있거나 선택했거나 실행 취소할 수 있는 것은 건드리지 않습니다."
+            "value" : "macOS가 메모리 부족을 경고하면 미리 시작한 스캔이 중지되고 아이콘과 차트 캐시가 비워집니다. 심각하면 화면에 없는 디스크 맵도 해제됩니다. 보고 있거나 선택했거나 실행 취소할 수 있는 것은 건드리지 않습니다. 직접 선택하기 전까지는 대용량 결과를 따릅니다. 빠르게까지는 켜지고 최대와 하이퍼스피드에서는 꺼집니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当 macOS 提示内存不足时，提前启动的扫描会停止，图标和图表缓存会清空；内存严重不足时，不在屏幕上的磁盘图也会释放。你正在查看、已选择或可撤销的内容不会被触碰。"
+            "value" : "当 macOS 提示内存不足时，提前启动的扫描会停止，图标和图表缓存会清空；内存严重不足时，不在屏幕上的磁盘图也会释放。你正在查看、已选择或可撤销的内容不会被触碰。在你自行选择之前，它跟随“内存占用”：快速及以下开启，强劲和极速关闭。"
           }
         }
       }
@@ -102489,6 +103655,126 @@
         }
       }
     },
+    "iCloud Drive files. Removing them here removes them on your other devices too." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Drive-Dateien. Hier entfernen entfernt sie auch auf deinen anderen Geräten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivos de iCloud Drive. Eliminarlos aquí los elimina también en tus otros dispositivos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fichiers iCloud Drive. Les supprimer ici les supprime aussi sur vos autres appareils."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Drive की फ़ाइलें। इन्हें यहाँ हटाने से ये आपके अन्य डिवाइस से भी हट जाती हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Drive 파일입니다. 여기서 제거하면 다른 기기에서도 제거됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 云盘文件。在这里移除也会从你的其他设备上移除。"
+          }
+        }
+      }
+    },
+    "iPhone or iPad Software" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone- oder iPad-Software"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Software de iPhone o iPad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logiciel iPhone ou iPad"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone या iPad सॉफ़्टवेयर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone 또는 iPad 소프트웨어"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone 或 iPad 软件"
+          }
+        }
+      }
+    },
+    "iPhone/iPad backup. Can't be recreated." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone-/iPad-Backup. Lässt sich nicht neu erstellen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copia de seguridad de iPhone/iPad. No se puede volver a crear."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauvegarde iPhone/iPad. Impossible à recréer."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone/iPad बैकअप। इसे दोबारा नहीं बनाया जा सकता।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone/iPad 백업입니다. 다시 만들 수 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone/iPad 备份。无法重新创建。"
+          }
+        }
+      }
+    },
     "in %lld groups of pictures that look alike" : {
       "localizations" : {
         "de" : {
@@ -103221,6 +104507,46 @@
         }
       }
     },
+    "macOS Installer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS-Installationsprogramm"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instalador de macOS"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Programme d’installation de macOS"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS इंस्टॉलर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 설치 프로그램"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 安装器"
+          }
+        }
+      }
+    },
     "macOS approval when administrator access is needed" : {
       "localizations" : {
         "de" : {
@@ -103621,6 +104947,46 @@
         }
       }
     },
+    "macOS keeps this runtime; remove it in Xcode's Components settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS behält diese Laufzeit; entferne sie in den Xcode-Einstellungen unter „Components“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS conserva este entorno; elimínalo en los ajustes Components de Xcode."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS conserve cet environnement ; supprimez-le dans les réglages Components de Xcode."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS यह रनटाइम रखता है; इसे Xcode की Components सेटिंग्ज़ में हटाएँ।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS가 이 런타임을 유지합니다. Xcode의 Components 설정에서 제거하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 保留此运行时；请在 Xcode 的“Components”设置中移除。"
+          }
+        }
+      }
+    },
     "macOS protects these, or every user of this Mac shares them, so MyMole only shows them. Each says what to do instead." : {
       "localizations" : {
         "de" : {
@@ -103697,6 +105063,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS 报告了这些路径，但在那里没有找到应用。这些记录不是已安装的副本，也不是移除对象，无法对应到具体某条 Siri 条目。"
+          }
+        }
+      }
+    },
+    "macOS restore images Tart downloaded to make machines. Downloaded again for the next new machine." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS-Wiederherstellungsimages, die Tart geladen hat, um Maschinen zu erstellen. Werden für die nächste neue Maschine erneut geladen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imágenes de restauración de macOS que Tart descargó para crear máquinas. Se vuelven a descargar para la próxima máquina nueva."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Images de restauration de macOS que Tart a téléchargées pour créer des machines. Téléchargées à nouveau pour la prochaine nouvelle machine."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS रीस्टोर इमेज जो Tart ने मशीनें बनाने के लिए डाउनलोड कीं। अगली नई मशीन के लिए फिर से डाउनलोड होती हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tart가 머신을 만들기 위해 다운로드한 macOS 복원 이미지입니다. 다음 새 머신을 만들 때 다시 다운로드합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tart 为创建机器而下载的 macOS 恢复镜像。下次新建机器时会重新下载。"
           }
         }
       }
@@ -104175,6 +105581,166 @@
         }
       }
     },
+    "npm cache" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm-Cache"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caché de npm"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cache npm"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm कैश"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm 캐시"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm 缓存"
+          }
+        }
+      }
+    },
+    "npm packages" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm-Pakete"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paquetes de npm"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paquets npm"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm पैकेज"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm 패키지"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm 软件包"
+          }
+        }
+      }
+    },
+    "npm refetches packages." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm lädt Pakete erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm vuelve a descargar los paquetes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm récupère à nouveau les paquets."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm पैकेज फिर से लाता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm이 패키지를 다시 받습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm 会重新获取软件包。"
+          }
+        }
+      }
+    },
+    "npm's download cache." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download-Cache von npm."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caché de descargas de npm."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cache de téléchargement de npm."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm का डाउनलोड कैश।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm의 다운로드 캐시."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npm 的下载缓存。"
+          }
+        }
+      }
+    },
     "of the tasks that are on would change something" : {
       "localizations" : {
         "de" : {
@@ -104331,6 +105897,126 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "权限 隐私 卸载 无法移动 废纸篓 管理员批准 删除其他应用 访达"
+          }
+        }
+      }
+    },
+    "pnpm refetches packages." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pnpm lädt Pakete erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pnpm vuelve a descargar los paquetes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pnpm récupère à nouveau les paquets."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pnpm पैकेज फिर से लाता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pnpm이 패키지를 다시 받습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pnpm 会重新获取软件包。"
+          }
+        }
+      }
+    },
+    "pnpm store" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pnpm-Store"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Almacén de pnpm"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magasin pnpm"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pnpm स्टोर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pnpm 저장소"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pnpm 存储库"
+          }
+        }
+      }
+    },
+    "pnpm's package store. Projects relink from it on the next install." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paketspeicher von pnpm. Projekte verknüpfen beim nächsten Installieren wieder daraus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Almacén de paquetes de pnpm. Los proyectos vuelven a enlazar desde él en la próxima instalación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magasin de paquets de pnpm. Les projets s’y relient à la prochaine installation."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pnpm का पैकेज स्टोर। अगले इंस्टॉल पर प्रोजेक्ट इससे फिर से लिंक होते हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pnpm의 패키지 저장소입니다. 다음 설치 시 프로젝트가 여기에서 다시 링크합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pnpm 的软件包存储库。下次安装时，项目会从这里重新链接。"
           }
         }
       }
