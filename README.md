@@ -213,6 +213,10 @@ Privacy shows the folder and the permissions the edition uses.
 Full Disk Access allows scans of protected folders. App Management controls
 changes to installed apps. Both are configured in macOS System Settings.
 
+Without Full Disk Access, Disk Map can still map one folder you choose.
+Folders macOS protects inside it stay closed and are listed as skipped;
+nothing else scans until access is given.
+
 ## Keyboard navigation
 
 - Use Tab and Shift-Tab between controls, and arrow keys in lists, trees and the

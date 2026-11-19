@@ -7,10 +7,19 @@ struct StorageView: View {
     @AppStorage("diskMap.listWidth") private var listWidth = 0.0
     @AppStorage("diskMap.chartHidden") private var chartHidden = false
     @Bindable var model: StorageModel
+    /// Without Full Disk Access, on a folder the user chose.
+    var limited = false
     @State private var places = PlacesModel()
 
     var body: some View {
         VStack(spacing: 0) {
+            if limited {
+                DSNotice(.info, "Without Full Disk Access, folders macOS protects stay closed. They're listed under Skipped, and the map counts them as unread.") {
+                    Button("Open System Settings") { FullDiskAccess.openSettings() }
+                }
+                .padding(.horizontal, DS.Space.lg)
+                .padding(.top, DS.Space.sm)
+            }
             PathBar(model: model)
             Group {
                 switch model.tab {

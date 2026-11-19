@@ -374,7 +374,7 @@ struct RootView: View {
         if let place = app.gate(for: app.pane) {
             FolderAccessGate(app: app, place: place)
                 .paneToolbar("\(app.pane.title)", subtitle: "Needs access to \(place.inSentence)")
-        } else if app.pane.needsDiskAccess && !app.fullDiskAccess {
+        } else if app.pane.needsDiskAccess && !app.fullDiskAccess && !(app.pane == .diskMap && app.limitedMap) {
             FullDiskAccessGate(app: app)
                 .paneToolbar("\(app.pane.title)", subtitle: "Needs Full Disk Access")
         } else {
@@ -385,7 +385,7 @@ struct RootView: View {
             case .systemClean: SystemCleanView(model: app.systemClean)
             case .installer: InstallersView(model: app.installers)
             case .uninstall: UninstallView(model: app.apps, orphans: app.orphans, selfRemoval: app.selfRemoval)
-            case .diskMap: StorageView(model: app.storage)
+            case .diskMap: StorageView(model: app.storage, limited: app.mapsLimited)
             case .projects: ProjectsView(app: app, model: app.projects)
             case .status: StatusView(app: app)
             case .history: HistoryView(app: app)
@@ -471,6 +471,12 @@ struct FullDiskAccessGate: View {
                     } label: { Text("Show This Copy in Finder").foregroundStyle(.primary).frame(maxWidth: .infinity, minHeight: 24) }
                     Button { app.recheckDiskAccess() } label: { Text("Check Now").foregroundStyle(.primary).frame(maxWidth: .infinity, minHeight: 24) }
                         .disabled(app.diskAccess.checking)
+                }
+                if app.pane == .diskMap {
+                    Button { app.mapOneFolder() } label: {
+                        Text("Map One Folder Without It…").foregroundStyle(.primary).frame(maxWidth: .infinity, minHeight: 24)
+                    }
+                    .help("Map a folder you choose now. Folders macOS protects inside it stay closed and are listed as skipped; nothing else scans.")
                 }
                 Label(app.diskAccess.checking ? String(localized: "Checking access…") : String(localized: "Checks automatically while this page is open"),
                       systemImage: "arrow.trianglehead.2.clockwise")

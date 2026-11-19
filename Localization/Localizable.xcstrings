@@ -5643,16 +5643,16 @@
     },
     "%@ · %lld revisions" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ · %2$lld revisions"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ · %lld Revisionen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$lld revisions"
           }
         },
         "es" : {
@@ -31139,6 +31139,46 @@
         }
       }
     },
+    "Choose one folder to map without Full Disk Access" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle einen Ordner, der ohne Festplattenvollzugriff kartiert wird"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige una carpeta para mapear sin acceso total al disco"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez un dossier à cartographier sans accès complet au disque"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पूर्ण डिस्क ऐक्सेस के बिना मैप करने के लिए एक फ़ोल्डर चुनें"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전체 디스크 접근 권한 없이 맵을 만들 폴더 하나를 선택하세요"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择一个文件夹，在没有完全磁盘访问的情况下绘制磁盘图"
+          }
+        }
+      }
+    },
     "Choose only the files shown by the current filters. Nothing moves until you confirm." : {
       "localizations" : {
         "de" : {
@@ -54515,6 +54555,46 @@
         }
       }
     },
+    "Map One Folder Without It…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einen Ordner ohne ihn kartieren …"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapear una carpeta sin él…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cartographier un dossier sans lui…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसके बिना एक फ़ोल्डर मैप करें…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "권한 없이 폴더 하나 맵 만들기…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不授权，只绘制一个文件夹…"
+          }
+        }
+      }
+    },
     "Map a common folder or a disk" : {
       "localizations" : {
         "de" : {
@@ -54551,6 +54631,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "绘制常用文件夹或磁盘"
+          }
+        }
+      }
+    },
+    "Map a folder you choose now. Folders macOS protects inside it stay closed and are listed as skipped; nothing else scans." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kartiert jetzt einen Ordner deiner Wahl. Ordner darin, die macOS schützt, bleiben verschlossen und werden als übersprungen aufgeführt; sonst wird nichts gescannt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapea ahora una carpeta que elijas. Las carpetas que macOS protege dentro de ella siguen cerradas y se listan como omitidas; no se analiza nada más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cartographie maintenant un dossier de votre choix. Les dossiers que macOS protège à l’intérieur restent fermés et sont listés comme ignorés ; rien d’autre n’est analysé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अभी अपनी पसंद का एक फ़ोल्डर मैप करें। उसके अंदर macOS द्वारा सुरक्षित फ़ोल्डर बंद रहते हैं और छोड़े गए के रूप में सूचीबद्ध होते हैं; और कुछ स्कैन नहीं होता।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금 선택한 폴더의 맵을 만듭니다. 그 안에서 macOS가 보호하는 폴더는 닫힌 채 건너뜀으로 표시되며, 다른 것은 스캔하지 않습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "现在为你选择的文件夹绘制磁盘图。其中受 macOS 保护的文件夹保持关闭并列为已跳过；不会扫描其他内容。"
           }
         }
       }
@@ -105065,6 +105185,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "加宽窗口以更改卡片宽度。"
+          }
+        }
+      }
+    },
+    "Without Full Disk Access, folders macOS protects stay closed. They're listed under Skipped, and the map counts them as unread." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ohne Festplattenvollzugriff bleiben Ordner, die macOS schützt, verschlossen. Sie stehen unter „Übersprungen“, und die Karte zählt sie als ungelesen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin acceso total al disco, las carpetas que macOS protege siguen cerradas. Aparecen en Omitidos, y el mapa las cuenta como no leídas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sans accès complet au disque, les dossiers que macOS protège restent fermés. Ils sont listés dans Ignorés, et la carte les compte comme non lus."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पूर्ण डिस्क ऐक्सेस के बिना macOS द्वारा सुरक्षित फ़ोल्डर बंद रहते हैं। वे छोड़े गए में सूचीबद्ध होते हैं, और मैप उन्हें बिना पढ़े गिनता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전체 디스크 접근 권한이 없으면 macOS가 보호하는 폴더는 닫힌 채로 남습니다. 건너뜀에 표시되며 맵은 이를 읽지 못한 폴더로 셉니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有完全磁盘访问时，受 macOS 保护的文件夹保持关闭。它们列在“已跳过”中，磁盘图将其计为未读取。"
           }
         }
       }
