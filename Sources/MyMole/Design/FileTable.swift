@@ -199,23 +199,42 @@ struct FileTable: NSViewRepresentable {
     /// The column's values are read out once and positions are sorted, so
     /// the rows themselves, which are large, move only once.
     nonisolated static func sorted(_ rows: [FileRow], by col: FileColumn, ascending asc: Bool) -> [FileRow] {
-        func byName(_ i: Int, _ j: Int) -> Bool { rows[i].name.localizedStandardCompare(rows[j].name) == .orderedAscending }
+        // Read out once: a sort compares a row many times, and each read of
+        // the large row would copy it.
+        let pins = rows.map(\.pinned)
+        let names = rows.map(\.name)
+        func byName(_ i: Int, _ j: Int) -> Bool { names[i].localizedStandardCompare(names[j]) == .orderedAscending }
+        /// By the column's values alone, then each run of equal values by
+        /// name: the same order as one sort with the name as a tie-break, with
+        /// the costly name comparisons only where values are equal.
         func order<T: Comparable>(_ keys: [T]) -> [Int] {
-            rows.indices.sorted { i, j in
-                if rows[i].pinned != rows[j].pinned { return rows[i].pinned }
-                return keys[i] == keys[j] ? byName(i, j) : (asc ? keys[i] < keys[j] : keys[i] > keys[j])
+            // Value and position side by side, so the sort reads them in place
+            // rather than looking each value up; pinned rows are a group of their own.
+            var pairs = rows.indices.map { (pinned: pins[$0], key: keys[$0], at: $0) }
+            pairs.sort { a, b in
+                if a.pinned != b.pinned { return a.pinned }
+                return asc ? a.key < b.key : a.key > b.key
             }
+            var positions = pairs.map(\.at)
+            var start = 0
+            while start < pairs.count {
+                var end = start + 1
+                while end < pairs.count, pairs[end].pinned == pairs[start].pinned, pairs[end].key == pairs[start].key { end += 1 }
+                if end - start > 1 { positions[start..<end].sort(by: byName) }
+                start = end
+            }
+            return positions
         }
         func text(_ keys: [String], tieByName: Bool) -> [Int] {
             rows.indices.sorted { i, j in
-                if rows[i].pinned != rows[j].pinned { return rows[i].pinned }
+                if pins[i] != pins[j] { return pins[i] }
                 let r = keys[i].localizedStandardCompare(keys[j])
                 if r == .orderedSame { return tieByName && byName(i, j) }
                 return asc ? r == .orderedAscending : r == .orderedDescending
             }
         }
         let positions: [Int] = switch col {
-        case .name: text(rows.map(\.name), tieByName: false)
+        case .name: text(names, tieByName: false)
         case .size: order(rows.map { $0.size ?? -1 })
         case .freeable: order(rows.map { $0.freeable ?? -1 })
         case .change: order(rows.map { $0.change ?? 0 })
