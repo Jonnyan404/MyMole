@@ -5641,6 +5641,52 @@
         }
       }
     },
+    "%@ · %lld revisions" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$lld revisions"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · %lld Revisionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · %lld revisiones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · %lld révisions"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · %lld संशोधन"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · 리비전 %lld개"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · %lld 个修订版本"
+          }
+        }
+      }
+    },
     "%@ · all users" : {
       "localizations" : {
         "de" : {
@@ -13427,6 +13473,46 @@
         }
       }
     },
+    "%lld layers" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Schichten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld capas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld couches"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld लेयर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레이어 %lld개"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个层"
+          }
+        }
+      }
+    },
     "%lld left: changed since you confirmed, or stopped" : {
       "localizations" : {
         "de" : {
@@ -14203,6 +14289,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld / 64 个点与最佳结果不同"
+          }
+        }
+      }
+    },
+    "%lld of its files stayed where they were." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld seiner Dateien blieben, wo sie waren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld de sus archivos se quedaron donde estaban."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld de ses fichiers sont restés en place."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसकी %lld फ़ाइलें अपनी जगह रहीं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일 %lld개가 원래 위치에 남았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其中 %lld 个文件留在原处。"
           }
         }
       }
@@ -15207,6 +15333,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld 张照片"
+          }
+        }
+      }
+    },
+    "%lld pieces" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Teile"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld partes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld morceaux"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld हिस्से"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "조각 %lld개"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个片段"
           }
         }
       }
@@ -18381,6 +18547,46 @@
         }
       }
     },
+    "1 layer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Schicht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 capa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 couche"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 लेयर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레이어 1개"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 个层"
+          }
+        }
+      }
+    },
     "1 level deep" : {
       "localizations" : {
         "de" : {
@@ -18457,6 +18663,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 条提示"
+          }
+        }
+      }
+    },
+    "1 piece" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Teil"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 parte"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 morceau"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 हिस्सा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "조각 1개"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 个片段"
           }
         }
       }
@@ -18977,6 +19223,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "有容器正在使用它。请先移除该容器。"
+          }
+        }
+      }
+    },
+    "A download that stopped before it finished. ollama pull starts it again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Download, der vor dem Ende abbrach. ollama pull startet ihn neu."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una descarga que se detuvo antes de terminar. ollama pull la vuelve a empezar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un téléchargement arrêté avant la fin. ollama pull le relance."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "एक डाउनलोड जो पूरा होने से पहले रुक गया। ollama pull उसे फिर से शुरू करता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료되기 전에 멈춘 다운로드입니다. ollama pull로 다시 시작합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未完成就停止的下载。ollama pull 会重新开始。"
           }
         }
       }
@@ -20111,6 +20397,126 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "占满一个核心 %1$lld 分钟，每个应用每天最多一次。"
+          }
+        }
+      }
+    },
+    "AI Models" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "KI-Modelle"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modelos de IA"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modèles d’IA"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI मॉडल"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 모델"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 模型"
+          }
+        }
+      }
+    },
+    "AI models go to the Trash, with every file that's only theirs; layers other models use stay. Each list is read again first; anything that started or changed since is left alone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "KI-Modelle kommen in den Papierkorb, mit jeder Datei, die nur ihnen gehört; Schichten, die andere Modelle nutzen, bleiben. Jede Liste wird zuerst neu gelesen; was seitdem gestartet oder sich geändert hat, bleibt unberührt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los modelos de IA van a la Papelera, con cada archivo que solo es suyo; las capas que usan otros modelos se quedan. Cada lista se vuelve a leer primero; lo que haya empezado o cambiado desde entonces no se toca."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les modèles d’IA vont dans la Corbeille, avec chaque fichier qui n’appartient qu’à eux ; les couches utilisées par d’autres modèles restent. Chaque liste est relue d’abord ; ce qui a démarré ou changé depuis n’est pas touché."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI मॉडल ट्रैश में जाते हैं, उन सभी फ़ाइलों के साथ जो केवल उनकी हैं; दूसरे मॉडल जिन लेयर का उपयोग करते हैं वे रहती हैं। हर सूची पहले फिर से पढ़ी जाती है; इस बीच जो शुरू हुआ या बदला, उसे छोड़ दिया जाता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 모델은 그 모델만의 파일과 함께 휴지통으로 이동하며, 다른 모델이 쓰는 레이어는 남습니다. 각 목록을 먼저 다시 읽으며, 그사이 시작되었거나 바뀐 항목은 건드리지 않습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 模型连同只属于它的所有文件会移到废纸篓；其他模型使用的层会保留。每个列表都会先重新读取；此后启动或变化的内容不会被处理。"
+          }
+        }
+      }
+    },
+    "AI models go to the Trash; the rest go through each tool's own command and can't be undone. Each list is read again first; anything that started or changed since is left alone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "KI-Modelle kommen in den Papierkorb; der Rest läuft über den eigenen Befehl jedes Tools und lässt sich nicht widerrufen. Jede Liste wird zuerst neu gelesen; was seitdem gestartet oder sich geändert hat, bleibt unberührt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los modelos de IA van a la Papelera; el resto pasa por el comando propio de cada herramienta y no se puede deshacer. Cada lista se vuelve a leer primero; lo que haya empezado o cambiado desde entonces no se toca."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les modèles d’IA vont dans la Corbeille ; le reste passe par la commande propre à chaque outil et ne peut pas être annulé. Chaque liste est relue d’abord ; ce qui a démarré ou changé depuis n’est pas touché."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI मॉडल ट्रैश में जाते हैं; बाकी हर टूल के अपने कमांड से जाता है और पूर्ववत नहीं किया जा सकता। हर सूची पहले फिर से पढ़ी जाती है; इस बीच जो शुरू हुआ या बदला, उसे छोड़ दिया जाता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 모델은 휴지통으로 이동하고, 나머지는 각 도구 자체 명령을 거치며 되돌릴 수 없습니다. 각 목록을 먼저 다시 읽으며, 그사이 시작되었거나 바뀐 항목은 건드리지 않습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 模型会移到废纸篓；其余项目经由各工具自己的命令执行，无法撤销。每个列表都会先重新读取；此后启动或变化的内容不会被处理。"
           }
         }
       }
@@ -24437,42 +24843,42 @@
         }
       }
     },
-    "As each tool lists them. Only what the tool builds or downloads again starts chosen. What may hold your work is chosen only by you, and what's in use or holds data is only shown. Each item goes through the tool's own command and is deleted for good." : {
+    "As each tool lists them. Only what the tool builds or downloads again starts chosen. What may hold your work is chosen only by you, and what's in use or holds data is only shown. Each item goes through the tool's own command and is deleted for good; AI models go to the Trash." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "So, wie jedes Tool sie auflistet. Nur was das Tool neu baut oder erneut lädt, ist anfangs ausgewählt. Was deine Arbeit enthalten könnte, wählst nur du aus, und was verwendet wird oder Daten enthält, wird nur angezeigt. Jedes Objekt läuft über den eigenen Befehl des Tools und wird endgültig gelöscht."
+            "value" : "So, wie jedes Tool sie auflistet. Nur was das Tool neu baut oder erneut lädt, ist anfangs ausgewählt. Was deine Arbeit enthalten könnte, wählst nur du aus, und was verwendet wird oder Daten enthält, wird nur angezeigt. Jedes Objekt läuft über den eigenen Befehl des Tools und wird endgültig gelöscht; KI-Modelle kommen in den Papierkorb."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tal como los lista cada herramienta. Solo lo que la herramienta vuelve a compilar o descargar empieza seleccionado. Lo que pueda contener tu trabajo solo lo eliges tú, y lo que está en uso o guarda datos solo se muestra. Cada elemento pasa por el comando propio de la herramienta y se elimina definitivamente."
+            "value" : "Tal como los lista cada herramienta. Solo lo que la herramienta vuelve a compilar o descargar empieza seleccionado. Lo que pueda contener tu trabajo solo lo eliges tú, y lo que está en uso o guarda datos solo se muestra. Cada elemento pasa por el comando propio de la herramienta y se elimina definitivamente; los modelos de IA van a la Papelera."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tels que chaque outil les liste. Seul ce que l’outil recompile ou retélécharge est choisi d’avance. Ce qui peut contenir votre travail n’est choisi que par vous, et ce qui est utilisé ou contient des données est seulement affiché. Chaque élément passe par la commande propre à l’outil et est supprimé définitivement."
+            "value" : "Tels que chaque outil les liste. Seul ce que l’outil recompile ou retélécharge est choisi d’avance. Ce qui peut contenir votre travail n’est choisi que par vous, et ce qui est utilisé ou contient des données est seulement affiché. Chaque élément passe par la commande propre à l’outil et est supprimé définitivement ; les modèles d’IA vont dans la Corbeille."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "जैसा हर टूल उन्हें सूचीबद्ध करता है। केवल वही पहले से चुना होता है जिसे टूल फिर से बनाता या डाउनलोड करता है। जिसमें आपका काम हो सकता है उसे केवल आप चुनते हैं, और जो उपयोग में है या डेटा रखता है वह केवल दिखाया जाता है। हर आइटम टूल के अपने कमांड से जाता है और स्थायी रूप से हटा दिया जाता है।"
+            "value" : "जैसा हर टूल उन्हें सूचीबद्ध करता है। केवल वही पहले से चुना होता है जिसे टूल फिर से बनाता या डाउनलोड करता है। जिसमें आपका काम हो सकता है उसे केवल आप चुनते हैं, और जो उपयोग में है या डेटा रखता है वह केवल दिखाया जाता है। हर आइटम टूल के अपने कमांड से जाता है और स्थायी रूप से हटा दिया जाता है; AI मॉडल ट्रैश में जाते हैं।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "각 도구가 나열한 그대로입니다. 도구가 다시 빌드하거나 다시 다운로드하는 것만 처음부터 선택됩니다. 작업 내용이 있을 수 있는 항목은 직접 선택해야 하며, 사용 중이거나 데이터가 있는 항목은 표시만 됩니다. 각 항목은 도구 자체 명령을 거쳐 영구적으로 삭제됩니다."
+            "value" : "각 도구가 나열한 그대로입니다. 도구가 다시 빌드하거나 다시 다운로드하는 것만 처음부터 선택됩니다. 작업 내용이 있을 수 있는 항목은 직접 선택해야 하며, 사용 중이거나 데이터가 있는 항목은 표시만 됩니다. 각 항목은 도구 자체 명령을 거쳐 영구적으로 삭제되며, AI 모델은 휴지통으로 이동합니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "按各工具自己的列表。只有工具会重新生成或重新下载的内容才会默认勾选。可能存有你的成果的内容，只有你自己勾选才会处理；正在使用或存有数据的内容只作展示。每一项都经由该工具自己的命令执行，并会被永久删除。"
+            "value" : "按各工具自己的列表。只有工具会重新生成或重新下载的内容才会默认勾选。可能存有你的成果的内容，只有你自己勾选才会处理；正在使用或存有数据的内容只作展示。每一项都经由该工具自己的命令执行，并会被永久删除；AI 模型则移到废纸篓。"
           }
         }
       }
@@ -37263,6 +37669,86 @@
         }
       }
     },
+    "Downloaded again by the program that asks for it. When it was last read doesn't tell whether a program still needs it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird vom Programm, das es anfordert, erneut geladen. Wann es zuletzt gelesen wurde, sagt nicht, ob ein Programm es noch braucht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo vuelve a descargar el programa que lo pide. Cuándo se leyó por última vez no indica si un programa aún lo necesita."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retéléchargé par le programme qui le demande. La date de dernière lecture ne dit pas si un programme en a encore besoin."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "जो प्रोग्राम इसे माँगता है वह इसे फिर से डाउनलोड करता है। इसे आख़िरी बार कब पढ़ा गया, इससे यह पता नहीं चलता कि किसी प्रोग्राम को अब भी इसकी ज़रूरत है या नहीं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "요청하는 프로그램이 다시 다운로드합니다. 마지막으로 읽은 시점만으로는 프로그램이 아직 필요로 하는지 알 수 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要它的程序会重新下载。上次读取的时间并不能说明程序是否仍需要它。"
+          }
+        }
+      }
+    },
+    "Downloaded again with ollama pull. Its own layers go with it; layers other models use stay." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit ollama pull erneut ladbar. Seine eigenen Schichten gehen mit; Schichten, die andere Modelle nutzen, bleiben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se vuelve a descargar con ollama pull. Sus propias capas se van con él; las capas que usan otros modelos se quedan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se retélécharge avec ollama pull. Ses propres couches partent avec lui ; les couches utilisées par d’autres modèles restent."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ollama pull से फिर से डाउनलोड होता है। इसकी अपनी लेयर इसके साथ जाती हैं; दूसरे मॉडल जिन लेयर का उपयोग करते हैं वे रहती हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ollama pull로 다시 다운로드할 수 있습니다. 이 모델만의 레이어는 함께 이동하고, 다른 모델이 쓰는 레이어는 남습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可用 ollama pull 重新下载。它自己的层会一起移走；其他模型使用的层会保留。"
+          }
+        }
+      }
+    },
     "Downloads" : {
       "localizations" : {
         "de" : {
@@ -46089,6 +46575,126 @@
         }
       }
     },
+    "Hugging Face dataset" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face-Datensatz"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conjunto de datos de Hugging Face"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeu de données Hugging Face"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face डेटासेट"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face 데이터셋"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face 数据集"
+          }
+        }
+      }
+    },
+    "Hugging Face model" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face-Modell"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modelo de Hugging Face"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modèle Hugging Face"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face मॉडल"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face 모델"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face 模型"
+          }
+        }
+      }
+    },
+    "Hugging Face space" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face-Space"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space de Hugging Face"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Space Hugging Face"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face स्पेस"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face 스페이스"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hugging Face Space"
+          }
+        }
+      }
+    },
     "Hyperspeed" : {
       "localizations" : {
         "de" : {
@@ -50579,6 +51185,126 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS 可识别"
+          }
+        }
+      }
+    },
+    "LM Studio downloads it again from its Discover page." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio lädt es über seine Seite „Discover“ erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio lo vuelve a descargar desde su página Discover."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio le retélécharge depuis sa page Discover."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio इसे अपने Discover पेज से फिर से डाउनलोड करता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio의 Discover 페이지에서 다시 다운로드합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio 可从其 Discover 页面重新下载。"
+          }
+        }
+      }
+    },
+    "LM Studio is running and may have it loaded. Quit it first." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio läuft und hat es vielleicht geladen. Beende es zuerst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio está abierto y puede tenerlo cargado. Ciérralo primero."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio est ouvert et l’a peut-être chargé. Quittez-le d’abord."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio चल रहा है और शायद इसे लोड किए हुए है। पहले उसे बंद करें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio가 실행 중이며 이 모델을 불러왔을 수 있습니다. 먼저 종료하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio 正在运行，可能已载入它。请先退出 LM Studio。"
+          }
+        }
+      }
+    },
+    "LM Studio model" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio-Modell"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modelo de LM Studio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modèle LM Studio"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio मॉडल"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio 모델"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio 模型"
           }
         }
       }
@@ -66671,6 +67397,246 @@
         }
       }
     },
+    "Ollama is running and may still be downloading. Quit it first." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama läuft und lädt vielleicht noch. Beende es zuerst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama está abierto y puede seguir descargando. Ciérralo primero."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama est ouvert et télécharge peut-être encore. Quittez-le d’abord."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama चल रहा है और शायद अभी भी डाउनलोड कर रहा है। पहले उसे बंद करें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama가 실행 중이며 아직 다운로드 중일 수 있습니다. 먼저 종료하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama 正在运行，可能仍在下载。请先退出 Ollama。"
+          }
+        }
+      }
+    },
+    "Ollama is running. Quit it first, or remove the model with ollama rm." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama läuft. Beende es zuerst oder entferne das Modell mit ollama rm."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama está abierto. Ciérralo primero o elimina el modelo con ollama rm."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama est ouvert. Quittez-le d’abord, ou supprimez le modèle avec ollama rm."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama चल रहा है। पहले उसे बंद करें, या मॉडल को ollama rm से हटाएँ।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama가 실행 중입니다. 먼저 종료하거나 ollama rm으로 모델을 제거하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama 正在运行。请先退出，或用 ollama rm 移除该模型。"
+          }
+        }
+      }
+    },
+    "Ollama layers no model lists" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama-Schichten, die kein Modell aufführt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capas de Ollama que ningún modelo lista"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couches Ollama qu’aucun modèle ne liste"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama लेयर जिन्हें कोई मॉडल सूचीबद्ध नहीं करता"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "어떤 모델도 쓰지 않는 Ollama 레이어"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有模型列出的 Ollama 层"
+          }
+        }
+      }
+    },
+    "Ollama model" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama-Modell"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modelo de Ollama"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modèle Ollama"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama मॉडल"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama 모델"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama 模型"
+          }
+        }
+      }
+    },
+    "Ollama model · %@ shared with other models stays" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama-Modell · %@, die es mit anderen Modellen teilt, bleiben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modelo de Ollama · %@ compartidos con otros modelos se quedan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modèle Ollama · %@ partagés avec d’autres modèles restent"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama मॉडल · दूसरे मॉडलों के साथ साझा %@ रहते हैं"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama 모델 · 다른 모델과 공유하는 %@는 남음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama 模型 · 与其他模型共享的 %@ 会保留"
+          }
+        }
+      }
+    },
+    "Ollama removes these itself the next time it starts." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama entfernt sie beim nächsten Start selbst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama las elimina por sí mismo la próxima vez que se inicia."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama les supprime lui-même au prochain démarrage."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama अगली बार शुरू होने पर इन्हें खुद हटा देता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama가 다음에 시작할 때 직접 제거합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama 下次启动时会自行移除这些层。"
+          }
+        }
+      }
+    },
     "On System Clean's keep list." : {
       "localizations" : {
         "de" : {
@@ -67267,6 +68233,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "始终保留一份副本。请先取消选择另一份副本。"
+          }
+        }
+      }
+    },
+    "One of Ollama's model lists couldn't be read, so it isn't known which layers other models use." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine der Modelllisten von Ollama konnte nicht gelesen werden, daher ist nicht bekannt, welche Schichten andere Modelle nutzen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo leer una de las listas de modelos de Ollama, así que no se sabe qué capas usan otros modelos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une des listes de modèles d’Ollama n’a pas pu être lue : on ne sait donc pas quelles couches les autres modèles utilisent."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama की एक मॉडल सूची पढ़ी नहीं जा सकी, इसलिए पता नहीं कि दूसरे मॉडल कौन-सी लेयर उपयोग करते हैं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama 모델 목록 중 하나를 읽을 수 없어 다른 모델이 어떤 레이어를 쓰는지 알 수 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama 的某个模型列表无法读取，因此无法确定其他模型使用哪些层。"
           }
         }
       }
@@ -70549,6 +71555,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "饼图"
+          }
+        }
+      }
+    },
+    "Pieces of a download that stopped. The next download of the same files starts over." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teile eines abgebrochenen Downloads. Der nächste Download derselben Dateien beginnt von vorn."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partes de una descarga que se detuvo. La próxima descarga de los mismos archivos empieza de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morceaux d’un téléchargement arrêté. Le prochain téléchargement des mêmes fichiers repart de zéro."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "रुके हुए डाउनलोड के हिस्से। उन्हीं फ़ाइलों का अगला डाउनलोड शुरू से होता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "멈춘 다운로드의 조각입니다. 같은 파일을 다음에 다운로드하면 처음부터 시작합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已停止的下载留下的片段。下次下载相同文件时会重新开始。"
           }
         }
       }
@@ -75509,6 +76555,126 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "请在 Android Studio 的 SDK Manager 中移除。"
+          }
+        }
+      }
+    },
+    "Remove it in LM Studio's My Models." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entferne es in LM Studio unter „My Models“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elimínalo en My Models de LM Studio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimez-le dans My Models de LM Studio."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसे LM Studio के My Models में हटाएँ।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LM Studio의 My Models에서 제거하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在 LM Studio 的 My Models 中移除。"
+          }
+        }
+      }
+    },
+    "Remove it with ollama rm, or in the Ollama app." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entferne es mit ollama rm oder in der Ollama-App."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elimínalo con ollama rm o en la app Ollama."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimez-le avec ollama rm, ou dans l’app Ollama."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसे ollama rm से, या Ollama ऐप में हटाएँ।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ollama rm 또는 Ollama 앱에서 제거하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请用 ollama rm 或在 Ollama 应用中移除。"
+          }
+        }
+      }
+    },
+    "Remove it with the hf cache command, or by moving its folder to the Trash." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entferne es mit dem Befehl hf cache oder indem du seinen Ordner in den Papierkorb legst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elimínalo con el comando hf cache o trasladando su carpeta a la Papelera."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimez-le avec la commande hf cache, ou en plaçant son dossier dans la Corbeille."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसे hf cache कमांड से, या इसका फ़ोल्डर ट्रैश में ले जाकर हटाएँ।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hf cache 명령으로 제거하거나 폴더를 휴지통으로 이동하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请用 hf cache 命令移除，或把它的文件夹移到废纸篓。"
           }
         }
       }
@@ -98737,6 +99903,86 @@
         }
       }
     },
+    "Unfinished Ollama downloads" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unfertige Ollama-Downloads"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descargas de Ollama sin terminar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Téléchargements Ollama inachevés"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अधूरे Ollama डाउनलोड"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료되지 않은 Ollama 다운로드"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未完成的 Ollama 下载"
+          }
+        }
+      }
+    },
+    "Unfinished downloads of %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unfertige Downloads von %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descargas sin terminar de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Téléchargements inachevés de %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ के अधूरे डाउनलोड"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@의 완료되지 않은 다운로드"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 的未完成下载"
+          }
+        }
+      }
+    },
     "Uninstall" : {
       "localizations" : {
         "de" : {
@@ -101649,42 +102895,42 @@
         }
       }
     },
-    "Virtual machines and Android's files, with their sizes, to look at. The App Store edition can't run Docker, Xcode's or Android's tools, so it removes nothing here; the direct edition removes what you choose with each tool's own command." : {
+    "Virtual machines, AI models and Android's files, with their sizes, to look at. The App Store edition can't run Docker, Xcode's or Android's tools, so it removes nothing here; the direct edition removes what you choose with each tool's own command, and moves AI models to the Trash." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Virtuelle Maschinen und Android-Dateien mit ihren Größen zum Ansehen. Die App Store-Edition kann die Tools von Docker, Xcode oder Android nicht ausführen, entfernt hier also nichts; die direkte Edition entfernt, was du auswählst, mit dem eigenen Befehl jedes Tools."
+            "value" : "Virtuelle Maschinen, KI-Modelle und Android-Dateien mit ihren Größen zum Ansehen. Die App Store-Edition kann die Tools von Docker, Xcode oder Android nicht ausführen, entfernt hier also nichts; die direkte Edition entfernt, was du auswählst, mit dem eigenen Befehl jedes Tools und legt KI-Modelle in den Papierkorb."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Máquinas virtuales y archivos de Android, con sus tamaños, para verlos. La edición App Store no puede ejecutar las herramientas de Docker, Xcode ni Android, así que aquí no elimina nada; la edición directa elimina lo que elijas con el comando propio de cada herramienta."
+            "value" : "Máquinas virtuales, modelos de IA y archivos de Android, con sus tamaños, para verlos. La edición App Store no puede ejecutar las herramientas de Docker, Xcode ni Android, así que aquí no elimina nada; la edición directa elimina lo que elijas con el comando propio de cada herramienta y traslada los modelos de IA a la Papelera."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les machines virtuelles et les fichiers d’Android, avec leurs tailles, à consulter. L’édition App Store ne peut pas exécuter les outils de Docker, d’Xcode ou d’Android, elle ne supprime donc rien ici ; l’édition directe supprime ce que vous choisissez avec la commande propre à chaque outil."
+            "value" : "Les machines virtuelles, les modèles d’IA et les fichiers d’Android, avec leurs tailles, à consulter. L’édition App Store ne peut pas exécuter les outils de Docker, d’Xcode ou d’Android, elle ne supprime donc rien ici ; l’édition directe supprime ce que vous choisissez avec la commande propre à chaque outil et place les modèles d’IA dans la Corbeille."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "वर्चुअल मशीन और Android की फ़ाइलें, उनके आकार के साथ, देखने के लिए। App Store संस्करण Docker, Xcode या Android के टूल नहीं चला सकता, इसलिए यहाँ कुछ नहीं हटाता; डायरेक्ट संस्करण आपकी चुनी चीज़ें हर टूल के अपने कमांड से हटाता है।"
+            "value" : "वर्चुअल मशीन, AI मॉडल और Android की फ़ाइलें, उनके आकार के साथ, देखने के लिए। App Store संस्करण Docker, Xcode या Android के टूल नहीं चला सकता, इसलिए यहाँ कुछ नहीं हटाता; डायरेक्ट संस्करण आपकी चुनी चीज़ें हर टूल के अपने कमांड से हटाता है और AI मॉडल को ट्रैश में ले जाता है।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "가상 머신과 Android 파일을 크기와 함께 보여 줍니다. App Store 에디션은 Docker, Xcode 또는 Android 도구를 실행할 수 없어 여기서 아무것도 제거하지 않으며, 직접 배포 에디션은 각 도구 자체 명령으로 선택한 항목을 제거합니다."
+            "value" : "가상 머신, AI 모델, Android 파일을 크기와 함께 보여 줍니다. App Store 에디션은 Docker, Xcode 또는 Android 도구를 실행할 수 없어 여기서 아무것도 제거하지 않으며, 직접 배포 에디션은 각 도구 자체 명령으로 선택한 항목을 제거하고 AI 모델은 휴지통으로 이동합니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "虚拟机与 Android 的文件及其大小，仅供查看。App Store 版无法运行 Docker、Xcode 或 Android 的工具，因此这里不会移除任何内容；直装版会用各工具自己的命令移除你所选择的内容。"
+            "value" : "虚拟机、AI 模型与 Android 的文件及其大小，仅供查看。App Store 版无法运行 Docker、Xcode 或 Android 的工具，因此这里不会移除任何内容；直装版会用各工具自己的命令移除你所选择的内容，并把 AI 模型移到废纸篓。"
           }
         }
       }

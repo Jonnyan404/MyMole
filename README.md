@@ -36,8 +36,8 @@ The GitHub edition also lists what programs left in the temporary folders and
 haven't touched for three days. Folders a running program works in are left
 out, and none is ever chosen for you.
 
-Developer Tools lists what Docker, Xcode's simulators, Android and virtual
-machine apps keep, with sizes:
+Developer Tools lists what Docker, Xcode's simulators, Android, virtual
+machine apps and local AI models keep, with sizes:
 
 - Unused build cache and untagged images no container uses start chosen.
 - Stopped containers, unused images and anonymous volumes, simulator runtimes
@@ -48,6 +48,10 @@ machine apps keep, with sizes:
 - Each removal goes through the tool's own command (`docker`, `xcrun simctl`,
   `avdmanager`, `sdkmanager`) after the tool's list is read again. It can't be
   undone. The App Store edition only lists these and removes nothing.
+- Ollama models are listed by name with the layers they share, Hugging Face's
+  cache by repository and LM Studio's models by folder, with unfinished
+  downloads apart. A model goes to the Trash only if you choose it, with the
+  files that are only its own, and only while its app isn't running.
 
 ![Deep Clean showing fictional application caches and cleanup categories](.github/images/deep-clean.png)
 
