@@ -10,6 +10,7 @@ struct DeepCleanView: View {
     var openSystemClean: () -> Void = {}
     @State private var confirming = false
     @State private var showDevTools = false
+    @State private var showCloud = false
     @State private var explaining: CleanCandidate?
     /// Kept while you go to other panes and back, as the window's own state.
     @SceneStorage("deepClean.filter") private var query = ""
@@ -47,6 +48,7 @@ struct DeepCleanView: View {
         .liveRefresh(every: .seconds(5)) { await model.refreshActivity() }
         .onChange(of: model.chosen) { _, _ in confirming = false }
         .sheet(isPresented: $showDevTools) { DevToolsSheet() }
+        .sheet(isPresented: $showCloud) { CloudDownloadsSheet() }
     }
 
     private var confirmationText: String {
@@ -63,6 +65,8 @@ struct DeepCleanView: View {
         }
         PaneTool.button("deep-clean.devtools", "Developer Tools…", symbol: "hammer",
                         help: "Docker, simulator runtimes, Android devices and virtual machines, as each tool lists them") { showDevTools = true }
+        PaneTool.button("deep-clean.icloud", "iCloud Downloads…", symbol: "icloud.and.arrow.down",
+                        help: "Files in iCloud Drive that are also downloaded to this Mac; removing a download keeps the file in iCloud") { showCloud = true }
         if model.scanning {
             PaneTool.button("deep-clean.scan", "Stop", symbol: "stop.fill", help: "Stop scanning; the last complete result stays") { model.stop() }
         } else {

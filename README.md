@@ -36,6 +36,10 @@ The GitHub edition also lists what programs left in the temporary folders and
 haven't touched for three days, or the number of days set in Settings (0 to 90). Folders a
 running program works in are left out, and none is ever chosen for you.
 
+iCloud Downloads lists files in iCloud Drive that are also downloaded to this
+Mac. Removing a download keeps the file in iCloud Drive and in Finder; opening
+it downloads it again. Files not yet uploaded in full can't be chosen.
+
 Developer Tools lists what Docker, Xcode's simulators, Android, virtual
 machine apps and local AI models keep, with sizes:
 

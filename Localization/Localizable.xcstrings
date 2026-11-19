@@ -17475,6 +17475,52 @@
         }
       }
     },
+    "%lld stayed: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld stayed: %2$@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld blieben: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld se quedaron: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld sont restés : %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld रहे: %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld개 남음: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个保留：%@"
+          }
+        }
+      }
+    },
     "%lld system items are deleted for good; they can't go to the Trash. The services that made them rebuild what they need. macOS asks for an administrator's password first." : {
       "localizations" : {
         "de" : {
@@ -41799,6 +41845,86 @@
         }
       }
     },
+    "Files in iCloud Drive that are also downloaded to this Mac. Removing a download keeps the file in iCloud Drive and in Finder, with a cloud icon; opening it downloads it again. Nothing goes to the Trash." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dateien in iCloud Drive, die auch auf diesen Mac geladen sind. Wird ein Download entfernt, bleibt die Datei in iCloud Drive und im Finder, mit einem Wolkensymbol; beim Öffnen wird sie wieder geladen. Nichts kommt in den Papierkorb."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivos de iCloud Drive que también están descargados en este Mac. Al eliminar una descarga, el archivo sigue en iCloud Drive y en el Finder, con un icono de nube; al abrirlo se descarga de nuevo. Nada va a la Papelera."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fichiers d’iCloud Drive également téléchargés sur ce Mac. Supprimer un téléchargement garde le fichier dans iCloud Drive et dans le Finder, avec une icône de nuage ; l’ouvrir le télécharge à nouveau. Rien ne va dans la Corbeille."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Drive की वे फ़ाइलें जो इस Mac पर भी डाउनलोड हैं। डाउनलोड हटाने पर फ़ाइल iCloud Drive और Finder में बादल आइकन के साथ रहती है; खोलने पर वह फिर डाउनलोड होती है। कुछ भी ट्रैश में नहीं जाता।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Mac에도 다운로드된 iCloud Drive 파일입니다. 다운로드를 제거해도 파일은 구름 아이콘과 함께 iCloud Drive와 Finder에 남으며, 열면 다시 다운로드됩니다. 휴지통으로 가는 것은 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已下载到这台 Mac 的 iCloud 云盘文件。移除下载后，文件仍以云朵图标留在 iCloud 云盘和访达中；打开时会再次下载。不会移到废纸篓。"
+          }
+        }
+      }
+    },
+    "Files in iCloud Drive that are also downloaded to this Mac; removing a download keeps the file in iCloud" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dateien in iCloud Drive, die auch auf diesen Mac geladen sind; wird ein Download entfernt, bleibt die Datei in iCloud"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivos de iCloud Drive también descargados en este Mac; al eliminar una descarga, el archivo sigue en iCloud"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fichiers d’iCloud Drive également téléchargés sur ce Mac ; supprimer un téléchargement garde le fichier dans iCloud"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Drive की वे फ़ाइलें जो इस Mac पर भी डाउनलोड हैं; डाउनलोड हटाने पर फ़ाइल iCloud में रहती है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Mac에도 다운로드된 iCloud Drive 파일. 다운로드를 제거해도 파일은 iCloud에 남습니다"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已下载到这台 Mac 的 iCloud 云盘文件；移除下载后文件仍留在 iCloud 中"
+          }
+        }
+      }
+    },
     "Files only" : {
       "localizations" : {
         "de" : {
@@ -50187,6 +50313,46 @@
         }
       }
     },
+    "It changed since it was listed, or isn't uploaded in full yet." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie hat sich seit dem Auflisten geändert oder ist noch nicht ganz hochgeladen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambió desde que se listó o aún no está subido del todo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il a changé depuis qu’il a été listé, ou n’est pas encore entièrement envoyé."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सूची बनने के बाद यह बदली, या अभी पूरी अपलोड नहीं हुई।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목록을 만든 뒤 바뀌었거나 아직 모두 업로드되지 않았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列出后已改动，或尚未完全上传。"
+          }
+        }
+      }
+    },
     "It changed while being removed and is kept at %@." : {
       "localizations" : {
         "de" : {
@@ -53161,6 +53327,46 @@
         }
       }
     },
+    "Last Opened" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zuletzt geöffnet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Última apertura"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dernière ouverture"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आख़िरी बार खोला"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마지막으로 연 날짜"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上次打开"
+          }
+        }
+      }
+    },
     "Last active" : {
       "localizations" : {
         "de" : {
@@ -55763,6 +55969,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "查找范围"
+          }
+        }
+      }
+    },
+    "Looking in iCloud Drive…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suche in iCloud Drive …"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando en iCloud Drive…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche dans iCloud Drive…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Drive में देख रहे हैं…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Drive 확인 중…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在查看 iCloud 云盘…"
           }
         }
       }
@@ -64535,6 +64781,46 @@
         }
       }
     },
+    "No Downloaded iCloud Files" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine geladenen iCloud-Dateien"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay archivos de iCloud descargados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun fichier iCloud téléchargé"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कोई डाउनलोड की गई iCloud फ़ाइल नहीं"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다운로드된 iCloud 파일 없음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有已下载的 iCloud 文件"
+          }
+        }
+      }
+    },
     "No Duplicates" : {
       "localizations" : {
         "de" : {
@@ -67255,6 +67541,46 @@
         }
       }
     },
+    "Not uploaded in full yet, so it stays on this Mac." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nicht ganz hochgeladen, daher bleibt sie auf diesem Mac."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no está subido del todo, así que se queda en este Mac."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas encore entièrement envoyé : il reste sur ce Mac."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अभी पूरी अपलोड नहीं हुई, इसलिए इसी Mac पर रहती है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 모두 업로드되지 않아 이 Mac에 남습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尚未完全上传，因此保留在这台 Mac 上。"
+          }
+        }
+      }
+    },
     "Nothing builds old logs again; they're only read to look into a problem." : {
       "localizations" : {
         "de" : {
@@ -67331,6 +67657,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "尚未清理任何内容"
+          }
+        }
+      }
+    },
+    "Nothing in iCloud Drive of 1 MB or more is downloaded to this Mac." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts in iCloud Drive mit 1 MB oder mehr ist auf diesen Mac geladen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay nada de 1 MB o más en iCloud Drive descargado en este Mac."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien de 1 Mo ou plus dans iCloud Drive n’est téléchargé sur ce Mac."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Drive में 1 MB या उससे बड़ी कोई चीज़ इस Mac पर डाउनलोड नहीं है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Mac에 다운로드된 1MB 이상의 iCloud Drive 파일이 없습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 云盘中没有 1 MB 或更大的文件下载到这台 Mac。"
           }
         }
       }
@@ -78131,6 +78497,46 @@
         }
       }
     },
+    "Remove %lld downloads from this Mac?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Downloads von diesem Mac entfernen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Eliminar %lld descargas de este Mac?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer %lld téléchargements de ce Mac ?"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इस Mac से %lld डाउनलोड हटाएँ?"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Mac에서 다운로드 %lld개를 제거할까요?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要从这台 Mac 移除 %lld 个下载吗？"
+          }
+        }
+      }
+    },
     "Remove %lld items for good?" : {
       "localizations" : {
         "de" : {
@@ -78367,6 +78773,126 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "移除 %1$lld…"
+          }
+        }
+      }
+    },
+    "Remove 1 download from this Mac?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Download von diesem Mac entfernen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Eliminar 1 descarga de este Mac?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer 1 téléchargement de ce Mac ?"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इस Mac से 1 डाउनलोड हटाएँ?"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Mac에서 다운로드 1개를 제거할까요?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要从这台 Mac 移除 1 个下载吗？"
+          }
+        }
+      }
+    },
+    "Remove Downloads" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Downloads entfernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar descargas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer les téléchargements"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डाउनलोड हटाएँ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다운로드 제거"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除下载"
+          }
+        }
+      }
+    },
+    "Remove Downloads…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Downloads entfernen …"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar descargas…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer les téléchargements…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डाउनलोड हटाएँ…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다운로드 제거…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除下载…"
           }
         }
       }
@@ -79035,6 +79561,92 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Removed %lld downloads · %@ free on this Mac" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Removed %1$lld downloads · %2$@ free on this Mac"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Downloads entfernt · %@ auf diesem Mac frei"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld descargas eliminadas · %@ libres en este Mac"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld téléchargements supprimés · %@ libérés sur ce Mac"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld डाउनलोड हटाए · इस Mac पर %@ खाली"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다운로드 %lld개 제거 · 이 Mac에서 %@ 확보"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已移除 %lld 个下载 · 这台 Mac 上释放了 %@"
+          }
+        }
+      }
+    },
+    "Removed 1 download · %@ free on this Mac" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Download entfernt · %@ auf diesem Mac frei"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 descarga eliminada · %@ libres en este Mac"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 téléchargement supprimé · %@ libérés sur ce Mac"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 डाउनलोड हटाया · इस Mac पर %@ खाली"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다운로드 1개 제거 · 이 Mac에서 %@ 확보"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已移除 1 个下载 · 这台 Mac 上释放了 %@"
           }
         }
       }
@@ -99057,6 +99669,46 @@
         }
       }
     },
+    "They stay in iCloud Drive and in Finder. Opening one downloads it again, which needs the internet then. Each is checked again first: one that changed or isn't uploaded in full stays." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie bleiben in iCloud Drive und im Finder. Beim Öffnen wird eine wieder geladen, wozu dann Internet nötig ist. Jede wird zuerst erneut geprüft: Eine, die sich geändert hat oder nicht ganz hochgeladen ist, bleibt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguen en iCloud Drive y en el Finder. Al abrir uno se descarga de nuevo, lo que entonces necesita internet. Cada uno se comprueba otra vez antes: el que haya cambiado o no esté subido del todo se queda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ils restent dans iCloud Drive et dans le Finder. En ouvrir un le télécharge à nouveau, ce qui demande alors Internet. Chacun est revérifié d’abord : celui qui a changé ou n’est pas entièrement envoyé reste."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "वे iCloud Drive और Finder में रहती हैं। किसी को खोलने पर वह फिर डाउनलोड होती है, जिसके लिए तब इंटरनेट चाहिए। हर एक पहले फिर से जाँची जाती है: जो बदली हो या पूरी अपलोड न हुई हो, वह रहती है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일은 iCloud Drive와 Finder에 남습니다. 열면 다시 다운로드되며, 그때 인터넷이 필요합니다. 각 파일을 먼저 다시 확인하며, 바뀌었거나 모두 업로드되지 않은 파일은 남습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "它们仍留在 iCloud 云盘和访达中。打开时会再次下载，届时需要联网。每个文件都会先重新检查：已改动或未完全上传的会保留。"
+          }
+        }
+      }
+    },
     "They take the space of one copy on the disk, as copies made with Finder's Duplicate do. If you change one later, it gets space of its own again; the others stay as they are." : {
       "localizations" : {
         "de" : {
@@ -104863,6 +105515,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在更新列表"
+          }
+        }
+      }
+    },
+    "Uploading" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird hochgeladen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subiendo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoi en cours"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अपलोड हो रहा है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업로드 중"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在上传"
           }
         }
       }
@@ -110785,6 +111477,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "hidden: 需要 yes 或 no。"
+          }
+        }
+      }
+    },
+    "iCloud Downloads" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud-Downloads"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descargas de iCloud"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Téléchargements iCloud"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud डाउनलोड"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 다운로드"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 下载"
+          }
+        }
+      }
+    },
+    "iCloud Downloads…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud-Downloads …"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descargas de iCloud…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Téléchargements iCloud…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud डाउनलोड…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 다운로드…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud 下载…"
           }
         }
       }
