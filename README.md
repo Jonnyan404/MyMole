@@ -70,7 +70,10 @@ Undo is not available.
 ## Uninstall
 
 Remove apps individually or in batches. Review their caches, settings and data
-before removal. Personal data starts unselected.
+before removal. What certainly belongs to the app, tied by its bundle ID, a
+part it carries or an app group its signature names, starts selected. Name
+matches, parts the maker's other apps may use, temporary data and folders that
+look like documents or projects start unselected, marked with the reason.
 
 For well-known vendors, Uninstall also finds the parts their own uninstall
 lists name, such as audio drivers, browser plug-ins and updaters, and the

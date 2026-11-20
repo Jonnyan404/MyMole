@@ -165,12 +165,13 @@ import Testing
         #expect(requests == [app.path] && !model.uninstalling && model.authorizingApp == nil)
         #expect(home.exists(".Trash/Editor.app/Contents/Info.plist"))
         #expect(!home.exists("Library/Caches/com.vendor.Editor/c"))
-        #expect(home.exists("Library/Preferences/com.vendor.Editor.plist"))
+        #expect(!home.exists("Library/Preferences/com.vendor.Editor.plist"))
         #expect(home.exists("Applications/Viewer.app/Contents/Info.plist"))
         model.undoUninstall()
         await model.undoJob?.value
         #expect(home.exists("Applications/Editor.app/Contents/Info.plist"))
         #expect(home.exists("Library/Caches/com.vendor.Editor/c"))
+        #expect(home.exists("Library/Preferences/com.vendor.Editor.plist"))
     }
 
     private static func simulatedFinder(in home: Home, trashName: String? = nil,
@@ -800,7 +801,7 @@ import Testing
         #expect(await model.uninstall(app, leftovers: selected) == .done)
         #expect(model.appMoveFailures[app.path] == nil)
         #expect(!home.exists("Applications/Editor.app"))
-        #expect(home.exists("Library/Preferences/com.vendor.Editor.plist"))
+        #expect(!home.exists("Library/Preferences/com.vendor.Editor.plist"))
     }
 
     @Test func finderCompletionKeepsSuccessfulMovesWhenOtherItemsFail() {

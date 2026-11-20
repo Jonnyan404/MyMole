@@ -29,12 +29,12 @@
         {
           "path": "Library/Preferences/org.example.Starlight.plist",
           "evidence": "bundleID",
-          "chosen": false
+          "chosen": true
         },
         {
           "path": "Library/Application Support/org.example.Starlight",
           "evidence": "bundleID",
-          "chosen": false
+          "chosen": true
         }
       ],
       "mustKeep": [
@@ -43,7 +43,7 @@
       "blocked": false
     },
     {
-      "id": "settings_and_data_stay_unchosen",
+      "id": "exact_id_settings_and_data_start_chosen",
       "deep": false,
       "apps": [
         {
@@ -63,12 +63,12 @@
         {
           "path": "Library/Preferences/org.example.Starlight.plist",
           "evidence": "bundleID",
-          "chosen": false
+          "chosen": true
         },
         {
           "path": "Library/Application Support/org.example.Starlight",
           "evidence": "bundleID",
-          "chosen": false
+          "chosen": true
         }
       ],
       "mustKeep": [],
@@ -260,7 +260,7 @@
         {
           "path": "Library/Group Containers/ABCDE12345.org.example.shared",
           "evidence": "group",
-          "chosen": false
+          "chosen": true
         }
       ],
       "mustKeep": [],
@@ -356,7 +356,7 @@
         {
           "path": "Library/Caches/Example/Starlight",
           "evidence": "vendorFolder",
-          "chosen": false
+          "chosen": true
         }
       ],
       "mustKeep": [],
@@ -506,7 +506,7 @@
         {
           "path": "Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/org.example.starlight.sfl2",
           "evidence": "bundleID",
-          "chosen": false
+          "chosen": true
         }
       ],
       "mustKeep": [],
@@ -702,7 +702,7 @@
       "blocked": false
     },
     {
-      "id": "persistent_webkit_is_review_only",
+      "id": "exact_id_webkit_starts_chosen",
       "deep": false,
       "apps": [
         {
@@ -721,14 +721,14 @@
         {
           "path": "Library/WebKit/org.example.Starlight",
           "evidence": "bundleID",
-          "chosen": false
+          "chosen": true
         }
       ],
       "mustKeep": [],
       "blocked": false
     },
     {
-      "id": "persistent_httpstorages_is_review_only",
+      "id": "exact_id_httpstorages_starts_chosen",
       "deep": false,
       "apps": [
         {
@@ -747,14 +747,14 @@
         {
           "path": "Library/HTTPStorages/org.example.Starlight",
           "evidence": "bundleID",
-          "chosen": false
+          "chosen": true
         }
       ],
       "mustKeep": [],
       "blocked": false
     },
     {
-      "id": "persistent_cookies_is_review_only",
+      "id": "exact_id_cookies_start_chosen",
       "deep": false,
       "apps": [
         {
@@ -773,14 +773,14 @@
         {
           "path": "Library/Cookies/org.example.Starlight.binarycookies",
           "evidence": "bundleID",
-          "chosen": false
+          "chosen": true
         }
       ],
       "mustKeep": [],
       "blocked": false
     },
     {
-      "id": "persistent_saved_application_state_is_review_only",
+      "id": "exact_id_saved_application_state_starts_chosen",
       "deep": false,
       "apps": [
         {
@@ -799,14 +799,14 @@
         {
           "path": "Library/Saved Application State/org.example.Starlight.savedState",
           "evidence": "bundleID",
-          "chosen": false
+          "chosen": true
         }
       ],
       "mustKeep": [],
       "blocked": false
     },
     {
-      "id": "persistent_application_scripts_is_review_only",
+      "id": "exact_id_application_scripts_start_chosen",
       "deep": false,
       "apps": [
         {
@@ -825,14 +825,14 @@
         {
           "path": "Library/Application Scripts/org.example.Starlight",
           "evidence": "bundleID",
-          "chosen": false
+          "chosen": true
         }
       ],
       "mustKeep": [],
       "blocked": false
     },
     {
-      "id": "launch_configuration_is_review_only",
+      "id": "exact_id_launch_configuration_starts_chosen",
       "deep": false,
       "apps": [
         {
@@ -851,7 +851,7 @@
         {
           "path": "Library/LaunchAgents/org.example.Starlight.plist",
           "evidence": "bundleID",
-          "chosen": false
+          "chosen": true
         }
       ],
       "mustKeep": [],
@@ -1008,7 +1008,7 @@
       "blocked": false
     },
     {
-      "id": "runtime_exact_ids_are_review_only",
+      "id": "runtime_caches_start_chosen_and_temporary_data_stays",
       "deep": true,
       "apps": [
         {
@@ -1029,7 +1029,7 @@
         {
           "path": "Runtime/Caches/org.example.Starlight",
           "evidence": "runtimeID",
-          "chosen": false
+          "chosen": true
         },
         {
           "path": "Runtime/Temp/org.example.Starlight",
@@ -1074,7 +1074,7 @@
         {
           "path": "Runtime/Caches/org.example.Worker",
           "evidence": "runtimeID",
-          "chosen": false
+          "chosen": true
         }
       ],
       "mustKeep": [],
@@ -1171,6 +1171,44 @@
           "temporary": true
         }
       ]
+    },
+    {
+      "id": "exact_id_folder_with_documents_stays_unchosen",
+      "deep": false,
+      "apps": [
+        {
+          "key": "target",
+          "name": "Starlight",
+          "bundleID": "org.example.Starlight",
+          "helpers": [],
+          "groups": []
+        }
+      ],
+      "files": [
+        "Library/Containers/org.example.Starlight/Data/Documents/Draft.txt",
+        "Library/Application Support/org.example.Starlight/Work/.git/HEAD",
+        "Library/Caches/org.example.Starlight/cache"
+      ],
+      "links": {},
+      "expected": [
+        {
+          "path": "Library/Containers/org.example.Starlight",
+          "evidence": "bundleID",
+          "chosen": false
+        },
+        {
+          "path": "Library/Application Support/org.example.Starlight",
+          "evidence": "bundleID",
+          "chosen": false
+        },
+        {
+          "path": "Library/Caches/org.example.Starlight",
+          "evidence": "bundleID",
+          "chosen": true
+        }
+      ],
+      "mustKeep": [],
+      "blocked": false
     }
   ]
 }

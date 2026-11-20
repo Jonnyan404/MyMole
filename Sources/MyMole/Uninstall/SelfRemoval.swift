@@ -80,7 +80,8 @@ final class SelfRemovalModel {
         dataIncomplete = report.map { $0.limited || !$0.unreadable.isEmpty } ?? false
         keepsUnreadable = protected == nil
         kept = protected ?? []
-        chosen = Set(leftovers.filter(\.chosenByDefault).map(\.path)).subtracting(kept)
+        // MyMole's own settings and keep lists stay unless chosen: only what it rebuilds starts chosen.
+        chosen = Set(leftovers.filter { $0.chosenByDefault && $0.kind == .rebuildable }.map(\.path)).subtracting(kept)
     }
 
     func remove() async {

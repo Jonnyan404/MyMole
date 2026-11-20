@@ -20,6 +20,8 @@ struct UninstallRowDetails: View {
                         .font(.caption).foregroundStyle(.secondary)
                 } else {
                     Text(verbatim: item.evidence.title).font(.callout.weight(.medium))
+                    Text(verbatim: item.choiceTitle).font(.caption.weight(.medium))
+                        .foregroundStyle(item.chosenByDefault ? Color.secondary : Color.orange)
                     Text(item.kind == .rebuildable
                          ? "The app may rebuild or download this data again."
                          : "Removing this item can reset settings or remove local app data.")

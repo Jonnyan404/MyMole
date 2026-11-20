@@ -112,7 +112,7 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
         /// Exact app/helper identity in a scoped runtime root; temporary data needs review.
         case runtimeID
         /// On the vendor's own list of what its app installs, at that exact
-        /// path. Never chosen for the user.
+        /// path. Chosen when it's the app's alone, not shared by the maker's apps.
         case knownPart
         /// Discovery can continue with partial owner information. These
         /// rows require separate manual review, never automatic selection.
@@ -136,25 +136,86 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
         }
     }
 
-    /// Only rebuildable caches/logs with identity evidence start chosen.
     public var canRemove: Bool { evidence != .unverified }
-    public var chosenByDefault: Bool { canRemove && kind.chosenByDefault && ![.name, .vendorFolder, .vendor, .loose, .runtimeID, .knownPart].contains(evidence) }
 
-    /// What a leftover holds, which decides whether it starts chosen.
+    /// Set by the search when what's inside calls for a look first,
+    /// whatever ties it to the app.
+    public var caution: Review? = nil
+    /// Which of macOS's per-user runtime roots it's in, if any.
+    public var runtimeRoot: RuntimeLeftovers.Root.Kind? = nil
+
+    /// Why it starts unchosen; nil when it's certainly the app's and starts
+    /// chosen. Exact ties (the app's bundle ID, a part it carries, an app
+    /// group its signature names, the vendor's list of the app's own parts)
+    /// are certain wherever they are. Ties by name, what the maker's apps
+    /// share, temporary data and what looks like the user's own work are not.
+    public var review: Review? {
+        guard canRemove else { return .unverified }
+        switch evidence {
+        case .name: return .nameOnly
+        case .vendor: return .maker
+        case .loose: return .looseMatch
+        case .vendorFolder where kind != .rebuildable: return .nameInMakerFolder
+        case .runtimeID where runtimeRoot != .caches: return .temporary
+        default: return caution
+        }
+    }
+
+    public var chosenByDefault: Bool { review == nil }
+
+    /// Why a leftover starts unchosen.
+    public enum Review: String, Sendable, Codable, CaseIterable {
+        /// Ownership couldn't be verified.
+        case unverified
+        /// Tied by the app's name only.
+        case nameOnly
+        /// The app's name inside its maker's folder, for more than a cache or log.
+        case nameInMakerFolder
+        /// Shared by the maker's apps.
+        case maker
+        /// A looser match of the app's name.
+        case looseMatch
+        /// Temporary data, which may hold unsaved work.
+        case temporary
+        /// Holds what looks like documents or projects.
+        case userWork
+        /// Settings or a part of an app that's part of macOS.
+        case macOSApp
+
+        public var title: String {
+            switch self {
+            case .unverified: String(localized: "Starts unchosen: ownership couldn't be verified")
+            case .nameOnly: String(localized: "Starts unchosen: tied by its name only")
+            case .nameInMakerFolder: String(localized: "Starts unchosen: tied by its name in its maker's folder")
+            case .maker: String(localized: "Starts unchosen: the maker's other apps may use it")
+            case .looseMatch: String(localized: "Starts unchosen: a looser match of its name")
+            case .temporary: String(localized: "Starts unchosen: temporary data may hold unsaved work")
+            case .userWork: String(localized: "Starts unchosen: it holds what looks like documents or projects")
+            case .macOSApp: String(localized: "Starts unchosen: macOS's own apps keep their settings unless you choose them")
+            }
+        }
+    }
+
+    /// Why it starts chosen or not, as one phrase.
+    public var choiceTitle: String { review?.title ?? String(localized: "Starts chosen: it certainly belongs to the app") }
+
+    /// What a leftover holds.
     public enum Kind: Int, Sendable, Comparable {
-        /// Caches and logs the app rebuilds. Chosen with identity evidence.
+        /// Caches and logs the app rebuilds.
         case rebuildable
-        /// Parts of the app, such as launch configuration. Reviewed explicitly.
+        /// Parts of the app, such as launch configuration.
         case appPart
-        /// Settings. Kept unless chosen: a reinstall would start over.
+        /// Settings: a reinstall would start over without them.
         case settings
-        /// Documents and data the app made. Kept unless chosen.
+        /// Documents and data the app made.
         case data
-        /// Data shared with the developer's other apps. Kept unless chosen.
+        /// Data the developer's apps can share: an app group.
         case shared
 
         public static func < (a: Self, b: Self) -> Bool { a.rawValue < b.rawValue }
 
+        /// For what no app's identity ties (a removed app's, a system-wide
+        /// item): only what's rebuilt.
         public var chosenByDefault: Bool { self == .rebuildable }
 
         public var title: String {
@@ -169,7 +230,8 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
     }
 
     public var kind: Kind {
-        switch place {
+        if let runtimeRoot { return runtimeRoot == .caches ? .rebuildable : .data }
+        return switch place {
         case "Caches", "Logs", "Logs/DiagnosticReports", "Application Support/CrashReporter":
             .rebuildable
         case "LaunchAgents": .appPart
@@ -534,6 +596,13 @@ public enum AppLeftovers {
         // One leftover inside another goes with it.
         let paths = Set(out.map(\.path))
         out.removeAll { l in paths.contains { l.path.hasPrefix($0 + "/") } }
+        for i in out.indices where out[i].caution == nil && out[i].kind != .rebuildable {
+            if scan.userWork.contains(out[i].path) {
+                out[i].caution = .userWork
+            } else if app.isProtected {
+                out[i].caution = .macOSApp
+            }
+        }
         return out.sorted { $0.bytes != $1.bytes ? $0.bytes > $1.bytes : $0.path < $1.path }
     }
 
@@ -577,6 +646,7 @@ public enum AppLeftovers {
                   let m = scan.measure(path) else { continue }
             var l = Leftover(path: path, bytes: m, place: knownPlace(path, home: home))
             l.evidence = .knownPart
+            if !part.sharedWith.isEmpty { l.caution = .maker }
             out.append(l)
         }
         return out

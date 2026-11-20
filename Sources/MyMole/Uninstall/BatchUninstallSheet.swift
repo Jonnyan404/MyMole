@@ -3,8 +3,9 @@ import StorageKit
 import SwiftUI
 
 /// Several apps uninstalled together: each with what it left in the
-/// Library, only identity-linked caches and logs initially chosen. All other
-/// data needs an explicit choice. An app that's open, has an uninstaller or is kept stays.
+/// Library, what is certainly the app's initially chosen (`Leftover.review`).
+/// Uncertain matches and what looks like the user's work need an explicit
+/// choice. An app that's open, has an uninstaller or is kept stays.
 /// System-wide leftovers are offered when an app is uninstalled on its own.
 struct BatchUninstallSheet: View {
     let model: AppsModel
@@ -83,7 +84,7 @@ struct BatchUninstallSheet: View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
             Text("Uninstall \(apps.count) Apps").font(.title2.bold())
             DSText(
-                "Each app goes to the Trash with the leftovers you choose. Only caches and logs tied by identity start chosen; settings, website data, scripts, launch configuration and name matches stay unless you choose them.",
+                "Each app goes to the Trash with the leftovers you choose. What certainly belongs to an app starts chosen. Name matches, what the maker's other apps may use, temporary data and folders that look like documents or projects are marked Review and stay unless you choose them.",
                 .metadata)
             if !problems.isEmpty {
                 DSNotice(.warning, problems.map { "\($0.name): \($0.reason)" }.joined(separator: "\n"))
@@ -197,8 +198,11 @@ struct BatchUninstallSheet: View {
                     id: $0.path, name: $0.name, size: $0.bytes, kind: "\(app.name): \($0.kind.title) · \($0.place)",
                     location: ($0.path as NSString).deletingLastPathComponent, symbol: "folder",
                     subtitle: $0.evidence.title,
-                    badge: $0.canRemove ? nil : String(localized: "Inspection only"),
-                    canChoose: $0.canRemove))
+                    badge: $0.canRemove ? ($0.chosenByDefault ? nil : String(localized: "Review")) : String(localized: "Inspection only"),
+                    badgeHelp: $0.canRemove ? $0.review?.title : nil,
+                    badgeTint: .secondaryLabelColor,
+                    canChoose: $0.canRemove,
+                    choiceHelp: $0.canRemove ? $0.choiceTitle : nil))
             }
             return [head] + (reason(app.path) == nil ? leftovers : [])
         }

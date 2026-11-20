@@ -203,12 +203,13 @@ func makeApp(_ box: Sandbox, _ rel: String, id: String?, name: String? = nil, by
         #expect(!AppLeftovers.isStillLeftover(lib + "/Caches/com.vendor.Editor", of: editor, home: box.path, installed: [editor]))
     }
 
-    @Test func onlyIdentityCachesAndLogsStartChosen() throws {
+    @Test func everyExactTieStartsChosenAndANameAloneDoesNot() throws {
         let box = try home()
         let identity = AppIdentity(groups: ["ABCDE12345.com.vendor.Editor", "group.com.vendor.Editor"])
         let found = AppLeftovers.find(for: editor, home: box.path, installed: [editor], identity: identity)
-        let chosen = Set(found.filter(\.chosenByDefault).map { String($0.path.dropFirst(box.path.count + "/Library/".count)) })
-        #expect(chosen == ["Caches/com.vendor.Editor"])
+        let unchosen = Set(found.filter { !$0.chosenByDefault }.map { String($0.path.dropFirst(box.path.count + "/Library/".count)) })
+        #expect(unchosen == ["Application Support/Editor", "Logs/Editor"])
+        #expect(found.filter { !$0.chosenByDefault }.allSatisfy { $0.review == .nameOnly })
         #expect(found.first { $0.place == "Group Containers" }?.kind == .shared)
         #expect(found.first { $0.place == "Containers" }?.kind == .data)
         #expect(found.first { $0.place == "Preferences" }?.kind == .settings)

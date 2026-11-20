@@ -39367,42 +39367,42 @@
         }
       }
     },
-    "Each app goes to the Trash with the leftovers you choose. Only caches and logs tied by identity start chosen; settings, website data, scripts, launch configuration and name matches stay unless you choose them." : {
+    "Each app goes to the Trash with the leftovers you choose. What certainly belongs to an app starts chosen. Name matches, what the maker's other apps may use, temporary data and folders that look like documents or projects are marked Review and stay unless you choose them." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jede App kommt mit den ausgewählten Resten in den Papierkorb. Nur über die Identität verknüpfte Caches und Protokolle sind anfangs ausgewählt; Einstellungen, Website-Daten, Skripte, Startkonfiguration und Namensübereinstimmungen bleiben, wenn du sie nicht auswählst."
+            "value" : "Jede App kommt mit den Resten, die du auswählst, in den Papierkorb. Was sicher zu einer App gehört, ist anfangs ausgewählt. Namensübereinstimmungen, was andere Apps des Herstellers nutzen könnten, temporäre Daten und Ordner, die wie Dokumente oder Projekte aussehen, sind mit „Prüfen“ markiert und bleiben, wenn du sie nicht auswählst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada app va a la Papelera con los restos que elijas. Solo las cachés y registros vinculados por identidad empiezan elegidos; los ajustes, datos de sitios web, scripts, configuración de arranque y coincidencias por nombre se quedan salvo que los elijas."
+            "value" : "Cada app va a la Papelera con los restos que elijas. Lo que sin duda pertenece a una app empieza elegido. Las coincidencias por nombre, lo que pueden usar otras apps del fabricante, los datos temporales y las carpetas que parecen documentos o proyectos se marcan con «Revisar» y se quedan salvo que los elijas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chaque app va dans la Corbeille avec les restes que vous choisissez. Seuls les caches et journaux liés par identité sont choisis d’avance ; les réglages, données de sites web, scripts, configuration de lancement et correspondances de nom restent sauf si vous les choisissez."
+            "value" : "Chaque app va à la corbeille avec les restes que vous choisissez. Ce qui appartient à coup sûr à une app est choisi d’avance. Les correspondances de nom, ce que les autres apps de l’éditeur peuvent utiliser, les données temporaires et les dossiers qui ressemblent à des documents ou à des projets sont marqués « Examiner » et restent sauf si vous les choisissez."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "हर ऐप आपके चुने बचे हुए आइटम के साथ ट्रैश में जाता है। केवल पहचान से जुड़े कैश और लॉग पहले से चुने होते हैं; सेटिंग्ज़, वेबसाइट डेटा, स्क्रिप्ट, लॉन्च कॉन्फ़िगरेशन और नाम से मेल खाने वाले आइटम तब तक रहते हैं जब तक आप उन्हें न चुनें।"
+            "value" : "हर ऐप आपके चुने हुए बचे हुए आइटम के साथ ट्रैश में जाता है। जो निश्चित रूप से किसी ऐप का है, वह पहले से चुना होता है। नाम से मेल खाने वाले आइटम, जिन्हें निर्माता के दूसरे ऐप इस्तेमाल कर सकते हैं, अस्थायी डेटा और दस्तावेज़ों या प्रोजेक्ट जैसे दिखने वाले फ़ोल्डर \"समीक्षा करें\" से चिह्नित होते हैं और तब तक रहते हैं जब तक आप उन्हें न चुनें।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "각 앱은 선택한 잔여 항목과 함께 휴지통으로 이동합니다. 식별 정보로 연결된 캐시와 로그만 처음부터 선택되며, 설정, 웹 사이트 데이터, 스크립트, 실행 구성 및 이름 일치 항목은 직접 선택하지 않으면 남습니다."
+            "value" : "각 앱은 선택한 잔여 항목과 함께 휴지통으로 이동합니다. 앱에 확실히 속한 항목은 처음부터 선택됩니다. 이름 일치 항목, 개발사의 다른 앱이 사용할 수 있는 항목, 임시 데이터, 문서나 프로젝트처럼 보이는 폴더는 '검토'로 표시되며 직접 선택하지 않으면 남습니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每个应用会连同你选择的残留项一起移到废纸篓。只有按身份关联的缓存和日志默认勾选；设置、网站数据、脚本、启动配置和名称匹配项，在你选择之前都会保留。"
+            "value" : "每个应用会和你选择的残留一起移到废纸篓。确定属于应用的项目默认勾选。名称匹配项、厂商其他应用可能使用的项目、临时数据，以及看起来像文稿或项目的文件夹会标为“检查”，在你选择之前都会保留。"
           }
         }
       }
@@ -39487,42 +39487,42 @@
         }
       }
     },
-    "Each folder row includes its contents. Your data stays unless you choose it." : {
+    "Each folder row includes its contents." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jede Ordnerzeile schließt ihren Inhalt ein. Deine Daten bleiben, wenn du sie nicht auswählst."
+            "value" : "Jede Ordnerzeile schließt ihren Inhalt ein."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada fila de carpeta incluye su contenido. Tus datos se quedan salvo que los elijas."
+            "value" : "Cada fila de carpeta incluye su contenido."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chaque ligne de dossier inclut son contenu. Vos données restent sauf si vous les choisissez."
+            "value" : "Chaque ligne de dossier inclut son contenu."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "हर फ़ोल्डर पंक्ति में उसकी सामग्री शामिल है। जब तक आप न चुनें, आपका डेटा बना रहता है।"
+            "value" : "हर फ़ोल्डर पंक्ति में उसकी सामग्री शामिल है।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "각 폴더 행에는 내용이 포함됩니다. 데이터는 직접 선택하지 않으면 남습니다."
+            "value" : "각 폴더 행에는 그 안의 내용이 포함됩니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每个文件夹行都包含其内容。除非你选择，否则你的数据会保留。"
+            "value" : "每个文件夹行都包含其中的内容。"
           }
         }
       }
@@ -39567,42 +39567,42 @@
         }
       }
     },
-    "Each leftover shows how it's tied to the app. Only caches and logs tied by identity start chosen. Settings, website data, saved state, scripts, launch configuration and name matches stay unless you choose them." : {
+    "Each leftover shows how it's tied to the app. What certainly belongs to it starts chosen. Name matches, what the maker's other apps may use, temporary data and folders that look like documents or projects are marked Review and stay unless you choose them." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jeder Rest zeigt, wie er mit der App verknüpft ist. Nur über die Identität verknüpfte Caches und Protokolle sind anfangs ausgewählt. Einstellungen, Website-Daten, gesicherter Zustand, Skripte, Startkonfiguration und Namensübereinstimmungen bleiben, wenn du sie nicht auswählst."
+            "value" : "Jeder Rest zeigt, wie er mit der App verknüpft ist. Was sicher zu ihr gehört, ist anfangs ausgewählt. Namensübereinstimmungen, was andere Apps des Herstellers nutzen könnten, temporäre Daten und Ordner, die wie Dokumente oder Projekte aussehen, sind mit „Prüfen“ markiert und bleiben, wenn du sie nicht auswählst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada resto muestra cómo está vinculado a la app. Solo las cachés y registros vinculados por identidad empiezan elegidos. Los ajustes, datos de sitios web, estados guardados, scripts, configuración de arranque y coincidencias por nombre se quedan salvo que los elijas."
+            "value" : "Cada resto muestra cómo está vinculado a la app. Lo que sin duda le pertenece empieza elegido. Las coincidencias por nombre, lo que pueden usar otras apps del fabricante, los datos temporales y las carpetas que parecen documentos o proyectos se marcan con «Revisar» y se quedan salvo que los elijas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chaque reste montre son lien avec l’app. Seuls les caches et journaux liés par identité sont choisis d’avance. Les réglages, données de sites web, états enregistrés, scripts, configuration de lancement et correspondances de nom restent sauf si vous les choisissez."
+            "value" : "Chaque reste montre son lien avec l’app. Ce qui lui appartient à coup sûr est choisi d’avance. Les correspondances de nom, ce que les autres apps de l’éditeur peuvent utiliser, les données temporaires et les dossiers qui ressemblent à des documents ou à des projets sont marqués « Examiner » et restent sauf si vous les choisissez."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "हर बचा हुआ आइटम दिखाता है कि वह ऐप से कैसे जुड़ा है। केवल पहचान से जुड़े कैश और लॉग पहले से चुने होते हैं। सेटिंग्ज़, वेबसाइट डेटा, सहेजी स्थिति, स्क्रिप्ट, लॉन्च कॉन्फ़िगरेशन और नाम से मेल खाने वाले आइटम तब तक रहते हैं जब तक आप उन्हें न चुनें।"
+            "value" : "हर बचा हुआ आइटम दिखाता है कि वह ऐप से कैसे जुड़ा है। जो निश्चित रूप से उसका है, वह पहले से चुना होता है। नाम से मेल खाने वाले आइटम, जिन्हें निर्माता के दूसरे ऐप इस्तेमाल कर सकते हैं, अस्थायी डेटा और दस्तावेज़ों या प्रोजेक्ट जैसे दिखने वाले फ़ोल्डर \"समीक्षा करें\" से चिह्नित होते हैं और तब तक रहते हैं जब तक आप उन्हें न चुनें।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "각 잔여 항목에는 앱과의 연결 방식이 표시됩니다. 식별 정보로 연결된 캐시와 로그만 처음부터 선택됩니다. 설정, 웹 사이트 데이터, 저장된 상태, 스크립트, 실행 구성 및 이름 일치 항목은 직접 선택하지 않으면 남습니다."
+            "value" : "각 잔여 항목에는 앱과의 연결 방식이 표시됩니다. 앱에 확실히 속한 항목은 처음부터 선택됩니다. 이름 일치 항목, 개발사의 다른 앱이 사용할 수 있는 항목, 임시 데이터, 문서나 프로젝트처럼 보이는 폴더는 '검토'로 표시되며 직접 선택하지 않으면 남습니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每项残留都会显示它与应用的关联方式。只有按身份关联的缓存和日志默认勾选。设置、网站数据、保存的状态、脚本、启动配置和名称匹配项，在你选择之前都会保留。"
+            "value" : "每项残留都会显示它与应用的关联方式。确定属于它的项目默认勾选。名称匹配项、厂商其他应用可能使用的项目、临时数据，以及看起来像文稿或项目的文件夹会标为“检查”，在你选择之前都会保留。"
           }
         }
       }
@@ -46953,42 +46953,42 @@
         }
       }
     },
-    "Hidden settings and deeper name matches are searched automatically. The direct edition also checks exact app IDs in per-user temporary/cache folders. These results start unchosen; temporary data may contain unsaved work." : {
+    "Hidden settings and deeper name matches are searched automatically. The direct edition also checks exact app IDs in per-user temporary/cache folders. Name matches and temporary data start unchosen; temporary data may contain unsaved work." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ausgeblendete Einstellungen und tiefere Namensübereinstimmungen werden automatisch durchsucht. Die direkte Edition prüft auch exakte App-IDs in temporären und Cache-Ordnern pro Benutzer. Diese Ergebnisse sind anfangs nicht ausgewählt; temporäre Daten können nicht gesicherte Arbeit enthalten."
+            "value" : "Ausgeblendete Einstellungen und tiefere Namensübereinstimmungen werden automatisch durchsucht. Die direkte Edition prüft auch exakte App-IDs in temporären und Cache-Ordnern pro Benutzer. Namensübereinstimmungen und temporäre Daten sind anfangs nicht ausgewählt; temporäre Daten können nicht gesicherte Arbeit enthalten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los ajustes ocultos y las coincidencias por nombre más profundas se buscan automáticamente. La edición directa también comprueba los ID de app exactos en las carpetas temporales y de caché de cada usuario. Estos resultados empiezan sin elegir; los datos temporales pueden contener trabajo sin guardar."
+            "value" : "Los ajustes ocultos y las coincidencias por nombre más profundas se buscan automáticamente. La edición directa también comprueba los ID de app exactos en las carpetas temporales y de caché de cada usuario. Las coincidencias por nombre y los datos temporales empiezan sin elegir; los datos temporales pueden contener trabajo sin guardar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les réglages masqués et les correspondances de nom plus profondes sont recherchés automatiquement. L’édition directe vérifie aussi les identifiants d’app exacts dans les dossiers temporaires et de cache de chaque utilisateur. Ces résultats ne sont pas choisis d’avance ; les données temporaires peuvent contenir du travail non enregistré."
+            "value" : "Les réglages masqués et les correspondances de nom plus profondes sont recherchés automatiquement. L’édition directe vérifie aussi les identifiants d’app exacts dans les dossiers temporaires et de cache de chaque utilisateur. Les correspondances de nom et les données temporaires ne sont pas choisies d’avance ; les données temporaires peuvent contenir du travail non enregistré."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "छिपी सेटिंग्ज़ और गहरे नाम मिलान अपने आप खोजे जाते हैं। डायरेक्ट संस्करण हर उपयोगकर्ता के अस्थायी/कैश फ़ोल्डरों में सटीक ऐप ID भी जाँचता है। ये परिणाम बिना चुने शुरू होते हैं; अस्थायी डेटा में बिना सहेजा काम हो सकता है।"
+            "value" : "छिपी सेटिंग्ज़ और गहरे नाम मिलान अपने आप खोजे जाते हैं। डायरेक्ट संस्करण हर उपयोगकर्ता के अस्थायी/कैश फ़ोल्डरों में सटीक ऐप ID भी जाँचता है। नाम मिलान और अस्थायी डेटा बिना चुने शुरू होते हैं; अस्थायी डेटा में बिना सहेजा काम हो सकता है।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "숨겨진 설정과 더 깊은 이름 일치 항목을 자동으로 검색합니다. 직접 배포 에디션은 사용자별 임시 및 캐시 폴더에서 정확한 앱 ID도 확인합니다. 이 결과는 선택되지 않은 상태로 시작하며, 임시 데이터에는 저장하지 않은 작업이 있을 수 있습니다."
+            "value" : "숨겨진 설정과 더 깊은 이름 일치 항목을 자동으로 검색합니다. 직접 배포 에디션은 사용자별 임시 및 캐시 폴더에서 정확한 앱 ID도 확인합니다. 이름 일치 항목과 임시 데이터는 선택되지 않은 상태로 시작하며, 임시 데이터에는 저장하지 않은 작업이 있을 수 있습니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "隐藏的设置和更深层的名称匹配会被自动搜索。直装版还会检查每个用户的临时/缓存文件夹中精确的应用 ID。这些结果默认不勾选；临时数据可能包含未保存的工作。"
+            "value" : "隐藏的设置和更深层的名称匹配会被自动搜索。直装版还会检查每个用户的临时/缓存文件夹中精确的应用 ID。名称匹配项和临时数据默认不勾选；临时数据可能包含未保存的工作。"
           }
         }
       }
@@ -91501,6 +91501,366 @@
         }
       }
     },
+    "Starts chosen: it certainly belongs to the app" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anfangs ausgewählt: gehört sicher zur App"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza elegido: sin duda pertenece a la app"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisi d’avance : appartient à coup sûr à l’app"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पहले से चुना: यह निश्चित रूप से ऐप का है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "처음부터 선택됨: 확실히 이 앱에 속함"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认勾选：确定属于该应用"
+          }
+        }
+      }
+    },
+    "Starts unchosen: a looser match of its name" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anfangs nicht ausgewählt: ein lockerer Treffer nach dem Namen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza sin elegir: una coincidencia menos estricta con su nombre"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas choisi d’avance : une correspondance plus large avec son nom"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बिना चुने शुरू: नाम से ढीला मिलान"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택되지 않은 상태로 시작: 이름과 느슨하게 일치함"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认不勾选：与其名称的宽松匹配"
+          }
+        }
+      }
+    },
+    "Starts unchosen: it holds what looks like documents or projects" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anfangs nicht ausgewählt: enthält etwas, das wie Dokumente oder Projekte aussieht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza sin elegir: contiene lo que parecen documentos o proyectos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas choisi d’avance : contient ce qui ressemble à des documents ou à des projets"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बिना चुने शुरू: इसमें दस्तावेज़ या प्रोजेक्ट जैसा कुछ है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택되지 않은 상태로 시작: 문서나 프로젝트처럼 보이는 항목이 있음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认不勾选：其中有看起来像文稿或项目的内容"
+          }
+        }
+      }
+    },
+    "Starts unchosen: macOS's own apps keep their settings unless you choose them" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anfangs nicht ausgewählt: Die eigenen Apps von macOS behalten ihre Einstellungen, wenn du sie nicht auswählst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza sin elegir: las apps de macOS conservan sus ajustes salvo que los elijas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas choisi d’avance : les apps de macOS gardent leurs réglages sauf si vous les choisissez"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बिना चुने शुरू: macOS के अपने ऐप अपनी सेटिंग्ज़ तब तक रखते हैं जब तक आप उन्हें न चुनें"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택되지 않은 상태로 시작: macOS 자체 앱의 설정은 직접 선택하지 않으면 남습니다"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认不勾选：除非你选择，macOS 自带应用会保留其设置"
+          }
+        }
+      }
+    },
+    "Starts unchosen: ownership couldn't be verified" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anfangs nicht ausgewählt: Die Zugehörigkeit konnte nicht bestätigt werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza sin elegir: no se pudo comprobar a quién pertenece"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas choisi d’avance : son appartenance n’a pas pu être vérifiée"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बिना चुने शुरू: स्वामित्व की पुष्टि नहीं हो सकी"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택되지 않은 상태로 시작: 소유 여부를 확인할 수 없음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认不勾选：无法确认归属"
+          }
+        }
+      }
+    },
+    "Starts unchosen: temporary data may hold unsaved work" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anfangs nicht ausgewählt: temporäre Daten können nicht gesicherte Arbeit enthalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza sin elegir: los datos temporales pueden contener trabajo sin guardar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas choisi d’avance : les données temporaires peuvent contenir du travail non enregistré"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बिना चुने शुरू: अस्थायी डेटा में बिना सहेजा काम हो सकता है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택되지 않은 상태로 시작: 임시 데이터에 저장하지 않은 작업이 있을 수 있음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认不勾选：临时数据可能包含未保存的工作"
+          }
+        }
+      }
+    },
+    "Starts unchosen: the maker's other apps may use it" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anfangs nicht ausgewählt: andere Apps des Herstellers könnten es nutzen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza sin elegir: otras apps del fabricante pueden usarlo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas choisi d’avance : d’autres apps de l’éditeur peuvent l’utiliser"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बिना चुने शुरू: निर्माता के दूसरे ऐप इसे इस्तेमाल कर सकते हैं"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택되지 않은 상태로 시작: 개발사의 다른 앱이 사용할 수 있음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认不勾选：厂商的其他应用可能会使用它"
+          }
+        }
+      }
+    },
+    "Starts unchosen: tied by its name in its maker's folder" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anfangs nicht ausgewählt: nach dem Namen im Ordner des Herstellers verknüpft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza sin elegir: vinculado por su nombre en la carpeta de su fabricante"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas choisi d’avance : lié par son nom dans le dossier de son éditeur"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बिना चुने शुरू: निर्माता के फ़ोल्डर में नाम से जुड़ा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택되지 않은 상태로 시작: 개발사 폴더에서 이름으로 연결됨"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认不勾选：在其厂商的文件夹中按名称关联"
+          }
+        }
+      }
+    },
+    "Starts unchosen: tied by its name only" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anfangs nicht ausgewählt: nur nach dem Namen verknüpft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza sin elegir: vinculado solo por su nombre"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas choisi d’avance : lié par son nom seulement"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बिना चुने शुरू: केवल नाम से जुड़ा"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택되지 않은 상태로 시작: 이름으로만 연결됨"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认不勾选：仅按名称关联"
+          }
+        }
+      }
+    },
     "Starts when something asks for it" : {
       "localizations" : {
         "de" : {
@@ -100137,42 +100497,42 @@
         }
       }
     },
-    "This app is already in the Trash. Only the chosen leftovers move; shared identities still used by installed apps stay. Settings and personal data stay unless you choose them." : {
+    "This app is already in the Trash. Only the chosen leftovers move; shared identities still used by installed apps stay. What certainly belongs to the app starts chosen." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese App ist bereits im Papierkorb. Nur die ausgewählten Reste werden bewegt; gemeinsame Identitäten, die installierte Apps noch verwenden, bleiben. Einstellungen und persönliche Daten bleiben, wenn du sie nicht auswählst."
+            "value" : "Diese App ist bereits im Papierkorb. Nur die ausgewählten Reste werden bewegt; gemeinsame Identitäten, die installierte Apps noch nutzen, bleiben. Was sicher zur App gehört, ist anfangs ausgewählt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta app ya está en la Papelera. Solo se mueven los restos elegidos; las identidades compartidas que aún usan apps instaladas se quedan. Los ajustes y datos personales se quedan salvo que los elijas."
+            "value" : "Esta app ya está en la Papelera. Solo se mueven los restos elegidos; las identidades compartidas que aún usan apps instaladas se quedan. Lo que sin duda pertenece a la app empieza elegido."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette app est déjà dans la Corbeille. Seuls les restes choisis sont déplacés ; les identités partagées encore utilisées par des apps installées restent. Les réglages et données personnelles restent sauf si vous les choisissez."
+            "value" : "Cette app est déjà dans la corbeille. Seuls les restes choisis sont déplacés ; les identités partagées encore utilisées par des apps installées restent. Ce qui appartient à coup sûr à l’app est choisi d’avance."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "यह ऐप पहले से ट्रैश में है। केवल चुने बचे हुए आइटम ले जाए जाते हैं; इंस्टॉल ऐप्स द्वारा अभी उपयोग की जा रही साझा पहचानें बनी रहती हैं। सेटिंग्ज़ और निजी डेटा तब तक रहते हैं जब तक आप उन्हें न चुनें।"
+            "value" : "यह ऐप पहले से ट्रैश में है। केवल चुने गए बचे हुए आइटम हटते हैं; इंस्टॉल किए ऐप जिन साझा पहचानों का अब भी इस्तेमाल करते हैं, वे रहती हैं। जो निश्चित रूप से ऐप का है, वह पहले से चुना होता है।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 앱은 이미 휴지통에 있습니다. 선택한 잔여 항목만 이동하며, 설치된 앱이 아직 사용하는 공유 식별 정보는 남습니다. 설정과 개인 데이터는 직접 선택하지 않으면 남습니다."
+            "value" : "이 앱은 이미 휴지통에 있습니다. 선택한 잔여 항목만 이동하며, 설치된 앱이 아직 사용하는 공유 식별 정보는 남습니다. 앱에 확실히 속한 항목은 처음부터 선택됩니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此应用已在废纸篓中。只会移动选中的残留项；仍被已安装应用使用的共享身份标识会保留。设置和个人数据除非你选择，否则会保留。"
+            "value" : "此应用已在废纸篓中。只会移动勾选的残留；已安装应用仍在使用的共享身份会保留。确定属于该应用的项目默认勾选。"
           }
         }
       }

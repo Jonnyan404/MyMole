@@ -484,8 +484,10 @@ struct UninstallView: View {
 
 /// Lists the app and everything it left in the Library and system-wide,
 /// then moves what's chosen to the Trash on confirmation; the privileged
-/// tool deletes explicitly chosen system-wide items. Only identity-linked
-/// caches and logs start chosen; all other data needs an explicit choice.
+/// tool deletes explicitly chosen system-wide items. What is certainly the
+/// app's starts chosen (`Leftover.review`); name matches, what the maker's
+/// apps share, temporary data and what looks like the user's own work need
+/// an explicit choice.
 /// A running app is refused until it's quit.
 struct UninstallSheet: View {
     let model: AppsModel
@@ -574,7 +576,7 @@ struct UninstallSheet: View {
                         )
                     }
                     if removed != nil {
-                        DSNotice(.info, "This app is already in the Trash. Only the chosen leftovers move; shared identities still used by installed apps stay. Settings and personal data stay unless you choose them.")
+                        DSNotice(.info, "This app is already in the Trash. Only the chosen leftovers move; shared identities still used by installed apps stay. What certainly belongs to the app starts chosen.")
                     }
                     if running {
                         DSNotice(
@@ -642,7 +644,7 @@ struct UninstallSheet: View {
                                 DSText("Uninstall now moves only the app. Related files can be chosen when the search finishes.", .metadata)
                             }
                         }
-                        DSText("Each folder row includes its contents. Your data stays unless you choose it.", .metadata)
+                        DSText("Each folder row includes its contents.", .metadata)
                         if RelatedComponents.isChrome(app) {
                             DSText("Chrome profile folders can contain bookmarks, history and extensions. Custom profile locations outside the searched folders aren't discovered automatically.", .metadata)
                         }
@@ -652,7 +654,7 @@ struct UninstallSheet: View {
                                     ? String(localized: "No verified leftovers in the inspected locations.")
                                     : String(
                                         localized:
-                                            "Each leftover shows how it's tied to the app. Only caches and logs tied by identity start chosen. Settings, website data, saved state, scripts, launch configuration and name matches stay unless you choose them."
+                                            "Each leftover shows how it's tied to the app. What certainly belongs to it starts chosen. Name matches, what the maker's other apps may use, temporary data and folders that look like documents or projects are marked Review and stay unless you choose them."
                                     ), .metadata)
                         }
                         FileTable(
@@ -683,7 +685,7 @@ struct UninstallSheet: View {
                         .frame(height: system.isEmpty ? 240 : 170)
                         UninstallRowDetails(item: inspectedLeftover, canChoose: inspectedLeftover.map(canChoose) ?? false)
                         DisclosureGroup("Search details") {
-                            DSText("Hidden settings and deeper name matches are searched automatically. The direct edition also checks exact app IDs in per-user temporary/cache folders. These results start unchosen; temporary data may contain unsaved work.", .metadata)
+                            DSText("Hidden settings and deeper name matches are searched automatically. The direct edition also checks exact app IDs in per-user temporary/cache folders. Name matches and temporary data start unchosen; temporary data may contain unsaved work.", .metadata)
                         }.font(.caption).foregroundStyle(.secondary)
                         if !system.isEmpty { systemSection }
                         relatedSection
@@ -1079,10 +1081,12 @@ struct UninstallSheet: View {
                         id: $0.path, name: $0.name, size: $0.bytes, kind: "\($0.kind.title) · \($0.place)",
                         location: ($0.path as NSString).deletingLastPathComponent,
                         symbol: "folder", subtitle: $0.canRemove ? $0.evidence.title : String(localized: "Ownership not verified"),
-                        badge: $0.canRemove ? nil : (canChoose($0) ? String(localized: "Unverified") : String(localized: "Inspection only")),
+                        badge: $0.canRemove ? ($0.chosenByDefault ? nil : String(localized: "Review"))
+                            : (canChoose($0) ? String(localized: "Unverified") : String(localized: "Inspection only")),
+                        badgeHelp: $0.canRemove ? $0.review?.title : nil,
                         badgeTint: canChoose($0) && !$0.canRemove ? .systemOrange : .secondaryLabelColor,
                         canChoose: canChoose($0) && self.leftovers != nil && checking == nil && !model.uninstalling,
-                        choiceHelp: $0.canRemove ? nil : (canChoose($0)
+                        choiceHelp: $0.canRemove ? $0.choiceTitle : (canChoose($0)
                             ? String(localized: "Unverified match. Review its path; removal always asks for confirmation.")
                             : String(localized: "This match couldn't pass the review's ownership, path or protection checks. Refresh the review or inspect it in Finder."))))
             }

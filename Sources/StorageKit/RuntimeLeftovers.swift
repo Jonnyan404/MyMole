@@ -1,11 +1,12 @@
 import Darwin
 import Foundation
 
-/// Exact app identities in macOS's per-user runtime roots. Temporary data
-/// can include unsaved work, so every result is manual-review data.
+/// Exact app identities in macOS's per-user runtime roots. What's in the
+/// cache root starts chosen; temporary data can include unsaved work, so it
+/// starts unchosen.
 public enum RuntimeLeftovers {
     public struct Root: Sendable, Hashable {
-        public enum Kind: Sendable, Hashable { case caches, temporary }
+        public enum Kind: String, Sendable, Hashable, Codable { case caches, temporary }
         public let path: String
         public let kind: Kind
         public init(path: String, kind: Kind) { self.path = Trasher.lexical(path); self.kind = kind }
@@ -51,6 +52,7 @@ public enum RuntimeLeftovers {
                 guard let bytes = scan.measure(path) else { continue }
                 var item = Leftover(path: path, bytes: bytes, place: root.place)
                 item.evidence = .runtimeID
+                item.runtimeRoot = root.kind
                 result.append(item)
             }
         }

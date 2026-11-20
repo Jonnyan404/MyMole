@@ -44,6 +44,8 @@ final class LeftoverScan {
     private var directories: [String: [String]] = [:]
     private(set) var unreadable = Set<String>()
     private(set) var limited = false
+    /// Measured folders holding what looks like the user's own work.
+    private(set) var userWork = Set<String>()
 
     init(progress: ScanProgress, limits: LeftoverScanLimits = .init()) {
         self.progress = progress
@@ -105,6 +107,41 @@ final class LeftoverScan {
         }
         unreadable.formUnion(result.deniedPaths)
         guard result.deniedPaths.isEmpty, !result.root.unreadable else { unreadable.insert(path); return nil }
+        if UserWork.isIn(result.root) { userWork.insert(path) }
         return result.root.size
     }
+}
+
+/// Signs that a folder holds the user's own work rather than what an app
+/// keeps for itself: a filled Documents, Desktop or Projects folder (as in a
+/// sandboxed app's container), a version-control repository, a document
+/// package, or a large document. Read from the measured tree, without
+/// another walk; smaller loose files aren't listed there.
+enum UserWork {
+    static let folders: Set<String> = ["documents", "desktop", "projects"]
+    static let repositories: Set<String> = [".git", ".hg", ".svn"]
+    static let packages: Set<String> = [
+        "pages", "key", "numbers", "rtfd", "logicx", "band", "fcpbundle", "photoslibrary", "sketch",
+        "xcodeproj", "xcworkspace", "playground", "scriv",
+    ]
+    static let documents: Set<String> = [
+        "pdf", "doc", "docx", "pages", "key", "numbers", "xls", "xlsx", "ppt", "pptx", "rtf", "odt", "ods", "odp",
+        "psd", "sketch", "epub",
+    ]
+
+    static func isIn(_ root: Folder) -> Bool {
+        var stack = [root]
+        while let folder = stack.popLast() {
+            if folder.listedFiles.contains(where: { documents.contains(ending($0.name)) }) { return true }
+            for sub in folder.subfolders {
+                let name = sub.name.lowercased()
+                if repositories.contains(name) || packages.contains(ending(name)) { return true }
+                if folders.contains(name) && sub.size > 0 { return true }
+                stack.append(sub)
+            }
+        }
+        return false
+    }
+
+    private static func ending(_ name: String) -> String { (name as NSString).pathExtension.lowercased() }
 }

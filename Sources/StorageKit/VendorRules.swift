@@ -6,7 +6,7 @@ import Foundation
 /// ones. A part is offered only when its app, or the last app of the family
 /// that shares it, is the one going; a part macOS protects, or one every
 /// user of the Mac shares, is only shown with what to do about it.
-/// Nothing here is ever chosen for the user.
+/// Only a part in the home folder that's the app's alone starts chosen.
 public enum VendorRules {
     public enum Handling: String, Sendable, Codable {
         /// Can go, after the user chooses it.

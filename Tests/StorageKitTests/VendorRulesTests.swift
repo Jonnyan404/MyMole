@@ -164,7 +164,7 @@ enum ReceiptFixture {
         AppBundle(path: box.path + "/Applications/\(name).app", name: name, bundleID: id, version: nil, bytes: 1, fromAppStore: false)
     }
 
-    @Test func homeFolderPartsAreOfferedButNeverChosen() throws {
+    @Test func homeFolderPartsTheAppHasAloneStartChosen() throws {
         let box = try Sandbox()
         try box.file("Library/Application Support/ZoomUpdater/u.bin", bytes: 5_000)
         try box.file(".zoomus/settings.db", bytes: 5_000)
@@ -173,7 +173,7 @@ enum ReceiptFixture {
         let found = AppLeftovers.find(for: zoom, home: box.path, installed: [zoom])
         let byPath = Dictionary(uniqueKeysWithValues: found.map { ($0.path, $0) })
         let updater = try #require(byPath[box.path + "/Library/Application Support/ZoomUpdater"])
-        #expect(updater.evidence == .knownPart && !updater.chosenByDefault)
+        #expect(updater.evidence == .knownPart && updater.chosenByDefault)
         #expect(byPath[box.path + "/.zoomus"]?.evidence == .knownPart)
         // Recordings are the user's.
         #expect(!found.contains { $0.path.contains("/Documents/") })
@@ -190,8 +190,10 @@ enum ReceiptFixture {
         let found = AppLeftovers.find(for: direct, home: box.path, installed: [direct, other]).map(\.path)
         #expect(!found.contains(box.path + "/Library/Application Support/JabraSDK"))
         #expect(!AppLeftovers.isStillLeftover(box.path + "/Library/Application Support/JabraSDK", of: direct, home: box.path, installed: [direct, other]))
-        let alone = AppLeftovers.find(for: direct, home: box.path, installed: [direct]).map(\.path)
-        #expect(alone.contains(box.path + "/Library/Application Support/JabraSDK"))
+        let alone = AppLeftovers.find(for: direct, home: box.path, installed: [direct])
+        let sdk = alone.first { $0.path == box.path + "/Library/Application Support/JabraSDK" }
+        // Shared by the family: offered with the last of its apps, never chosen.
+        #expect(sdk?.evidence == .knownPart && sdk?.review == .maker)
     }
 
     @Test func versionedFoldersInTheMakersFolderAreTheApps() throws {
