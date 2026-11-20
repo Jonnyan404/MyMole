@@ -244,6 +244,22 @@ public enum VendorRules {
             Part("/Library/Application Support/MainStage", .offer, .data),
             Part("/Library/Audio/Apple Loops/Apple", .offer, .data, sharedWith: appleMusicApps),
         ]),
+        // Firefox and Thunderbird share Mozilla's folders; their own are found by name.
+        Rule("Mozilla", apps: ["org.mozilla."], parts: [
+            Part("~/Library/Caches/Mozilla", .offer, .rebuildable, sharedWith: ["org.mozilla."]),
+            Part("~/Library/Application Support/Mozilla", .show, .data,
+                 note: String(localized: "Mozilla's shared folder. Other apps put their browser connections here too, so it stays.")),
+        ]),
+        Rule("Steam", apps: ["com.valvesoftware.steam"], parts: [
+            Part("~/Library/Application Support/Steam", .show, .data,
+                 note: String(localized: "Holds the games Steam installed, in steamapps. Remove games in Steam first, or keep this folder to keep them.")),
+        ]),
+        Rule("Battle.net", apps: ["net.battle.", "com.blizzard."], parts: [
+            Part("/Users/Shared/Battle.net", .show, .data,
+                 note: String(localized: "Battle.net's shared agent and setup files, which Blizzard's support says to remove after quitting Battle.net.")),
+            Part("/Users/Shared/Blizzard", .show, .data,
+                 note: String(localized: "May hold games and their data. Remove games in Battle.net first.")),
+        ]),
         Rule("HP", apps: ["com.hp."], parts: [Part("/Library/Printers/hp", .show, .appPart, note: printerNote)]),
         Rule("Canon", apps: ["jp.co.canon."], parts: [Part("/Library/Printers/Canon", .show, .appPart, note: printerNote)]),
         Rule("Epson", apps: ["com.epson."], parts: [Part("/Library/Printers/EPSON", .show, .appPart, note: printerNote)]),
@@ -258,6 +274,9 @@ public enum VendorRules {
         "~/VirtualBox VMs", "~/Virtual Machines.localized", "~/.tart/vms",
         "/Users/Shared", "/Library/Extensions", "/Library/SystemExtensions", "/Library/StagedExtensions",
         "/Library/Audio/Plug-Ins/Components", "/Library/Audio/Plug-Ins/VST", "/Library/Audio/Plug-Ins/VST3",
+        // Adobe's shared licensing, color profiles and fonts serve every Adobe app.
+        "/Library/Application Support/Adobe/SLStore", "/Library/Application Support/Adobe/Color Profiles",
+        "/Library/Application Support/Adobe/Fonts",
         "/System", "/usr", "/bin", "/sbin",
     ]
 

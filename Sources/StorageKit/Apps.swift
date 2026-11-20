@@ -235,6 +235,7 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
         case "Caches", "Logs", "Logs/DiagnosticReports", "Application Support/CrashReporter":
             .rebuildable
         case "LaunchAgents": .appPart
+        case _ where AppLeftovers.bundlePlaces.contains(place): .appPart
         case "Preferences", "Preferences/ByHost", AppLeftovers.recentDocuments: .settings
         case "Group Containers": .shared
         case "~/.cache": .rebuildable
@@ -582,8 +583,10 @@ public enum AppLeftovers {
         if !app.isProtected && !scan.shouldStop && Trasher.noLinksBetween(home, and: lib) {
             out += vendorFolders(of: app, lib: lib, installed: installed, scan: scan)
             out += vendorShared(of: app, lib: lib, installed: installed, scan: scan)
-            let known = Set(out.map(\.path))
+            var known = Set(out.map(\.path))
             out += knownParts(of: app, home: home, installed: installed, identity: identity, scan: scan).filter { !known.contains($0.path) }
+            known.formUnion(out.map(\.path))
+            out += bundled(of: app, lib: lib, identity: identity, installed: installed, scan: scan).filter { !known.contains($0.path) }
         }
         if deep && !app.isProtected && !scan.shouldStop {
             var known = Set(out.map(\.path))
@@ -593,6 +596,9 @@ public enum AppLeftovers {
                 .filter { !known.contains($0.path) }
         }
         out.removeAll { claimedByOtherApp($0.path, of: app, home: home, identity: identity) }
+        // What the vendor's own list only shows, with what to do instead, isn't offered too.
+        let shown = shownOnly(for: app, home: home)
+        out.removeAll { shown.contains($0.path) }
         // One leftover inside another goes with it.
         let paths = Set(out.map(\.path))
         out.removeAll { l in paths.contains { l.path.hasPrefix($0 + "/") } }
@@ -681,10 +687,18 @@ public enum AppLeftovers {
     /// and its name without the maker's ("Chrome" of "Google Chrome").
     static func productNames(_ app: AppBundle, inVendorFolder vendor: String) -> Set<String> {
         var names: Set<String> = [app.name.lowercased()]
+        if let id = app.bundleID?.lowercased() { names.formUnion((folderNames[id] ?? []).map { $0.lowercased() }) }
         let prefix = vendor.lowercased() + " "
         if app.name.lowercased().hasPrefix(prefix) { names.insert(String(app.name.lowercased().dropFirst(prefix.count))) }
         return names.filter { $0.count >= 3 && !genericNames.contains($0) }
     }
+
+    /// What a maker calls an app's folder when it isn't the app's name, by
+    /// its documentation: IntelliJ IDEA Community keeps "IdeaIC2026.2".
+    static let folderNames: [String: [String]] = [
+        "com.jetbrains.intellij.ce": ["IdeaIC"],
+        "com.jetbrains.intellij": ["IntelliJIdea"],
+    ]
 
     /// Whether `entry` in `vendor` folder is `app`'s, and no other installed app's.
     static func isAppsVendorEntry(_ entry: String, vendor: String, of app: AppBundle, installed: [AppBundle]) -> Bool {
@@ -909,7 +923,8 @@ public enum AppLeftovers {
         // What the deeper search offered, checked again by its own rules.
         if isStillKnownPart(path, of: app, home: home, installed: installed, identity: identity) { return true }
         if deep { return DeepLeftovers.isStill(path, of: app, home: home, installed: installed) }
-        guard path.hasPrefix(lib), Trasher.noLinksBetween(home, and: path) else { return false }
+        guard path.hasPrefix(lib), Trasher.noLinksBetween(home, and: path), !shownOnly(for: app, home: home).contains(path) else { return false }
+        if isStillBundled(path, of: app, lib: home + "/Library", identity: identity, installed: installed) { return true }
         let folder = (String(path.dropFirst(lib.count)) as NSString).deletingLastPathComponent
         let entry = (path as NSString).lastPathComponent
         if isStillVendorLeftover(folder: folder, entry: entry, of: app, installed: installed) {

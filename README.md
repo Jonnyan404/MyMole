@@ -84,6 +84,10 @@ Kernel and system extensions and folders every user shares are only shown,
 with what to do instead. When an app ships its own uninstaller, MyMole points
 to it. Removing system-wide parts needs the GitHub edition.
 
+Plug-ins an app installed in your Library (web, Quick Look, Spotlight and audio
+plug-ins, screen savers, services, preference panes) and its background
+services' containers are found by the ID macOS reads in them, never by name.
+
 Also includes app reset, searches for files left by removed apps, and lists of
 app copies and file associations.
 

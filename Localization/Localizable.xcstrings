@@ -26421,6 +26421,46 @@
         }
       }
     },
+    "Battle.net's shared agent and setup files, which Blizzard's support says to remove after quitting Battle.net." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gemeinsame Agent- und Setup-Dateien von Battle.net, die laut Blizzard-Support nach dem Beenden von Battle.net entfernt werden können."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivos compartidos del agente y de instalación de Battle.net, que el soporte de Blizzard indica eliminar tras cerrar Battle.net."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fichiers partagés de l’agent et d’installation de Battle.net, que l’assistance de Blizzard conseille de supprimer après avoir quitté Battle.net."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Battle.net की साझा एजेंट और सेटअप फ़ाइलें, जिन्हें Blizzard सहायता Battle.net बंद करने के बाद हटाने को कहती है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Battle.net의 공유 에이전트 및 설치 파일로, Blizzard 지원에 따르면 Battle.net을 종료한 뒤 제거할 수 있습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Battle.net 共享的代理和安装文件，暴雪支持建议在退出 Battle.net 后移除。"
+          }
+        }
+      }
+    },
     "Before %@" : {
       "localizations" : {
         "de" : {
@@ -47473,6 +47513,46 @@
         }
       }
     },
+    "Holds the games Steam installed, in steamapps. Remove games in Steam first, or keep this folder to keep them." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enthält die von Steam installierten Spiele, in steamapps. Entferne Spiele zuerst in Steam, oder behalte diesen Ordner, um sie zu behalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contiene los juegos que instaló Steam, en steamapps. Elimina primero los juegos en Steam, o conserva esta carpeta para conservarlos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contient les jeux installés par Steam, dans steamapps. Supprimez d’abord les jeux dans Steam, ou gardez ce dossier pour les garder."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसमें Steam द्वारा इंस्टॉल किए गए गेम steamapps में हैं। पहले Steam में गेम हटाएँ, या उन्हें रखने के लिए यह फ़ोल्डर रखें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steam이 설치한 게임이 steamapps에 들어 있습니다. 먼저 Steam에서 게임을 제거하거나, 게임을 유지하려면 이 폴더를 남겨 두세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其中的 steamapps 存有 Steam 安装的游戏。请先在 Steam 中移除游戏，或保留此文件夹以保留它们。"
+          }
+        }
+      }
+    },
     "Holds the least. The disk map is let go a while after you leave it and isn't prepared at launch; running scans repaint less often." : {
       "localizations" : {
         "de" : {
@@ -56693,6 +56773,46 @@
         }
       }
     },
+    "May hold games and their data. Remove games in Battle.net first." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kann Spiele und ihre Daten enthalten. Entferne Spiele zuerst in Battle.net."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puede contener juegos y sus datos. Elimina primero los juegos en Battle.net."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peut contenir des jeux et leurs données. Supprimez d’abord les jeux dans Battle.net."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसमें गेम और उनका डेटा हो सकता है। पहले Battle.net में गेम हटाएँ।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "게임과 그 데이터가 들어 있을 수 있습니다. 먼저 Battle.net에서 게임을 제거하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可能存有游戏及其数据。请先在 Battle.net 中移除游戏。"
+          }
+        }
+      }
+    },
     "May hold things the app downloads again, or a sign-in it asks for again." : {
       "localizations" : {
         "de" : {
@@ -62017,6 +62137,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在移动…"
+          }
+        }
+      }
+    },
+    "Mozilla's shared folder. Other apps put their browser connections here too, so it stays." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gemeinsamer Ordner von Mozilla. Auch andere Apps legen hier ihre Browserverbindungen ab, daher bleibt er."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carpeta compartida de Mozilla. Otras apps también guardan aquí sus conexiones con el navegador, así que se queda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dossier partagé de Mozilla. D’autres apps y placent aussi leurs connexions au navigateur : il reste donc."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mozilla का साझा फ़ोल्डर। दूसरे ऐप भी अपने ब्राउज़र कनेक्शन यहाँ रखते हैं, इसलिए यह रहता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mozilla의 공유 폴더입니다. 다른 앱도 이곳에 브라우저 연결 정보를 두므로 남겨 둡니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mozilla 的共享文件夹。其他应用也会在此存放其浏览器连接，因此保留它。"
           }
         }
       }
