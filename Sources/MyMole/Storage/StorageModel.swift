@@ -782,6 +782,38 @@ final class StorageModel {
     func cancelScan() {
         if scanning, stopAsked == nil { stopAsked = .now }
         progress?.cancel()
+        guard scanning else { return }
+        let run = epoch, wait = stopWait
+        stopWatch?.cancel()
+        stopWatch = Task { [weak self] in
+            try? await Task.sleep(for: wait)
+            guard !Task.isCancelled, let self, run == self.epoch, self.scanning, self.stopAsked != nil else { return }
+            self.letGo(run: run)
+        }
+    }
+
+    /// How long Stop waits for the disk before it stops waiting.
+    @ObservationIgnored var stopWait: Duration = .seconds(2)
+    @ObservationIgnored private var stopWatch: Task<Void, Never>?
+
+    /// A slow or vanished network disk can take minutes to answer one read,
+    /// which nothing can interrupt. Stop doesn't wait for it: the read is
+    /// left to end on its own, its result is never shown, and a map it was
+    /// still writing goes; a complete map being refreshed stays.
+    private func letGo(run: Int) {
+        let partial = !refreshing
+        finish(nil, large: nil, snapshot: nil, index: nil, run: run)
+        epoch += 1
+        if partial {
+            root = nil
+            current = nil
+            hovered = nil
+            index = nil
+            marked.removeAll()
+            installLargeFiles([], spill: nil)
+        }
+        showNotice(Notice(text: String(localized: "The disk is slow to answer, so MyMole stopped waiting. Its last read ends on its own when the disk answers."),
+                          canUndo: false))
     }
 
     /// When the running scan started, and when it was asked to stop.

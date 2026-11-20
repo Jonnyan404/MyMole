@@ -267,3 +267,40 @@ struct NFSShareTests {
         #expect(FileManager.default.fileExists(atPath: share + "/keep/keep.bin"))
     }
 }
+
+/// A WebDAV share whose server sends at most 16 KiB a second, as a slow
+/// NAS or a far-away server does. Started, filled and torn down by
+/// `scripts/volume-tests.sh slow`, which mounts it twice to see it's known again.
+@Suite(.serialized, .enabled(if: ProcessInfo.processInfo.environment["MYMOLE_SLOW_SHARE"] != nil))
+struct SlowShareTests {
+    let share = ProcessInfo.processInfo.environment["MYMOLE_SLOW_SHARE"] ?? ""
+
+    /// It tells no size, so its free space is unknown, not none.
+    @Test func theShareIsListedWithNoFreeSpaceKnown() throws {
+        let volume = try #require(Volumes.mounted().first { $0.path == share })
+        #expect(volume.available == nil)
+        #expect(Volumes.detachableName(of: share) != nil)
+    }
+
+    /// Printed for the script, which compares it after mounting the share again.
+    @Test func theShareIsKnownByItsAddress() throws {
+        let id = try #require(Volumes.identity(of: share))
+        #expect(!id.isStartup && id.uuid?.hasPrefix("share:http://127.0.0.1:") == true)
+        print("share-history-key " + Volumes.historyKey(for: share))
+    }
+
+    /// The share sends a folder's whole listing in one answer, which the
+    /// system reads in one call nothing can interrupt: the scan ends after
+    /// it, with no folder more read. The map doesn't wait for it
+    /// (SlowDiskStopTests).
+    @Test func aScanStoppedWhileTheShareIsSlowReadsNothingMore() async throws {
+        let progress = ScanProgress()
+        let path = share
+        let scan = Task.detached { StorageScanner.scan(path: path, progress: progress, workers: 2) }
+        try await Task.sleep(for: .seconds(1.5))
+        progress.cancel()
+        let result = await scan.value
+        #expect(result.cancelled)
+        #expect(result.root.fileCount < 600)
+    }
+}

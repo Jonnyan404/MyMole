@@ -4667,6 +4667,46 @@
         }
       }
     },
+    "%@ point into the app and stop working once it's gone. They take no space. The app's own settings may remove them; otherwise an administrator can, in Terminal." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ zeigen in die App und funktionieren nicht mehr, sobald sie weg ist. Sie belegen keinen Platz. Die Einstellungen der App können sie entfernen, sonst kann es ein Administrator im Terminal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ apuntan dentro de la app y dejan de funcionar cuando ya no está. No ocupan espacio. Los ajustes de la propia app pueden quitarlos; si no, puede hacerlo un administrador en Terminal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ pointent dans l'app et cessent de fonctionner une fois qu'elle n'est plus là. Ils n'occupent pas d'espace. Les réglages de l'app peuvent les supprimer ; sinon, un administrateur peut le faire dans Terminal."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ऐप के अंदर की ओर इशारा करते हैं और ऐप हटने पर काम करना बंद कर देते हैं। ये जगह नहीं लेते। ऐप की अपनी सेटिंग्स इन्हें हटा सकती हैं; नहीं तो कोई एडमिनिस्ट्रेटर Terminal में हटा सकता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@은(는) 앱 안을 가리키며 앱이 없어지면 작동하지 않습니다. 공간을 차지하지 않습니다. 앱 자체 설정에서 제거할 수 있고, 그렇지 않으면 관리자가 터미널에서 제거할 수 있습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 指向应用内部，应用移除后便无法使用。它们不占空间。应用自身的设置可以移除它们；否则管理员可以在“终端”中移除。"
+          }
+        }
+      }
+    },
     "%@ report %@" : {
       "localizations" : {
         "de" : {
@@ -34313,6 +34353,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "命令面板…"
+          }
+        }
+      }
+    },
+    "Command links in %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Befehlslinks in %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enlaces de comandos en %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liens de commandes dans %@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ में कमांड लिंक"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@의 명령 링크"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 中的命令链接"
           }
         }
       }
@@ -98459,6 +98539,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "会先推出磁盘映像，再移到废纸篓。你可以随后立即撤销。"
+          }
+        }
+      }
+    },
+    "The disk is slow to answer, so MyMole stopped waiting. Its last read ends on its own when the disk answers." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Volume antwortet langsam, daher wartet MyMole nicht mehr. Der letzte Lesevorgang endet von selbst, sobald es antwortet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El disco tarda en responder, así que MyMole dejó de esperar. Su última lectura termina sola cuando el disco responda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le disque met du temps à répondre, MyMole a donc cessé d'attendre. Sa dernière lecture se termine d'elle-même quand le disque répond."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डिस्क धीरे जवाब दे रही है, इसलिए MyMole ने इंतज़ार बंद कर दिया। डिस्क के जवाब देने पर इसकी आख़िरी रीडिंग अपने आप ख़त्म हो जाएगी।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "디스크 응답이 느려 MyMole이 기다리기를 멈췄습니다. 마지막 읽기는 디스크가 응답하면 저절로 끝납니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "磁盘响应缓慢，因此 MyMole 停止了等待。磁盘响应后，最后一次读取会自行结束。"
           }
         }
       }

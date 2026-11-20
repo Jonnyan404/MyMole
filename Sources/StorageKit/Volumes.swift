@@ -18,19 +18,28 @@ public enum Volumes {
         guard let scope = try? SyntheticRun.current() else { return [] }
         return [Volume(path: scope.home, name: "Synthetic Disk", available: 60 << 30, isRemovable: false)]
         #else
-        let keys: [URLResourceKey] = [.volumeNameKey, .volumeAvailableCapacityKey, .volumeAvailableCapacityForImportantUsageKey, .volumeIsRemovableKey, .volumeIsEjectableKey, .volumeIsRootFileSystemKey]
+        let keys: [URLResourceKey] = [.volumeNameKey, .volumeAvailableCapacityKey, .volumeAvailableCapacityForImportantUsageKey, .volumeTotalCapacityKey, .volumeIsRemovableKey, .volumeIsEjectableKey, .volumeIsRootFileSystemKey]
         let urls = FileManager.default.mountedVolumeURLs(includingResourceValuesForKeys: keys, options: [.skipHiddenVolumes]) ?? []
         return urls.compactMap { url -> (Volume, Bool)? in
             guard let v = try? url.resourceValues(forKeys: Set(keys)) else { return nil }
             let vol = Volume(
                 path: url.path, name: v.volumeName ?? url.lastPathComponent,
-                available: v.volumeAvailableCapacityForImportantUsage ?? v.volumeAvailableCapacity.map(Int64.init),
+                available: free(total: v.volumeTotalCapacity, forImportantUsage: v.volumeAvailableCapacityForImportantUsage,
+                                plain: v.volumeAvailableCapacity),
                 isRemovable: v.volumeIsRemovable == true || v.volumeIsEjectable == true)
             return (vol, v.volumeIsRootFileSystem == true)
         }
         .sorted { $0.1 != $1.1 ? $0.1 : $0.0.name.localizedStandardCompare($1.0.name) == .orderedAscending }
         .map(\.0)
         #endif
+    }
+
+    /// The free space a disk reports, or nil when it doesn't know it. A
+    /// WebDAV share gives no size and 0 for what's free for important use,
+    /// which is no space known, not none.
+    static func free(total: Int?, forImportantUsage: Int64?, plain: Int?) -> Int64? {
+        guard let total, total > 0 else { return nil }
+        return forImportantUsage ?? plain.map(Int64.init)
     }
 
     /// The name of the disk `path` is on when it can be disconnected:
@@ -51,12 +60,22 @@ public enum Volumes {
         return path + "#" + (id.uuid ?? "unknown-" + UUID().uuidString)
     }
 
+    /// A network share has no UUID; the address it's mounted again from is
+    /// the same each time it's connected, so a share keeps its history.
+    /// Never with a password.
+    static func shareIdentity(_ url: URL) -> String? {
+        guard var parts = URLComponents(url: url, resolvingAgainstBaseURL: false), parts.host?.isEmpty == false else { return nil }
+        parts.password = nil
+        return parts.string.map { "share:" + $0 }
+    }
+
     public static func identity(of path: String) -> (isStartup: Bool, uuid: String?)? {
         #if SMOKE
         return (try? SyntheticRun.current()) == nil ? nil : (true, nil)
         #else
-        guard let v = try? URL(fileURLWithPath: path).resourceValues(forKeys: [.volumeIsRootFileSystemKey, .volumeUUIDStringKey]) else { return nil }
-        return (v.volumeIsRootFileSystem == true, v.volumeUUIDString)
+        guard let v = try? URL(fileURLWithPath: path).resourceValues(forKeys: [.volumeIsRootFileSystemKey, .volumeUUIDStringKey, .volumeURLForRemountingKey])
+        else { return nil }
+        return (v.volumeIsRootFileSystem == true, v.volumeUUIDString ?? v.volumeURLForRemounting.flatMap(shareIdentity))
         #endif
     }
 }

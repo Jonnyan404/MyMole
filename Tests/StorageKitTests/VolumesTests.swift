@@ -15,6 +15,23 @@ import Testing
         #expect(a != b && a.hasPrefix("/Volumes/Stick#unknown-"))
     }
 
+    /// A WebDAV share gives no size and 0 for what's free for important use.
+    @Test func aDiskThatGivesNoSizeHasNoKnownFreeSpace() {
+        #expect(Volumes.free(total: nil, forImportantUsage: 0, plain: nil) == nil)
+        #expect(Volumes.free(total: 0, forImportantUsage: 0, plain: 0) == nil)
+        #expect(Volumes.free(total: 1_000, forImportantUsage: 400, plain: 300) == 400)
+        #expect(Volumes.free(total: 1_000, forImportantUsage: nil, plain: 300) == 300)
+    }
+
+    /// A share connected again has the same address, so its history is kept; a password never is.
+    @Test func aShareIsKnownByTheAddressItsMountedFrom() throws {
+        let one = Volumes.shareIdentity(try #require(URL(string: "smb://anna:secret@nas.local/Media")))
+        let again = Volumes.shareIdentity(try #require(URL(string: "smb://anna:secret@nas.local/Media")))
+        #expect(one == again && one == "share:smb://anna@nas.local/Media")
+        #expect(Volumes.shareIdentity(try #require(URL(string: "smb://anna@nas.local/Other"))) != one)
+        #expect(Volumes.shareIdentity(URL(fileURLWithPath: "/Volumes/Stick")) == nil)
+    }
+
     @Test func theStartupDiskIsListedFirst() {
         let all = Volumes.mounted()
         #expect(all.first?.path == "/")
