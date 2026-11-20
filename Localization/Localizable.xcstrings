@@ -5199,6 +5199,46 @@
         }
       }
     },
+    "%@ was moved by Finder, but couldn't be found in the Trash as the same app. Its data stayed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ wurde vom Finder bewegt, ließ sich aber im Papierkorb nicht als dieselbe App finden. Seine Daten sind geblieben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Finder movió %@, pero no se encontró en la Papelera como la misma app. Sus datos se quedaron."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ a été déplacée par le Finder, mais n’a pas été retrouvée dans la Corbeille comme la même app. Ses données sont restées."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ को Finder ने ले जाया, लेकिन ट्रैश में वही ऐप नहीं मिला। इसका डेटा अपनी जगह रहा।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finder가 %@을(를) 옮겼지만 휴지통에서 같은 앱으로 찾을 수 없습니다. 데이터는 그대로 남았습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "访达已移动 %@，但在废纸篓中找不到同一个应用。它的数据保留在原处。"
+          }
+        }
+      }
+    },
     "%@ wasn't moved." : {
       "localizations" : {
         "de" : {

@@ -70,7 +70,8 @@ Undo is not available.
 ## Uninstall
 
 Remove apps individually or in batches. Review their caches, settings and data
-before removal. What certainly belongs to the app, tied by its bundle ID, a
+before removal. In a batch, apps only Finder can move go to Finder together, so it asks
+for approval once. What certainly belongs to the app, tied by its bundle ID, a
 part it carries or an app group its signature names, starts selected. Name
 matches, parts the maker's other apps may use, temporary data and folders that
 look like documents or projects start unselected, marked with the reason.
