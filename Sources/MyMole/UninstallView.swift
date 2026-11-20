@@ -832,12 +832,14 @@ struct UninstallSheet: View {
         .actionConfirmation(
             String(localized: "Uninstall \(app.name)?"), isPresented: $confirm,
             action: pendingUninstall?.needsExplicitConfirmation == true ? .uninstallSystem : .uninstall,
-            big: ConfirmationSettings.isBig(bytes: app.bytes + chosenLeftoverBytes, count: 1 + chosen.count), message: pendingMessage
+            big: ConfirmationSettings.isBig(bytes: app.bytes + chosenLeftoverBytes, count: 1 + chosen.count),
+            warning: pendingUninstall?.leftovers.contains { !$0.canRemove } == true ? .unverifiedMatches : nil, message: pendingMessage
         ) { uninstall() }
         .actionConfirmation(
             removed == nil ? String(localized: "Reset \(app.name)?") : String(localized: "Move leftovers of \(app.name) to the Trash?"), isPresented: $confirmReset,
-            action: removed == nil ? .reset : .orphans, always: hasManualSelection,
-            big: ConfirmationSettings.isBig(bytes: chosenLeftoverBytes, count: chosen.count), button: removed == nil ? String(localized: "Reset") : String(localized: "Move to Trash"),
+            action: removed == nil ? .reset : .orphans,
+            big: ConfirmationSettings.isBig(bytes: chosenLeftoverBytes, count: chosen.count),
+            warning: hasManualSelection ? .unverifiedMatches : nil, button: removed == nil ? String(localized: "Reset") : String(localized: "Move to Trash"),
             message: (removed == nil ? String(
                 localized:
                     "\(app.name) stays. The \(chosen.count) chosen leftovers (\(fmt(chosenLeftoverBytes))) go to the Trash, so it starts over as on its first launch. You can undo right after."

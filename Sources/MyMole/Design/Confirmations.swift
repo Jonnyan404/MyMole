@@ -3,7 +3,7 @@ import Observation
 import SwiftUI
 
 enum ConfirmationAction: String, CaseIterable, Identifiable {
-    case deepClean, installers, projects, duplicates, orphans, uninstall, reset
+    case deepClean, installers, projects, duplicates, orphans, uninstall, reset, unverifiedMatches
     case similar, startup, ejectImage, cloudDownloads, quitApp, optimize, savedResults
     case projectWhitelist, projectBlacklist
     // What can't be undone.
@@ -22,6 +22,7 @@ enum ConfirmationAction: String, CaseIterable, Identifiable {
         case .orphans: String(localized: "Left by removed apps")
         case .uninstall: String(localized: "App uninstallation to the Trash")
         case .reset: String(localized: "Reset app data to the Trash")
+        case .unverifiedMatches: String(localized: "Warn about unverified leftovers you chose")
         case .similar: String(localized: "Similar photos to the Trash")
         case .startup: String(localized: "Startup items to the Trash")
         case .ejectImage: String(localized: "Eject and move a disk image to the Trash")
@@ -63,10 +64,14 @@ final class ConfirmationSettings {
 
     static func isBig(bytes: Int64, count: Int) -> Bool { bytes >= bigBytes || count >= bigCount }
 
-    /// Whether to ask: the user's choice for the action, and a big move when that's turned on.
-    func shouldAsk(_ action: ConfirmationAction?, always: Bool = false, big: Bool = false) -> Bool {
-        asksOnlyBecauseBig(action, always: always, big: big) || asks(action, always: always)
+    /// Whether to ask: the user's choice for the action, a warning that
+    /// comes with it this time, and a big move when that's turned on.
+    func shouldAsk(_ action: ConfirmationAction?, always: Bool = false, big: Bool = false, warning: ConfirmationAction? = nil) -> Bool {
+        warns(warning) || asksOnlyBecauseBig(action, always: always, big: big) || asks(action, always: always)
     }
+
+    /// Whether a warning that comes with the question this time is still turned on.
+    func warns(_ warning: ConfirmationAction?) -> Bool { warning.map { asks($0) } ?? false }
 
     /// Whether the question is asked only because the move is big.
     func asksOnlyBecauseBig(_ action: ConfirmationAction?, always: Bool, big: Bool) -> Bool {
@@ -98,13 +103,17 @@ private struct ActionConfirmation: ViewModifier {
     let action: ConfirmationAction?
     let always: Bool
     let big: Bool
+    let warning: ConfirmationAction?
     let button: String
     let message: String
     let perform: () -> Void
     @State private var settings = ConfirmationSettings.shared
 
-    private var forced: Bool { settings.asksOnlyBecauseBig(action, always: always, big: big) }
-    private var asks: Bool { settings.shouldAsk(action, always: always, big: big) }
+    private var warns: Bool { settings.warns(warning) }
+    private var forced: Bool { !warns && settings.asksOnlyBecauseBig(action, always: always, big: big) }
+    private var asks: Bool { settings.shouldAsk(action, always: always, big: big, warning: warning) }
+    /// What Don't Ask Again turns off: the warning when it's shown, else the question.
+    private var skippable: ConfirmationAction? { warns ? warning : always ? nil : action }
 
     func body(content: Content) -> some View {
         content
@@ -113,7 +122,7 @@ private struct ActionConfirmation: ViewModifier {
             ), titleVisibility: .visible) {
                 Button(button, role: .destructive) { run(skip: false) }
                     .accessibilityIdentifier("confirmation.accept")
-                if action != nil, !always, !forced {
+                if skippable != nil, !forced {
                     Button(String(localized: "\(button) and Don't Ask Again"), role: .destructive) { run(skip: true) }
                 }
                 Button("Cancel", role: .cancel) { requested = false }
@@ -121,7 +130,9 @@ private struct ActionConfirmation: ViewModifier {
             } message: {
                 Text(message + (forced
                      ? "\n\n" + String(localized: "Asked because it's a big move. Settings → Confirmations → Always ask before big moves.")
-                     : action != nil && !always
+                     : warns
+                     ? "\n\n" + String(localized: "Don't Ask Again turns off only this warning. Turn it on again in Settings → Confirmations.")
+                     : skippable != nil
                      ? "\n\n" + String(localized: "Don't Ask Again applies only to this action. Turn the question on again in Settings → Confirmations.") : ""))
             }
             .confirmationKeyboard(isPresented: Binding(get: { requested && asks }, set: { requested = $0 }))
@@ -132,9 +143,9 @@ private struct ActionConfirmation: ViewModifier {
 
     private func run(skip: Bool) {
         requested = false
-        if skip, let action {
-            settings.setAsking(false, for: action)
-            settings.notice = action
+        if skip, let skippable {
+            settings.setAsking(false, for: skippable)
+            settings.notice = skippable
         }
         perform()
     }
@@ -143,11 +154,12 @@ private struct ActionConfirmation: ViewModifier {
 extension View {
     func actionConfirmation(
         _ title: String, isPresented: Binding<Bool>, action: ConfirmationAction? = nil,
-        always: Bool = false, big: Bool = false, button: String = String(localized: "Move to Trash"), message: String,
+        always: Bool = false, big: Bool = false, warning: ConfirmationAction? = nil,
+        button: String = String(localized: "Move to Trash"), message: String,
         perform: @escaping () -> Void
     ) -> some View {
-        modifier(ActionConfirmation(title: title, requested: isPresented, action: action,
-                                    always: always, big: big, button: button, message: message, perform: perform))
+        modifier(ActionConfirmation(title: title, requested: isPresented, action: action, always: always, big: big,
+                                    warning: warning, button: button, message: message, perform: perform))
     }
 }
 
@@ -197,7 +209,7 @@ struct ConfirmationsSection: View {
     }
 
     var body: some View {
-        DSSection("Confirmations", footer: "Turning a question off applies only to that action. Your choices, Keep rules and all file checks still apply. Manually chosen unverified matches and uninstalling MyMole always ask.", rows: false) {
+        DSSection("Confirmations", footer: "Turning a question off applies only to that action. Your choices, Keep rules and all file checks still apply. Uninstalling MyMole always asks.", rows: false) {
             DSFormGrid {
                 ForEach(ConfirmationAction.allCases) { action in
                     DSFormRow(label(action), checkbox: true) {

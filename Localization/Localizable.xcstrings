@@ -39207,6 +39207,46 @@
         }
       }
     },
+    "Don't Ask Again turns off only this warning. Turn it on again in Settings → Confirmations." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„Nicht mehr fragen“ schaltet nur diese Warnung aus. Du kannst sie unter Einstellungen → Bestätigungen wieder einschalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«No volver a preguntar» desactiva solo esta advertencia. Puedes volver a activarla en Ajustes → Confirmaciones."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "« Ne plus demander » désactive uniquement cet avertissement. Vous pouvez le réactiver dans Réglages → Confirmations."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"फिर न पूछें\" सिर्फ़ इस चेतावनी को बंद करता है। इसे सेटिंग्स → पुष्टियाँ में फिर से चालू करें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "'다시 묻지 않기'는 이 경고만 끕니다. 설정 → 확인에서 다시 켤 수 있습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“不再询问”只会关闭此警告。可在“设置”→“确认”中重新打开。"
+          }
+        }
+      }
+    },
     "Don't Scan This Folder" : {
       "localizations" : {
         "de" : {
@@ -104233,42 +104273,42 @@
         }
       }
     },
-    "Turning a question off applies only to that action. Your choices, Keep rules and all file checks still apply. Manually chosen unverified matches and uninstalling MyMole always ask." : {
+    "Turning a question off applies only to that action. Your choices, Keep rules and all file checks still apply. Uninstalling MyMole always asks." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Frage auszuschalten gilt nur für diese Aktion. Deine Auswahl, Behalten-Regeln und alle Dateiprüfungen gelten weiter. Selbst gewählte, nicht bestätigte Treffer und das Deinstallieren von MyMole fragen immer."
+            "value" : "Eine Frage auszuschalten gilt nur für diese Aktion. Deine Auswahl, Behalten-Regeln und alle Dateiprüfungen gelten weiterhin. Beim Deinstallieren von MyMole wird immer gefragt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desactivar una pregunta solo afecta a esa acción. Tu selección, las reglas de conservación y todas las comprobaciones de archivos siguen aplicándose. Las coincidencias sin verificar que elijas tú y la desinstalación de MyMole siempre preguntan."
+            "value" : "Desactivar una pregunta solo afecta a esa acción. Tu selección, las reglas de conservación y todas las comprobaciones de archivos siguen aplicándose. Desinstalar MyMole siempre pregunta."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Désactiver une question ne concerne que cette action. Vos choix, les règles de conservation et toutes les vérifications de fichiers s’appliquent toujours. Les correspondances non vérifiées choisies à la main et la désinstallation de MyMole demandent toujours."
+            "value" : "Désactiver une question ne concerne que cette action. Vos choix, les règles de conservation et toutes les vérifications de fichiers s’appliquent toujours. La désinstallation de MyMole demande toujours."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "कोई सवाल बंद करना केवल उसी क्रिया पर लागू होता है। आपके चुनाव, रखने के नियम और फ़ाइलों की सभी जाँचें लागू रहती हैं। ख़ुद चुने गए बिना पुष्टि वाले मिलान और MyMole को अनइंस्टॉल करना हमेशा पूछते हैं।"
+            "value" : "किसी सवाल को बंद करना सिर्फ़ उसी कार्रवाई पर लागू होता है। आपके चुनाव, रखने के नियम और सभी फ़ाइल जाँचें लागू रहती हैं। MyMole को अनइंस्टॉल करने पर हमेशा पूछा जाता है।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "질문을 끄면 그 작업에만 적용됩니다. 선택한 항목, 보관 규칙, 모든 파일 확인은 그대로 적용됩니다. 직접 고른 미확인 항목과 MyMole 제거는 항상 묻습니다."
+            "value" : "질문을 끄면 해당 작업에만 적용됩니다. 선택 항목, 보관 규칙, 모든 파일 검사는 그대로 적용됩니다. MyMole을 제거할 때는 항상 묻습니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "关闭某个询问只影响该操作。你的选择、保留规则和所有文件检查仍然有效。手动选择的未确认匹配项以及卸载 MyMole 始终会询问。"
+            "value" : "关闭某个询问只影响该操作。你的选择、保留规则和所有文件检查仍然有效。卸载 MyMole 时始终会询问。"
           }
         }
       }
@@ -108755,6 +108795,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在等待 macOS 批准…"
+          }
+        }
+      }
+    },
+    "Warn about unverified leftovers you chose" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vor selbst gewählten, nicht bestätigten Resten warnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advertir sobre restos no verificados que elegiste"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avertir pour les restes non vérifiés que vous avez choisis"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आपके चुने हुए असत्यापित बचे हुए आइटम पर चेतावनी दें"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "직접 선택한 확인되지 않은 잔여 항목에 대해 경고"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对你选择的未经验证的残留项发出警告"
           }
         }
       }

@@ -60,7 +60,7 @@ import Testing
         #expect(settings.asksBig && settings.asks(.deepClean))
     }
 
-    @Test func everyRepeatedQuestionCanBeSkippedButSelfRemovalAndUnverifiedMatchesCannot() throws {
+    @Test func everyRepeatedQuestionCanBeSkippedButSelfRemovalCannot() throws {
         let root = FileManager.default.temporaryDirectory.appending(path: "confirmations-\(UUID().uuidString)")
         defer { try? FileManager.default.removeItem(at: root) }
         let defaults = testDefaults(in: root)
@@ -69,8 +69,8 @@ import Testing
         #expect(settings.skipped.count == ConfirmationAction.allCases.count)
         // Uninstalling MyMole has no action to skip.
         #expect(settings.asks(nil))
-        // Manually chosen unverified matches still ask.
-        #expect(settings.asks(.reset, always: true))
+        // The warning about unverified matches can be turned off too.
+        #expect(!settings.shouldAsk(.reset, warning: .unverifiedMatches))
         // What can't be undone can be skipped too, each on its own.
         let permanent = ConfirmationAction.allCases.filter(\.isPermanent)
         #expect(Set(permanent) == [.uninstallSystem, .systemClean, .devTools, .emptyTrash])
@@ -80,5 +80,25 @@ import Testing
         // The question about a big move comes back when that's turned on, permanent or not.
         settings.asksBig = true
         #expect(settings.shouldAsk(.systemClean, big: true) && !settings.shouldAsk(.systemClean, big: false))
+    }
+
+    @Test func unverifiedMatchesWarnUntilTurnedOffWhateverTheQuestion() throws {
+        let root = FileManager.default.temporaryDirectory.appending(path: "confirmations-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let settings = ConfirmationSettings(defaults: testDefaults(in: root))
+        // On from the start, and it asks even where the question itself is off.
+        settings.setAsking(false, for: .reset)
+        #expect(settings.warns(.unverifiedMatches))
+        #expect(settings.shouldAsk(.reset, warning: .unverifiedMatches))
+        #expect(!settings.shouldAsk(.reset))
+        // Turned off, it leaves the question to its own choice.
+        settings.setAsking(false, for: .unverifiedMatches)
+        #expect(!settings.shouldAsk(.reset, warning: .unverifiedMatches))
+        settings.setAsking(true, for: .reset)
+        #expect(settings.shouldAsk(.reset, warning: .unverifiedMatches))
+        // And Settings brings it back.
+        settings.restore()
+        #expect(settings.warns(.unverifiedMatches))
+        #expect(!settings.warns(nil))
     }
 }
