@@ -47,8 +47,10 @@ import Testing
 
         // Kept in Deep Clean after the search: it stays when the move runs.
         _ = try CleanKeepList.update(at: model.protections.keepList) { $0.paths.insert(other) }
+        let before = try TreeFingerprint(box.home)
         model.trashChosen()
         await model.job?.value
+        try expectOnlyMoved([cache], in: box.home, since: before)
         #expect(!box.exists(cache) && box.exists(data) && box.exists(other))
         let record = try #require(CleanupLog.load(from: box.log).first)
         #expect(record.source == OrphansModel.source && record.items == 1)
@@ -56,6 +58,7 @@ import Testing
         model.undoTrash(run: record.id)
         await model.job?.value
         #expect(box.exists(cache) && model.items.contains { $0.path == cache })
+        try expectOnlyMoved([], in: box.home, since: before)
     }
 
     @Test func reopeningReusesRecentResultsAndRefreshesOlderOnes() async throws {

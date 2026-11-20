@@ -88,9 +88,11 @@ import Testing
         model.toggle(shared)
         model.chooseLeftovers()
         #expect(model.chosen == [mine])
+        let before = try TreeFingerprint(box.root.path, excluding: ["Bin", "lists", "history.json", "history.json.lock"])
 
         model.trashChosen()
         await model.job?.value
+        try expectOnlyMoved([mine], in: box.root.path, since: before, excluding: ["Bin", "lists", "history.json", "history.json.lock"])
         #expect(!FileManager.default.fileExists(atPath: mine) && FileManager.default.fileExists(atPath: shared))
         #expect(model.items.map(\.path) == [shared] && model.chosen.isEmpty && model.canUndo)
         let record = try #require(CleanupLog.load(from: box.log).first)
@@ -99,6 +101,7 @@ import Testing
         model.undoTrash(run: record.id)
         await model.job?.value
         #expect(FileManager.default.fileExists(atPath: mine) && !model.canUndo)
+        try expectOnlyMoved([], in: box.root.path, since: before, excluding: ["Bin", "lists", "history.json", "history.json.lock"])
         #expect(CleanupLog.load(from: box.log).first?.restored == 1)
     }
 

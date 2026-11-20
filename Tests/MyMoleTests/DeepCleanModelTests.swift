@@ -235,8 +235,13 @@ private final class ToolNames: @unchecked Sendable {
         await model.scanJob?.value
         model.keepAlways([home.path + "/.npm/_cacache/index"])
         model.chosen = [home.path + "/Library/Caches/com.vendor.Editor", home.path + "/.npm/_cacache"]
+        let stores = ["store", "keep.json", "history.json", "history.json.lock", "projects", "Bin", "lists", "support"]
+        let before = try TreeFingerprint(home.path, excluding: stores)
         model.trashChosen()
         while model.trashing { try await Task.sleep(for: .milliseconds(10)) }
+        // The npm cache's kept item stays where it was, the rest of it moved.
+        try expectOnlyMoved([home.path + "/Library/Caches/com.vendor.Editor", home.path + "/.npm/_cacache/content"],
+                            in: home.path, since: before, excluding: stores)
 
         #expect(!home.exists("Library/Caches/com.vendor.Editor"))
         #expect(!home.exists(".npm/_cacache/content"))
@@ -252,6 +257,7 @@ private final class ToolNames: @unchecked Sendable {
         await model.undoJob?.value
         #expect(home.exists("Library/Caches/com.vendor.Editor/blob"))
         #expect(home.exists(".npm/_cacache/content/a"))
+        try expectOnlyMoved([], in: home.path, since: before, excluding: stores)
         #expect(model.isStale)
     }
 

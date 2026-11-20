@@ -226,9 +226,11 @@ import Testing
         let group = try #require(model.groups.first)
         model.chooseAll(keeping: .oldest)
         let going = model.chosen
+        let before = try TreeFingerprint(box.home)
 
         model.trashChosen()
         await model.trashJob?.value
+        try expectOnlyMoved(Array(going), in: box.home, since: before)
         #expect(going.allSatisfy { !FileManager.default.fileExists(atPath: $0) })
         #expect(FileManager.default.fileExists(atPath: group.files[0].path) && box.exists("Documents/other.bin"))
         // With one copy left it isn't a duplicate any more.
@@ -240,6 +242,7 @@ import Testing
         await model.trashJob?.value
         await model.scanJob?.value
         #expect(going.allSatisfy { FileManager.default.fileExists(atPath: $0) })
+        try expectOnlyMoved([], in: box.home, since: before)
         #expect(model.groups.count == 1 && model.groups[0].files.count == 3 && !model.canUndo)
         #expect(CleanupLog.load(from: box.log).first?.restored == 2)
     }

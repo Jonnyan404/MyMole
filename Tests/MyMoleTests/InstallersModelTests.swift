@@ -84,8 +84,10 @@ import Testing
         try FileManager.default.removeItem(atPath: swapped)
         try FileManager.default.createSymbolicLink(atPath: swapped, withDestinationPath: keep)
         model.chosen = [go, swapped]
+        let before = try TreeFingerprint(box.downloads)
         model.trashChosen()
         await model.trashJob?.value
+        try expectOnlyMoved([go], in: box.downloads, since: before)
 
         #expect(!FileManager.default.fileExists(atPath: go))
         #expect(FileManager.default.fileExists(atPath: keep))
@@ -98,6 +100,7 @@ import Testing
         model.undoTrash()
         await model.trashJob?.value
         #expect(FileManager.default.fileExists(atPath: go))
+        try expectOnlyMoved([], in: box.downloads, since: before)
         #expect(model.files.contains { $0.path == go })
     }
 
