@@ -94,6 +94,20 @@ import Testing
         #expect(found.contains(box.path + "/Library/Logs/JetBrains/IdeaIC2026.2"))
     }
 
+    /// Docker's own uninstaller, inside the app wherever it is, is pointed
+    /// to by a name of its own; it never stops the app from being moved.
+    @Test func dockersOwnUninstallerIsPointedTo() throws {
+        let box = try Sandbox()
+        try box.file("Elsewhere/Docker.app/Contents/MacOS/uninstall", bytes: 1_000)
+        let docker = AppBundle(path: box.path + "/Elsewhere/Docker.app", name: "Docker", bundleID: "com.docker.docker",
+                               version: nil, bytes: 1, fromAppStore: false)
+        let shown = RelatedComponents.shown(for: docker, home: box.path, runner: CommandRunner(run: { _, _ in (1, "") }, exists: { _ in false }))
+        let hint = try #require(shown.first { $0.path == box.path + "/Elsewhere/Docker.app/Contents/MacOS/uninstall" })
+        #expect(hint.name == String(localized: "Docker Desktop's own uninstaller") && hint.note.contains("Troubleshoot"))
+        #expect(VendorRules.uninstallers(for: "com.docker.docker", home: box.path).isEmpty)
+        #expect(!VendorRules.offered(for: "com.docker.docker", home: box.path).contains { $0.inApp })
+    }
+
     @Test func adobesSharedLicensingIsNeverAPart() {
         #expect(VendorRules.isNever("/Library/Application Support/Adobe/SLStore/x", home: "/synthetic/home"))
         #expect(VendorRules.isNever("/Library/Application Support/Adobe/Color Profiles", home: "/synthetic/home"))

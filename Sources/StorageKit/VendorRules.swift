@@ -20,7 +20,7 @@ public enum VendorRules {
     }
 
     public struct Part: Sendable, Equatable {
-        /// Absolute; "~/" is the user's home folder.
+        /// Absolute; "~/" is the user's home folder, and "@app/" is inside the app itself.
         public let path: String
         public let handling: Handling
         public let kind: Kind
@@ -32,16 +32,22 @@ public enum VendorRules {
         public let bundleID: String?
         /// What to do instead, for a part that is only shown.
         public let note: String?
+        /// The name a shown part goes by, when its file's own name says little ("uninstall").
+        public let title: String?
 
         init(_ path: String, _ handling: Handling = .offer, _ kind: Kind = .data, sharedWith: [String] = [],
-             bundleID: String? = nil, note: String? = nil) {
+             bundleID: String? = nil, note: String? = nil, title: String? = nil) {
             self.path = path
             self.handling = handling
             self.kind = kind
             self.sharedWith = sharedWith
             self.bundleID = bundleID
             self.note = note
+            self.title = title
         }
+
+        /// Inside the app's own bundle: only ever shown, as a pointer.
+        public var inApp: Bool { path.hasPrefix("@app/") }
 
         /// Whether `path` here is in the home folder.
         public var inHome: Bool { path.hasPrefix("~/") }
@@ -157,6 +163,10 @@ public enum VendorRules {
             Part("~/Library/Application Support/DropboxElectron", .offer, .data),
         ]),
         Rule("Docker", apps: ["com.docker.docker"], parts: [
+            // Docker's documented uninstaller, run from the app; pointed to, never run, and it doesn't stop a move.
+            Part("@app/Contents/MacOS/uninstall", .show, .appPart,
+                 note: String(localized: "Docker's documentation recommends it: in Docker Desktop choose Troubleshoot, then Uninstall. It also removes Docker's virtual machine data and network helpers."),
+                 title: String(localized: "Docker Desktop's own uninstaller")),
             Part("~/Library/Application Support/Docker Desktop", .offer, .data),
             Part("~/Library/Caches/Docker Desktop", .offer, .rebuildable),
             Part("~/Library/Logs/Docker Desktop", .offer, .rebuildable),

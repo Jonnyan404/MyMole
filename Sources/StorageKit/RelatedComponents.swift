@@ -111,10 +111,10 @@ extension RelatedComponents {
         }
         var out: [Shown] = []
         for part in VendorRules.parts(for: id) where part.handling == .show {
-            let path = part.resolved(home: home, base: systemBase)
+            let path = part.inApp ? app.path + part.path.dropFirst("@app".count) : part.resolved(home: home, base: systemBase)
             var st = stat()
             guard lstat(path, &st) == 0, st.st_mode & S_IFMT == S_IFDIR || st.st_mode & S_IFMT == S_IFREG else { continue }
-            out.append(Shown(path: path, name: (path as NSString).lastPathComponent, note: part.note ?? VendorRules.protectedNote,
+            out.append(Shown(path: path, name: part.title ?? (path as NSString).lastPathComponent, note: part.note ?? VendorRules.protectedNote,
                              bytes: AppLeftovers.measure(path)))
         }
         let kexts = systemBase + "/Library/Extensions"

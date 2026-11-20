@@ -38407,6 +38407,46 @@
         }
       }
     },
+    "Docker Desktop's own uninstaller" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eigene Deinstallation von Docker Desktop"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desinstalador propio de Docker Desktop"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Programme de désinstallation de Docker Desktop"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Docker Desktop का अपना अनइंस्टॉलर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Docker Desktop 자체 제거 프로그램"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Docker Desktop 自带的卸载程序"
+          }
+        }
+      }
+    },
     "Docker didn't answer, so its images, containers and volumes aren't listed. Start Docker and look again." : {
       "localizations" : {
         "de" : {
@@ -38443,6 +38483,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Docker 没有响应，因此未列出它的镜像、容器和卷。请启动 Docker 后重新查看。"
+          }
+        }
+      }
+    },
+    "Docker's documentation recommends it: in Docker Desktop choose Troubleshoot, then Uninstall. It also removes Docker's virtual machine data and network helpers." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dockers Dokumentation empfiehlt sie: Wähle in Docker Desktop „Troubleshoot“ und dann „Uninstall“. Dabei werden auch die Daten der virtuellen Maschine und die Netzwerkhelfer von Docker entfernt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La documentación de Docker lo recomienda: en Docker Desktop elige Troubleshoot y luego Uninstall. También elimina los datos de la máquina virtual y los ayudantes de red de Docker."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La documentation de Docker le recommande : dans Docker Desktop, choisissez Troubleshoot, puis Uninstall. Il supprime aussi les données de la machine virtuelle et les assistants réseau de Docker."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Docker का दस्तावेज़ इसकी सलाह देता है: Docker Desktop में Troubleshoot, फिर Uninstall चुनें। यह Docker के वर्चुअल मशीन डेटा और नेटवर्क हेल्पर भी हटाता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Docker 문서에서 권장하는 방법입니다. Docker Desktop에서 Troubleshoot를 선택한 다음 Uninstall을 선택하세요. Docker의 가상 머신 데이터와 네트워크 도우미도 함께 제거됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Docker 文档推荐使用它：在 Docker Desktop 中选择 Troubleshoot，然后选择 Uninstall。它还会移除 Docker 的虚拟机数据和网络辅助程序。"
           }
         }
       }
