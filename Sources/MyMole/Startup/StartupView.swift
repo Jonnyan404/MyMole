@@ -45,7 +45,7 @@ struct StartupView: View {
         }
         .actionConfirmation(
             String(localized: "Move \(model.chosen.count) startup items to the Trash?"),
-            isPresented: $confirming,
+            isPresented: $confirming, action: .startup,
             message: String(localized: "\(model.chosenItems.map(\.label).sorted().joined(separator: ", ")). They stop starting from the next login; one that's running now keeps running until then, or until you quit its app. You can undo right after, or put them back from the Trash later.")
         ) { model.trashChosen() }
         .onAppear { model.load() }

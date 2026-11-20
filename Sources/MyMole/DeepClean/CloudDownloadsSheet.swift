@@ -57,7 +57,7 @@ struct CloudDownloadsSheet: View {
         .dialogKeyboard()
         .actionConfirmation(
             chosenItems.count == 1 ? String(localized: "Remove 1 download from this Mac?") : String(localized: "Remove \(chosenItems.count) downloads from this Mac?"),
-            isPresented: $confirming, always: true, button: String(localized: "Remove Downloads"),
+            isPresented: $confirming, action: .cloudDownloads, button: String(localized: "Remove Downloads"),
             message: String(localized: "They stay in iCloud Drive and in Finder. Opening one downloads it again, which needs the internet then. Each is checked again first: one that changed or isn't uploaded in full stays.")
         ) { Task { await remove() } }
         .task { await load() }

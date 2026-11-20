@@ -418,21 +418,18 @@ struct DiskImageSheet: View {
                 if current { confirm = false }
             }
         }
-        .confirmationDialog("Eject and move \(item.image?.name ?? "") to the Trash?", isPresented: $confirm) {
-            Button("Cancel", role: .cancel) { confirm = false }
-            Button("Move to Trash", role: .destructive) {
-                Task {
-                    switch await model.removeImage(item) {
-                    case .done: dismiss()
-                    case .refused(let why), .failed(let why):
-                        problem = why
-                        running = model.running(item.app)
-                    }
+        .actionConfirmation(
+            String(localized: "Eject and move \(item.image?.name ?? "") to the Trash?"), isPresented: $confirm, action: .ejectImage,
+            message: String(localized: "The disk image is ejected, then moved to the Trash. You can undo right after.")
+        ) {
+            Task {
+                switch await model.removeImage(item) {
+                case .done: dismiss()
+                case .refused(let why), .failed(let why):
+                    problem = why
+                    running = model.running(item.app)
                 }
             }
-        } message: {
-            Text("The disk image is ejected, then moved to the Trash. You can undo right after.")
         }
-        .confirmationKeyboard(isPresented: $confirm)
     }
 }

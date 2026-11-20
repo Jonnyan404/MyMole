@@ -133,13 +133,22 @@ extension View {
     /// The confirmation before the Trash is emptied, and what came of it,
     /// wherever in the window the user asked.
     func emptyTrashFlow(_ trash: TrashModel) -> some View {
-        confirmationDialog(
-            String(localized: "Empty the Trash?"),
-            isPresented: Binding(get: { trash.confirming != nil }, set: { if !$0 { trash.confirming = nil } }),
-            presenting: trash.confirming
+        let settings = ConfirmationSettings.shared
+        func big(_ l: TrashEmptier.Listing) -> Bool { ConfirmationSettings.isBig(bytes: l.bytes, count: l.count) }
+        func asks(_ l: TrashEmptier.Listing?) -> Bool { l.map { settings.shouldAsk(.emptyTrash, big: big($0)) } ?? false }
+        let shown = Binding(get: { asks(trash.confirming) }, set: { if !$0 { trash.confirming = nil } })
+        return confirmationDialog(
+            String(localized: "Empty the Trash?"), isPresented: shown, presenting: trash.confirming
         ) { listing in
             Button("Delete \(listing.count) Items for Good", role: .destructive) {
                 Task { await trash.empty(listing) }
+            }
+            if !settings.asksOnlyBecauseBig(.emptyTrash, always: false, big: big(listing)) {
+                Button(String(localized: "\(String(localized: "Delete \(listing.count) Items for Good")) and Don't Ask Again"), role: .destructive) {
+                    settings.setAsking(false, for: .emptyTrash)
+                    settings.notice = .emptyTrash
+                    Task { await trash.empty(listing) }
+                }
             }
             Button("Cancel", role: .cancel) {}
         } message: { listing in
@@ -147,7 +156,11 @@ extension View {
                 ? String(localized: "\(listing.count) items, at least \(Freeing.phrase(listing.bytes, frees: listing.frees)) (part couldn't be measured), will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there.")
                 : String(localized: "\(listing.count) items, \(Freeing.phrase(listing.bytes, frees: listing.frees)), will be deleted for good. This can't be undone. Anything you move to the Trash after this stays there."))
         }
-        .confirmationKeyboard(isPresented: Binding(get: { trash.confirming != nil }, set: { if !$0 { trash.confirming = nil } }))
+        .confirmationKeyboard(isPresented: shown)
+        // With the question turned off, what was just listed is emptied.
+        .onChange(of: trash.confirming, initial: true) { _, listing in
+            if let listing, !asks(listing) { Task { await trash.empty(listing) } }
+        }
         .dsBottom(showing: false) {
             EmptyView()
         } toast: {

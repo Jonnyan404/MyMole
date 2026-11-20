@@ -56,7 +56,8 @@ struct DevToolsSheet: View {
         .dialogControls()
         .dialogKeyboard()
         .actionConfirmation(
-            String(localized: "Remove \(model.chosenItems.count) items for good?"), isPresented: $confirming, always: true,
+            String(localized: "Remove \(model.chosenItems.count) items for good?"), isPresented: $confirming, action: .devTools,
+            big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosenItems.count),
             button: String(localized: "Remove"),
             message: confirmText
         ) { Task { await model.removeChosen() } }

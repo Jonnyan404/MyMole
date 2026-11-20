@@ -25821,6 +25821,46 @@
         }
       }
     },
+    "Ask before, can't be undone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorher fragen, nicht umkehrbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar antes de, sin deshacer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander avant, irréversible"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पहले पूछें, वापस नहीं हो सकता"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 전에 묻기, 되돌릴 수 없음"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作前询问（无法撤销）"
+          }
+        }
+      }
+    },
     "Asked because it's a big move. Settings → Confirmations → Always ask before big moves." : {
       "localizations" : {
         "de" : {
@@ -37419,6 +37459,46 @@
         }
       }
     },
+    "Delete system items for good" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systemobjekte endgültig löschen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar definitivamente elementos del sistema"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer définitivement des éléments système"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सिस्टम आइटम स्थायी रूप से हटाना"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템 항목 영구 삭제"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "彻底删除系统项目"
+          }
+        }
+      }
+    },
     "Delete what's in the Trash for good, after a confirmation" : {
       "localizations" : {
         "de" : {
@@ -40599,6 +40679,46 @@
         }
       }
     },
+    "Eject and move a disk image to the Trash" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Festplattenimage auswerfen und in den Papierkorb legen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expulsar una imagen de disco y trasladarla a la Papelera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Éjecter une image disque et la placer dans la Corbeille"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डिस्क इमेज इजेक्ट करके ट्रैश में ले जाना"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "디스크 이미지를 추출하고 휴지통으로 이동"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推出磁盘映像并移到废纸篓"
+          }
+        }
+      }
+    },
     "Ejected %@ and moved it (%@) to the Trash" : {
       "localizations" : {
         "de" : {
@@ -40761,6 +40881,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "清空废纸篓…"
+          }
+        }
+      }
+    },
+    "Empty the Trash" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Papierkorb entleeren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vaciar la Papelera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vider la Corbeille"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ट्रैश खाली करना"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "휴지통 비우기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清空废纸篓"
           }
         }
       }
@@ -77137,6 +77297,46 @@
         }
       }
     },
+    "Quit an app" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine App beenden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salir de una app"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitter une app"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कोई ऐप बंद करना"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 종료"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出 App"
+          }
+        }
+      }
+    },
     "Quit it before uninstalling" : {
       "localizations" : {
         "de" : {
@@ -79857,6 +80057,46 @@
         }
       }
     },
+    "Remove developer items for good" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entwicklerobjekte endgültig entfernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar definitivamente elementos de desarrollo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer définitivement des éléments de développement"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डेवलपर आइटम स्थायी रूप से हटाना"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개발자 항목 영구 제거"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "彻底移除开发者项目"
+          }
+        }
+      }
+    },
     "Remove filter: %@" : {
       "localizations" : {
         "de" : {
@@ -80053,6 +80293,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "从列表中移除"
+          }
+        }
+      }
+    },
+    "Remove iCloud downloads from this Mac" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud-Downloads von diesem Mac entfernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar descargas de iCloud de este Mac"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer des téléchargements iCloud de ce Mac"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इस Mac से iCloud डाउनलोड हटाना"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Mac에서 iCloud 다운로드 제거"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从这台 Mac 移除 iCloud 下载项"
           }
         }
       }
@@ -84269,6 +84549,46 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Run maintenance tasks" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wartungsaufgaben ausführen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ejecutar tareas de mantenimiento"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lancer des tâches de maintenance"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "रखरखाव कार्य चलाना"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "유지 관리 작업 실행"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "运行维护任务"
           }
         }
       }
@@ -90495,6 +90815,46 @@
         }
       }
     },
+    "Similar photos to the Trash" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ähnliche Fotos in den Papierkorb"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotos parecidas a la Papelera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photos similaires dans la Corbeille"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "मिलती-जुलती फ़ोटो ट्रैश में"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "비슷한 사진을 휴지통으로"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将相似照片移到废纸篓"
+          }
+        }
+      }
+    },
     "Simulator apps and their data." : {
       "localizations" : {
         "de" : {
@@ -92897,6 +93257,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "启动项"
+          }
+        }
+      }
+    },
+    "Startup items to the Trash" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Startobjekte in den Papierkorb"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elementos de inicio a la Papelera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Éléments de démarrage dans la Corbeille"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "स्टार्टअप आइटम ट्रैश में"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시동 항목을 휴지통으로"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将启动项移到废纸篓"
           }
         }
       }
@@ -103833,42 +104233,42 @@
         }
       }
     },
-    "Turning a question off applies only to that action. Your choices, Keep rules and all file checks still apply. Manually chosen unverified matches, permanent deletion, emptying the Trash, system maintenance, startup changes, similar-photo removal and uninstalling MyMole always ask." : {
+    "Turning a question off applies only to that action. Your choices, Keep rules and all file checks still apply. Manually chosen unverified matches and uninstalling MyMole always ask." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Deaktivieren einer Frage gilt nur für diese Aktion. Deine Auswahl, Behalten-Regeln und alle Dateiprüfungen gelten weiterhin. Manuell ausgewählte ungeprüfte Übereinstimmungen, endgültiges Löschen, Entleeren des Papierkorbs, Systemwartung, Änderungen am Start, Entfernen ähnlicher Fotos und Deinstallieren von MyMole fragen immer."
+            "value" : "Eine Frage auszuschalten gilt nur für diese Aktion. Deine Auswahl, Behalten-Regeln und alle Dateiprüfungen gelten weiter. Selbst gewählte, nicht bestätigte Treffer und das Deinstallieren von MyMole fragen immer."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desactivar una pregunta solo se aplica a esa acción. Tus elecciones, las reglas de conservación y todas las comprobaciones de archivos se siguen aplicando. Las coincidencias sin verificar elegidas a mano, la eliminación definitiva, vaciar la Papelera, el mantenimiento del sistema, los cambios de arranque, la eliminación de fotos similares y desinstalar MyMole siempre preguntan."
+            "value" : "Desactivar una pregunta solo afecta a esa acción. Tu selección, las reglas de conservación y todas las comprobaciones de archivos siguen aplicándose. Las coincidencias sin verificar que elijas tú y la desinstalación de MyMole siempre preguntan."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Désactiver une question ne s’applique qu’à cette action. Vos choix, les règles de conservation et toutes les vérifications de fichiers s’appliquent toujours. Les correspondances non vérifiées choisies à la main, la suppression définitive, le vidage de la Corbeille, la maintenance du système, les modifications au démarrage, la suppression de photos similaires et la désinstallation de MyMole demandent toujours."
+            "value" : "Désactiver une question ne concerne que cette action. Vos choix, les règles de conservation et toutes les vérifications de fichiers s’appliquent toujours. Les correspondances non vérifiées choisies à la main et la désinstallation de MyMole demandent toujours."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "सवाल बंद करना केवल उस क्रिया पर लागू होता है। आपके चयन, रखें नियम और सभी फ़ाइल जाँच अब भी लागू रहती हैं। हाथ से चुने असत्यापित मिलान, स्थायी रूप से हटाना, ट्रैश खाली करना, सिस्टम रखरखाव, स्टार्टअप बदलाव, मिलते-जुलते फ़ोटो हटाना और MyMole अनइंस्टॉल करना हमेशा पूछते हैं।"
+            "value" : "कोई सवाल बंद करना केवल उसी क्रिया पर लागू होता है। आपके चुनाव, रखने के नियम और फ़ाइलों की सभी जाँचें लागू रहती हैं। ख़ुद चुने गए बिना पुष्टि वाले मिलान और MyMole को अनइंस्टॉल करना हमेशा पूछते हैं।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "질문을 끄면 해당 작업에만 적용됩니다. 선택, 보관 규칙 및 모든 파일 확인은 계속 적용됩니다. 직접 선택한 확인되지 않은 일치 항목, 영구 삭제, 휴지통 비우기, 시스템 유지 관리, 시동 변경, 유사한 사진 제거 및 MyMole 제거는 항상 묻습니다."
+            "value" : "질문을 끄면 그 작업에만 적용됩니다. 선택한 항목, 보관 규칙, 모든 파일 확인은 그대로 적용됩니다. 직접 고른 미확인 항목과 MyMole 제거는 항상 묻습니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "关闭某个询问只对那次操作生效。你的选择、保留规则和所有文件检查仍然有效。手动选择的未核实匹配项、彻底删除、清空废纸篓、系统维护、启动项更改、相似照片移除和卸载 MyMole 始终会询问。"
+            "value" : "关闭某个询问只影响该操作。你的选择、保留规则和所有文件检查仍然有效。手动选择的未确认匹配项以及卸载 MyMole 始终会询问。"
           }
         }
       }
@@ -105603,6 +106003,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "要卸载这份 MyMole 副本吗？"
+          }
+        }
+      }
+    },
+    "Uninstall with system-wide parts, deleted for good" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deinstallieren mit systemweiten Teilen, endgültig gelöscht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desinstalar con partes de todo el sistema, eliminadas definitivamente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Désinstaller avec des parties système, supprimées définitivement"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सिस्टम-व्यापी हिस्सों सहित अनइंस्टॉल, स्थायी रूप से हटाए गए"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템 전체 구성 요소와 함께 제거(영구 삭제)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连同系统级部分一起卸载（彻底删除）"
           }
         }
       }

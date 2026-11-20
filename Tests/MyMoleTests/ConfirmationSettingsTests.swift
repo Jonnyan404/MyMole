@@ -60,16 +60,25 @@ import Testing
         #expect(settings.asksBig && settings.asks(.deepClean))
     }
 
-    @Test func irreversibleAndSelfRemovalQuestionsCannotBeSkipped() throws {
+    @Test func everyRepeatedQuestionCanBeSkippedButSelfRemovalAndUnverifiedMatchesCannot() throws {
         let root = FileManager.default.temporaryDirectory.appending(path: "confirmations-\(UUID().uuidString)")
         defer { try? FileManager.default.removeItem(at: root) }
         let defaults = testDefaults(in: root)
-        defaults.set(ConfirmationAction.allCases.map(\.rawValue) + ["emptyTrash", "selfRemoval", "unknown"], forKey: ConfirmationSettings.key)
+        defaults.set(ConfirmationAction.allCases.map(\.rawValue) + ["selfRemoval", "unknown"], forKey: ConfirmationSettings.key)
         let settings = ConfirmationSettings(defaults: defaults)
-        #expect(settings.asks(nil))
-        // App uninstallation with a system-wide deletion still asks.
-        #expect(settings.asks(.uninstall, always: true))
-        #expect(!settings.asks(.uninstall))
         #expect(settings.skipped.count == ConfirmationAction.allCases.count)
+        // Uninstalling MyMole has no action to skip.
+        #expect(settings.asks(nil))
+        // Manually chosen unverified matches still ask.
+        #expect(settings.asks(.reset, always: true))
+        // What can't be undone can be skipped too, each on its own.
+        let permanent = ConfirmationAction.allCases.filter(\.isPermanent)
+        #expect(Set(permanent) == [.uninstallSystem, .systemClean, .devTools, .emptyTrash])
+        #expect(permanent.allSatisfy { !settings.shouldAsk($0) })
+        settings.setAsking(true, for: .emptyTrash)
+        #expect(settings.shouldAsk(.emptyTrash) && !settings.shouldAsk(.systemClean))
+        // The question about a big move comes back when that's turned on, permanent or not.
+        settings.asksBig = true
+        #expect(settings.shouldAsk(.systemClean, big: true) && !settings.shouldAsk(.systemClean, big: false))
     }
 }

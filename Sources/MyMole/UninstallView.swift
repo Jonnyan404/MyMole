@@ -831,7 +831,7 @@ struct UninstallSheet: View {
         }
         .actionConfirmation(
             String(localized: "Uninstall \(app.name)?"), isPresented: $confirm,
-            action: .uninstall, always: pendingUninstall?.needsExplicitConfirmation == true,
+            action: pendingUninstall?.needsExplicitConfirmation == true ? .uninstallSystem : .uninstall,
             big: ConfirmationSettings.isBig(bytes: app.bytes + chosenLeftoverBytes, count: 1 + chosen.count), message: pendingMessage
         ) { uninstall() }
         .actionConfirmation(

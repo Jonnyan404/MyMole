@@ -109,7 +109,8 @@ struct SimilarView: View {
         }
         .actionConfirmation(
             String(localized: "Move \(model.chosen.count) pictures to the Trash?"),
-            isPresented: $confirming,
+            isPresented: $confirming, action: .similar,
+            big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosen.count),
             message: String(
                 localized:
                     "\(ByteSize.format(model.chosenBytes)). One picture of each group stays where it is. Look at them first: pictures that look alike aren't always copies. You can undo right after."
