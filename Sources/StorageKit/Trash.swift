@@ -5,10 +5,14 @@ import Foundation
 public struct TrashRecord: Sendable, Hashable, Codable {
     public let original: URL
     public let trashed: URL
+    /// It was locked in Finder and unlocked to move; Undo locks it again.
+    /// Nil in records saved before this was kept.
+    public var locked: Bool?
 
-    public init(original: URL, trashed: URL) {
+    public init(original: URL, trashed: URL, locked: Bool? = nil) {
         self.original = original
         self.trashed = trashed
+        self.locked = locked
     }
 }
 
@@ -481,9 +485,11 @@ public enum Trasher {
                 failed.append((path, Refusal.protectedLocation.text))
                 continue
             }
+            let locked = Locks.isLocked(path)
             let r = backend.moveOne(path)
             if let to = r.trashed {
-                moved.append(TrashRecord(original: URL(fileURLWithPath: path), trashed: to))
+                // A lock cleared for the move is said, so Undo puts it back.
+                moved.append(TrashRecord(original: URL(fileURLWithPath: path), trashed: to, locked: locked && !Locks.isLocked(to.path) ? true : nil))
             } else {
                 failed.append((path, r.error ?? notMoved))
             }
@@ -506,10 +512,20 @@ public enum Trasher {
         let name = (original as NSString).lastPathComponent
         guard let dir = openFolder((original as NSString).deletingLastPathComponent, creating: true) else { return false }
         defer { close(dir) }
-        if renameatx_np(AT_FDCWD, r.trashed.path, dir, name, UInt32(RENAME_EXCL)) == 0 { return true }
+        var back = renameatx_np(AT_FDCWD, r.trashed.path, dir, name, UInt32(RENAME_EXCL)) == 0
         // exFAT has no exclusive rename.
-        guard errno == ENOTSUP || errno == EINVAL else { return false }
-        return renameClaimingName(r.trashed.path, into: dir, name)
+        if !back, errno == ENOTSUP || errno == EINVAL { back = renameClaimingName(r.trashed.path, into: dir, name) }
+        guard back else { return false }
+        if r.locked == true {
+            // Opened in the folder already open, never through a link.
+            let fd = openat(dir, name, O_RDONLY | O_SYMLINK | O_CLOEXEC)
+            if fd >= 0 {
+                var st = stat()
+                if fstat(fd, &st) == 0 { _ = fchflags(fd, st.st_flags | UInt32(UF_IMMUTABLE)) }
+                close(fd)
+            }
+        }
+        return true
     }
 
     /// Moves `source` to `name` in `dir` on a disk without exclusive

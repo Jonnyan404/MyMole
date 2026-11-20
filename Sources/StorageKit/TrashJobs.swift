@@ -40,6 +40,8 @@ public struct TrashPlan: Sendable, Identifiable {
         let identity: Trasher.Identity?
         let parent: Trasher.Identity?
         public internal(set) var status: Status
+        /// Locked in Finder, and unlocked to move: Undo locks it again.
+        var unlocked = false
     }
 
     public let id: UUID
@@ -81,7 +83,7 @@ public struct TrashPlan: Sendable, Identifiable {
             let item = items[i]
             switch item.status {
             case .done(let to):
-                if let to { moved.append(TrashRecord(original: URL(fileURLWithPath: item.path), trashed: to)) }
+                if let to { moved.append(TrashRecord(original: URL(fileURLWithPath: item.path), trashed: to, locked: item.unlocked ? true : nil)) }
             case .refused(let why), .failed(let why): failed.append((item.path, why))
             case .cancelled: failed.append((item.path, Self.stoppedReason))
             case .waiting: break
@@ -157,7 +159,9 @@ extension Trasher {
             } else if isProtectedResolved(item.path) {
                 plan.set(i, .refused(Trasher.Refusal.protectedLocation.text))
             } else {
+                let locked = Locks.isLocked(item.path)
                 let r = backend.moveOne(item.path)
+                if let to = r.trashed, locked, !Locks.isLocked(to.path) { plan.items[i].unlocked = true }
                 plan.set(i, r.trashed.map { .done($0) } ?? .failed(r.error ?? Trasher.notMoved))
             }
         }
