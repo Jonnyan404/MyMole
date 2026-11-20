@@ -21139,6 +21139,86 @@
         }
       }
     },
+    "AVG's own uninstaller" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AVGs eigenes Deinstallationsprogramm"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El desinstalador propio de AVG"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le programme de désinstallation d'AVG"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AVG का अपना अनइंस्टॉलर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AVG 자체 제거 프로그램"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AVG 自带的卸载程序"
+          }
+        }
+      }
+    },
+    "AVG's own uninstaller, from the AVG AntiVirus menu. It also removes its protection, which runs as a system extension." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AVGs eigenes Deinstallationsprogramm, im Menü von AVG AntiVirus. Es entfernt auch den Schutz, der als Systemerweiterung läuft."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El desinstalador propio de AVG, en el menú de AVG AntiVirus. También elimina su protección, que funciona como extensión del sistema."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le programme de désinstallation d'AVG, dans le menu d'AVG AntiVirus. Il supprime aussi sa protection, qui fonctionne comme extension système."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AVG का अपना अनइंस्टॉलर, AVG AntiVirus के मेनू से। यह इसकी सुरक्षा भी हटाता है, जो सिस्टम एक्सटेंशन के रूप में चलती है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AVG AntiVirus 메뉴에 있는 AVG 자체 제거 프로그램입니다. 시스템 확장 프로그램으로 실행되는 보호 기능도 함께 제거됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AVG 自带的卸载程序，位于 AVG AntiVirus 的菜单中。它还会移除以系统扩展运行的防护功能。"
+          }
+        }
+      }
+    },
     "About" : {
       "localizations" : {
         "de" : {
@@ -26021,6 +26101,86 @@
         }
       }
     },
+    "Avast's own uninstaller" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avasts eigenes Deinstallationsprogramm"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El desinstalador propio de Avast"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le programme de désinstallation d'Avast"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avast का अपना अनइंस्टॉलर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avast 자체 제거 프로그램"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avast 自带的卸载程序"
+          }
+        }
+      }
+    },
+    "Avast's support says to use it: in Avast Security's menu choose Uninstall Avast Security. It also removes its protection, which runs as a system extension." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Avast-Support empfiehlt es: Wähle im Menü von Avast Security „Uninstall Avast Security“. Es entfernt auch den Schutz, der als Systemerweiterung läuft."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El soporte de Avast recomienda usarlo: en el menú de Avast Security, elige Uninstall Avast Security. También elimina su protección, que funciona como extensión del sistema."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'assistance d'Avast recommande de l'utiliser : dans le menu d'Avast Security, choisissez Uninstall Avast Security. Il supprime aussi sa protection, qui fonctionne comme extension système."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avast सपोर्ट इसे इस्तेमाल करने को कहता है: Avast Security के मेनू में Uninstall Avast Security चुनें। यह इसकी सुरक्षा भी हटाता है, जो सिस्टम एक्सटेंशन के रूप में चलती है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avast 지원팀은 이 방법을 권장합니다. Avast Security 메뉴에서 Uninstall Avast Security를 선택하세요. 시스템 확장 프로그램으로 실행되는 보호 기능도 함께 제거됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avast 支持建议使用它：在 Avast Security 的菜单中选择 Uninstall Avast Security。它还会移除以系统扩展运行的防护功能。"
+          }
+        }
+      }
+    },
     "Back" : {
       "localizations" : {
         "de" : {
@@ -27071,6 +27231,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已加入黑名单 — 清理建议"
+          }
+        }
+      }
+    },
+    "Box Drive's own uninstaller" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Box Drives eigenes Deinstallationsprogramm"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El desinstalador propio de Box Drive"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le programme de désinstallation de Box Drive"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Box Drive का अपना अनइंस्टॉलर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Box Drive 자체 제거 프로그램"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Box Drive 自带的卸载程序"
+          }
+        }
+      }
+    },
+    "Box's support says to remove Box Drive with it or with the Box Reset Tool. Files not yet uploaded to Box are deleted, so let Box finish first." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Box-Support empfiehlt, Box Drive damit oder mit dem Box Reset Tool zu entfernen. Noch nicht zu Box hochgeladene Dateien werden gelöscht, lass Box also zuerst fertig werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El soporte de Box indica quitar Box Drive con él o con Box Reset Tool. Los archivos que aún no se han subido a Box se eliminan, así que deja que Box termine primero."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'assistance de Box indique de supprimer Box Drive avec lui ou avec Box Reset Tool. Les fichiers pas encore envoyés vers Box sont supprimés : laissez Box terminer d'abord."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Box सपोर्ट Box Drive को इससे या Box Reset Tool से हटाने को कहता है। जो फ़ाइलें अभी Box पर अपलोड नहीं हुई हैं वे मिट जाती हैं, इसलिए पहले Box को पूरा करने दें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Box 지원팀은 이것 또는 Box Reset Tool로 Box Drive를 제거하라고 안내합니다. 아직 Box에 업로드되지 않은 파일은 삭제되므로 Box가 먼저 끝나도록 기다리세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Box 支持建议用它或 Box Reset Tool 移除 Box Drive。尚未上传到 Box 的文件会被删除，所以请先让 Box 完成上传。"
           }
         }
       }
@@ -39487,6 +39727,86 @@
         }
       }
     },
+    "ESET's own uninstaller" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ESETs eigenes Deinstallationsprogramm"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El desinstalador propio de ESET"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le programme de désinstallation d'ESET"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ESET का अपना अनइंस्टॉलर"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ESET 자체 제거 프로그램"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ESET 自带的卸载程序"
+          }
+        }
+      }
+    },
+    "ESET's support says to open it, in the app's Contents/Helpers folder, and choose Uninstall. It also removes ESET's protection." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der ESET-Support empfiehlt, es im Ordner Contents/Helpers der App zu öffnen und „Uninstall“ zu wählen. Es entfernt auch den Schutz von ESET."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El soporte de ESET indica abrirlo, en la carpeta Contents/Helpers de la app, y elegir Uninstall. También elimina la protección de ESET."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'assistance d'ESET indique de l'ouvrir, dans le dossier Contents/Helpers de l'app, puis de choisir Uninstall. Il supprime aussi la protection d'ESET."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ESET सपोर्ट इसे ऐप के Contents/Helpers फ़ोल्डर में खोलकर Uninstall चुनने को कहता है। यह ESET की सुरक्षा भी हटाता है।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ESET 지원팀은 앱의 Contents/Helpers 폴더에서 이것을 열고 Uninstall을 선택하라고 안내합니다. ESET의 보호 기능도 함께 제거됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ESET 支持建议在应用的 Contents/Helpers 文件夹中打开它并选择 Uninstall。它还会移除 ESET 的防护功能。"
+          }
+        }
+      }
+    },
     "Each" : {
       "localizations" : {
         "de" : {
@@ -51647,6 +51967,46 @@
         }
       }
     },
+    "Its own file names a program inside the app" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die eigene Datei nennt ein Programm in der App"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Su propio archivo nombra un programa dentro de la app"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son propre fichier désigne un programme dans l'app"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसकी अपनी फ़ाइल ऐप के अंदर के एक प्रोग्राम का नाम लेती है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자체 파일이 앱 안의 프로그램을 가리킴"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其自身文件指向应用内的程序"
+          }
+        }
+      }
+    },
     "Its place has changed since it was found." : {
       "localizations" : {
         "de" : {
@@ -51883,6 +52243,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "应用从内部注册的任务不是文件，因此不会列在这里。请在“系统设置”→“通用”→“登录项与扩展”中关闭它们。每个文件显示的状态（登录时启动、已关闭）表示应当发生的情况；“正在运行”和“当前未载入”是 launchd 在你当前会话中的实际状态。"
+          }
+        }
+      }
+    },
+    "Karabiner-Elements' keyboard driver and its uninstaller. In Karabiner-Elements' settings, open Uninstall and choose Launch uninstaller." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Tastaturtreiber von Karabiner-Elements und sein Deinstallationsprogramm. Öffne in den Einstellungen von Karabiner-Elements „Uninstall“ und wähle „Launch uninstaller“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El controlador de teclado de Karabiner-Elements y su desinstalador. En los ajustes de Karabiner-Elements, abre Uninstall y elige Launch uninstaller."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le pilote de clavier de Karabiner-Elements et son programme de désinstallation. Dans les réglages de Karabiner-Elements, ouvrez Uninstall et choisissez Launch uninstaller."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karabiner-Elements का कीबोर्ड ड्राइवर और उसका अनइंस्टॉलर। Karabiner-Elements की सेटिंग्स में Uninstall खोलें और Launch uninstaller चुनें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karabiner-Elements의 키보드 드라이버와 제거 프로그램입니다. Karabiner-Elements 설정에서 Uninstall을 열고 Launch uninstaller를 선택하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karabiner-Elements 的键盘驱动及其卸载程序。在 Karabiner-Elements 的设置中打开 Uninstall，然后选择 Launch uninstaller。"
           }
         }
       }
@@ -96985,6 +97385,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法核实应用移动操作。"
+          }
+        }
+      }
+    },
+    "The app names this folder as its own" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App nennt diesen Ordner als ihren eigenen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La app nombra esta carpeta como suya"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'app désigne ce dossier comme le sien"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐप इस फ़ोल्डर को अपना बताता है"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱이 이 폴더를 자신의 폴더로 지정함"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用将此文件夹声明为自己的"
           }
         }
       }

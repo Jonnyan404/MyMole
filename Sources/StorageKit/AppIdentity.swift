@@ -17,12 +17,17 @@ public struct AppIdentity: Sendable, Equatable {
     public var otherOwnerIDs: [String] = []
     /// Known competing signed group claims, including read-only discovery.
     public var otherGroupIDs: [String] = []
+    /// Folders the app names as its own in its bundle, relative to the
+    /// home folder, that no other installed app names too.
+    public var folders: [String] = []
 
-    public init(helperIDs: [String] = [], groups: [String] = [], otherOwnerIDs: [String] = [], otherGroupIDs: [String] = []) {
+    public init(helperIDs: [String] = [], groups: [String] = [], otherOwnerIDs: [String] = [], otherGroupIDs: [String] = [],
+                folders: [String] = []) {
         self.helperIDs = helperIDs
         self.groups = groups
         self.otherOwnerIDs = otherOwnerIDs
         self.otherGroupIDs = otherGroupIDs
+        self.folders = folders
     }
 
     /// Where an app keeps code with identities of its own.
@@ -171,7 +176,8 @@ public struct AppIdentity: Sendable, Equatable {
         guard let id = app.bundleID, let space = namespace(of: id) else { return nil }
         guard let found = readers.carried(app.path), let groups = readers.groups(app.path) else { return nil }
         let helpers = found.filter { $0 != id && $0.hasPrefix(space) && !$0.hasPrefix("com.apple.") && AppLeftovers.isWellFormed($0) }
-        return AppIdentity(helperIDs: helpers.sorted(), groups: groups.filter(isRemovableGroup).sorted())
+        return AppIdentity(helperIDs: helpers.sorted(), groups: groups.filter(isRemovableGroup).sorted(),
+                           folders: AppLeftovers.declaredFolders(of: app.path))
     }
 
     /// Shared identities stay. An unknown competing owner is never an empty set.
@@ -203,7 +209,8 @@ public struct AppIdentity: Sendable, Equatable {
             let folded = Set(claimed.map { $0.lowercased() })
             groups = groups.filter { !folded.contains($0.lowercased()) }
         }
-        return AppIdentity(helperIDs: helpers, groups: groups, otherOwnerIDs: carried.union(otherIDs).sorted(), otherGroupIDs: claimed.sorted())
+        return AppIdentity(helperIDs: helpers, groups: groups, otherOwnerIDs: carried.union(otherIDs).sorted(), otherGroupIDs: claimed.sorted(),
+                           folders: AppLeftovers.unclaimed(identity.folders, by: others))
     }
 
     public static func owned(for app: AppBundle, installed: [AppBundle], readers: Readers = .live) -> AppIdentity? {
@@ -227,7 +234,8 @@ public struct AppIdentity: Sendable, Equatable {
         let groups = (readers.groups(app.path) ?? []).filter {
             isRemovableGroup($0) && !claimedGroups.contains($0.lowercased())
         }
-        return AppIdentity(helperIDs: helpers.sorted(), groups: groups.sorted(), otherOwnerIDs: otherIDs.sorted(), otherGroupIDs: claimedGroups.sorted())
+        return AppIdentity(helperIDs: helpers.sorted(), groups: groups.sorted(), otherOwnerIDs: otherIDs.sorted(), otherGroupIDs: claimedGroups.sorted(),
+                           folders: AppLeftovers.unclaimed(AppLeftovers.declaredFolders(of: app.path), by: others))
     }
 
     private static func identityNames(in folder: String, bundle: String) -> [String]? {

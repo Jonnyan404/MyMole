@@ -170,8 +170,48 @@ public enum VendorRules {
             Part("~/Library/Application Support/Docker Desktop", .offer, .data),
             Part("~/Library/Caches/Docker Desktop", .offer, .rebuildable),
             Part("~/Library/Logs/Docker Desktop", .offer, .rebuildable),
+            Part("~/Library/Application Support/docker-secrets-engine", .offer, .data),
+            Part("~/Library/Caches/docker-secrets-engine", .offer, .rebuildable),
+            // Docker Desktop's window is an Electron app with IDs of its own.
+            Part("~/Library/Preferences/com.electron.dockerdesktop.plist", .offer, .settings),
+            Part("~/Library/Preferences/com.electron.docker-frontend.plist", .offer, .settings),
+            Part("~/Library/Saved Application State/com.electron.dockerdesktop.savedState", .offer, .settings),
+            Part("~/Library/Saved Application State/com.electron.docker-frontend.savedState", .offer, .settings),
             Part("~/.docker", .show, .settings,
                  note: String(localized: "The docker command's own settings, contexts and sign-ins. Docker installed another way uses it too.")),
+        ]),
+        // The SDK and emulators other Android tools use too: offered only without a JetBrains IDE, never chosen.
+        Rule("Android Studio", apps: ["com.google.android.studio"], parts: [
+            Part("~/Library/Android/sdk", .offer, .data, sharedWith: ["com.jetbrains."]),
+            Part("~/.android", .offer, .data, sharedWith: ["com.jetbrains."]),
+        ]),
+        Rule("Avast", apps: ["com.avast."], parts: [
+            Part("@app/Contents/Backend/hub/uninstall.sh", .show, .appPart,
+                 note: String(localized: "Avast's support says to use it: in Avast Security's menu choose Uninstall Avast Security. It also removes its protection, which runs as a system extension."),
+                 title: String(localized: "Avast's own uninstaller")),
+        ]),
+        Rule("AVG", apps: ["com.avg."], parts: [
+            Part("@app/Contents/Backend/hub/uninstall.sh", .show, .appPart,
+                 note: String(localized: "AVG's own uninstaller, from the AVG AntiVirus menu. It also removes its protection, which runs as a system extension."),
+                 title: String(localized: "AVG's own uninstaller")),
+        ]),
+        Rule("ESET", apps: ["com.eset."], parts: [
+            Part("@app/Contents/Helpers/Uninstaller.app", .show, .appPart,
+                 note: String(localized: "ESET's support says to open it, in the app's Contents/Helpers folder, and choose Uninstall. It also removes ESET's protection."),
+                 title: String(localized: "ESET's own uninstaller")),
+        ]),
+        Rule("Karabiner-Elements", apps: ["org.pqrs."], parts: [
+            Part("/Library/Application Support/org.pqrs", .show, .appPart,
+                 note: String(localized: "Karabiner-Elements' keyboard driver and its uninstaller. In Karabiner-Elements' settings, open Uninstall and choose Launch uninstaller.")),
+            Part("~/.config/karabiner", .offer, .settings, sharedWith: ["org.pqrs."]),
+        ]),
+        Rule("Box Drive", apps: ["com.box.desktop"], parts: [
+            Part("/Library/Application Support/Box/uninstall_box_drive", .show, .appPart,
+                 note: String(localized: "Box's support says to remove Box Drive with it or with the Box Reset Tool. Files not yet uploaded to Box are deleted, so let Box finish first."),
+                 title: String(localized: "Box Drive's own uninstaller")),
+        ]),
+        Rule("SteelSeries GG", apps: ["com.steelseries."], uninstallers: [
+            "/Applications/SteelSeries GG/SteelSeries GG Uninstaller.app",
         ]),
         Rule("Jabra", apps: ["com.jabra.directonline"], parts: [
             Part("~/Library/Application Support/Jabra Direct", .offer, .data),

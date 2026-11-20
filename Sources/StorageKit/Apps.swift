@@ -114,6 +114,12 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
         /// On the vendor's own list of what its app installs, at that exact
         /// path. Chosen when it's the app's alone, not shared by the maker's apps.
         case knownPart
+        /// Its own file names a program inside the app: a launch job
+        /// launchd starts, or a browser's native messaging host.
+        case pointsIntoApp
+        /// A folder the app names as its own, in its bundle (VS Code's
+        /// product.json names "Code" and ".vscode").
+        case declared
         /// Discovery can continue with partial owner information. These
         /// rows require separate manual review, never automatic selection.
         case unverified
@@ -131,6 +137,8 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
             case .loose: String(localized: "A looser match of its name; look before choosing")
             case .runtimeID: String(localized: "An app or helper ID in a per-user runtime folder; review its contents")
             case .knownPart: String(localized: "On the vendor's own list of what the app installs")
+            case .pointsIntoApp: String(localized: "Its own file names a program inside the app")
+            case .declared: String(localized: "The app names this folder as its own")
             case .unverified: String(localized: "A possible app match; ownership couldn't be verified")
             }
         }
@@ -234,7 +242,10 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
         return switch place {
         case "Caches", "Logs", "Logs/DiagnosticReports", "Application Support/CrashReporter":
             .rebuildable
+        case _ where place.hasPrefix("Caches/") || AppLeftovers.crashReporterPlaces.contains(place): .rebuildable
         case "LaunchAgents": .appPart
+        case _ where place.hasSuffix("/" + AppLeftovers.messagingHosts): .appPart
+        case "SyncedPreferences": .settings
         case _ where AppLeftovers.bundlePlaces.contains(place): .appPart
         case "Preferences", "Preferences/ByHost", AppLeftovers.recentDocuments: .settings
         case "Group Containers": .shared
@@ -511,6 +522,26 @@ public enum AppLeftovers {
         ("Logs/DiagnosticReports", [.report]),
         ("Application Support/CrashReporter", [.report]),
         (recentDocuments, [.recentList]),
+        // Where crash reporters that many apps embed keep each app's reports, by its ID or name.
+        ("Caches/com.plausiblelabs.crashreporter.data", [.exactID]),
+        ("Caches/com.crashlytics.data", [.exactID]),
+        ("Caches/io.fabric.sdk.mac.data", [.exactID]),
+        ("Caches/SentryCrash", [.exactID, .name]),
+        ("Caches/KSCrashReports", [.exactID, .name]),
+        ("Application Support/com.bugsnag.Bugsnag", [.exactID]),
+        // What macOS keeps for an app by its ID: background downloads, iCloud's
+        // cache, a file provider's database, autosave and synced settings records.
+        ("Caches/com.apple.nsurlsessiond/Downloads", [.exactID]),
+        ("Caches/CloudKit", [.exactID]),
+        ("Application Support/FileProvider", [.idPrefix]),
+        ("Autosave Information", [.idPlist]),
+        ("SyncedPreferences", [.idPlist]),
+    ]
+
+    /// Crash reports a crash reporter the app embeds keeps for it.
+    static let crashReporterPlaces: Set<String> = [
+        "Caches/com.plausiblelabs.crashreporter.data", "Caches/com.crashlytics.data", "Caches/io.fabric.sdk.mac.data",
+        "Caches/SentryCrash", "Caches/KSCrashReports", "Application Support/com.bugsnag.Bugsnag",
     ]
 
     /// Names too generic to tie a folder to one app.
@@ -587,6 +618,10 @@ public enum AppLeftovers {
             out += knownParts(of: app, home: home, installed: installed, identity: identity, scan: scan).filter { !known.contains($0.path) }
             known.formUnion(out.map(\.path))
             out += bundled(of: app, lib: lib, identity: identity, installed: installed, scan: scan).filter { !known.contains($0.path) }
+            known.formUnion(out.map(\.path))
+            out += pointing(of: app, lib: lib, installed: installed, scan: scan).filter { !known.contains($0.path) }
+            known.formUnion(out.map(\.path))
+            out += declared(of: app, home: home, identity: identity, scan: scan).filter { !known.contains($0.path) }
         }
         if deep && !app.isProtected && !scan.shouldStop {
             var known = Set(out.map(\.path))
@@ -698,6 +733,8 @@ public enum AppLeftovers {
     static let folderNames: [String: [String]] = [
         "com.jetbrains.intellij.ce": ["IdeaIC"],
         "com.jetbrains.intellij": ["IntelliJIdea"],
+        // Google Drive keeps its accounts and file cache in Google's folder.
+        "com.google.drivefs": ["DriveFS"],
     ]
 
     /// Whether `entry` in `vendor` folder is `app`'s, and no other installed app's.
@@ -839,7 +876,7 @@ public enum AppLeftovers {
         guard let id = app.bundleID, isWellFormed(id) else { return nil }
         let others = installed.filter { $0.path != app.path }
         let name = app.name
-        let nameUsable = name.count >= 3 && !genericNames.contains(name.lowercased()) && !others.contains { $0.name.caseInsensitiveCompare(name) == .orderedSame }
+        let nameUsable = name.count >= 3 && !genericNames.contains(name.lowercased()) && !others.contains { nameKey($0.name) == nameKey(name) }
         // An app group is matched exactly, by the name the signature gives it.
         if rules.contains(.groupContainer), identity.groups.contains(where: { $0.caseInsensitiveCompare(entry) == .orderedSame }) { return .group }
         // The app's own ID and name, then each helper's ID by the same rules.
@@ -868,13 +905,28 @@ public enum AppLeftovers {
         return claimed ? nil : why
     }
 
+    /// The forms of an app's name its folders are found by, in lower case:
+    /// as it is, and as Electron and other tools write it, with its spaces
+    /// as hyphens or underscores or left out ("beekeeper-studio" for
+    /// Beekeeper Studio).
+    static func nameForms(_ name: String) -> Set<String> {
+        let lower = name.lowercased()
+        return [lower, lower.replacingOccurrences(of: " ", with: "-"), lower.replacingOccurrences(of: " ", with: "_"),
+                lower.replacingOccurrences(of: " ", with: "")]
+    }
+
+    /// Two names whose folders could be the same: equal without case, spaces, hyphens and underscores.
+    static func nameKey(_ name: String) -> String {
+        name.lowercased().filter { $0 != " " && $0 != "-" && $0 != "_" }
+    }
+
     static func matches(_ entry: String, id: String, name: String?, rules: [Match]) -> Bool {
         rules.contains { rule in
             switch rule {
             case .exactID: entry == id
             case .idPrefix: entry == id || entry.hasPrefix(id + ".")
             case .idPlist: entry == id + ".plist"
-            case .name: name.map { entry == $0 } ?? false
+            case .name: name.map { nameForms($0).contains(entry.lowercased()) } ?? false
             case .report:
                 // "<Name>-2026-11-06-101112.ips", "<Name>_<UUID>.plist": by the
                 // app's name, which must be one only it has.
@@ -923,8 +975,10 @@ public enum AppLeftovers {
         // What the deeper search offered, checked again by its own rules.
         if isStillKnownPart(path, of: app, home: home, installed: installed, identity: identity) { return true }
         if deep { return DeepLeftovers.isStill(path, of: app, home: home, installed: installed) }
+        if !app.isProtected, isStillDeclared(path, of: app, home: home, identity: identity) { return true }
         guard path.hasPrefix(lib), Trasher.noLinksBetween(home, and: path), !shownOnly(for: app, home: home).contains(path) else { return false }
         if isStillBundled(path, of: app, lib: home + "/Library", identity: identity, installed: installed) { return true }
+        if !app.isProtected, isStillPointing(path, of: app, lib: home + "/Library", installed: installed) { return true }
         let folder = (String(path.dropFirst(lib.count)) as NSString).deletingLastPathComponent
         let entry = (path as NSString).lastPathComponent
         if isStillVendorLeftover(folder: folder, entry: entry, of: app, installed: installed) {
