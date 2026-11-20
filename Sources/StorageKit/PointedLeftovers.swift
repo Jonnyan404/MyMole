@@ -64,6 +64,59 @@ extension AppLeftovers {
         return isInside(program, app)
     }
 
+    /// Folders in the home folder where tools put links to their commands.
+    static let commandFolders = [".local/bin", "bin"]
+    /// System and Homebrew folders of commands: links into the app there are only shown.
+    static let sharedCommandFolders = ["/usr/local/bin", "/opt/homebrew/bin"]
+
+    /// Where a link points, worked out from the folder it's in; nil for anything but a link.
+    static func linkTarget(_ path: String) -> String? {
+        var st = stat()
+        guard lstat(path, &st) == 0, st.st_mode & S_IFMT == S_IFLNK,
+              let dest = try? FileManager.default.destinationOfSymbolicLink(atPath: path), !dest.isEmpty else { return nil }
+        return dest.hasPrefix("/") ? dest : ((path as NSString).deletingLastPathComponent as NSString).appendingPathComponent(dest)
+    }
+
+    /// A link to a command inside the app, which stops working once the app is gone.
+    static func linksIntoApp(_ path: String, _ app: AppBundle) -> Bool {
+        linkTarget(path).map { isInside($0, app) } ?? false
+    }
+
+    /// The app's command links in the home folder's own command folders.
+    static func commandLinks(of app: AppBundle, home: String, scan: LeftoverScan) -> [Leftover] {
+        var out: [Leftover] = []
+        for folder in commandFolders where !scan.shouldStop {
+            let dir = home + "/" + folder
+            // Read only as the folder of commands it usually is: "~/bin" can be anything.
+            guard AppFinder.isRealFolder(dir), Trasher.noLinksBetween(home, and: dir) else { continue }
+            for entry in scan.names(dir, within: home) where !scan.shouldStop {
+                let p = dir + "/" + entry
+                var st = stat()
+                guard linksIntoApp(p, app), lstat(p, &st) == 0 else { continue }
+                var l = Leftover(path: p, bytes: Int64(st.st_blocks) * 512, place: "~/" + folder)
+                l.evidence = .pointsIntoApp
+                out.append(l)
+            }
+        }
+        return out
+    }
+
+    /// Checked again before it moves: still a link into the app, directly in one of those folders.
+    static func isStillCommandLink(_ path: String, of app: AppBundle, home: String) -> Bool {
+        let dir = (path as NSString).deletingLastPathComponent
+        return commandFolders.contains { dir == home + "/" + $0 } && Trasher.noLinksBetween(home, and: path) && linksIntoApp(path, app)
+    }
+
+    /// The app's command links in the system's and Homebrew's command
+    /// folders, by folder: their names, never moved.
+    public static func sharedCommandLinks(of app: AppBundle, base: String = "") -> [(folder: String, names: [String])] {
+        sharedCommandFolders.compactMap { folder in
+            let dir = base + folder
+            let names = (DirectoryListing.names(dir) ?? []).sorted().filter { linksIntoApp(dir + "/" + $0, app) }
+            return names.isEmpty ? nil : (dir, names)
+        }
+    }
+
     static func pointing(of app: AppBundle, lib: String, installed: [AppBundle], scan: LeftoverScan) -> [Leftover] {
         var out: [Leftover] = []
         let agents = lib + "/LaunchAgents"

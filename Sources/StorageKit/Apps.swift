@@ -246,6 +246,7 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
         case "LaunchAgents": .appPart
         case _ where place.hasSuffix("/" + AppLeftovers.messagingHosts): .appPart
         case "SyncedPreferences": .settings
+        case "~/.local/bin", "~/bin": .appPart
         case _ where AppLeftovers.bundlePlaces.contains(place): .appPart
         case "Preferences", "Preferences/ByHost", AppLeftovers.recentDocuments: .settings
         case "Group Containers": .shared
@@ -497,7 +498,7 @@ public enum AppFinder {
 
 public enum AppLeftovers {
     /// Library folders searched, and how an entry there is tied to an app.
-    enum Match { case exactID, idPrefix, idPlist, name, groupContainer, report, recentList }
+    enum Match { case exactID, idPrefix, idPlist, shipIt, name, updaterCache, groupContainer, report, recentList }
 
     /// Where macOS keeps each app's list of recent documents.
     static let recentDocuments =
@@ -507,7 +508,8 @@ public enum AppLeftovers {
 
     static let places: [(folder: String, matches: [Match])] = [
         ("Application Support", [.exactID, .name]),
-        ("Caches", [.exactID, .name]),
+        // "<id>.ShipIt": the updater Electron apps carry keeps its downloads by the app's ID.
+        ("Caches", [.exactID, .shipIt, .name, .updaterCache]),
         ("Containers", [.exactID]),
         ("Group Containers", [.groupContainer]),
         ("Preferences", [.idPlist]),
@@ -620,6 +622,7 @@ public enum AppLeftovers {
             out += bundled(of: app, lib: lib, identity: identity, installed: installed, scan: scan).filter { !known.contains($0.path) }
             known.formUnion(out.map(\.path))
             out += pointing(of: app, lib: lib, installed: installed, scan: scan).filter { !known.contains($0.path) }
+            out += commandLinks(of: app, home: home, scan: scan)
             known.formUnion(out.map(\.path))
             out += declared(of: app, home: home, identity: identity, scan: scan).filter { !known.contains($0.path) }
         }
@@ -880,7 +883,7 @@ public enum AppLeftovers {
         // An app group is matched exactly, by the name the signature gives it.
         if rules.contains(.groupContainer), identity.groups.contains(where: { $0.caseInsensitiveCompare(entry) == .orderedSame }) { return .group }
         // The app's own ID and name, then each helper's ID by the same rules.
-        let idRules = rules.filter { $0 != .name && $0 != .report }
+        let idRules = rules.filter { $0 != .name && $0 != .report && $0 != .updaterCache }
         var matched: [String] = []
         var why: Leftover.Evidence?
         if matches(entry, id: id, name: nil, rules: rules) {
@@ -926,7 +929,16 @@ public enum AppLeftovers {
             case .exactID: entry == id
             case .idPrefix: entry == id || entry.hasPrefix(id + ".")
             case .idPlist: entry == id + ".plist"
-            case .name: name.map { nameForms($0).contains(entry.lowercased()) } ?? false
+            case .shipIt: entry.lowercased() == id.lowercased() + ".shipit"
+            case .name:
+                // The folder, or the log a log folder keeps by the name.
+                name.map { n in
+                    let e = entry.lowercased()
+                    return nameForms(n).contains { e == $0 || e == $0 + ".log" }
+                } ?? false
+            case .updaterCache:
+                // "<name>-updater": where electron-updater keeps the updates it downloads.
+                name.map { n in nameForms(n).contains { entry.lowercased() == $0 + "-updater" } } ?? false
             case .report:
                 // "<Name>-2026-11-06-101112.ips", "<Name>_<UUID>.plist": by the
                 // app's name, which must be one only it has.
@@ -976,6 +988,7 @@ public enum AppLeftovers {
         if isStillKnownPart(path, of: app, home: home, installed: installed, identity: identity) { return true }
         if deep { return DeepLeftovers.isStill(path, of: app, home: home, installed: installed) }
         if !app.isProtected, isStillDeclared(path, of: app, home: home, identity: identity) { return true }
+        if !app.isProtected, isStillCommandLink(path, of: app, home: home) { return true }
         guard path.hasPrefix(lib), Trasher.noLinksBetween(home, and: path), !shownOnly(for: app, home: home).contains(path) else { return false }
         if isStillBundled(path, of: app, lib: home + "/Library", identity: identity, installed: installed) { return true }
         if !app.isProtected, isStillPointing(path, of: app, lib: home + "/Library", installed: installed) { return true }

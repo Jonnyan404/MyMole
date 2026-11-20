@@ -64,6 +64,40 @@ import Testing
         #expect(!AppLeftovers.isStillLeftover(theirs, of: vault, home: box.path, installed: [vault, other]))
     }
 
+    /// A command the app links into a command folder stops working once the
+    /// app is gone: in the home folder it goes with the app; in the system's
+    /// and Homebrew's folders it's only shown.
+    @Test func commandLinksIntoTheAppAreFound() throws {
+        let box = try Sandbox()
+        let docker = app(box, "Docker", "com.docker.docker"), other = app(box, "Other", "com.other.app")
+        let fm = FileManager.default
+        try box.folder(".local/bin")
+        try box.folder("bin")
+        try fm.createSymbolicLink(atPath: box.path + "/.local/bin/docker", withDestinationPath: docker.path + "/Contents/Resources/bin/docker")
+        try fm.createSymbolicLink(atPath: box.path + "/bin/compose", withDestinationPath: "../Applications/Docker.app/Contents/Resources/bin/compose")
+        try fm.createSymbolicLink(atPath: box.path + "/bin/other", withDestinationPath: other.path + "/Contents/MacOS/other")
+        try fm.createSymbolicLink(atPath: box.path + "/bin/escape", withDestinationPath: docker.path + "/../Other.app/Contents/MacOS/other")
+        let found = AppLeftovers.find(for: docker, home: box.path, installed: [docker, other])
+        let links = found.filter { $0.evidence == .pointsIntoApp }
+        #expect(Set(links.map(\.path)) == [box.path + "/.local/bin/docker", box.path + "/bin/compose"])
+        #expect(links.allSatisfy { $0.chosenByDefault && $0.kind == .appPart })
+        #expect(AppLeftovers.isStillLeftover(box.path + "/bin/compose", of: docker, home: box.path, installed: [docker, other]))
+        #expect(!AppLeftovers.isStillLeftover(box.path + "/bin/other", of: docker, home: box.path, installed: [docker, other]))
+        #expect(!AppLeftovers.isStillLeftover(box.path + "/bin/escape", of: docker, home: box.path, installed: [docker, other]))
+
+        let system = box.path + "/system"
+        try box.folder("system/usr/local/bin")
+        for name in ["docker", "kubectl"] {
+            try fm.createSymbolicLink(atPath: system + "/usr/local/bin/" + name, withDestinationPath: docker.path + "/Contents/Resources/bin/" + name)
+        }
+        try fm.createSymbolicLink(atPath: system + "/usr/local/bin/other", withDestinationPath: other.path + "/Contents/MacOS/other")
+        #expect(AppLeftovers.sharedCommandLinks(of: docker, base: system).map(\.names) == [["docker", "kubectl"]])
+        let shown = RelatedComponents.shown(for: docker, home: box.path, systemBase: system,
+                                            runner: CommandRunner(run: { _, _ in (1, "") }, exists: { _ in false }))
+        let row = try #require(shown.first { $0.path == system + "/usr/local/bin" })
+        #expect(row.note.hasPrefix("docker, kubectl"))
+    }
+
     @Test func crashReportersAndMacOSKeepTheAppsFoldersByItsID() throws {
         let box = try Sandbox()
         let id = "com.vendor.editor"
@@ -97,6 +131,14 @@ import Testing
         let support = try #require(found.first { $0.path.hasSuffix("/beekeeper-studio") })
         #expect(support.evidence == .name && !support.chosenByDefault)
         #expect(found.contains { $0.path.hasSuffix("/Logs/BeekeeperStudio") })
+        // What Electron's two updaters keep, and a log by the name.
+        try box.file("Library/Caches/io.beekeeperstudio.desktop.ShipIt/update.zip", bytes: 2_000)
+        try box.file("Library/Caches/beekeeper-studio-updater/pending/u.zip", bytes: 2_000)
+        try box.file("Library/Logs/Beekeeper Studio.log", bytes: 500)
+        let more = AppLeftovers.find(for: app, home: box.path, installed: [app])
+        #expect(more.first { $0.path.hasSuffix(".ShipIt") }.map { $0.evidence == .bundleID && $0.chosenByDefault } == true)
+        #expect(more.first { $0.path.hasSuffix("beekeeper-studio-updater") }?.evidence == .name)
+        #expect(more.contains { $0.path.hasSuffix("/Logs/Beekeeper Studio.log") })
         // Another app whose name is the same but for spaces and case: neither's.
         let twin = AppBundle(path: box.path + "/Applications/BeekeeperStudio.app", name: "BeekeeperStudio", bundleID: "com.twin.app",
                              version: nil, bytes: 1, fromAppStore: false)

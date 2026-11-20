@@ -117,6 +117,12 @@ extension RelatedComponents {
             out.append(Shown(path: path, name: part.title ?? (path as NSString).lastPathComponent, note: part.note ?? VendorRules.protectedNote,
                              bytes: AppLeftovers.measure(path)))
         }
+        for (folder, names) in AppLeftovers.sharedCommandLinks(of: app, base: systemBase) {
+            let shown = names.prefix(6).joined(separator: ", ") + (names.count > 6 ? " …" : "")
+            out.append(Shown(path: folder, name: String(localized: "Command links in \(folder)"),
+                             note: String(localized: "\(shown) point into the app and stop working once it's gone. They take no space. The app's own settings may remove them; otherwise an administrator can, in Terminal."),
+                             bytes: nil))
+        }
         let kexts = systemBase + "/Library/Extensions"
         for name in (DirectoryListing.names(kexts) ?? []).sorted() where name.lowercased().hasSuffix(".kext") {
             let path = kexts + "/" + name
