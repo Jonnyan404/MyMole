@@ -55,6 +55,7 @@ struct DuplicatesView: View {
         .actionConfirmation(
             String(localized: "Move \(model.chosen.count) copies to the Trash?"),
             isPresented: $confirming, action: .duplicates,
+            big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosen.count),
             message: confirmationMessage
         ) { model.trashChosen() }
         .sheet(isPresented: $sharing) { ShareStorageSheet(model: model) }

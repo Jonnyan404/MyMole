@@ -12,9 +12,9 @@ import Testing
 @Suite(.serialized) struct IntegrityTests {
     /// A tree of what files on a Mac carry: random and empty content, a
     /// sparse file, tags, a resource fork and Finder info, hidden and
-    /// locked flags, unusual permissions, a time to the nanosecond, links
-    /// (one going nowhere), a file with two names, names in decomposed
-    /// Unicode, and a bundle.
+    /// locked flags, unusual permissions, a time to the nanosecond, an old
+    /// creation date and Date Added, an access rule (ACL), links (one going
+    /// nowhere), a file with two names, names in decomposed Unicode, and a bundle.
     static func richTree(_ box: Sandbox, at dir: String) throws {
         let base = box.path + "/" + dir
         try box.file(dir + "/random.bin", bytes: 1 << 20)
@@ -48,6 +48,21 @@ import Testing
         try FileManager.default.createSymbolicLink(atPath: base + "/nowhere", withDestinationPath: "/nonexistent/mymole/target")
         #expect(link(base + "/one name.bin", base + "/sub/other name.bin") == 0)
         #expect(chflags(base + "/sub/locked.txt", UInt32(UF_IMMUTABLE)) == 0)
+        // Made and added to its folder in 2001.
+        var list = attrlist()
+        list.bitmapcount = u_short(ATTR_BIT_MAP_COUNT)
+        list.commonattr = attrgroup_t(ATTR_CMN_CRTIME)
+        var made = timespec(tv_sec: 978_307_200, tv_nsec: 5)
+        #expect(setattrlist(base + "/old.txt", &list, &made, MemoryLayout<timespec>.size, UInt32(FSOPT_NOFOLLOW)) == 0)
+        let folder = open(base, O_RDONLY | O_DIRECTORY)
+        #expect(DateAdded.set(978_307_200_000_000_007, on: "old.txt", in: folder))
+        close(folder)
+        #expect(DateAdded.read(base + "/old.txt") == 978_307_200_000_000_007)
+        // Everyone may read it: an access rule beyond the permissions.
+        let rule = acl_from_text("!#acl 1\ngroup:ABCDEFAB-CDEF-ABCD-EFAB-CDEF0000000C:everyone:12:allow:read\n")
+        #expect(rule != nil && acl_set_link_np(base + "/private.txt", ACL_TYPE_EXTENDED, rule) == 0)
+        acl_free(UnsafeMutableRawPointer(rule))
+        #expect(TreeFingerprint.accessRules(base + "/private.txt").contains("allow"))
     }
 
     /// Locked files can't be removed, so the box unlocks them before it goes.
@@ -202,6 +217,7 @@ import Testing
         #expect(setxattr(target, "com.apple.metadata:_kMDItemUserTags", tags, tags.count, 0, XATTR_NOFOLLOW) == 0)
         let backend = try testBin(box)
         let sourceBefore = try TreeFingerprint(source), targetBefore = try TreeFingerprint(target)
+        let addedBefore = try #require(DateAdded.read(target))
         let groups = DuplicateFinder.find(in: [box.path + "/Documents", box.path + "/Downloads"], minimum: 100_000, workers: 1).groups
         let plan = CloneSharing.plan(groups, chosen: [target])
         guard !plan.shares.isEmpty else { return }
@@ -210,6 +226,8 @@ import Testing
         #expect(try TreeFingerprint(source) == sourceBefore)
         let targetAfter = try TreeFingerprint(target)
         #expect(targetAfter == targetBefore, "\(TreeFingerprint.differences(targetBefore.items, targetAfter.items))")
+        // Finder still shows it added when it was, not when it was shared.
+        #expect(DateAdded.read(target) == addedBefore)
         let old = try #require(out.trashed.first)
         #expect(try TreeFingerprint(old.trashed.path) == targetBefore)
     }

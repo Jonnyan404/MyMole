@@ -28,13 +28,28 @@ enum ConfirmationAction: String, CaseIterable, Identifiable {
 final class ConfirmationSettings {
     static let shared = ConfirmationSettings()
     static let key = "confirmations.skipped.v1"
+    static let bigKey = "confirmations.askBigMoves.v1"
+    /// A big move: this much or more, or this many items or more.
+    static let bigBytes: Int64 = 10_000_000_000
+    static let bigCount = 1_000
     private let defaults: UserDefaults
     private(set) var skipped: Set<ConfirmationAction>
+    /// Asks before a big move even where the question is turned off. Off
+    /// unless the user turns it on; it only ever adds a question.
+    var asksBig: Bool { didSet { defaults.set(asksBig, forKey: Self.bigKey) } }
     var notice: ConfirmationAction?
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         skipped = Set((defaults.stringArray(forKey: Self.key) ?? []).compactMap(ConfirmationAction.init(rawValue:)))
+        asksBig = defaults.bool(forKey: Self.bigKey)
+    }
+
+    static func isBig(bytes: Int64, count: Int) -> Bool { bytes >= bigBytes || count >= bigCount }
+
+    /// Whether the question is asked only because the move is big.
+    func asksOnlyBecauseBig(_ action: ConfirmationAction?, always: Bool, big: Bool) -> Bool {
+        big && asksBig && !asks(action, always: always)
     }
 
     func asks(_ action: ConfirmationAction?, always: Bool = false) -> Bool {
@@ -61,12 +76,14 @@ private struct ActionConfirmation: ViewModifier {
     @Binding var requested: Bool
     let action: ConfirmationAction?
     let always: Bool
+    let big: Bool
     let button: String
     let message: String
     let perform: () -> Void
     @State private var settings = ConfirmationSettings.shared
 
-    private var asks: Bool { settings.asks(action, always: always) }
+    private var forced: Bool { settings.asksOnlyBecauseBig(action, always: always, big: big) }
+    private var asks: Bool { forced || settings.asks(action, always: always) }
 
     func body(content: Content) -> some View {
         content
@@ -75,13 +92,15 @@ private struct ActionConfirmation: ViewModifier {
             ), titleVisibility: .visible) {
                 Button(button, role: .destructive) { run(skip: false) }
                     .accessibilityIdentifier("confirmation.accept")
-                if action != nil, !always {
+                if action != nil, !always, !forced {
                     Button(String(localized: "\(button) and Don't Ask Again"), role: .destructive) { run(skip: true) }
                 }
                 Button("Cancel", role: .cancel) { requested = false }
                     .accessibilityIdentifier("confirmation.cancel")
             } message: {
-                Text(message + (action != nil && !always
+                Text(message + (forced
+                     ? "\n\n" + String(localized: "Asked because it's a big move. Settings → Confirmations → Always ask before big moves.")
+                     : action != nil && !always
                      ? "\n\n" + String(localized: "Don't Ask Again applies only to this action. Turn the question on again in Settings → Confirmations.") : ""))
             }
             .confirmationKeyboard(isPresented: Binding(get: { requested && asks }, set: { requested = $0 }))
@@ -103,11 +122,11 @@ private struct ActionConfirmation: ViewModifier {
 extension View {
     func actionConfirmation(
         _ title: String, isPresented: Binding<Bool>, action: ConfirmationAction? = nil,
-        always: Bool = false, button: String = String(localized: "Move to Trash"), message: String,
+        always: Bool = false, big: Bool = false, button: String = String(localized: "Move to Trash"), message: String,
         perform: @escaping () -> Void
     ) -> some View {
         modifier(ActionConfirmation(title: title, requested: isPresented, action: action,
-                                    always: always, button: button, message: message, perform: perform))
+                                    always: always, big: big, button: button, message: message, perform: perform))
     }
 }
 
@@ -159,6 +178,11 @@ struct ConfirmationsSection: View {
                             Text("Question turned off; turn this on to ask again")
                         }
                     }
+                }
+                DSFormRow(nil, checkbox: true) {
+                    Toggle("Always ask before big moves", isOn: Binding(get: { settings.asksBig }, set: { settings.asksBig = $0 }))
+                } help: {
+                    Text("Over 10 GB or 1,000 items, even where the question is turned off. Adds a question; never removes one.")
                 }
                 DSFormRow(nil) {
                     Button("Restore All Confirmations") { settings.restore(); projectRules?.restore() }

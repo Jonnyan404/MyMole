@@ -46,6 +46,7 @@ struct ProjectsView: View {
         .actionConfirmation(
             String(localized: "Move \(model.chosenEntries.count) items to the Trash?"),
             isPresented: $confirming, action: .projects,
+            big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosenEntries.count),
             message: String(localized: "\(Freeing.phrase(model.chosenBytes, frees: model.chosenFrees)) from \(Set(model.chosenEntries.map(\.project)).count) project(s):\n\(reviewList)\n\nAnything holding a Git repository, key files, files Git tracks or uncommitted work stays. You can undo right after, or put things back from the Trash later.")
         ) { model.trashChosen() }
         .onAppear { model.pins.refresh(); model.scanIfNeeded() }

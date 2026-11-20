@@ -23219,6 +23219,46 @@
         }
       }
     },
+    "Always ask before big moves" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vor großen Verschiebungen immer fragen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar siempre antes de movimientos grandes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toujours demander avant les gros déplacements"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बड़े स्थानांतरण से पहले हमेशा पूछें"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "큰 이동 전에는 항상 묻기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大批移动前总是询问"
+          }
+        }
+      }
+    },
     "An app dragged to the Trash leaves its settings, caches and data in your Library. Nothing is removed until you choose it." : {
       "localizations" : {
         "de" : {
@@ -25777,6 +25817,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "操作前询问"
+          }
+        }
+      }
+    },
+    "Asked because it's a big move. Settings → Confirmations → Always ask before big moves." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gefragt, weil es eine große Verschiebung ist. „Einstellungen“ → „Bestätigungen“ → „Vor großen Verschiebungen immer fragen“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se pregunta porque es un movimiento grande. Ajustes → Confirmaciones → Preguntar siempre antes de movimientos grandes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demandé parce que c’est un gros déplacement. Réglages → Confirmations → Toujours demander avant les gros déplacements."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "यह सवाल इसलिए पूछा गया क्योंकि यह बड़ा स्थानांतरण है। सेटिंग्ज़ → पुष्टियाँ → बड़े स्थानांतरण से पहले हमेशा पूछें।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "큰 이동이라서 묻습니다. 설정 → 확인 → 큰 이동 전에는 항상 묻기."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "因为这是一次大批移动，所以询问。“设置”→“确认”→“大批移动前总是询问”。"
           }
         }
       }
@@ -73051,6 +73131,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "位于你的“资源库”之外，经管理员批准后会彻底删除。此处的项目默认都未勾选：请逐项检查你要移除的系统项目。"
+          }
+        }
+      }
+    },
+    "Over 10 GB or 1,000 items, even where the question is turned off. Adds a question; never removes one." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ab 10 GB oder 1.000 Objekten, auch wo die Frage ausgeschaltet ist. Fügt eine Frage hinzu, entfernt nie eine."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desde 10 GB o 1000 elementos, incluso donde la pregunta está desactivada. Añade una pregunta; nunca quita ninguna."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À partir de 10 Go ou 1 000 éléments, même là où la question est désactivée. Ajoute une question, n’en retire jamais."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 GB या 1,000 आइटम से ज़्यादा पर, वहाँ भी जहाँ सवाल बंद है। यह एक सवाल जोड़ता है, कभी कोई सवाल हटाता नहीं।"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10GB 또는 1,000개 이상이면 질문을 꺼 둔 곳에서도 묻습니다. 질문을 더할 뿐, 없애지는 않습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "达到 10 GB 或 1,000 个项目时，即使关闭了该询问也会询问。只会增加询问，绝不减少。"
           }
         }
       }

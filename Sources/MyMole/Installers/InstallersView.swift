@@ -28,6 +28,7 @@ struct InstallersView: View {
         .actionConfirmation(
             String(localized: "Move \(model.chosen.count) installers to the Trash?"),
             isPresented: $confirming, action: .installers,
+            big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosen.count),
             message: String(localized: "\(fmt(model.chosenBytes)). You can undo right after, or put them back from the Trash later.")
         ) { model.trashChosen() }
         .onAppear { model.scanIfNeeded() }

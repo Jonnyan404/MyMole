@@ -42,7 +42,8 @@ struct DeepCleanView: View {
         .confirmationKeyboard(isPresented: Binding(get: { explaining != nil }, set: { if !$0 { explaining = nil } }))
         .actionConfirmation(
             String(localized: "Move \(fmt(model.chosenBytes)) to the Trash?"),
-            isPresented: $confirming, action: .deepClean, message: confirmationText
+            isPresented: $confirming, action: .deepClean,
+            big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosenCandidates.count), message: confirmationText
         ) { model.trashChosen() }
         .onAppear { model.scanIfNeeded() }
         .liveRefresh(every: .seconds(5)) { await model.refreshActivity() }

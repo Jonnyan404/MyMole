@@ -168,7 +168,10 @@ struct BatchUninstallSheet: View {
         .liveRefresh(every: .seconds(10), events: .protections) { await refreshProtections() }
         .actionConfirmation(
             String(localized: "Uninstall \(pendingItems.count) apps?"), isPresented: $confirm,
-            action: .uninstall, message: pendingMessage
+            action: .uninstall,
+            big: ConfirmationSettings.isBig(bytes: pendingItems.reduce(0) { $0 + $1.app.bytes + $1.leftovers.reduce(0) { $0 + $1.bytes } },
+                                            count: pendingItems.reduce(0) { $0 + 1 + $1.leftovers.count }),
+            message: pendingMessage
         ) { run() }
     }
 

@@ -8,11 +8,15 @@ public struct TrashRecord: Sendable, Hashable, Codable {
     /// It was locked in Finder and unlocked to move; Undo locks it again.
     /// Nil in records saved before this was kept.
     public var locked: Bool?
+    /// Finder's Date Added before the move, in nanoseconds since 1970, which
+    /// Undo puts back. Nil when the disk doesn't keep it, and in older records.
+    public var added: Int64?
 
-    public init(original: URL, trashed: URL, locked: Bool? = nil) {
+    public init(original: URL, trashed: URL, locked: Bool? = nil, added: Int64? = nil) {
         self.original = original
         self.trashed = trashed
         self.locked = locked
+        self.added = added
     }
 }
 
@@ -72,9 +76,10 @@ public struct TrashBackend: Sendable {
         #if SMOKE
         return TrashOutcome(moved: [], failed: [(source.path, "System Trash is disabled in synthetic test builds.")])
         #else
+        let added = DateAdded.read(source.path)
         switch trash.move(source) {
         case .success(let trashed):
-            return TrashOutcome(moved: [TrashRecord(original: source, trashed: trashed)], failed: [])
+            return TrashOutcome(moved: [TrashRecord(original: source, trashed: trashed, added: added)], failed: [])
         case .failure(let failure):
             return TrashOutcome(moved: [], failed: [(source.path, failure.reason)],
                                 failureInfo: failure.error.map { [source.path: .init($0, area: area)] } ?? [:])
@@ -486,10 +491,12 @@ public enum Trasher {
                 continue
             }
             let locked = Locks.isLocked(path)
+            let added = DateAdded.read(path)
             let r = backend.moveOne(path)
             if let to = r.trashed {
                 // A lock cleared for the move is said, so Undo puts it back.
-                moved.append(TrashRecord(original: URL(fileURLWithPath: path), trashed: to, locked: locked && !Locks.isLocked(to.path) ? true : nil))
+                moved.append(TrashRecord(original: URL(fileURLWithPath: path), trashed: to,
+                                         locked: locked && !Locks.isLocked(to.path) ? true : nil, added: added))
             } else {
                 failed.append((path, r.error ?? notMoved))
             }
@@ -516,6 +523,8 @@ public enum Trasher {
         // exFAT has no exclusive rename.
         if !back, errno == ENOTSUP || errno == EINVAL { back = renameClaimingName(r.trashed.path, into: dir, name) }
         guard back else { return false }
+        // Before the lock, which would refuse it.
+        if let added = r.added { DateAdded.set(added, on: name, in: dir) }
         if r.locked == true {
             // Opened in the folder already open, never through a link.
             let fd = openat(dir, name, O_RDONLY | O_SYMLINK | O_CLOEXEC)

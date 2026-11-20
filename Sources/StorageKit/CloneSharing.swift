@@ -211,14 +211,24 @@ public enum CloneSharing {
             }
         }
         guard copyfile(copy, clone, nil, copyfile_flags_t(COPYFILE_METADATA | COPYFILE_NOFOLLOW)) == 0 else { return false }
-        // copyfile keeps the clone's own creation date; the copy's goes on it.
-        guard let made = (try? URL(fileURLWithPath: copy).resourceValues(forKeys: [.creationDateKey]))?.creationDate else { return false }
-        var url = URL(fileURLWithPath: clone)
-        var values = URLResourceValues()
-        values.creationDate = made
-        guard (try? url.setResourceValues(values)) != nil else { return false }
-        var a = stat(), b = stat()
-        return lstat(copy, &a) == 0 && lstat(clone, &b) == 0 && a.st_mode == b.st_mode && a.st_uid == b.st_uid
+        // copyfile keeps the clone's own creation date; the copy's goes on
+        // it to the nanosecond, and so does its Date Added in the folder.
+        var a = stat()
+        guard lstat(copy, &a) == 0 else { return false }
+        var list = attrlist()
+        list.bitmapcount = u_short(ATTR_BIT_MAP_COUNT)
+        list.commonattr = attrgroup_t(ATTR_CMN_CRTIME)
+        var made = a.st_birthtimespec
+        guard setattrlist(clone, &list, &made, MemoryLayout<timespec>.size, UInt32(FSOPT_NOFOLLOW)) == 0 else { return false }
+        if let added = DateAdded.read(copy) {
+            let folder = open((clone as NSString).deletingLastPathComponent, O_RDONLY | O_DIRECTORY | O_CLOEXEC)
+            guard folder >= 0 else { return false }
+            defer { close(folder) }
+            guard DateAdded.set(added, on: (clone as NSString).lastPathComponent, in: folder) else { return false }
+        }
+        var b = stat()
+        return lstat(clone, &b) == 0 && a.st_mode == b.st_mode && a.st_uid == b.st_uid
             && a.st_mtimespec.tv_sec == b.st_mtimespec.tv_sec && a.st_mtimespec.tv_nsec == b.st_mtimespec.tv_nsec
+            && a.st_birthtimespec.tv_sec == b.st_birthtimespec.tv_sec && a.st_birthtimespec.tv_nsec == b.st_birthtimespec.tv_nsec
     }
 }

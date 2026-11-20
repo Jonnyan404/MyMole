@@ -7,8 +7,10 @@ import Foundation
 /// SHA-256 of the bytes, permissions, the modification time to the
 /// nanosecond, the flags a user can set (hidden, locked), every extended
 /// attribute's bytes (tags, resource fork, Finder info), where a link
-/// points, and which names are one file. Folders' times change whenever
-/// what's in them does, so they're left out.
+/// points, which names are one file, when it was made, its access rules
+/// (ACL), and Finder's Date Added. Folders' times change whenever what's in
+/// them does, so they're left out; the root's Date Added changes whenever
+/// it moves, so it's left out too.
 struct TreeFingerprint: Equatable {
     struct Item: Equatable {
         var kind = ""
@@ -21,6 +23,9 @@ struct TreeFingerprint: Equatable {
         var linkTarget: String?
         var names: UInt16 = 1
         var sameFileAs: String?
+        var created: Int64 = 0
+        var acl = ""
+        var added: Int64 = 0
     }
 
     private(set) var items: [String: Item] = [:]
@@ -44,6 +49,9 @@ struct TreeFingerprint: Equatable {
             item.mode = UInt16(st.st_mode) & 0o7777
             item.flags = st.st_flags & Self.userFlags
             item.xattrs = try Self.attributes(path)
+            item.created = Int64(st.st_birthtimespec.tv_sec) * 1_000_000_000 + Int64(st.st_birthtimespec.tv_nsec)
+            item.acl = Self.accessRules(path)
+            item.added = rel.isEmpty ? 0 : Self.dateAdded(path)
             switch item.kind {
             case "file":
                 item.length = Int64(st.st_size)
@@ -73,6 +81,26 @@ struct TreeFingerprint: Equatable {
         case S_IFLNK: return "link"
         default: return "other"
         }
+    }
+
+    /// The ACL as text, "" when there is none.
+    static func accessRules(_ path: String) -> String {
+        guard let acl = acl_get_link_np(path, ACL_TYPE_EXTENDED) else { return "" }
+        defer { acl_free(UnsafeMutableRawPointer(acl)) }
+        guard let text = acl_to_text(acl, nil) else { return "?" }
+        defer { acl_free(text) }
+        return String(cString: text)
+    }
+
+    /// Finder's Date Added in nanoseconds, read here independently of the app's own reader.
+    static func dateAdded(_ path: String) -> Int64 {
+        var list = attrlist()
+        list.bitmapcount = u_short(ATTR_BIT_MAP_COUNT)
+        list.commonattr = attrgroup_t(ATTR_CMN_ADDEDTIME)
+        var buffer = [UInt8](repeating: 0, count: 32)
+        guard getattrlist(path, &list, &buffer, buffer.count, UInt32(FSOPT_NOFOLLOW)) == 0 else { return -1 }
+        let ts = buffer.withUnsafeBytes { $0.loadUnaligned(fromByteOffset: 4, as: timespec.self) }
+        return Int64(ts.tv_sec) * 1_000_000_000 + Int64(ts.tv_nsec)
     }
 
     static func hash(_ path: String) throws -> String {
@@ -109,6 +137,7 @@ struct TreeFingerprint: Equatable {
             var item = item
             // A name that's one file with another outside the part compared says only how many names it has.
             if let same = item.sameFileAs { item.sameFileAs = same.hasPrefix(prefix + "/") ? String(same.dropFirst(prefix.count + 1)) : nil }
+            if rel == prefix { item.added = 0 }
             out[rel == prefix ? "" : String(rel.dropFirst(prefix.count + 1))] = item
         }
         return out
