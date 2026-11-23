@@ -354,11 +354,13 @@ struct UIResponsivenessBenchmarkTests {
             return f
         }()
         // One round, not timed, as a running app has made its first rows,
-        // symbols and formatters already.
-        if let first = largestChild(tree) {
-            _ = await act(model.chart) { model.open(first) }
-            _ = await act(model.chart) { model.back() }
+        // symbols and formatters already. It goes down to the deepest folder
+        // the rounds open: the first time the list fits its view whole, with
+        // nothing to scroll either way, AppKit takes about a frame longer.
+        while let next = model.current.flatMap(largestChild), next.lineage.count <= deepest.lineage.count {
+            _ = await act(model.chart) { model.open(next) }
         }
+        _ = await act(model.chart) { model.open(tree) }
         for chart in StorageModel.Chart.allCases {
             var inputs: [UISample] = [], visible: [Double] = [], stalls: [Double] = []
             func record(_ r: (input: UISample, visible: Double, stall: Double), _ action: String) {
