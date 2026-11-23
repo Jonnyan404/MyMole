@@ -296,39 +296,65 @@ struct UIInteractionEndToEndTests {
 
     /// The window is AppKit's, as in the app: a pane's filter must change the
     /// list while typing and keep its text when something else redraws it.
-    @Test func paneFilterFieldFiltersAndKeepsItsText() async throws {
+    @Test func paneFilterFieldsFilterAndKeepTheirText() async throws {
         let f = try EndToEndFixture()
+        let defaults = testDefaults(in: f.root)
         let alpha = try f.file("Downloads/Alpha.pkg")
         _ = try f.file("Downloads/Beta.dmg")
-        let model = InstallersModel(locations: [.init(path: f.home + "/Downloads", depth: 1)],
+        let installers = InstallersModel(locations: [.init(path: f.home + "/Downloads", depth: 1)],
             base: f.root.appending(path: "installers"), logURL: f.log, trash: f.backend)
-        model.protections = f.protections
-        model.jobs = f.jobs
-        model.scan()
-        await model.scanJob?.value
-        try #require(model.files.count == 2)
-        let defaults = testDefaults(in: f.root)
-        let ui = UIInteractionWindow(InstallersView(model: model).defaultAppStorage(defaults), width: 1_100, height: 700)
+        installers.protections = f.protections
+        installers.jobs = f.jobs
+        installers.scan()
+        await installers.scanJob?.value
+        try await expectFilter(InstallersView(model: installers), defaults: defaults, key: "installers.filter",
+                               prompt: "Filter by name or folder", rows: 2) { installers.chosen = [alpha] }
+
+        _ = try f.plist("Library/LaunchAgents/com.example.alpha.plist", ["Label": "com.example.alpha", "Program": f.home + "/missing-alpha"])
+        _ = try f.plist("Library/LaunchAgents/com.example.beta.plist", ["Label": "com.example.beta", "Program": f.home + "/missing-beta"])
+        let startup = StartupModel(home: f.home, root: f.home + "/System", logURL: f.log, trash: f.backend)
+        startup.jobs = f.jobs
+        startup.protections = f.protections
+        startup.readLive = { nil }
+        startup.load()
+        await startup.job?.value
+        try await expectFilter(StartupView(model: startup), defaults: defaults, key: "startup.filter",
+                               prompt: "Filter by name or program", rows: 2) { startup.chosen = Set(startup.items.prefix(1).map(\.path)) }
+
+        _ = try f.file("Library/Caches/com.example.Alpha/blob")
+        _ = try f.file("Library/Caches/com.example.Beta/blob")
+        let clean = DeepCleanModel(home: f.home, base: f.root.appending(path: "clean"), keepURL: f.protections.keepList,
+            logURL: f.log, runningApps: { [] }, runningTools: { [] }, trash: f.backend, projectRules: f.protections.projectBase, quietFor: 0)
+        clean.jobs = f.jobs
+        clean.scan()
+        await clean.scanJob?.value
+        try await expectFilter(DeepCleanView(model: clean), defaults: defaults, key: "deepClean.filter",
+                               prompt: "Filter by name or folder", rows: 2) { clean.chosen = [f.home + "/Library/Caches/com.example.Alpha"] }
+        print("ui-e2e pane.filter.type-filter-keep")
+    }
+
+    /// Types "Alpha" into the pane's filter: one of its `rows` stays, and the
+    /// text stays too after `redraw` changes something else.
+    private func expectFilter<V: View>(_ pane: V, defaults: UserDefaults, key: String, prompt: String, rows: Int,
+                                       redraw: () -> Void) async throws {
+        let ui = UIInteractionWindow(pane.defaultAppStorage(defaults), width: 1_100, height: 700)
         defer { ui.close() }
         try await ui.settle()
         // Shown even where the screen is locked or covered, as the table fixture does.
         func shown() { for t in ui.views(FileTableView.self) { t.coordinator?.setPresentationActive(true) } }
-        shown()
-        func rows() -> [Int] { ui.views(NSTableView.self).map(\.numberOfRows) }
-        for _ in 0..<100 where rows().first != 2 { try await ui.settle() }
-        try #require(rows().first == 2, "Rows in tables: \(rows()), fields: \(ui.views(NSTextField.self).map { $0.placeholderString ?? "-" })")
-        let table = try #require(ui.views(NSTableView.self).first)
-        let field = try #require(ui.views(NSTextField.self).first { $0.placeholderString == "Filter by name or folder" })
+        func count() -> Int { ui.views(NSTableView.self).first?.numberOfRows ?? -1 }
+        for _ in 0..<100 where count() != rows { shown(); try await ui.settle() }
+        try #require(count() == rows, "\(key): rows \(count()), fields \(ui.views(NSTextField.self).map { $0.placeholderString ?? "-" })")
+        let field = try #require(ui.views(NSTextField.self).first { $0.placeholderString == prompt }, "\(key): no field")
         #expect(ui.window.makeFirstResponder(field))
         for character in "Alpha" { try ui.key(0, characters: String(character)) }
-        for _ in 0..<100 where table.numberOfRows != 1 { shown(); try await ui.settle() }
-        try #require(table.numberOfRows == 1, "Rows \(table.numberOfRows), field \(field.stringValue), kept \(defaults.string(forKey: "installers.filter") ?? "nil")")
-        model.chosen = [alpha]
+        for _ in 0..<100 where count() != 1 { shown(); try await ui.settle() }
+        try #require(count() == 1, "\(key): rows \(count()), field \(field.stringValue), kept \(defaults.string(forKey: key) ?? "nil")")
+        redraw()
         try await ui.settle()
-        #expect(field.stringValue == "Alpha")
-        #expect(table.numberOfRows == 1)
-        #expect(defaults.string(forKey: "installers.filter") == "Alpha")
-        print("ui-e2e pane.filter.type-filter-keep")
+        #expect(field.stringValue == "Alpha", "\(key)")
+        #expect(count() == 1, "\(key)")
+        #expect(defaults.string(forKey: key) == "Alpha", "\(key)")
     }
 }
 #endif

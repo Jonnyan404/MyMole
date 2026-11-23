@@ -120,7 +120,8 @@ struct StartupView: View {
 
     private var shown: [StartupItem] {
         let list = show == .jobs ? jobs : plugins
-        return query.isEmpty ? list : list.filter { DSFilterField.matches(query, $0.label, $0.program ?? "") }
+        let search = TextQuery(query)
+        return search.isEmpty ? list : list.filter { search.matches($0.label, $0.program ?? "") }
     }
 
     private var table: some View {

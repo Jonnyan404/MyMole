@@ -407,12 +407,6 @@ extension View {
 /// clear button once there's text. Looks like the system search field.
 struct DSFilterField: View {
     @Environment(\.closeDialog) private var closeDialog
-    /// Whether a row with these texts (name, folder…) passes `query`: every
-    /// word typed appears in one of them, in any case.
-    nonisolated static func matches(_ query: String, _ texts: String...) -> Bool {
-        TextQuery(query).matches(texts: texts)
-    }
-
     /// "· 3 chosen hidden by the filter", so a choice the filter hides is never a surprise.
     static func hiddenNote(chosen: Set<String>, shown: Set<String>) -> String {
         let hidden = chosen.subtracting(shown).count

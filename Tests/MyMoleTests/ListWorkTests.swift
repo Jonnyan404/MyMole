@@ -27,7 +27,9 @@ import Testing
         let compare = (0..<5).map { _ in time { _ = rows == changed } }.min()!
         let bySize = time { _ = FileTable.sorted(rows, by: .size, ascending: false) }
         let byName = time { _ = FileTable.sorted(rows, by: .name, ascending: true) }
-        let filter = time { _ = rows.filter { DSFilterField.matches("file-49", $0.name, $0.id) } }
+        // Filtered as the lists do: the query read once, then each row matched.
+        let search = TextQuery("file-49")
+        let filter = (0..<3).map { _ in time { _ = rows.filter { search.matches($0.name, $0.id) } } }.min()!
         print("50 000 rows: compare \(compare), size sort \(bySize), name sort \(byName), filter \(filter)")
         #expect(compare < .milliseconds(50))
         #expect(bySize < .seconds(1) && filter < .seconds(1))
