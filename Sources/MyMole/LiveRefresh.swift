@@ -64,24 +64,31 @@ struct LiveRefreshEvents: OptionSet {
     static let protections = Self(rawValue: 1 << 2)
 }
 
-private struct LiveRefreshModifier: ViewModifier {
-    @Environment(\.scenePhase) private var phase
+/// The app's windows are AppKit's, not a SwiftUI scene's, so the scene phase
+/// is always background there. Whether to read comes from the app instead.
+struct LiveRefreshModifier: ViewModifier {
     @State private var refresh = LiveRefresh()
     let interval: Duration
     let events: LiveRefreshEvents
+    /// Whether the app is in front, when the view comes into a window.
+    var active: @MainActor () -> Bool = { NSApp.isActive }
+    /// Whether a read is worth it: the app in front with a window on screen.
+    var shown: @MainActor () -> Bool = {
+        NSApp.isActive && !NSApp.isHidden && NSApp.windows.contains {
+            $0.isVisible && !$0.isMiniaturized && $0.occlusionState.contains(.visible)
+        }
+    }
     let update: @MainActor () async -> Void
 
     func body(content: Content) -> some View {
         content
             .task {
                 await refresh.observe(every: interval) {
-                    guard NSApp.isActive, !NSApp.isHidden, NSApp.windows.contains(where: {
-                        $0.isVisible && !$0.isMiniaturized && $0.occlusionState.contains(.visible)
-                    }) else { return }
+                    guard shown() else { return }
                     await update()
                 }
             }
-            .onChange(of: phase, initial: true) { _, phase in refresh.setEnabled(phase == .active) }
+            .onAppear { refresh.setEnabled(active()) }
             .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
                 refresh.setEnabled(true)
                 refresh.request()
