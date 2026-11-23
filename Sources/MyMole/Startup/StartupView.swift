@@ -8,8 +8,8 @@ import SwiftUI
 struct StartupView: View {
     @Bindable var model: StartupModel
     @State private var confirming = false
-    /// Kept while you go to other panes and back, as the window's own state.
-    @SceneStorage("startup.filter") private var query = ""
+    /// Kept between panes and launches.
+    @AppStorage("startup.filter") private var query = ""
     @AppStorage("startup.show") private var show: Show = .jobs
 
     enum Show: String, CaseIterable, Identifiable {

@@ -42,7 +42,7 @@ extension DuplicatesShow {
 struct SimilarView: View {
     @Bindable var model: SimilarModel
     @State private var confirming = false
-    @SceneStorage("similar.filter") private var query = ""
+    @AppStorage("similar.filter") private var query = ""
     @State private var filtered = OffMain<[SimilarGroup]>([])
 
     private struct FilterKey: Equatable {

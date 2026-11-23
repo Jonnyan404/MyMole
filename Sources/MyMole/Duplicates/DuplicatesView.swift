@@ -9,8 +9,8 @@ struct DuplicatesView: View {
     @Bindable var model: DuplicatesModel
     @State private var confirming = false
     @State private var sharing = false
-    /// Kept while you go to other panes and back, as the window's own state.
-    @SceneStorage("duplicates.filter") private var query = ""
+    /// Kept between panes and launches.
+    @AppStorage("duplicates.filter") private var query = ""
 
     var body: some View {
         VStack(spacing: 0) {

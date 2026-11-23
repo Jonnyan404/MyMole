@@ -12,8 +12,8 @@ struct DeepCleanView: View {
     @State private var showDevTools = false
     @State private var showCloud = false
     @State private var explaining: CleanCandidate?
-    /// Kept while you go to other panes and back, as the window's own state.
-    @SceneStorage("deepClean.filter") private var query = ""
+    /// Kept between panes and launches.
+    @AppStorage("deepClean.filter") private var query = ""
 
     var body: some View {
         VStack(spacing: 0) {

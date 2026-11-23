@@ -6,8 +6,8 @@ import SwiftUI
 /// many as you like. Files appear while the scan is still running.
 struct LargeFilesView: View {
     @Bindable var model: StorageModel
-    /// Kept while you go to other panes and back, as the window's own state.
-    @SceneStorage("largeFiles.filter") private var query = ""
+    /// Kept between panes and launches.
+    @AppStorage("largeFiles.filter") private var query = ""
     @State private var kind: FileKind?
     @State private var date = DateFilter()
     @State private var place: Place = .anywhere

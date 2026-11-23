@@ -823,7 +823,8 @@
     "cancellingNativeResizeRestoresPreferences": "resize.escape-cancels-without-saving",
     "uninstallConfirmationMovesOnlyOwnedFixtureAndUndoRestoresBytes": "uninstall.confirm-cancel-owned-trash-restore",
     "scanSpeedAccessibilityResetAndPersistence": "settings.scan-speed.accessibility-reset-persistence",
-    "resizeReturningToOriginDoesNotClickAndShortDragsDoNotLeakState": "resize.return-and-short-drag-state"
+    "resizeReturningToOriginDoesNotClickAndShortDragsDoNotLeakState": "resize.return-and-short-drag-state",
+    "paneFilterFieldFiltersAndKeepsItsText": "pane.filter.type-filter-keep"
   },
   "sourcePatterns": {
     "drag": "\\bDragGesture\\s*\\(",

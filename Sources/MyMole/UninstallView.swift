@@ -17,8 +17,8 @@ struct UninstallView: View {
     @Bindable var model: AppsModel
     let orphans: OrphansModel
     var selfRemoval: SelfRemovalModel?
-    /// Kept while you go to other panes and back, as the window's own state.
-    @SceneStorage("uninstall.filter") private var query = ""
+    /// Kept between panes and launches.
+    @AppStorage("uninstall.filter") private var query = ""
     @State private var selected: AppBundle?
     @State private var showOrphans = false
     @State private var showCopies = false

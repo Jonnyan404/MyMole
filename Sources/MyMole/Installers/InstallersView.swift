@@ -8,8 +8,8 @@ import SwiftUI
 struct InstallersView: View {
     @Bindable var model: InstallersModel
     @State private var confirming = false
-    /// Kept while you go to other panes and back, as the window's own state.
-    @SceneStorage("installers.filter") private var query = ""
+    /// Kept between panes and launches.
+    @AppStorage("installers.filter") private var query = ""
 
     var body: some View {
         VStack(spacing: 0) {

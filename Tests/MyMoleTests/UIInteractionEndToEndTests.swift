@@ -293,5 +293,42 @@ struct UIInteractionEndToEndTests {
         #expect(try files.contents() == untouched)
         print("ui-e2e storage.divider.mouse-clamping")
     }
+
+    /// The window is AppKit's, as in the app: a pane's filter must change the
+    /// list while typing and keep its text when something else redraws it.
+    @Test func paneFilterFieldFiltersAndKeepsItsText() async throws {
+        let f = try EndToEndFixture()
+        let alpha = try f.file("Downloads/Alpha.pkg")
+        _ = try f.file("Downloads/Beta.dmg")
+        let model = InstallersModel(locations: [.init(path: f.home + "/Downloads", depth: 1)],
+            base: f.root.appending(path: "installers"), logURL: f.log, trash: f.backend)
+        model.protections = f.protections
+        model.jobs = f.jobs
+        model.scan()
+        await model.scanJob?.value
+        try #require(model.files.count == 2)
+        let defaults = testDefaults(in: f.root)
+        let ui = UIInteractionWindow(InstallersView(model: model).defaultAppStorage(defaults), width: 1_100, height: 700)
+        defer { ui.close() }
+        try await ui.settle()
+        // Shown even where the screen is locked or covered, as the table fixture does.
+        func shown() { for t in ui.views(FileTableView.self) { t.coordinator?.setPresentationActive(true) } }
+        shown()
+        func rows() -> [Int] { ui.views(NSTableView.self).map(\.numberOfRows) }
+        for _ in 0..<100 where rows().first != 2 { try await ui.settle() }
+        try #require(rows().first == 2, "Rows in tables: \(rows()), fields: \(ui.views(NSTextField.self).map { $0.placeholderString ?? "-" })")
+        let table = try #require(ui.views(NSTableView.self).first)
+        let field = try #require(ui.views(NSTextField.self).first { $0.placeholderString == "Filter by name or folder" })
+        #expect(ui.window.makeFirstResponder(field))
+        for character in "Alpha" { try ui.key(0, characters: String(character)) }
+        for _ in 0..<100 where table.numberOfRows != 1 { shown(); try await ui.settle() }
+        try #require(table.numberOfRows == 1, "Rows \(table.numberOfRows), field \(field.stringValue), kept \(defaults.string(forKey: "installers.filter") ?? "nil")")
+        model.chosen = [alpha]
+        try await ui.settle()
+        #expect(field.stringValue == "Alpha")
+        #expect(table.numberOfRows == 1)
+        #expect(defaults.string(forKey: "installers.filter") == "Alpha")
+        print("ui-e2e pane.filter.type-filter-keep")
+    }
 }
 #endif
