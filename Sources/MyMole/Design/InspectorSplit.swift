@@ -28,6 +28,10 @@ final class InspectorSplitController: NSViewController, NSSplitViewDelegate {
     private var inspectorWidth: CGFloat = 440
     private var arranging = false
 
+    /// The narrowest each pane may be. The inspector may take the rest.
+    static let minContent: CGFloat = 380
+    static let minInspector: CGFloat = 340
+
     init(content: AnyView, inspector: AnyView) {
         self.content = NSHostingController(rootView: content)
         self.inspector = NSHostingController(rootView: inspector)
@@ -58,7 +62,7 @@ final class InspectorSplitController: NSViewController, NSSplitViewDelegate {
         defer { arranging = false }
         let divider = min(splitView.dividerThickness, splitView.bounds.width)
         let available = max(0, splitView.bounds.width - divider)
-        let width = min(available, inspectorWidth, max(340, available - 380))
+        let width = min(available, inspectorWidth, max(Self.minInspector, available - Self.minContent))
         let main = available - width
         content.view.frame = NSRect(x: 0, y: 0, width: main, height: splitView.bounds.height)
         inspector.view.frame = NSRect(x: main + divider, y: 0,
@@ -68,18 +72,18 @@ final class InspectorSplitController: NSViewController, NSSplitViewDelegate {
     func splitView(_ splitView: NSSplitView, constrainSplitPosition proposedPosition: CGFloat,
                    ofSubviewAt dividerIndex: Int) -> CGFloat {
         let available = splitView.bounds.width - splitView.dividerThickness
-        let position = min(max(380, available - 340), max(max(380, available - 520), proposedPosition))
-        if !arranging { inspectorWidth = min(520, max(340, available - position)) }
+        let position = min(max(Self.minContent, available - Self.minInspector), max(Self.minContent, proposedPosition))
+        if !arranging { inspectorWidth = max(Self.minInspector, available - position) }
         return position
     }
 
     func splitView(_ splitView: NSSplitView, constrainMinCoordinate proposedMinimumPosition: CGFloat,
                    ofSubviewAt dividerIndex: Int) -> CGFloat {
-        max(380, splitView.bounds.width - splitView.dividerThickness - 520)
+        Self.minContent
     }
 
     func splitView(_ splitView: NSSplitView, constrainMaxCoordinate proposedMaximumPosition: CGFloat,
                    ofSubviewAt dividerIndex: Int) -> CGFloat {
-        max(380, splitView.bounds.width - splitView.dividerThickness - 340)
+        max(Self.minContent, splitView.bounds.width - splitView.dividerThickness - Self.minInspector)
     }
 }
