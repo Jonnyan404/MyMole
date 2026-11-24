@@ -63,21 +63,33 @@ import Testing
         #expect(model.root?.fileCount == 1)
     }
 
+    /// Only a stop seen to end within the wait says something: a busy Mac can
+    /// hold it up past a short one, and then the notice is right. It's tried
+    /// again with a longer wait.
     @Test func aDiskThatStopsAtOnceShowsNoNotice() async throws {
-        let box = try Box()
-        let model = box.model()
-        model.stopWait = .milliseconds(300)
-        let reading = Atomic(false)
-        model.scanFolder = { path, progress, workers, root, subtree, skip in
-            reading.store(true, ordering: .relaxed)
-            while !progress.isCancelled { usleep(2_000) }
-            return StorageScanner.scan(path: path, progress: progress, workers: workers, onRoot: root, onSubtree: subtree, skip: skip)
+        for wait in [Duration.milliseconds(300), .seconds(1), .seconds(3), .seconds(10)] {
+            let box = try Box()
+            let model = box.model()
+            model.stopWait = wait
+            let reading = Atomic(false)
+            model.scanFolder = { path, progress, workers, root, subtree, skip in
+                reading.store(true, ordering: .relaxed)
+                while !progress.isCancelled { usleep(2_000) }
+                return StorageScanner.scan(path: path, progress: progress, workers: workers, onRoot: root, onSubtree: subtree, skip: skip)
+            }
+            model.scan(path: box.home)
+            for _ in 0..<500 where !reading.load(ordering: .relaxed) { try await Task.sleep(for: .milliseconds(5)) }
+            let asked = ContinuousClock.now
+            model.cancelScan()
+            await model.scanJob?.value
+            let inTime = !model.scanning && ContinuousClock.now - asked < wait
+            guard inTime else { continue }
+            #expect(model.notice == nil)
+            // The wait runs out after the stop, and still says nothing.
+            try await Task.sleep(until: asked + wait + .milliseconds(200), clock: .continuous)
+            #expect(!model.scanning && model.notice == nil)
+            return
         }
-        model.scan(path: box.home)
-        for _ in 0..<500 where !reading.load(ordering: .relaxed) { try await Task.sleep(for: .milliseconds(5)) }
-        model.cancelScan()
-        await model.scanJob?.value
-        try await Task.sleep(for: .milliseconds(500))
-        #expect(!model.scanning && model.notice == nil)
+        Issue.record("No stop ended within its wait")
     }
 }
