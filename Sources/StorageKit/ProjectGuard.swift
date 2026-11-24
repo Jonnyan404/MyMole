@@ -28,14 +28,66 @@ public enum ProjectGuard {
     public static func reason(
         for path: String, project: String, worktree: Bool = false, runner: CommandRunner = .processes(timeLimit: 30)
     ) -> String? {
-        if let r = scan(path, ownGit: worktree) { return r }
+        if let r = scan(path, ownGit: worktree, runner: runner) { return r }
         if worktree { return uncommitted(path, runner: runner) }
         return tracked(path, project: project, runner: runner)
     }
 
+    /// As `reason(for:)` for files side by side in one folder of a project,
+    /// by path: Git is asked about them together, not once for each.
+    public static func reasons(
+        forFiles paths: [String], project: String, runner: CommandRunner = .processes(timeLimit: 30)
+    ) -> [String: String] {
+        var held: [String: String] = [:]
+        var files: [String: [String]] = [:]
+        for path in paths {
+            if ProjectRules.isRealFolder(path) {
+                held[path] = reason(for: path, project: project, runner: runner)
+            } else if let why = scan(path, runner: runner) {
+                held[path] = why
+            } else {
+                files[(path as NSString).deletingLastPathComponent, default: []].append(path)
+            }
+        }
+        for siblings in files.values { held.merge(tracked(siblings: siblings, project: project, runner: runner)) { a, _ in a } }
+        return held
+    }
+
+    /// Files one Git command is asked about: far below the argument limit.
+    static let filesPerCommand = 400
+
+    /// Which of `siblings`, files in one folder, the enclosing repository
+    /// tracks, or why none of them could be checked.
+    private static func tracked(siblings: [String], project: String, runner: CommandRunner) -> [String: String] {
+        guard let first = siblings.first, let repo = enclosingRepository(of: first, within: project) else { return [:] }
+        func all(_ why: String) -> [String: String] { Dictionary(siblings.map { ($0, why) }, uniquingKeysWith: { a, _ in a }) }
+        guard let git = git(runner) else { return all(String(localized: "Git isn't installed, so tracked files couldn't be checked.")) }
+        if let why = untrusted(repo) { return all(why) }
+        var held: [String: String] = [:]
+        for start in stride(from: 0, to: siblings.count, by: filesPerCommand) {
+            let some = siblings[start..<min(siblings.count, start + filesPerCommand)]
+            let names = some.map { String($0.dropFirst(repo.count + 1)) }
+            let r = runner.run(git, safety + ["--literal-pathspecs", "-C", repo, "ls-files", "-z", "--"] + names)
+            guard r.code == 0 else {
+                for path in some { held[path] = String(localized: "Git couldn't check it for tracked files.") }
+                continue
+            }
+            // Each tracked file ends in a NUL; a warning before the first doesn't hide it.
+            guard r.output.contains("\0") else { continue }
+            let listed = Set(r.output.split(separator: "\0").map(String.init))
+            let hits = some.filter { listed.contains(String($0.dropFirst(repo.count + 1))) }
+            for path in hits.count == r.output.filter({ $0 == "\0" }).count ? hits : Array(some) {
+                held[path] = String(localized: "Holds files Git tracks.")
+            }
+        }
+        return held
+    }
+
     /// A nested repository or key file inside, without following links.
     /// `ownGit` lets the `.git` right inside `path` be, as a worktree's own.
-    static func scan(_ path: String, ownGit: Bool = false) -> String? {
+    /// A package SwiftPM or Xcode checked out, and can again, is third-party
+    /// code once nobody has worked in it.
+    static func scan(_ path: String, ownGit: Bool = false, runner: CommandRunner) -> String? {
         var st = stat()
         guard lstat(path, &st) == 0 else { return String(localized: "It's gone or can't be read.") }
         if (path as NSString).lastPathComponent == ".git" { return String(localized: "It's a Git repository.") }
@@ -45,16 +97,17 @@ public enum ProjectGuard {
             guard let names = try? FileManager.default.contentsOfDirectory(atPath: dir) else {
                 return String(localized: "A folder inside can't be read, so it couldn't be checked.")
             }
-            for name in names {
+            var theirs = inThirdParty
+            if names.contains(".git"), !(ownGit && dir == path) {
+                guard isUntouchedCheckout(dir, runner: runner) else { return String(localized: "Holds a Git repository.") }
+                theirs = true
+            }
+            for name in names where name != ".git" {
                 let p = dir + "/" + name
-                if name == ".git" {
-                    if ownGit && dir == path { continue }
-                    return String(localized: "Holds a Git repository.")
-                }
                 guard lstat(p, &st) == 0 else { continue }
                 if st.st_mode & S_IFMT == S_IFDIR {
-                    stack.append((p, inThirdParty || thirdParty.contains(name)))
-                } else if !inThirdParty, isKey(name) {
+                    stack.append((p, theirs || thirdParty.contains(name)))
+                } else if !theirs, isKey(name) {
                     return String(localized: "Holds key files.")
                 }
             }
@@ -73,6 +126,104 @@ public enum ProjectGuard {
     static let envTemplates: Set<String> = [".env.example", ".env.sample", ".env.template", ".env.dist"]
 
     static func git(_ runner: CommandRunner) -> String? { gitLocations.first(where: runner.exists) }
+
+    // MARK: Package checkouts
+
+    /// Whether the repository at `dir` is a package SwiftPM or Xcode checked
+    /// out and nobody has worked in: their own list names it and its
+    /// revision, Git is at exactly that revision and holds no object of its
+    /// own, so no commit, stash or staged change, and every file is as it
+    /// was checked out with none beside them, ignored ones included. Git's
+    /// index is enough for that: the objects are in a store next to
+    /// `checkouts`, which may be gone. What can't be told counts as touched.
+    static func isUntouchedCheckout(_ dir: String, runner: CommandRunner) -> Bool {
+        let checkouts = (dir as NSString).deletingLastPathComponent
+        let store = dir + "/.git"
+        guard (checkouts as NSString).lastPathComponent == "checkouts",
+              let revision = checkedOut((dir as NSString).lastPathComponent, in: (checkouts as NSString).deletingLastPathComponent),
+              ProjectRules.isRealFolder(store),
+              let head = smallFile(store + "/HEAD", limit: 1_024).flatMap({ String(data: $0, encoding: .utf8) }),
+              head.trimmingCharacters(in: .whitespacesAndNewlines) == revision,
+              holdsNoObjects(store),
+              !["modules", "worktrees", "shallow"].contains(where: { exists(store + "/" + $0) }),
+              untrusted(dir) == nil, let git = git(runner)
+        else { return false }
+        // The folder and its own files only, whatever its settings name.
+        let asking = safety + ["-c", "core.ignoreStat=false", "-c", "core.fileMode=true", "--no-optional-locks", "-C", dir, "--git-dir=.git", "--work-tree=."]
+        func ask(_ arguments: [String]) -> String? {
+            let r = runner.run(git, asking + arguments)
+            return r.code == 0 ? r.output : nil
+        }
+        // Each file in an answer ends in a NUL; warnings don't.
+        guard let listed = ask(["ls-files", "-z", "-v"]), allChecked(listed),
+              let changed = ask(["diff", "--raw", "-z", "--no-ext-diff", "--no-textconv", "--ignore-submodules=none"]), !changed.contains("\0"),
+              let beside = ask(["ls-files", "-z", "--others"]), !beside.contains("\0")
+        else { return false }
+        return true
+    }
+
+    /// The revision SwiftPM's or Xcode's own list in `base` gives for the
+    /// package it checked out as `name`.
+    static func checkedOut(_ name: String, in base: String) -> String? {
+        guard let data = smallFile(base + "/workspace-state.json", limit: 8 << 20),
+              let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let object = root["object"] as? [String: Any],
+              let dependencies = object["dependencies"] as? [[String: Any]]
+        else { return nil }
+        let named = dependencies.filter { $0["subpath"] as? String == name }
+        guard named.count == 1, let state = named[0]["state"] as? [String: Any], state["name"] as? String == "sourceControlCheckout",
+              let checkout = state["checkoutState"] as? [String: Any], let revision = checkout["revision"] as? String,
+              revision.count >= 40, revision.allSatisfy({ $0.isASCII && $0.isHexDigit })
+        else { return nil }
+        return revision
+    }
+
+    /// A shared clone with nothing written to it: only the note of where
+    /// the objects are.
+    static func holdsNoObjects(_ store: String) -> Bool {
+        guard ProjectRules.isRealFolder(store + "/objects"),
+              let names = try? FileManager.default.contentsOfDirectory(atPath: store + "/objects") else { return false }
+        var shared = false
+        for name in names {
+            let dir = store + "/objects/" + name
+            guard ProjectRules.isRealFolder(dir), let inside = try? FileManager.default.contentsOfDirectory(atPath: dir) else { return false }
+            if name == "info" {
+                guard inside == ["alternates"] else { return false }
+                shared = true
+            } else if !inside.isEmpty {
+                return false
+            }
+        }
+        return shared
+    }
+
+    /// Whether `ls-files -v` listed files and Git compares every one of
+    /// them: none is marked to be taken as unchanged or left out.
+    static func allChecked(_ output: String) -> Bool {
+        var records = output.components(separatedBy: "\0")
+        // A warning after the last file, or nothing.
+        records.removeLast()
+        guard let first = records.first else { return false }
+        // A warning comes before the first file, on lines of its own.
+        records[0] = first.components(separatedBy: "\n").last ?? ""
+        return records.allSatisfy { $0.hasPrefix("H ") }
+    }
+
+    private static func exists(_ path: String) -> Bool {
+        var st = stat()
+        return lstat(path, &st) == 0 || errno != ENOENT
+    }
+
+    /// A plain file of at most `limit` bytes, never through a link.
+    private static func smallFile(_ path: String, limit: Int) -> Data? {
+        let fd = open(path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC)
+        guard fd >= 0 else { return nil }
+        defer { close(fd) }
+        var st = stat()
+        guard fstat(fd, &st) == 0, st.st_mode & S_IFMT == S_IFREG, st.st_size <= limit else { return nil }
+        let data = try? FileHandle(fileDescriptor: fd, closeOnDealloc: false).read(upToCount: limit + 1)
+        return data.flatMap { $0.count <= limit ? $0 : nil }
+    }
 
     /// Put before every command: a repository's settings can't start an
     /// fsmonitor program while Git reads the index.

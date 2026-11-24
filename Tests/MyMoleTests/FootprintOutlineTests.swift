@@ -322,4 +322,46 @@ import Testing
         h.coordinator.rebuild()
         #expect(item.children?.contains { $0.path?.hasSuffix("folder-000") == true } == false)
     }
+
+    /// The row for the files counted together can be ticked by its box, the
+    /// menu and Space like any other.
+    @Test func theSmallFilesRowIsTickedLikeAnyOther() async throws {
+        let h = try Fixture()
+        for i in 0..<3 { try Data(repeating: 1, count: 4096).write(to: URL(fileURLWithPath: h.entry + "/f\(i).txt")) }
+        h.start()
+        let root = h.tree(count: 2)
+        root.smallFileCount = 3
+        root.smallFileBytes = 12_288
+        h.model.contents[h.entry] = root
+        h.coordinator.rebuild()
+        let item = try #require(h.outline.item(atRow: 1) as? FootprintOutline.Node)
+        h.outline.expandItem(item)
+        let row = try #require(item.children?.last)
+        guard case .smallFiles = row.kind else { Issue.record("The last row isn't the small files"); return }
+        let cell = try #require(h.coordinator.outlineView(h.outline, viewFor: h.outline.outlineTableColumn, item: row))
+        let check = try #require(cell.subviews.compactMap { $0 as? NSButton }.first)
+        #expect(check.isEnabled && !check.isHidden && check.state == .off)
+        let files = Set((0..<3).map { h.entry + "/f\($0).txt" })
+        func settle(_ chosen: Set<String>) async throws {
+            for _ in 0..<400 where h.model.chosen != chosen { try await Task.sleep(for: .milliseconds(5)) }
+            try #require(h.model.chosen == chosen)
+        }
+        check.performClick(nil)
+        try await settle(files)
+        h.outline.selectRowIndexes(IndexSet(integer: h.outline.row(forItem: row)), byExtendingSelection: false)
+        h.coordinator.toggleSelection()
+        try await settle([])
+        h.coordinator.setTicks([row], on: true)
+        try await settle(files)
+        // Kept, its folder has a lock and no box.
+        h.model.chosen = []
+        let footprint = h.footprint
+        h.model.measureProject = { _, _, _ in footprint }
+        h.model.changeRules(project: footprint.id) { $0.keepPaths = [h.entry] }
+        let kept = try #require(h.coordinator.outlineView(h.outline, viewFor: h.outline.outlineTableColumn, item: row))
+        #expect(kept.subviews.compactMap { $0 as? NSButton }.first?.isHidden == true)
+        h.coordinator.setTicks([row], on: true)
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(h.model.chosen.isEmpty)
+    }
 }

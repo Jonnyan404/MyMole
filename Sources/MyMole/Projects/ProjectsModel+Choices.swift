@@ -17,6 +17,10 @@ extension ProjectsModel {
         var holding = Set<String>()
         /// Chosen path → bytes left out of it.
         var leftOut: [String: Int64] = [:]
+        /// Folder → whether the small files read in it go.
+        var small: [String: Check] = [:]
+        /// What goes, once it's been asked for.
+        var entries: [Chosen]?
     }
 
     var index: ChoiceIndex {
@@ -27,23 +31,44 @@ extension ProjectsModel {
                 for e in item.entries { ix.owners[e.path] = Chosen(project: f.id, item: item, entry: e) }
             }
         }
+        // Files chosen together share their folder: it's looked up once.
+        var ownerOfFolder: [String: Chosen?] = [:]
+        func owner(of p: String) -> Chosen? {
+            if let hit = ix.owners[p] { return hit }
+            let folder = (p as NSString).deletingLastPathComponent
+            if let known = ownerOfFolder[folder] { return known }
+            let found = Self.owner(of: folder, in: ix.owners)
+            ownerOfFolder[folder] = .some(found)
+            return found
+        }
         for p in chosen.union(excluded) {
-            guard let o = Self.owner(of: p, in: ix.owners) else { continue }
+            guard let o = owner(of: p) else { continue }
             var counts = ix.perItem[o.item.id] ?? (0, false)
             if p == o.entry.path && chosen.contains(p) { counts.whole += 1 } else { counts.parts = true }
             ix.perItem[o.item.id] = counts
             var up = (p as NSString).deletingLastPathComponent
-            while up.count >= o.entry.path.count {
-                ix.holding.insert(up)
+            // A folder noted already has those above it noted too.
+            while up.count >= o.entry.path.count, ix.holding.insert(up).inserted {
                 up = (up as NSString).deletingLastPathComponent
             }
         }
         for e in excluded {
-            guard let o = Self.owner(of: e, in: ix.owners), let m = marker(above: e, top: o.entry.path), m.chosen else { continue }
+            guard let o = owner(of: e), let m = marker(above: e, top: o.entry.path), m.chosen else { continue }
             ix.leftOut[m.path, default: 0] += partInfo[e]?.bytes ?? 0
+        }
+        for (folder, files) in smallFiles where !files.isEmpty {
+            guard let o = owner(of: folder) else { continue }
+            let follows = goesWith(folder, top: o.entry.path)
+            let going = files.count { follows ? !excluded.contains($0) : chosen.contains($0) }
+            ix.small[folder] = going == files.count ? .on : going == 0 ? .off : .mixed
         }
         choiceIndex = ix
         return ix
+    }
+
+    /// Whether what's directly in `folder` goes unless it's left out.
+    private func goesWith(_ folder: String, top: String) -> Bool {
+        chosen.contains(folder) || (!excluded.contains(folder) && marker(above: folder, top: top)?.chosen == true)
     }
 
     private static func owner(of path: String, in owners: [String: Chosen]) -> Chosen? {
@@ -102,6 +127,59 @@ extension ProjectsModel {
         note(path, in: top)
         excluded = x
         chosen = c
+    }
+
+    /// Whether the small files of `folder`, counted together in the list, go.
+    func smallFilesState(in folder: String) -> Check {
+        guard !isKeptElsewhere(folder), let o = owner(of: folder) else { return .off }
+        return index.small[folder] ?? (goesWith(folder, top: o.entry.path) ? .on : .off)
+    }
+
+    /// Chooses or unchooses the small files of `folder`: the ones there now,
+    /// read off the main thread. A file made later isn't one of them.
+    @discardableResult
+    func toggleSmallFiles(in folder: String) -> Task<Void, Never>? {
+        guard !trashing, !isKeptElsewhere(folder), let o = owner(of: folder), !readingSmallFiles.contains(folder) else { return nil }
+        let on = smallFilesState(in: folder) != .on
+        let top = o.entry.path
+        let version = contentsVersions[top, default: 0]
+        let read = readSmallFiles
+        readingSmallFiles.insert(folder)
+        return Task { [weak self] in
+            let found = await Task.detached(priority: .userInitiated) { read(folder) }.value
+            guard let self else { return }
+            readingSmallFiles.remove(folder)
+            // The folder was measured again, or a move began, meanwhile.
+            guard contentsVersions[top, default: 0] == version, !trashing, owner(of: folder)?.entry.path == top else { return }
+            setSmallFiles(found ?? [], in: folder, top: top, on: on)
+        }
+    }
+
+    private func setSmallFiles(_ found: [FootprintEntry], in folder: String, top: String, on: Bool) {
+        let files = found.filter { !isKeptElsewhere($0.path) }
+        guard !files.isEmpty else {
+            // Gone or unreadable: the folder is measured again.
+            dropContents(touching: [folder])
+            return
+        }
+        for e in files { partInfo[e.path] = e }
+        let paths = Set(files.map(\.path))
+        // Chosen or left out before, and no longer one of them.
+        let gone = smallFiles[folder, default: []].subtracting(paths)
+        smallFiles[folder] = paths
+        let follows = goesWith(folder, top: top)
+        var c = chosen.subtracting(gone)
+        var x = excluded.subtracting(gone)
+        if on {
+            x.subtract(paths)
+            if !follows { c.formUnion(paths) }
+        } else {
+            c.subtract(paths)
+            if follows { x.formUnion(paths) }
+        }
+        excluded = x
+        chosen = c
+        choiceIndex = nil
     }
 
     /// Left-out paths only mean something inside a chosen one.
@@ -199,6 +277,9 @@ extension ProjectsModel {
     /// Forgets measured contents that changed, so they're measured again.
     func dropContents(touching paths: some Collection<String>) {
         let stale = Set(contents.keys).union(loadingContents.keys).union(contentsVersions.keys).filter { e in paths.contains { $0 == e || $0.hasPrefix(e + "/") || e.hasPrefix($0 + "/") } }
+        for folder in smallFiles.keys where stale.contains(where: { folder == $0 || folder.hasPrefix($0 + "/") }) {
+            smallFiles[folder] = nil
+        }
         for e in stale {
             contents.removeValue(forKey: e)
             loadingContents[e] = nil

@@ -2995,12 +2995,12 @@
         }
       }
     },
-    "%@ from %lld project(s):\n%@\n\nAnything holding a Git repository, key files, files Git tracks or uncommitted work stays. You can undo right after, or put things back from the Trash later." : {
+    "%@ from %lld project(s):\n%@\n\nAnything holding a Git repository (other than unchanged package checkouts), key files, files Git tracks or uncommitted work stays. You can undo right after, or put things back from the Trash later." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ aus %#@arg2@:\n%3$@\n\nAlles, was ein Git-Repository, Schlüsseldateien, von Git verfolgte Dateien oder nicht festgeschriebene Arbeit enthält, bleibt. Du kannst direkt danach widerrufen oder Objekte später aus dem Papierkorb zurücklegen."
+            "value" : "%1$@ aus %#@arg2@:\n%3$@\n\nAlles, was ein Git-Repository (außer unveränderten Paket-Checkouts), Schlüsseldateien, von Git verfolgte Dateien oder nicht festgeschriebene Arbeit enthält, bleibt. Du kannst direkt danach widerrufen oder Objekte später aus dem Papierkorb zurücklegen."
           },
           "substitutions" : {
             "arg2" : {
@@ -3028,13 +3028,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ from %2$lld project(s):\n%3$@\n\nAnything holding a Git repository, key files, files Git tracks or uncommitted work stays. You can undo right after, or put things back from the Trash later."
+            "value" : "%1$@ from %2$lld project(s):\n%3$@\n\nAnything holding a Git repository (other than unchanged package checkouts), key files, files Git tracks or uncommitted work stays. You can undo right after, or put things back from the Trash later."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ de %#@arg2@:\n%3$@\n\nTodo lo que contenga un repositorio Git, archivos clave, archivos que Git sigue o trabajo sin confirmar se queda. Puedes deshacer justo después o recuperar las cosas de la Papelera más tarde."
+            "value" : "%1$@ de %#@arg2@:\n%3$@\n\nTodo lo que contenga un repositorio Git (salvo copias de paquetes sin cambios), archivos clave, archivos que Git sigue o trabajo sin confirmar se queda. Puedes deshacer justo después o recuperar las cosas de la Papelera más tarde."
           },
           "substitutions" : {
             "arg2" : {
@@ -3062,7 +3062,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ de %#@arg2@ :\n%3$@\n\nTout ce qui contient un dépôt Git, des fichiers clés, des fichiers suivis par Git ou du travail non validé reste en place. Vous pouvez annuler juste après, ou remettre les éléments depuis la Corbeille plus tard."
+            "value" : "%1$@ de %#@arg2@ :\n%3$@\n\nTout ce qui contient un dépôt Git (hormis les copies de paquets inchangées), des fichiers clés, des fichiers suivis par Git ou du travail non validé reste en place. Vous pouvez annuler juste après, ou remettre les éléments depuis la Corbeille plus tard."
           },
           "substitutions" : {
             "arg2" : {
@@ -3090,19 +3090,19 @@
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%2$lld प्रोजेक्ट से %1$@:\n%3$@\n\nजिसमें भी Git रिपॉज़िटरी, कुंजी फ़ाइलें, Git द्वारा ट्रैक की गई फ़ाइलें या बिना कमिट किया काम है, वह बना रहता है। आप तुरंत बाद पहले जैसा कर सकते हैं, या बाद में ट्रैश से चीज़ें वापस रख सकते हैं।"
+            "value" : "%2$lld प्रोजेक्ट से %1$@:\n%3$@\n\nजिसमें भी Git रिपॉज़िटरी (बिना बदले पैकेज चेकआउट को छोड़कर), कुंजी फ़ाइलें, Git द्वारा ट्रैक की गई फ़ाइलें या बिना कमिट किया काम है, वह बना रहता है। आप तुरंत बाद पहले जैसा कर सकते हैं, या बाद में ट्रैश से चीज़ें वापस रख सकते हैं।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "프로젝트 %2$lld개의 %1$@:\n%3$@\n\nGit 저장소, 키 파일, Git이 추적하는 파일 또는 커밋되지 않은 작업이 있는 항목은 그대로 남습니다. 바로 실행 취소하거나 나중에 휴지통에서 되돌려 놓을 수 있습니다."
+            "value" : "프로젝트 %2$lld개의 %1$@:\n%3$@\n\nGit 저장소(변경되지 않은 패키지 체크아웃 제외), 키 파일, Git이 추적하는 파일 또는 커밋되지 않은 작업이 있는 항목은 그대로 남습니다. 바로 실행 취소하거나 나중에 휴지통에서 되돌려 놓을 수 있습니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@，来自 %2$lld 个项目：\n%3$@\n\n含 Git 仓库、密钥文件、Git 跟踪的文件或未提交改动的项目会保留。你可以随后立即撤销，也可以稍后从废纸篓放回。"
+            "value" : "%1$@，来自 %2$lld 个项目：\n%3$@\n\n含 Git 仓库（未改动的软件包检出除外）、密钥文件、Git 跟踪的文件或未提交改动的项目会保留。你可以随后立即撤销，也可以稍后从废纸篓放回。"
           }
         }
       }
@@ -42885,42 +42885,42 @@
         }
       }
     },
-    "Files under 1 MB, counted together; they go with their folder." : {
+    "Files under 1 MB, counted together. Tick them to choose the files there now; a file made later isn't chosen." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dateien unter 1 MB, zusammen gezählt; sie gehen mit ihrem Ordner."
+            "value" : "Dateien unter 1 MB, zusammen gezählt. Wähle sie aus, um die jetzt vorhandenen Dateien auszuwählen; eine später erstellte Datei gehört nicht dazu."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Archivos de menos de 1 MB, contados juntos; van con su carpeta."
+            "value" : "Archivos de menos de 1 MB, contados juntos. Márcalos para elegir los archivos que hay ahora; un archivo creado después no se elige."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fichiers de moins de 1 Mo, comptés ensemble ; ils suivent leur dossier."
+            "value" : "Fichiers de moins de 1 Mo, comptés ensemble. Cochez-les pour choisir les fichiers présents maintenant ; un fichier créé plus tard n’est pas choisi."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1 MB से छोटी फ़ाइलें, साथ में गिनी गईं; ये अपने फ़ोल्डर के साथ जाती हैं।"
+            "value" : "1 MB से छोटी फ़ाइलें, साथ में गिनी गईं। अभी मौजूद फ़ाइलों को चुनने के लिए इन पर सही का निशान लगाएँ; बाद में बनी फ़ाइल नहीं चुनी जाती।"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1MB 미만 파일을 함께 계산합니다. 폴더와 함께 처리됩니다."
+            "value" : "1MB 미만 파일을 함께 계산합니다. 선택하면 지금 있는 파일이 선택되며, 나중에 만들어진 파일은 선택되지 않습니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "小于 1 MB 的文件合并统计；它们随所属文件夹一起处理。"
+            "value" : "小于 1 MB 的文件合并统计。勾选后会选择当前已有的文件；之后新建的文件不会被选择。"
           }
         }
       }

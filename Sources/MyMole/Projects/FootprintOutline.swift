@@ -617,8 +617,8 @@ struct FootprintOutline: NSViewRepresentable {
             case .item(let i):
                 return (state(model.check(i)), false, false)
             case .smallFiles(_, let folder, _, _):
-                // Small files go with their folder; they can't be chosen one by one.
-                return (model.state(of: folder) == .on ? .on : .off, false, false)
+                if model.isKeptElsewhere(folder) { return (nil, true, model.rules.protects(folder)) }
+                return (state(model.smallFilesState(in: folder)), false, false)
             default:
                 return (n.path.map { state(model.state(of: $0)) }, false, false)
             }
@@ -640,7 +640,7 @@ struct FootprintOutline: NSViewRepresentable {
             guard isCurrent(n) else { return }
             switch n.kind {
             case .item(let i): model.toggle(i)
-            case .smallFiles: break
+            case .smallFiles(_, let folder, _, _): model.toggleSmallFiles(in: folder)
             default: if let p = n.path { model.toggle(path: p) }
             }
             // The box shows the model's state even when the click changed
@@ -715,6 +715,7 @@ struct FootprintOutline: NSViewRepresentable {
             } else if let p = n.path {
                 target = .path(item, p)
             } else {
+                menu.add(tickEntries(clicked: n))
                 return
             }
             menu.add(tickEntries(clicked: n) + [.divider] + parent.menu(target))
@@ -733,7 +734,6 @@ struct FootprintOutline: NSViewRepresentable {
             guard isCurrent(n) else { return nil }
             let l = look(n)
             guard let state = l.check, !l.locked else { return nil }
-            if case .smallFiles = n.kind { return nil }
             return state == .on
         }
 
@@ -870,7 +870,6 @@ private final class TreeNameCell: NSTableCellView, ColumnWidthProviding {
     private var onToggle: () -> Void = {}
     private var isItem = false
     private var isSection = false
-    private var choiceIsEditable = true
     private var normalLockTint = NSColor.secondaryLabelColor
 
     override var backgroundStyle: NSView.BackgroundStyle {
@@ -908,7 +907,7 @@ private final class TreeNameCell: NSTableCellView, ColumnWidthProviding {
     }
 
     func setChoosingEnabled(_ enabled: Bool) {
-        check.isEnabled = enabled && choiceIsEditable
+        check.isEnabled = enabled
         check.hoverHelp = enabled ? nil : String(localized: "Refreshing folder contents…")
     }
 
@@ -916,7 +915,6 @@ private final class TreeNameCell: NSTableCellView, ColumnWidthProviding {
         self.onToggle = onToggle
         isItem = false
         isSection = false
-        choiceIsEditable = true
         check.isHidden = look.check == nil
         check.state = look.check ?? .off
         check.isEnabled = true
@@ -963,12 +961,10 @@ private final class TreeNameCell: NSTableCellView, ColumnWidthProviding {
             icon.image = Self.symbol(for: p, folder: false)
             hoverHelp = p
         case .smallFiles(_, _, let count, _):
-            choiceIsEditable = false
             title.stringValue = String(localized: "\(count) smaller files")
             title.textColor = .secondaryLabelColor
             icon.image = FileCellResources.symbol("doc.on.doc")
-            check.isEnabled = false
-            hoverHelp = String(localized: "Files under 1 MB, counted together; they go with their folder.")
+            hoverHelp = String(localized: "Files under 1 MB, counted together. Tick them to choose the files there now; a file made later isn't chosen.")
         case .loading:
             check.isHidden = true
             title.stringValue = String(localized: "Measuring…")

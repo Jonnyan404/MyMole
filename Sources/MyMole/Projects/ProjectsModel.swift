@@ -29,6 +29,8 @@ final class ProjectsModel {
     struct Notice: Equatable {
         let text: String
         let canUndo: Bool
+        /// Shown until it's closed, so what it says can be read.
+        var stays = false
     }
 
     /// An entry with what it belongs to, for totals and undo. A part is a
@@ -119,6 +121,10 @@ final class ProjectsModel {
     /// Counts part sizes measured after they were chosen, so totals redraw.
     var partSizes = 0
     @ObservationIgnored var choiceIndex: ChoiceIndex?
+    /// Folder → its small files, as read when their row was ticked.
+    @ObservationIgnored var smallFiles: [String: Set<String>] = [:]
+    @ObservationIgnored var readingSmallFiles = Set<String>()
+    @ObservationIgnored var readSmallFiles: @Sendable (String) -> [FootprintEntry]? = { SmallFileList.read(in: $0) }
     /// What's inside entries the user opened, measured on demand; the most
     /// recent few are kept.
     var contents: [String: Folder] = [:]
@@ -537,9 +543,11 @@ final class ProjectsModel {
     /// chosen one, sized without what's left out of it.
     var chosenEntries: [Chosen] {
         guard !chosen.isEmpty else { return [] }
-        _ = partSizes
+        // Asked for several times a redraw: worked out once per choice.
+        _ = (partSizes, excluded.isEmpty, footprints.isEmpty)
+        if let known = index.entries { return known }
         let ix = index
-        return chosen.sorted().compactMap { p in
+        let entries: [Chosen] = chosen.sorted().compactMap { p in
             guard let o = owner(of: p), marker(above: p, top: o.entry.path)?.chosen != true else { return nil }
             let base = p == o.entry.path ? o.entry : partInfo[p] ?? FootprintEntry(path: p, bytes: 0, modified: .distantPast)
             let left = ix.leftOut[p] ?? 0
@@ -550,6 +558,8 @@ final class ProjectsModel {
             let entry = FootprintEntry(path: p, bytes: max(0, base.bytes - left), modified: base.modified, isDirectory: base.isDirectory, reclaim: reclaim)
             return Chosen(project: o.project, item: o.item, entry: entry, part: true)
         }
+        choiceIndex?.entries = entries
+        return entries
     }
 
     /// Paths left out of `path` when it goes.
@@ -686,9 +696,12 @@ final class ProjectsModel {
         let current = rules
         // What the user left out of a chosen folder stays, like a kept path.
         let picks = picked.map {
-            (path: $0.entry.path, project: $0.project, worktree: $0.item.category == .worktrees, leftOut: excluded(inside: $0.entry.path))
+            (path: $0.entry.path, project: $0.project, worktree: $0.item.category == .worktrees,
+             file: $0.entry.isDirectory == false, leftOut: excluded.isEmpty ? [] : excluded(inside: $0.entry.path))
         }
         let backend = trashBackend
+        let guardPath = guardPath
+        let guardFiles = guardFiles
         Task {
             let job = await jobs.begin(.moveToTrash)
             defer { jobs.end(job) }
@@ -720,8 +733,13 @@ final class ProjectsModel {
                 // something the outer one leaves out.
                 var plan: [String: [String]] = [:]
                 var held: [String: String] = [:]
+                // Files are checked together, folders one by one.
+                for (project, files) in Dictionary(grouping: picks.filter { $0.file && !$0.worktree }, by: \.project) {
+                    held.merge(guardFiles(files.map(\.path), project)) { a, _ in a }
+                }
                 for p in picks {
-                    if let why = ProjectGuard.reason(for: p.path, project: p.project, worktree: p.worktree) {
+                    if held[p.path] != nil { continue }
+                    if !p.file || p.worktree, let why = guardPath(p.path, p.project, p.worktree) {
                         held[p.path] = why
                     } else {
                         var rules = guarding
@@ -754,7 +772,7 @@ final class ProjectsModel {
         let moved = Set(outcome.moved.map(\.original.path))
         // Gone whole: moved itself, not just around something kept.
         let whole = Set(plan.filter { top, paths in paths == [top] && moved.contains(top) }.keys)
-        let gone = picked.filter { e in whole.contains { e.entry.path == $0 || e.entry.path.hasPrefix($0 + "/") } }
+        let gone = picked.filter { Self.lies($0.entry.path, in: whole) }
         let wholeGone = gone.filter { whole.contains($0.entry.path) }
         let freed = Self.frees(wholeGone)
         let movedBytes = wholeGone.reduce(0) { $0 + $1.entry.bytes }
@@ -764,7 +782,8 @@ final class ProjectsModel {
             if let g = goneByProject[footprints[i].id] { footprints[i].remove(paths: Set(g.filter { !$0.part }.map(\.entry.path))) }
         }
         chosen.subtract(gone.map(\.entry.path))
-        chosen = chosen.filter { p in !partly.union(held.keys).contains { p == $0 || p.hasPrefix($0 + "/") } }
+        let stayed = partly.union(held.keys)
+        if !stayed.isEmpty { chosen = chosen.filter { !Self.lies($0, in: stayed) } }
         tidyExcluded()
         dropContents(touching: moved)
         // Parts went from inside entries, which are measured again; so is a
@@ -779,17 +798,37 @@ final class ProjectsModel {
             shelf.add(Run(id: record.id, records: outcome.moved, entries: gone, needsScan: !partly.isEmpty))
         }
         CleanupLog.submit(record, to: logURL)
-        var text = outcome.moved.isEmpty && !outcome.failed.isEmpty
+        var text = outcome.moved.isEmpty
             ? nothingMoved(outcome.failed)
             : String(localized: "Moved \(outcome.moved.count) items (\(Freeing.phrase(movedBytes, frees: freed))) to the Trash")
         if !outcome.moved.isEmpty && !outcome.failed.isEmpty { text += String(localized: " · \(outcome.failed.count) couldn't be moved") }
+        // More follows on the same line: no full stop before it.
+        if !partly.isEmpty || !held.isEmpty, let end = text.last, ".。।".contains(end) { text.removeLast() }
         if !partly.isEmpty { text += String(localized: " · \(partly.count) kept in part") }
         if let why = held.values.sorted().first {
             text += String(localized: " · \(held.count) protected (\(why.trimmingCharacters(in: CharacterSet(charactersIn: "."))))")
         }
-        show(Notice(text: text, canUndo: !outcome.moved.isEmpty))
+        show(Notice(text: text, canUndo: !outcome.moved.isEmpty, stays: outcome.moved.isEmpty || !held.isEmpty))
         // Folders emptied around kept items are measured again.
         if !partly.isEmpty || scanAfterTrash { scanAfterTrash = false; scan() }
+    }
+
+    /// Whether `path` is one of `folders` or lies inside one.
+    nonisolated static func lies(_ path: String, in folders: Set<String>) -> Bool {
+        var p = path
+        while p.count > 1 {
+            if folders.contains(p) { return true }
+            p = (p as NSString).deletingLastPathComponent
+        }
+        return false
+    }
+
+    /// Why a path, or any of a folder's files, must stay; tests answer for Git.
+    @ObservationIgnored var guardPath: @Sendable (String, String, Bool) -> String? = {
+        ProjectGuard.reason(for: $0, project: $1, worktree: $2)
+    }
+    @ObservationIgnored var guardFiles: @Sendable ([String], String) -> [String: String] = {
+        ProjectGuard.reasons(forFiles: $0, project: $1)
     }
 
     /// Where moved items go; tests use a folder of their own.
@@ -856,6 +895,7 @@ final class ProjectsModel {
             undoNotice = n
             return
         }
+        if n.stays { return }
         Task {
             try? await Task.sleep(for: .seconds(4))
             guard notice == n else { return }
