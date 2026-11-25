@@ -56,7 +56,7 @@ struct BatchUninstallSheet: View {
 
     private func reason(_ path: String) -> String? {
         if kept.contains(path) { return String(localized: "Kept") }
-        return blocked[path] ?? (runningPaths.contains(path) ? String(localized: "Open") : nil)
+        return blocked[path] ?? (runningPaths.contains(path) ? AppPresentation.openMark : nil)
     }
 
     private func refreshRunning() {

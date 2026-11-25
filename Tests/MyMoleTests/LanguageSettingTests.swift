@@ -22,5 +22,10 @@ import Testing
         #expect(LanguageSetting.name(of: "fr") == "Français")
         #expect(LanguageSetting.name(of: "de") == "Deutsch")
         #expect(LanguageSetting.name(of: "en") == "English")
+        #expect(LanguageSetting.name(of: "pt-BR") == "Português (Brasil)")
+        #expect(LanguageSetting.name(of: "zh-Hans") == "简体中文")
+        #expect(LanguageSetting.name(of: "zh-Hant") == "繁體中文")
+        #expect(LanguageSetting.name(of: "ja") == "日本語")
+        #expect(LanguageSetting.name(of: "sv") == "Svenska")
     }
 }

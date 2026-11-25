@@ -655,7 +655,7 @@ final class ProjectsModel {
         if recent > 0 { left.append(String(localized: "\(recent) items changed in the last week")) }
         if byName > 0 { left.append(String(localized: "\(byName) groups matched by name only")) }
         if !left.isEmpty {
-            show(Notice(text: String(localized: "Left unchosen: \(left.joined(separator: " and ")); tick them yourself if they can go"), canUndo: false))
+            show(Notice(text: String(localized: "Left unchosen: \(left.formatted(.list(type: .and))); tick them yourself if they can go"), canUndo: false))
         }
     }
 
@@ -806,7 +806,7 @@ final class ProjectsModel {
         if !partly.isEmpty || !held.isEmpty, let end = text.last, ".。।".contains(end) { text.removeLast() }
         if !partly.isEmpty { text += String(localized: " · \(partly.count) kept in part") }
         if let why = held.values.sorted().first {
-            text += String(localized: " · \(held.count) protected (\(why.trimmingCharacters(in: CharacterSet(charactersIn: "."))))")
+            text += String(localized: " · \(held.count) protected (\(withoutFullStop(why)))")
         }
         show(Notice(text: text, canUndo: !outcome.moved.isEmpty, stays: outcome.moved.isEmpty || !held.isEmpty))
         // Folders emptied around kept items are measured again.

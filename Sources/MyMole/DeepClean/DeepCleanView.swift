@@ -310,10 +310,10 @@ struct DeepCleanView: View {
         DSActionBar {
             VStack(alignment: .leading, spacing: DS.Space.xxs) {
                 HStack(spacing: DS.Space.sm) {
-                    DSText("\(model.chosen.count.formatted()) chosen · \(fmt(model.chosenBytes))"
+                    DSText(String(localized: "\(model.chosen.count.formatted()) chosen · \(fmt(model.chosenBytes))")
                         + DSFilterField.hiddenNote(chosen: model.chosen, shown: Set(shown.map(\.path))), .lead)
                         .keepWhole()
-                    Button("Clear") { model.chosen = [] }
+                    Button(DS.clearChoice) { model.chosen = [] }
                 .accessibilityLabel("Clear the choice")
                         .controlSize(.small)
                 }

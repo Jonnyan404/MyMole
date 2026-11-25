@@ -53,6 +53,10 @@ extension EnvironmentValues {
 }
 
 enum DS {
+    /// Empties the choice beside a removal. Its own phrase: next to chosen
+    /// files, "clear" as a filter field says it reads as delete in many languages.
+    static var clearChoice: String { String(localized: "choice.clear", defaultValue: "Clear", comment: "Unchoose everything chosen for a removal; nothing is deleted") }
+
     @MainActor enum Space {
         static var xxs: CGFloat { Density.pick(2, 3) }
         static var xs: CGFloat { Density.pick(4, 5) }
@@ -482,10 +486,16 @@ struct DSFilterField: View {
     }
 }
 
+/// A reason to set inside another sentence, without the full stop its
+/// language ends it with.
+func withoutFullStop(_ reason: String) -> String {
+    reason.trimmingCharacters(in: CharacterSet(charactersIn: ".。।"))
+}
+
 /// The notice for a move where nothing reached the Trash, with the first
 /// reason, so it never reads as "Moved Zero KB".
 func nothingMoved(_ failed: [(path: String, reason: String)]) -> String {
-    guard let reason = failed.first?.reason.trimmingCharacters(in: CharacterSet(charactersIn: ".")) else {
+    guard let reason = failed.first.map({ withoutFullStop($0.reason) }) else {
         return String(localized: "Nothing was moved to the Trash.")
     }
     return failed.count == 1

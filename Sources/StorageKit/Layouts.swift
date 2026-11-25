@@ -23,7 +23,7 @@ public enum Segment: Sendable, Hashable {
     public var name: String {
         switch self {
         case .folder(let f): f.name
-        case .files: "Files"
+        case .files: String(localized: "Files")
         }
     }
 

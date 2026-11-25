@@ -474,7 +474,7 @@ struct UninstallView: View {
                     .foregroundStyle(.secondary)
                     .padding(8)
                     .help("Open: quit it before uninstalling")
-                    .accessibilityLabel("Open")
+                    .accessibilityLabel(AppPresentation.openMark)
             }
         }
         .opacity(app.isProtected ? 0.6 : 1)

@@ -229,7 +229,7 @@ public enum DevTools {
                 guard isDockerRef(ref) else { continue }
                 (handling, reason, removal) = (.offer, String(localized: "Unused, but tagged: pulled or built again only when it's needed."), .command(["image", "rm", ref]))
             }
-            out.append(Item(id: "docker.image." + id, source: .docker, name: name, detail: "Image", bytes: bytes,
+            out.append(Item(id: "docker.image." + id, source: .docker, name: name, detail: String(localized: "Image", comment: "A Docker image"), bytes: bytes,
                             handling: handling, reason: reason, removal: removal, path: nil))
         }
         for c in list("Containers") {
@@ -251,7 +251,7 @@ public enum DevTools {
             let unusedAnonymous = anonymous && links == 0
             out.append(Item(id: "docker.volume." + name, source: .docker,
                             name: anonymous ? String(localized: "Anonymous volume \(String(name.prefix(12)))") : name,
-                            detail: "Volume", bytes: dockerBytes(str(v, "Size")),
+                            detail: String(localized: "Volume", comment: "A Docker volume"), bytes: dockerBytes(str(v, "Size")),
                             handling: unusedAnonymous ? .offer : .show,
                             reason: unusedAnonymous ? String(localized: "No container uses it. A container made it without a name; it may still hold that container's data.")
                                 : links.map { $0 > 0 } ?? true ? String(localized: "A container uses it.")

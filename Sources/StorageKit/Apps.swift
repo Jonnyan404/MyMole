@@ -228,11 +228,11 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
 
         public var title: String {
             switch self {
-            case .rebuildable: "Rebuilt"
+            case .rebuildable: String(localized: "Rebuilt")
             case .appPart: String(localized: "App part")
-            case .settings: "Settings"
+            case .settings: String(localized: "Settings")
             case .data: String(localized: "Your data")
-            case .shared: "Shared"
+            case .shared: String(localized: "Shared")
             }
         }
     }

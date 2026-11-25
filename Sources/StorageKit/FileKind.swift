@@ -6,14 +6,14 @@ public enum FileKind: Int, CaseIterable, Sendable, Codable {
 
     public var title: String {
         switch self {
-        case .apps: "Apps"
-        case .developer: "Developer"
+        case .apps: String(localized: "Apps")
+        case .developer: String(localized: "Developer")
         case .caches: String(localized: "Caches & Logs")
         case .media: String(localized: "Photos, Music & Video")
-        case .documents: "Documents"
+        case .documents: String(localized: "Documents")
         case .archives: String(localized: "Archives & Installers")
         case .system: String(localized: "System & Libraries")
-        case .other: "Other"
+        case .other: String(localized: "Other")
         }
     }
 

@@ -425,7 +425,7 @@ struct BasketBar: View {
                         .help("Stops before the next item. Anything already moved can be undone.")
                 }
             } else {
-            Button("Clear") { model.marked.removeAll() }
+            Button(DS.clearChoice) { model.marked.removeAll() }
                 .accessibilityLabel("Clear the choice")
                 .controlSize(.large)
                 .disabled(model.trashing)

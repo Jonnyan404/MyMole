@@ -19,7 +19,7 @@ public enum PluginKind: String, Sendable, CaseIterable {
         case .vst: String(localized: "VST plug-in")
         case .vst3: String(localized: "VST3 plug-in")
         case .inputMethod: String(localized: "Input method")
-        case .service: "Service"
+        case .service: String(localized: "Service")
         case .colorPicker: String(localized: "Color picker")
         }
     }

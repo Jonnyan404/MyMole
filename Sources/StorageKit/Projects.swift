@@ -61,9 +61,9 @@ public enum FootprintCategory: String, CaseIterable, Sendable, Codable {
         switch self {
         case .source: String(localized: "Source & other files")
         case .git: String(localized: "Git history")
-        case .dependencies: "Dependencies"
+        case .dependencies: String(localized: "Dependencies")
         case .build: String(localized: "Build output")
-        case .caches: "Caches"
+        case .caches: String(localized: "Caches")
         case .localData: String(localized: "Local work files")
         case .worktrees: String(localized: "Agent worktrees")
         case .agentSessions: String(localized: "Agent sessions")

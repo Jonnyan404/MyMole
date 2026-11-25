@@ -8,10 +8,11 @@ system activity. Scans do not delete files.
 **[Download for Apple silicon](https://github.com/compilererrors/MyMole/releases/latest)** ·
 [Editions and permissions](#editions-and-permissions) · [License](#license)
 
-Requires **macOS 26 or later**. The interface is in English, German, Spanish,
-French, Hindi, Korean and Simplified Chinese. It follows your Mac's language,
-or the one you choose in Settings. Numbers, sizes and dates follow your
-system's locale.
+Requires **macOS 26 or later**. The interface is in English, Simplified and
+Traditional Chinese, Dutch, French, German, Hindi, Italian, Japanese, Korean,
+Brazilian Portuguese, Spanish and Swedish. It follows your Mac's language, or
+the one you choose in Settings. Numbers, sizes and dates follow your system's
+locale.
 
 All screenshots below show fictional apps, files, projects, cleanup history and
 system readings.

@@ -330,7 +330,7 @@ struct ProjectsView: View {
         DSActionBar {
             DSText("\(model.chosenEntries.count) items chosen · \(Freeing.phrase(model.chosenBytes, frees: model.chosenFrees))", .lead)
                 .keepWhole()
-            Button("Clear") { model.chosen = [] }
+            Button(DS.clearChoice) { model.chosen = [] }
                 .accessibilityLabel("Clear the choice")
                 .controlSize(.small)
         } trailing: {
