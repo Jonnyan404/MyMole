@@ -17,6 +17,22 @@ locale.
 All screenshots below show fictional apps, files, projects, cleanup history and
 system readings.
 
+## Install with Homebrew
+
+On Apple silicon, install the GitHub edition with Homebrew:
+
+```sh
+brew tap compilererrors/mymole https://github.com/compilererrors/MyMole.git
+brew install --cask compilererrors/mymole/mymole
+```
+
+To get a newer build through Homebrew, run:
+
+```sh
+brew update
+brew upgrade --cask compilererrors/mymole/mymole
+```
+
 ## Dashboard and Smart Scan
 
 View disk usage, CPU, memory and recent cleanups. Smart Scan checks caches,
