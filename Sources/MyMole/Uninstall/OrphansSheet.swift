@@ -169,6 +169,7 @@ struct OrphansSheet: View {
         .actionConfirmation(
             String(localized: "Move \(model.chosen.count) leftovers to the Trash?"),
             isPresented: $confirm, action: .orphans,
+            big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosen.count),
             message: String(
                 localized:
                     "\(ByteSize.format(model.chosenBytes)). Each is checked again right before it goes. You can undo right after, or put them back from the Trash later."

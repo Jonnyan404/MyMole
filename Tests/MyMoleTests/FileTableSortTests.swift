@@ -6,6 +6,32 @@ import Testing
 
 @MainActor
 @Suite struct FileTableSortTests {
+    /// Sorting by a value, then each run of equal values by name, gives the
+    /// order of one sort with the name as tie-break: pinned rows first,
+    /// whatever the direction.
+    @Test func equalValuesAreOrderedByNameAsOneSortWouldOrderThem() {
+        var generator = SplitMix(seed: 7)
+        let rows: [FileRow] = (0..<2_000).map { i in
+            var r = FileRow(id: "/synthetic/\(i)", name: "Item \(generator.next() % 300)", size: Int64(generator.next() % 40))
+            r.modified = Date(timeIntervalSinceReferenceDate: Double(generator.next() % 25))
+            r.pinned = generator.next() % 50 == 0
+            return r
+        }
+        func reference<T: Comparable>(_ key: (FileRow) -> T, ascending: Bool) -> [String] {
+            rows.sorted { a, b in
+                if a.pinned != b.pinned { return a.pinned }
+                let (x, y) = (key(a), key(b))
+                if x == y { return a.name.localizedStandardCompare(b.name) == .orderedAscending }
+                return ascending ? x < y : x > y
+            }.map(\.name)
+        }
+        for ascending in [true, false] {
+            // Rows with the same value and the same name may come in either order; their names may not.
+            #expect(FileTable.sorted(rows, by: .size, ascending: ascending).map(\.name) == reference({ $0.size ?? -1 }, ascending: ascending))
+            #expect(FileTable.sorted(rows, by: .modified, ascending: ascending).map(\.name) == reference({ $0.modified ?? .distantPast }, ascending: ascending))
+        }
+    }
+
     @Test func pinsStayFirstInBothSortDirectionsWithoutChangingEligibility() {
         var pinned = FileRow(id: "/synthetic/Pinned", name: "Zeta", size: 1)
         pinned.pinned = true
@@ -144,5 +170,18 @@ import Testing
         for _ in 0..<100 where coordinator.shown.count != latest.count { try await Task.sleep(for: .milliseconds(5)) }
         #expect(coordinator.shown.map(\.id) == latest.reversed().map(\.id))
         #expect(table.numberOfRows == latest.count)
+    }
+}
+
+/// A repeatable source of numbers for a test's rows.
+private struct SplitMix {
+    var state: UInt64
+    init(seed: UInt64) { state = seed }
+    mutating func next() -> UInt64 {
+        state &+= 0x9E37_79B9_7F4A_7C15
+        var z = state
+        z = (z ^ (z >> 30)) &* 0xBF58_476D_1CE4_E5B9
+        z = (z ^ (z >> 27)) &* 0x94D0_49BB_1331_11EB
+        return z ^ (z >> 31)
     }
 }

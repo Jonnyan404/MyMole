@@ -298,7 +298,7 @@ struct AppEndToEndTests {
         let smaller = try image("Downloads/smaller.jpg", width: 300, type: .jpeg)
         let before = try f.contents()
         let model = SimilarModel(home: f.home, roots: [f.home + "/Pictures", f.home + "/Downloads"], minimum: 1,
-            logURL: f.log, trash: f.backend, cacheURL: f.root.appending(path: "fingerprints.json"))
+            logURL: f.log, trash: f.backend, cacheURL: f.root.appending(path: "fingerprints.bin"))
         model.jobs = f.jobs
         model.protections = f.protections
         model.scan()

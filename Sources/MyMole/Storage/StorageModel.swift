@@ -32,12 +32,19 @@ struct BrowseFilter: Hashable, Codable {
         date = DateFilter()
     }
 
-    func matches(_ e: DiskEntry) -> Bool {
-        guard isActive else { return true }
-        guard !e.pending else { return false }
-        return (query.isEmpty || DSFilterField.matches(query, e.name))
-            && (kind == nil || e.kind == kind)
-            && date.matches(e.modified)
+    func matches(_ e: DiskEntry) -> Bool { matcher()(e) }
+
+    /// The filter with its text prepared once, for every row of a folder.
+    func matcher() -> @Sendable (DiskEntry) -> Bool {
+        guard isActive else { return { _ in true } }
+        let (search, kind, date) = (TextQuery(query), kind, date)
+        return { e in
+            guard !e.pending else { return false }
+            return (kind == nil || e.kind == kind) && date.matches(e.modified)
+                && search.matches(texts: [e.name], facts: SearchQuery.Facts(
+                    name: e.name, size: e.size, modified: e.modified, kind: e.kind, isFolder: e.folder != nil,
+                    hidden: SearchQuery.isHidden(name: e.name, folder: (e.path as NSString).deletingLastPathComponent)))
+        }
     }
 }
 
@@ -127,6 +134,10 @@ final class StorageModel {
     /// when it was made. Nothing can be chosen or moved while it's shown.
     private(set) var opened: (file: String, date: Date)?
     private(set) var exportProblem: String?
+    /// The sheet that chooses what a report of the map holds.
+    var showReport = false
+    /// The sheet that shows what macOS counts as System Data.
+    var showSystemData = false
 
     /// Writes the finished scan to a file the user picks.
     func exportScan() {
@@ -220,7 +231,8 @@ final class StorageModel {
     /// Leaves `path` out of every scan from now on, and maps again without it.
     func skipFromNowOn(_ path: String) {
         DiskMapSkips.add(path)
-        rescan()
+        // What a map leaves out changed, not what's on the disk: the whole map is read.
+        scan(path: rootPath)
     }
 
     /// Every folder and listed file of the finished scan, for searching it whole.
@@ -484,6 +496,10 @@ final class StorageModel {
         progress?.cancel()
         epoch += 1
         let run = epoch
+        // On this Mac's own disks, what changes from now on is collected, so a rescan can read only that.
+        pendingWatcher?.stop()
+        pendingWatcher = Volumes.detachableName(of: path) == nil ? ChangedFolders.Watcher(root: path, since: ChangedFolders.now()) : nil
+        watcherRun = run
         let session = DiskScanSession()
         scanSession = session
         scanInBackground = background
@@ -542,7 +558,7 @@ final class StorageModel {
             }
         }
 
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let workers = level.workers(background: background)
         let (budget, scanFolder, collectFiles) = (scanBudget, scanFolder, collectFiles)
         let (memoryBudget, spillBase) = (largeResultBudget(), spillBase)
@@ -550,7 +566,7 @@ final class StorageModel {
         skipped = skips.full.sorted()
         scanJob = Task.detached(priority: level.priority(background: background)) { [weak self] in
             defer { session.finish() }
-            let result = await budget.run(background: background, progress: p) {
+            let result = await budget.walk(background: background, progress: p) {
                 scanFolder(path, p, workers,
                            { r in Task { @MainActor in self?.installRoot(r, run: run) } },
                            { f in Task { @MainActor in self?.subtreeDone(f, run: run) } }, skips.full)
@@ -592,7 +608,36 @@ final class StorageModel {
         }
     }
 
-    func rescan() { scan(path: rootPath) }
+    /// The whole map again. On this Mac's own disks, after a complete scan,
+    /// only the folders the file system's event history says changed are
+    /// read again; when it can't say for sure, the whole map is.
+    func rescan() {
+        guard let root, let watcher, watcher.root == rootPath, root.path == rootPath, opened == nil, !incomplete,
+              !scanning, !trashing, let changed = watcher.flush()
+        else { scan(path: rootPath); return }
+        let toRead = ChangedFolders.toRead(changed, in: root)
+        if toRead.isEmpty {
+            // A change made a moment ago may not have reached the history yet: it's asked once more.
+            rescanJob = Task { [weak self] in
+                try? await Task.sleep(for: .seconds(1))
+                guard let self, self.root === root, !self.scanning, !self.trashing else { return }
+                guard let again = watcher.flush(), again.isEmpty else { self.rescan(); return }
+                self.showNotice(Notice(text: String(localized: "Nothing has changed since the last scan."), canUndo: false))
+            }
+            return
+        }
+        if toRead.contains(rootPath) { scan(path: rootPath); return }
+        // What changes while these are read is collected from now on.
+        refreshFolders(toRead, in: root, whole: ChangedFolders.Watcher(root: rootPath, since: ChangedFolders.now()))
+    }
+
+    /// What has changed under the map since its scan started, on this Mac's own disks.
+    @ObservationIgnored private var watcher: ChangedFolders.Watcher?
+    /// The running scan's, until it ends with a complete map.
+    @ObservationIgnored private var pendingWatcher: ChangedFolders.Watcher?
+    @ObservationIgnored private var watcherRun = 0
+    /// The second look when the first found nothing changed.
+    @ObservationIgnored private(set) var rescanJob: Task<Void, Never>?
 
     var refreshTitle: String {
         tab == .browse ? String(localized: "Refresh Current Folder") : String(localized: "Rescan Entire Map")
@@ -605,6 +650,13 @@ final class StorageModel {
         guard tab == .browse else { rescan(); return }
         guard let root, let current, current !== root else { rescan(); return }
         guard isReady(current) else { return }
+        refreshFolders([current.path], in: root, whole: nil)
+    }
+
+    /// Reads `paths` again, one after another, and puts them in the map in
+    /// one go. `whole` is set when this stands in for a whole-map rescan:
+    /// then a folder that can't be fully read means the whole map is read.
+    private func refreshFolders(_ paths: [String], in root: Folder, whole: ChangedFolders.Watcher??) {
         showReview = false
         allContentsChoice = nil
         progress?.cancel()
@@ -621,10 +673,8 @@ final class StorageModel {
         stopAsked = nil
         liveFiles = 0
         liveBytes = 0
-        let path = current.path
-        let inheritedKind = current.inheritedKind
-        let skips = DiskMapSkips.under(path).full
-        let level = PerformanceLevel.current()
+        let parts = paths.map { ($0, root.find(path: $0)?.inheritedKind, DiskMapSkips.under($0).full) }
+        let level = PerformanceLevel.inEffect()
         let workers = level.workers(background: false)
         let read = scanSubfolder
         let budget = scanBudget
@@ -639,25 +689,30 @@ final class StorageModel {
         }
         scanJob = Task.detached(priority: level.priority(background: false)) { [weak self] in
             defer { session.finish() }
-            let result = await budget.run(background: false, progress: p) {
-                read(path, p, workers, skips, inheritedKind)
+            var results: [(String, ScanResult)] = []
+            for (path, kind, skips) in parts {
+                guard !p.isCancelled, let r = await budget.walk(background: false, progress: p, { read(path, p, workers, skips, kind) }) else { break }
+                results.append((path, r))
             }
-            await self?.finishFolderRefresh(result, path: path, map: root, progress: p, session: session, run: run)
+            await self?.finishFolderRefresh(results.count == parts.count ? results : nil, map: root, progress: p, session: session, run: run, whole: whole)
         }
     }
 
-    private func finishFolderRefresh(_ result: ScanResult?, path: String, map: Folder,
-                                     progress: ScanProgress, session: DiskScanSession, run: Int) async {
+    private func finishFolderRefresh(_ results: [(String, ScanResult)]?, map: Folder,
+                                     progress: ScanProgress, session: DiskScanSession, run: Int,
+                                     whole: ChangedFolders.Watcher??) async {
         guard run == epoch else { return }
-        guard let result, !result.cancelled, !progress.isCancelled, session.beginFinalization() else {
+        guard let results, !results.contains(where: { $0.1.cancelled }), !progress.isCancelled, session.beginFinalization() else {
             finish(nil, large: nil, snapshot: nil, index: nil, run: run)
             return
         }
-        guard !result.root.unreadable, result.deniedPaths.isEmpty else {
+        guard results.allSatisfy({ !$0.1.root.unreadable && $0.1.deniedPaths.isEmpty }) else {
             finish(nil, large: nil, snapshot: nil, index: nil, run: run)
+            if whole != nil { scan(path: rootPath); return }
             showNotice(Notice(text: String(localized: "This folder couldn't be fully read. Its previous scan stays."), canUndo: false))
             return
         }
+        let paths = results.map(\.0)
         // A copy briefly reads the presented map. Serialize such readers and
         // let removal join them even if another scan has since superseded us.
         let predecessor = mapReader?.job
@@ -667,20 +722,25 @@ final class StorageModel {
         let (memoryBudget, spillBase) = (largeResultBudget(), spillBase)
         let worker = Task.detached(priority: .userInitiated) {
             await predecessor?.value
-            guard !progress.isCancelled,
-                  let updated = map.replacingSubtree(at: path, with: result.root, stop: { progress.isCancelled }) else { return nil as (Folder, [LargeFile], ScanIndex, SpillTable?)? }
+            var patched: Folder? = map
+            for (path, result) in results where !progress.isCancelled {
+                patched = patched?.replacingSubtree(at: path, with: result.root, stop: { progress.isCancelled })
+            }
+            guard !progress.isCancelled, let updated = patched else { return nil as (Folder, [LargeFile], ScanIndex, SpillTable?, Snapshot?)? }
             let files = collect(updated, { progress.isCancelled })
             guard !progress.isCancelled else { return nil }
             let index = ScanIndex(updated, limit: indexLimit, stop: { progress.isCancelled })
             let spill = progress.isCancelled ? nil : Self.spillIfLarge(files, budget: memoryBudget, base: spillBase, stop: { progress.isCancelled })
             guard !progress.isCancelled else { spill?.remove(); return nil }
-            return (updated, files, index, spill)
+            // Standing in for a whole-map rescan, it adds to the history the same way.
+            let snapshot = whole == nil ? nil : Snapshot(of: updated, incomplete: false, excluded: DiskMapSkips.under(updated.path).relative, stop: { progress.isCancelled })
+            return (updated, files, index, spill, snapshot)
         }
         let barrier = Task { _ = await worker.value }
         mapReader = (owner, barrier)
         let prepared = await worker.value
         if mapReader?.owner == owner { mapReader = nil }
-        guard run == epoch, !progress.isCancelled, let (updated, files, index, spill) = prepared else {
+        guard run == epoch, !progress.isCancelled, let (updated, files, index, spill, snapshot) = prepared else {
             prepared?.3?.remove()
             if let prepared { RetiredValue(prepared).releaseLater() }
             if run == epoch { finish(nil, large: nil, snapshot: nil, index: nil, run: run) }
@@ -693,8 +753,25 @@ final class StorageModel {
         self.index = index
         installLargeFiles(files, spill: spill)
         selection = selection.filter { Self.holds(updated, $0) }
-        marked = marked.filter { key, _ in key != path && !key.hasPrefix(path + "/") && !path.hasPrefix(key + "/") }
-        denied.removeAll { $0 == path || $0.hasPrefix(path + "/") }
+        marked = marked.filter { key, _ in !paths.contains { path in key == path || key.hasPrefix(path + "/") || path.hasPrefix(key + "/") } }
+        denied.removeAll { d in paths.contains { d == $0 || d.hasPrefix($0 + "/") } }
+        if let whole {
+            watcher?.stop()
+            watcher = whole
+            watcherRun = run
+        }
+        if let snapshot {
+            let base = snapshotBase
+            StoreWrites.submit { [weak self] in
+                let key = Volumes.historyKey(for: snapshot.rootPath)
+                SnapshotStore.save(snapshot, key: key, base: base)
+                let found = SnapshotStore.history(for: key, base: base)
+                Task { @MainActor in
+                    guard let self, run == self.epoch else { return }
+                    self.showHistory(found)
+                }
+            }
+        }
         hovered = nil
         lastDuration = nil
         finish(nil, large: nil, snapshot: nil, index: nil, run: run)
@@ -705,6 +782,38 @@ final class StorageModel {
     func cancelScan() {
         if scanning, stopAsked == nil { stopAsked = .now }
         progress?.cancel()
+        guard scanning else { return }
+        let run = epoch, wait = stopWait
+        stopWatch?.cancel()
+        stopWatch = Task { [weak self] in
+            try? await Task.sleep(for: wait)
+            guard !Task.isCancelled, let self, run == self.epoch, self.scanning, self.stopAsked != nil else { return }
+            self.letGo(run: run)
+        }
+    }
+
+    /// How long Stop waits for the disk before it stops waiting.
+    @ObservationIgnored var stopWait: Duration = .seconds(2)
+    @ObservationIgnored private var stopWatch: Task<Void, Never>?
+
+    /// A slow or vanished network disk can take minutes to answer one read,
+    /// which nothing can interrupt. Stop doesn't wait for it: the read is
+    /// left to end on its own, its result is never shown, and a map it was
+    /// still writing goes; a complete map being refreshed stays.
+    private func letGo(run: Int) {
+        let partial = !refreshing
+        finish(nil, large: nil, snapshot: nil, index: nil, run: run)
+        epoch += 1
+        if partial {
+            root = nil
+            current = nil
+            hovered = nil
+            index = nil
+            marked.removeAll()
+            installLargeFiles([], spill: nil)
+        }
+        showNotice(Notice(text: String(localized: "The disk is slow to answer, so MyMole stopped waiting. Its last read ends on its own when the disk answers."),
+                          canUndo: false))
     }
 
     /// When the running scan started, and when it was asked to stop.
@@ -743,13 +852,11 @@ final class StorageModel {
     private func addFound(_ found: [FoundFile], run: Int) {
         // While the earlier map stays, so does its list.
         guard run == epoch, scanning, !refreshing, !found.isEmpty else { return }
-        var all = largeFiles
-        all.reserveCapacity(all.count + found.count)
-        for f in found {
-            all.append(LargeFile(path: f.path, name: f.name, folder: f.folder, size: f.size, modified: f.modified, kind: f.kind,
-                                 reclaim: f.reclaim.flatMap { $0.bytes < f.size ? $0 : nil }))
-        }
-        largeFiles = all
+        // Added in place: a copy of the whole list for every batch would grow with the scan.
+        largeFiles.append(contentsOf: found.map { f in
+            LargeFile(path: f.path, name: f.name, folder: f.folder, size: f.size, modified: f.modified, kind: f.kind,
+                      reclaim: f.reclaim.flatMap { $0.bytes < f.size ? $0 : nil })
+        })
     }
 
     /// The largest files listed at the standard result size.
@@ -785,6 +892,11 @@ final class StorageModel {
         poller?.cancel()
         if let stopAsked, stopped || r?.cancelled != false { Timings.record(.stop, since: stopAsked) }
         stopAsked = nil
+        // A scan that doesn't replace the map leaves its watcher as it was.
+        if watcherRun == run, r == nil || refreshing && (r?.cancelled == true || stopped) {
+            pendingWatcher?.stop()
+            pendingWatcher = nil
+        }
         guard let r else {
             refreshing = false
             scanning = false
@@ -818,6 +930,14 @@ final class StorageModel {
         if let current { selection = selected.filter { Self.holds(current, $0) } }
         denied = r.deniedPaths
         incomplete = stopped || r.cancelled || !r.deniedPaths.isEmpty || r.root.unreadable
+        // A complete map knows the moment it was read from, so a rescan can ask what changed since.
+        // The new map's watcher takes over; a partial map has none, so its rescan reads it all.
+        if watcherRun == run {
+            watcher?.stop()
+            watcher = incomplete ? nil : pendingWatcher
+            if incomplete { pendingWatcher?.stop() }
+            pendingWatcher = nil
+        }
         if let large { installLargeFiles(large, spill: spill) }
         lastDuration = r.duration
         liveFiles = r.root.fileCount
@@ -1488,6 +1608,8 @@ final class StorageModel {
 
     /// A notice with Undo stays until it's used, closed or replaced; any
     /// other passes after a few seconds.
+    func showReportNotice(_ text: String) { showNotice(Notice(text: text, canUndo: false)) }
+
     private func showNotice(_ n: Notice) {
         withAnimation(Motion.snappy) { notice = n }
         if n.canUndo {

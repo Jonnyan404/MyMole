@@ -30,6 +30,24 @@ import Testing
         #expect(result.root.scannedRisk?.reason == "Inside: " + expected.reason)
     }
 
+    @Test func rulesMatchWholeNamesWhateverElseThePathHolds() {
+        let home = "/Users/synthetic"
+        // A name that only begins like a rule's isn't the thing itself.
+        #expect(PathRisk.of(home + "/.awsome/key") == nil)
+        #expect(PathRisk.of(home + "/tools/.netrc.sample") == nil)
+        // Docker's disk is the file of that name, not a folder named so.
+        #expect(PathRisk.of(home + "/images/Docker.raw")?.level == .caution)
+        #expect(PathRisk.of(home + "/images/Docker.raw/part") == nil)
+        // Names in other scripts around a rule's own.
+        #expect(PathRisk.of(home + "/Bilder från Åre/Album.photoslibrary")?.level == .caution)
+        #expect(PathRisk.of(home + "/日本語/Documents/メモ")?.reason == "Your own files.")
+        #expect(PathRisk.of(home + "/Skrivbord/日本語/メモ") == nil)
+        // Shorter than any rule.
+        #expect(PathRisk.of("") == nil && PathRisk.of("/") == nil)
+        // The first rule that matches decides, as listed.
+        #expect(PathRisk.of(home + "/Documents/.aws")?.reason.hasPrefix("Sign-in keys") == true)
+    }
+
     @Test func skippedAndCancelledTreesCannotClaimCompleteRiskInformation() throws {
         let box = try Sandbox()
         try box.file("omitted/.netrc", bytes: 1)

@@ -3,8 +3,9 @@ import StorageKit
 import SwiftUI
 
 /// Several apps uninstalled together: each with what it left in the
-/// Library, only identity-linked caches and logs initially chosen. All other
-/// data needs an explicit choice. An app that's open, has an uninstaller or is kept stays.
+/// Library, what is certainly the app's initially chosen (`Leftover.review`).
+/// Uncertain matches and what looks like the user's work need an explicit
+/// choice. An app that's open, has an uninstaller or is kept stays.
 /// System-wide leftovers are offered when an app is uninstalled on its own.
 struct BatchUninstallSheet: View {
     let model: AppsModel
@@ -55,7 +56,7 @@ struct BatchUninstallSheet: View {
 
     private func reason(_ path: String) -> String? {
         if kept.contains(path) { return String(localized: "Kept") }
-        return blocked[path] ?? (runningPaths.contains(path) ? String(localized: "Open") : nil)
+        return blocked[path] ?? (runningPaths.contains(path) ? AppPresentation.openMark : nil)
     }
 
     private func refreshRunning() {
@@ -83,7 +84,7 @@ struct BatchUninstallSheet: View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
             Text("Uninstall \(apps.count) Apps").font(.title2.bold())
             DSText(
-                "Each app goes to the Trash with the leftovers you choose. Only caches and logs tied by identity start chosen; settings, website data, scripts, launch configuration and name matches stay unless you choose them.",
+                "Each app goes to the Trash with the leftovers you choose. What certainly belongs to an app starts chosen. Name matches, what the maker's other apps may use, temporary data and folders that look like documents or projects are marked Review and stay unless you choose them.",
                 .metadata)
             if !problems.isEmpty {
                 DSNotice(.warning, problems.map { "\($0.name): \($0.reason)" }.joined(separator: "\n"))
@@ -167,7 +168,10 @@ struct BatchUninstallSheet: View {
         .liveRefresh(every: .seconds(10), events: .protections) { await refreshProtections() }
         .actionConfirmation(
             String(localized: "Uninstall \(pendingItems.count) apps?"), isPresented: $confirm,
-            action: .uninstall, message: pendingMessage
+            action: .uninstall,
+            big: ConfirmationSettings.isBig(bytes: pendingItems.reduce(0) { $0 + $1.app.bytes + $1.leftovers.reduce(0) { $0 + $1.bytes } },
+                                            count: pendingItems.reduce(0) { $0 + 1 + $1.leftovers.count }),
+            message: pendingMessage
         ) { run() }
     }
 
@@ -196,9 +200,12 @@ struct BatchUninstallSheet: View {
                 marked(FileRow(
                     id: $0.path, name: $0.name, size: $0.bytes, kind: "\(app.name): \($0.kind.title) · \($0.place)",
                     location: ($0.path as NSString).deletingLastPathComponent, symbol: "folder",
-                    subtitle: String(localized: "Found \($0.evidence.title)"),
-                    badge: $0.canRemove ? nil : String(localized: "Inspection only"),
-                    canChoose: $0.canRemove))
+                    subtitle: $0.evidence.title,
+                    badge: $0.canRemove ? ($0.chosenByDefault ? nil : String(localized: "Review")) : String(localized: "Inspection only"),
+                    badgeHelp: $0.canRemove ? $0.review?.title : nil,
+                    badgeTint: .secondaryLabelColor,
+                    canChoose: $0.canRemove,
+                    choiceHelp: $0.canRemove ? $0.choiceTitle : nil))
             }
             return [head] + (reason(app.path) == nil ? leftovers : [])
         }
@@ -355,8 +362,7 @@ struct DiskImageSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
             HStack(spacing: 14) {
-                Image(nsImage: AppIcons.icon(item.app.path))
-                    .resizable().frame(width: 64, height: 64)
+                InstalledAppIcon(path: item.app.path, side: 64)
                 VStack(alignment: .leading, spacing: 3) {
                     Text(item.app.name).font(.title2.bold())
                     DSPath(item.app.path, .mono)
@@ -412,21 +418,18 @@ struct DiskImageSheet: View {
                 if current { confirm = false }
             }
         }
-        .confirmationDialog("Eject and move \(item.image?.name ?? "") to the Trash?", isPresented: $confirm) {
-            Button("Cancel", role: .cancel) { confirm = false }
-            Button("Move to Trash", role: .destructive) {
-                Task {
-                    switch await model.removeImage(item) {
-                    case .done: dismiss()
-                    case .refused(let why), .failed(let why):
-                        problem = why
-                        running = model.running(item.app)
-                    }
+        .actionConfirmation(
+            String(localized: "Eject and move \(item.image?.name ?? "") to the Trash?"), isPresented: $confirm, action: .ejectImage,
+            message: String(localized: "The disk image is ejected, then moved to the Trash. You can undo right after.")
+        ) {
+            Task {
+                switch await model.removeImage(item) {
+                case .done: dismiss()
+                case .refused(let why), .failed(let why):
+                    problem = why
+                    running = model.running(item.app)
                 }
             }
-        } message: {
-            Text("The disk image is ejected, then moved to the Trash. You can undo right after.")
         }
-        .confirmationKeyboard(isPresented: $confirm)
     }
 }

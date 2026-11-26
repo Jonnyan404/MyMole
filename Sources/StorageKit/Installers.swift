@@ -17,8 +17,8 @@ public struct InstallerFile: Sendable, Hashable, Codable, Identifiable {
             case .diskImage: String(localized: "Disk Image")
             case .package: String(localized: "Installer Package")
             case .archive: String(localized: "Xcode Archive")
-            case .firmware: "iPhone or iPad Software"
-            case .macOSInstaller: "macOS Installer"
+            case .firmware: String(localized: "iPhone or iPad Software")
+            case .macOSInstaller: String(localized: "macOS Installer")
             }
         }
     }

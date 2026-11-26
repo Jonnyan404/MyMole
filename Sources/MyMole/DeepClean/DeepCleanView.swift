@@ -10,9 +10,10 @@ struct DeepCleanView: View {
     var openSystemClean: () -> Void = {}
     @State private var confirming = false
     @State private var showDevTools = false
+    @State private var showCloud = false
     @State private var explaining: CleanCandidate?
-    /// Kept while you go to other panes and back, as the window's own state.
-    @SceneStorage("deepClean.filter") private var query = ""
+    /// Kept between panes and launches.
+    @AppStorage("deepClean.filter") private var query = ""
 
     var body: some View {
         VStack(spacing: 0) {
@@ -41,12 +42,14 @@ struct DeepCleanView: View {
         .confirmationKeyboard(isPresented: Binding(get: { explaining != nil }, set: { if !$0 { explaining = nil } }))
         .actionConfirmation(
             String(localized: "Move \(fmt(model.chosenBytes)) to the Trash?"),
-            isPresented: $confirming, action: .deepClean, message: confirmationText
+            isPresented: $confirming, action: .deepClean,
+            big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosenCandidates.count), message: confirmationText
         ) { model.trashChosen() }
         .onAppear { model.scanIfNeeded() }
         .liveRefresh(every: .seconds(5)) { await model.refreshActivity() }
         .onChange(of: model.chosen) { _, _ in confirming = false }
         .sheet(isPresented: $showDevTools) { DevToolsSheet() }
+        .sheet(isPresented: $showCloud) { CloudDownloadsSheet() }
     }
 
     private var confirmationText: String {
@@ -63,6 +66,8 @@ struct DeepCleanView: View {
         }
         PaneTool.button("deep-clean.devtools", "Developer Tools…", symbol: "hammer",
                         help: "Docker, simulator runtimes, Android devices and virtual machines, as each tool lists them") { showDevTools = true }
+        PaneTool.button("deep-clean.icloud", "iCloud Downloads…", symbol: "icloud.and.arrow.down",
+                        help: "Files in iCloud Drive that are also downloaded to this Mac; removing a download keeps the file in iCloud") { showCloud = true }
         if model.scanning {
             PaneTool.button("deep-clean.scan", "Stop", symbol: "stop.fill", help: "Stop scanning; the last complete result stays") { model.stop() }
         } else {
@@ -75,13 +80,13 @@ struct DeepCleanView: View {
     private var header: some View {
         DSPaneHeader {
             if showsPreview {
-                DSMetric(fmt(model.preview.reduce(0) { $0 + $1.bytes }), "found so far in \(model.preview.count.formatted()) items")
+                DSMetric(fmt(model.preview.reduce(0) { $0 + $1.bytes }), "found so far in \(model.preview.count) items")
             } else {
-                DSMetric(fmt(model.totalBytes), "found in \(model.candidates.count.formatted()) items")
+                DSMetric(fmt(model.totalBytes), "found in \(model.candidates.count) items")
             }
         } actions: {
             DSControlField("Filter results") {
-                DSFilterField(String(localized: "Filter by name or folder"), text: $query)
+                DSFilterField(String(localized: "Filter by name or folder"), text: $query, conditions: true)
                     .frame(minWidth: 180, idealWidth: 280, maxWidth: .infinity)
                     .disabled(listed.isEmpty)
             }
@@ -111,6 +116,9 @@ struct DeepCleanView: View {
                 DSStripButton("Stop", symbol: "stop.fill") { model.stop() }
             } else if model.trashing {
                 DSRunningCapsule(text: "Moving to the Trash", since: nil)
+            } else if model.lookingInTemporary {
+                DSRunningCapsule(text: "Updating the list", since: nil)
+                DSStripButton("Stop", symbol: "stop.fill") { model.stop() }
             } else if model.isStale {
                 if let ago {
                     DSCapsule("From an earlier scan, \(ago)", symbol: "clock", tint: .orange)
@@ -120,6 +128,11 @@ struct DeepCleanView: View {
                 DSStripButton("Scan Again", symbol: "arrow.clockwise") { model.scan() }
             } else if let ago {
                 DSCapsule("Scanned \(ago)", symbol: "clock")
+            }
+            if !model.scanning, model.temporaryInUse >= 100 << 20 {
+                DSCapsule("\(fmt(model.temporaryInUse)) in temporary folders is in use", symbol: "hourglass")
+                    .help(CleanRules.temporaryDays() == 0 ? "A running program is at work there. It's offered here once the program has left it alone."
+                        : "Changed within the last \(CleanRules.temporaryDaysText()), or a running program is at work there. It's offered here once it has been left alone.")
             }
             let runningCount = model.candidates.filter(model.isRunning).count
             if runningCount > 0 {
@@ -185,7 +198,10 @@ struct DeepCleanView: View {
     /// What the filter lets through; choices it hides stay chosen.
     private var shown: [CleanCandidate] {
         let search = TextQuery(query)
-        return search.isEmpty ? listed : listed.filter { search.matches($0.name, $0.path) }
+        // Whether a find is a folder isn't kept, so kind:folder and kind:file don't pass.
+        return search.isEmpty ? listed : listed.filter {
+            search.matches(texts: [$0.name, $0.path], facts: SearchQuery.facts(path: $0.path, size: $0.bytes, modified: $0.modified, isFolder: nil))
+        }
     }
 
     private var table: some View {
@@ -294,14 +310,14 @@ struct DeepCleanView: View {
         DSActionBar {
             VStack(alignment: .leading, spacing: DS.Space.xxs) {
                 HStack(spacing: DS.Space.sm) {
-                    DSText("\(model.chosen.count.formatted()) chosen · \(fmt(model.chosenBytes))"
+                    DSText(String(localized: "\(model.chosen.count.formatted()) chosen · \(fmt(model.chosenBytes))")
                         + DSFilterField.hiddenNote(chosen: model.chosen, shown: Set(shown.map(\.path))), .lead)
                         .keepWhole()
-                    Button("Clear") { model.chosen = [] }
+                    Button(DS.clearChoice) { model.chosen = [] }
                 .accessibilityLabel("Clear the choice")
                         .controlSize(.small)
                 }
-                Label("Moved to the Trash — you can undo.", systemImage: "trash")
+                Label("Chosen items go to the Trash, and you can undo.", systemImage: "trash")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .labelStyle(.titleAndIcon)
@@ -325,6 +341,7 @@ extension CleanCategory {
         case .downloads: "paperclip"
         case .devices: "iphone"
         case .archives: "archivebox.fill"
+        case .temporary: "hourglass"
         }
     }
 }

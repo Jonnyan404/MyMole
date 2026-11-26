@@ -613,8 +613,8 @@ func testBin(_ box: Sandbox) throws -> TrashBackend {
             for background in [false, true] {
                 let workers = PerformanceLevel.allCases.map { $0.workers(background: background, cores: cores) }
                 #expect(workers == workers.sorted(), "cores \(cores), background \(background): \(workers)")
-                // Up to Maximum the walkers have a ceiling; Hyperspeed has none.
-                #expect(workers.dropLast().allSatisfy { $0 >= 1 && $0 <= 48 })
+                // No level asks for more walkers than the cores carry at once.
+                #expect(workers.allSatisfy { $0 >= 1 && $0 <= cores })
             }
             // Work started ahead of need never gets more than work someone waits on.
             for level in PerformanceLevel.allCases {
@@ -623,9 +623,24 @@ func testBin(_ box: Sandbox) throws -> TrashBackend {
         }
     }
 
-    @Test func fastKeepsTheEarlierThreadCounts() {
+    @Test func fastWalksWithEveryCoreAndHalfOfThemAheadOfNeed() {
         #expect(PerformanceLevel.fast.workers(background: false) == StorageScanner.defaultWorkers)
         #expect(PerformanceLevel.fast.workers(background: true) == StorageScanner.backgroundWorkers)
+        #expect(PerformanceLevel.fast.workers(background: false, cores: 12) == 12)
+        #expect(PerformanceLevel.fast.workers(background: true, cores: 12) == 6)
+    }
+
+    @Test func lowPowerModeOrHeatHoldsScansAtBalanced() {
+        #expect(PerformanceLevel.full.held(lowPower: true, thermal: .nominal) == .balanced)
+        // Hyperspeed has no limits, this one included.
+        #expect(PerformanceLevel.hyperspeed.held(lowPower: true, thermal: .critical) == .hyperspeed)
+        #expect(!PerformanceLevel.hyperspeed.isHeldWhenStrained && PerformanceLevel.full.isHeldWhenStrained && !PerformanceLevel.balanced.isHeldWhenStrained)
+        #expect(PerformanceLevel.full.held(lowPower: false, thermal: .serious) == .balanced)
+        #expect(PerformanceLevel.fast.held(lowPower: false, thermal: .critical) == .balanced)
+        // A level already below Balanced stays where it was chosen.
+        #expect(PerformanceLevel.light.held(lowPower: true, thermal: .critical) == .light)
+        #expect(PerformanceLevel.full.held(lowPower: false, thermal: .fair) == .full)
+        #expect(!PerformanceLevel.isStrained(lowPower: false, thermal: .nominal))
     }
 
     @Test func lowLevelsRunQuietAndOneAtATime() {
@@ -645,10 +660,10 @@ func testBin(_ box: Sandbox) throws -> TrashBackend {
         #expect(PerformanceLevel(saved: -1) == .full)
     }
 
-    @Test func maximumKeepsItsLimitsAndHyperspeedHasNone() {
+    @Test func maximumAndHyperspeedWalkWithEveryCoreAheadOfNeedToo() {
         for cores in [1, 8, 24] {
-            #expect(PerformanceLevel.full.workers(background: false, cores: cores) == min(max(cores * 3, 4), 48))
-            #expect(PerformanceLevel.full.workers(background: true, cores: cores) == max(cores, 4))
+            #expect(PerformanceLevel.full.workers(background: false, cores: cores) == cores)
+            #expect(PerformanceLevel.full.workers(background: true, cores: cores) == cores)
             let unlimited = PerformanceLevel.hyperspeed
             #expect(unlimited.workers(background: true, cores: cores) == unlimited.workers(background: false, cores: cores))
         }

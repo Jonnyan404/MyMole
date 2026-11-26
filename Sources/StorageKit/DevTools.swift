@@ -23,7 +23,7 @@ public enum DevTools {
     }
 
     public enum Source: String, Sendable, Codable, CaseIterable {
-        case docker, simulator, android, virtualMachine
+        case docker, simulator, android, virtualMachine, aiModels
 
         public var title: String {
             switch self {
@@ -31,6 +31,7 @@ public enum DevTools {
             case .simulator: String(localized: "Xcode Simulators")
             case .android: "Android"
             case .virtualMachine: String(localized: "Virtual Machines")
+            case .aiModels: String(localized: "AI Models")
             }
         }
     }
@@ -44,6 +45,8 @@ public enum DevTools {
         case xcrun([String])
         /// A tool at this path with these arguments.
         case tool(String, [String])
+        /// These files and folders, to the Trash, each checked again right before it moves.
+        case trash([String])
     }
 
     public struct Item: Identifiable, Equatable, Sendable {
@@ -94,7 +97,8 @@ public enum DevTools {
 
     // MARK: Everything
 
-    public static func inventory(home: String, tools: Tools, runner: CommandRunner, running: Set<String>?) -> Listing {
+    /// `trash` is whether this edition may move models to the Trash.
+    public static func inventory(home: String, tools: Tools, runner: CommandRunner, running: Set<String>?, trash: Bool = false) -> Listing {
         var out = Listing()
         if let docker = tools.docker {
             let r = runner.run(docker, dockerList)
@@ -110,6 +114,7 @@ public enum DevTools {
         }
         out.items += android(home: home, toolExists: runner.exists)
         out.items += virtualMachines(home: home, running: running ?? [])
+        out.items += aiModels(homes: ModelHomes(home: home), running: running, trash: trash)
         out.items.sort { ($0.source.rawValue, $0.handling, -($0.bytes ?? 0), $0.name) < ($1.source.rawValue, $1.handling, -($1.bytes ?? 0), $1.name) }
         return out
     }
@@ -117,10 +122,17 @@ public enum DevTools {
     /// Removes each item the user chose, after reading its tool's inventory
     /// again: an item that is no longer there, or no longer removable the
     /// same way, is refused. A shown item never goes.
-    public static func remove(_ items: [Item], tools: Tools, home: String, runner: CommandRunner) -> Report {
+    /// Models go to the Trash through `backend`, never past the Deep Clean
+    /// keep list, and only while the place they're in is as it was listed.
+    public static func remove(
+        _ items: [Item], tools: Tools, home: String, runner: CommandRunner,
+        running: @Sendable () -> Set<String>? = { RunningTools.names() }, trash: Bool = false, backend: TrashBackend = .system,
+        protections: @escaping @Sendable () throws -> @Sendable (String) -> Bool = { let k = try CleanKeepList.load().resolved; return { k.protects($0) } }
+    ) -> Report {
         var report = Report()
         for item in items {
-            guard item.handling != .show, let removal = item.removal, let fresh = current(item.source, tools: tools, home: home, runner: runner),
+            guard item.handling != .show, let removal = item.removal,
+                  let fresh = current(item.source, tools: tools, home: home, runner: runner, running: running, trash: trash),
                   let now = fresh.first(where: { $0.id == item.id }), now.handling != .show, now.removal == removal
             else {
                 report.refused.append(item.id)
@@ -136,6 +148,16 @@ public enum DevTools {
                 r = runner.run(xcrun, args)
             case .tool(let path, let args):
                 r = runner.run(path, args)
+            case .trash(let paths):
+                let homes = ModelHomes(home: home)
+                let bases = [homes.ollama, homes.huggingFace] + homes.lmStudio
+                let gate = TrashGate(still: { p in
+                    bases.contains { b in p.hasPrefix(b + "/") && Trasher.noLinksBetween(b, and: p) } && FileManager.default.fileExists(atPath: p)
+                }, protections: protections)
+                let outcome = Trasher.moveToTrash(paths, through: gate, backend: backend)
+                let moved = Set(outcome.moved.map(\.original.path))
+                r = moved == Set(paths) ? (0, "")
+                    : (1, outcome.failed.first?.reason ?? String(localized: "\(paths.count - moved.count) of its files stayed where they were."))
             }
             if r.code == 0 {
                 report.removed.append(item.id)
@@ -147,7 +169,8 @@ public enum DevTools {
         return report
     }
 
-    static func current(_ source: Source, tools: Tools, home: String, runner: CommandRunner) -> [Item]? {
+    static func current(_ source: Source, tools: Tools, home: String, runner: CommandRunner,
+                        running: () -> Set<String>? = { RunningTools.names() }, trash: Bool = false) -> [Item]? {
         switch source {
         case .docker:
             guard let docker = tools.docker else { return nil }
@@ -159,6 +182,7 @@ public enum DevTools {
             return d.code == 0 && rt.code == 0 ? simulators(devices: d.output, runtimes: rt.output) : nil
         case .android: return android(home: home, toolExists: runner.exists)
         case .virtualMachine: return nil
+        case .aiModels: return aiModels(homes: ModelHomes(home: home), running: running(), trash: trash)
         }
     }
 
@@ -205,7 +229,7 @@ public enum DevTools {
                 guard isDockerRef(ref) else { continue }
                 (handling, reason, removal) = (.offer, String(localized: "Unused, but tagged: pulled or built again only when it's needed."), .command(["image", "rm", ref]))
             }
-            out.append(Item(id: "docker.image." + id, source: .docker, name: name, detail: "Image", bytes: bytes,
+            out.append(Item(id: "docker.image." + id, source: .docker, name: name, detail: String(localized: "Image", comment: "A Docker image"), bytes: bytes,
                             handling: handling, reason: reason, removal: removal, path: nil))
         }
         for c in list("Containers") {
@@ -227,7 +251,7 @@ public enum DevTools {
             let unusedAnonymous = anonymous && links == 0
             out.append(Item(id: "docker.volume." + name, source: .docker,
                             name: anonymous ? String(localized: "Anonymous volume \(String(name.prefix(12)))") : name,
-                            detail: "Volume", bytes: dockerBytes(str(v, "Size")),
+                            detail: String(localized: "Volume", comment: "A Docker volume"), bytes: dockerBytes(str(v, "Size")),
                             handling: unusedAnonymous ? .offer : .show,
                             reason: unusedAnonymous ? String(localized: "No container uses it. A container made it without a name; it may still hold that container's data.")
                                 : links.map { $0 > 0 } ?? true ? String(localized: "A container uses it.")
@@ -285,10 +309,10 @@ public enum DevTools {
             let deletable = rt["deletable"] as? Bool ?? false
             let inUse = used.contains(runtime.lowercased())
             let handling: Handling = deletable && !inUse ? .offer : .show
-            let reason = !deletable ? "macOS keeps this runtime; remove it in Xcode's Components settings."
+            let reason = !deletable ? String(localized: "macOS keeps this runtime; remove it in Xcode's Components settings.")
                 : inUse ? String(localized: "Simulators use it. Remove them first, or keep it.")
                 : String(localized: "No simulator uses it. Xcode downloads it again when one needs it.")
-            out.append(Item(id: "simulator.runtime." + identifier, source: .simulator, name: "\(platform(runtime)) \(version) runtime",
+            out.append(Item(id: "simulator.runtime." + identifier, source: .simulator, name: String(localized: "\(platform(runtime)) \(version) runtime"),
                             detail: String(localized: "Simulator runtime"), bytes: (rt["sizeBytes"] as? NSNumber)?.int64Value, handling: handling,
                             reason: reason, removal: handling == .offer ? .xcrun(["simctl", "runtime", "delete", identifier]) : nil, path: nil))
         }
@@ -389,7 +413,7 @@ public enum DevTools {
                 let name = m.suffix.map { entry.hasSuffix($0) ? String(entry.dropLast($0.count)) : entry } ?? entry
                 let isRunning = m.processes.contains { running.contains($0) }
                 out.append(Item(id: "vm." + path, source: .virtualMachine, name: name,
-                                detail: isRunning ? "\(m.app) · running" : m.app, bytes: AppLeftovers.measure(path),
+                                detail: isRunning ? String(localized: "\(m.app) · running") : m.app, bytes: AppLeftovers.measure(path),
                                 handling: .show, reason: String(localized: "A whole computer with everything installed in it. Remove it in \(m.app), which also handles its snapshots."),
                                 removal: nil, path: path))
             }

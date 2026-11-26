@@ -74,16 +74,11 @@ final class EndToEndFixture: @unchecked Sendable {
 
     func exists(_ path: String) -> Bool { FileManager.default.fileExists(atPath: path) }
 
-    func contents() throws -> [String: String] {
-        var output: [String: String] = [:]
-        let base = URL(fileURLWithPath: home)
-        let enumerator = try #require(FileManager.default.enumerator(at: base, includingPropertiesForKeys: nil))
-        for case let url as URL in enumerator {
-            var st = stat()
-            guard lstat(url.path, &st) == 0, st.st_mode & S_IFMT == S_IFREG else { continue }
-            output[String(url.path.dropFirst(home.count + 1))] = SHA256.hash(data: try Data(contentsOf: url)).map { String(format: "%02x", $0) }.joined()
-        }
-        return output
+    /// Every file and link under the home folder with all a move must keep
+    /// of it: its bytes' SHA-256, permissions, time, flags, attributes, and
+    /// where a link points (`TreeFingerprint`).
+    func contents() throws -> [String: TreeFingerprint.Item] {
+        try TreeFingerprint(home).items.filter { $0.key != "" && ($0.value.kind == "file" || $0.value.kind == "link") }
     }
 
     @MainActor func wait(_ condition: @MainActor () -> Bool) async throws {

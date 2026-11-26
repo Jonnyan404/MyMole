@@ -35,18 +35,18 @@ public enum AppIntegrations {
             let menu = (service["NSMenuItem"] as? [String: String])?["default"]
             let message = service["NSMessage"] as? String
             // Services strip a preceding menu path. Localized labels can differ.
-            let title = menu?.split(separator: "/").last.map(String.init) ?? message ?? "Service"
+            let title = menu?.split(separator: "/").last.map(String.init) ?? message ?? String(localized: "Service")
             add(.service, title, message ?? "NSServices", at: path, index: index)
         }
         for (index, document) in entries("CFBundleDocumentTypes").enumerated() where !progress.isCancelled {
             let types = document["LSItemContentTypes"] as? [String] ?? document["CFBundleTypeExtensions"] as? [String] ?? []
-            let name = document["CFBundleTypeName"] as? String ?? types.first ?? "Document handler"
+            let name = document["CFBundleTypeName"] as? String ?? types.first ?? String(localized: "Document handler")
             let role = document["CFBundleTypeRole"] as? String
             add(.documents, name, ([role].compactMap { $0 } + Array(types.prefix(32))).joined(separator: " · "), at: path, index: index)
         }
         for (index, scheme) in entries("CFBundleURLTypes").enumerated() where !progress.isCancelled {
             let schemes = Array((scheme["CFBundleURLSchemes"] as? [String] ?? []).prefix(32))
-            add(.urls, scheme["CFBundleURLName"] as? String ?? schemes.first ?? "URL handler", schemes.joined(separator: ", "), at: path, index: index)
+            add(.urls, scheme["CFBundleURLName"] as? String ?? schemes.first ?? String(localized: "URL handler"), schemes.joined(separator: ", "), at: path, index: index)
         }
         let plugins = path + "/Contents/PlugIns"
         var st = stat()

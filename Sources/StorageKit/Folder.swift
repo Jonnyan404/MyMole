@@ -228,13 +228,14 @@ public final class Folder: Identifiable, @unchecked Sendable {
     /// shared with either input, so later pruning cannot race a retired reader.
     /// The caller must keep the inputs immutable until this returns.
     public func replacingSubtree(at target: String, with replacement: Folder, stop: () -> Bool = { false }) -> Folder? {
-        guard replacement.path == target, find(path: target) != nil else { return nil }
+        // Found once: a folder's path is put together from its ancestors' names.
+        guard replacement.path == target, let replaced = find(path: target) else { return nil }
         var result: Folder?
         var changed: Folder?
         var pending: [(Folder, Folder?)] = [(self, nil)]
         while let (original, parent) = pending.popLast() {
             if stop() { return nil }
-            let source = original.path == target ? replacement : original
+            let source = original === replaced ? replacement : original
             let copy = Folder(name: original.name, parent: parent, rootPath: parent == nil ? path : nil,
                               rebuildable: original.rebuildable, inheritedKind: original.inheritedKind)
             copy.unreadable = source.unreadable
@@ -257,7 +258,7 @@ public final class Folder: Identifiable, @unchecked Sendable {
             copy.riskCode = source.riskCode
             copy.riskComplete = source.riskComplete
             copy.isFinished = source.isFinished
-            if original.path == target { changed = copy }
+            if original === replaced { changed = copy }
             if let parent { parent.subfolders.append(copy) } else { result = copy }
             // Taken first child first, so every copy keeps its folders' order.
             pending.append(contentsOf: source.subfolders.reversed().map { ($0, copy) })

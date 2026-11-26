@@ -352,6 +352,13 @@ public enum SavedResults {
         for f in files { try? FileManager.default.removeItem(at: f) }
         try? FileManager.default.removeItem(at: snapshots)
     }
+
+    /// The JSON an earlier build kept the picture fingerprints in, once the
+    /// current file beside it is written.
+    static func removeEarlierFingerprints(besides url: URL) {
+        guard let earlier = FingerprintCache.earlierFile(of: url), FileManager.default.fileExists(atPath: url.path) else { return }
+        try? FileManager.default.removeItem(at: earlier)
+    }
 }
 
 extension SavedResults {
@@ -371,11 +378,11 @@ extension SavedResults {
     ) -> [Part] {
         let list: [(String, String, [URL])] = [
             ("deepClean", String(localized: "Deep Clean's last scan"), [deepClean.appending(path: "last.json")]),
-            ("installers", "Installers' last scan", [installers.appending(path: "last.json")]),
+            ("installers", String(localized: "Installers' last scan"), [installers.appending(path: "last.json")]),
             ("apps", String(localized: "The app list"), [apps.appending(path: "last.json")]),
-            ("projects", "Projects' last scan and growth", [projects.appending(path: "last.json"), projects.appending(path: "history.json")]),
+            ("projects", String(localized: "Projects' last scan and growth"), [projects.appending(path: "last.json"), projects.appending(path: "history.json")]),
             ("snapshots", String(localized: "Disk Map's saved scans"), [snapshots]),
-            ("fingerprints", String(localized: "Similar Photos' fingerprints"), [fingerprints]),
+            ("fingerprints", String(localized: "Similar Photos' fingerprints"), [fingerprints] + [FingerprintCache.earlierFile(of: fingerprints)].compactMap { $0 }),
         ]
         return list.map { id, title, urls in
             var bytes: Int64 = 0

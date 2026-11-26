@@ -53,7 +53,7 @@ struct StatusProcessesSheet: View {
         .accessibilityIdentifier("status.processes.review")
         .actionConfirmation(
             String(localized: "Quit \(quitTarget?.name ?? "")?"), isPresented: $confirmingQuit,
-            button: String(localized: "Quit App"),
+            action: .quitApp, button: String(localized: "Quit App"),
             message: String(localized: "The app is asked to quit normally, so it can save its work or ask you first. A changed or restarted process is left alone.")
         ) {
             if let target = quitTarget, !target.quit() {

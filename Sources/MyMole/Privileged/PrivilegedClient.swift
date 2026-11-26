@@ -1,5 +1,6 @@
 import Foundation
 import PrivilegedKit
+import Security
 import StorageKit
 
 /// System tasks: what's safe to do as the user runs here, and what needs
@@ -145,7 +146,7 @@ final class PrivilegedClient {
         #if SMOKE
         throw Failure.unavailable
         #else
-        return await Task.detached(priority: .userInitiated) { SystemCleanRules.list(progress: progress) }.value
+        return await Self.waiting { SystemCleanRules.list(progress: progress) }
         #endif
     }
 
@@ -219,10 +220,10 @@ final class PrivilegedClient {
         if usedService, let helper {
             r = await helper.perform(argument)
         } else {
-            r = await Task.detached(priority: .userInitiated) { elevate(tool, argument, prompt) }.value
+            r = await Self.waiting { elevate(tool, argument, prompt) }
         }
         #else
-        r = await Task.detached(priority: .userInitiated) { elevate(tool, argument, prompt) }.value
+        r = await Self.waiting { elevate(tool, argument, prompt) }
         #endif
         do {
             return try Self.interpret(code: r.code, output: r.output)
@@ -237,10 +238,19 @@ final class PrivilegedClient {
     private var usedService = false
     #endif
 
+    /// Runs `work` on a thread of its own. The prompt stays up until it's
+    /// answered and the tool runs for as long as its task takes, up to the
+    /// time limit: waited for on one of Swift's shared task threads, that
+    /// thread would be lost to every other task meanwhile.
+    nonisolated static func waiting<T: Sendable>(_ work: @escaping @Sendable () -> T) async -> T {
+        await ScanBudget.onOwnThread(work)
+    }
+
     /// What a run of the tool came to: its reply, or why there's none.
     nonisolated static func interpret(code: Int32, output: String) throws -> PrivilegedReply {
-        // AppleScript's "user canceled" error.
-        if output.contains("(-128)") { throw Failure.cancelled }
+        // AppleScript's "user canceled" error, which only a run that failed
+        // prints: a reply may hold the same text in a path or a reason.
+        if code != 0, output.contains("(-128)") { throw Failure.cancelled }
         // Only the prompt is stopped at the time limit; the tool runs as
         // root apart from it and may still be at work.
         if code == CommandRunner.timedOut || code == CommandRunner.stopUnverified { throw Failure.outcomeUnknown }
@@ -276,10 +286,31 @@ final class PrivilegedClient {
             + " with prompt \(appleScriptString(prompt)) with administrator privileges without altering line endings"
     }
 
+    /// Whether the tool at `path` is the one this app was shipped with. A
+    /// copy signed for distribution runs only a tool signed by the same
+    /// team under the helper's identifier, checked right before macOS asks
+    /// for the password: the approved service is checked by macOS as it
+    /// starts, and a tool run through the prompt has no such check of its
+    /// own. A development build has no distribution signature to hold the
+    /// tool to.
+    nonisolated static func toolIsTrusted(_ path: String, identity: HelperServiceIdentity? = .current(helper: false)) -> Bool {
+        guard let identity else { return true }
+        var code: SecStaticCode?
+        var requirement: SecRequirement?
+        guard SecStaticCodeCreateWithPath(URL(fileURLWithPath: path) as CFURL, [], &code) == errSecSuccess, let code,
+              SecRequirementCreateWithString(identity.requirement(helper: true) as CFString, [], &requirement) == errSecSuccess
+        else { return false }
+        let flags = SecCSFlags(rawValue: kSecCSStrictValidate | kSecCSCheckAllArchitectures)
+        return SecStaticCodeCheckValidity(code, flags, requirement) == errSecSuccess
+    }
+
     nonisolated static let adminPrompt: @Sendable (String, String, String) -> (code: Int32, output: String) = { tool, argument, prompt in
         #if SMOKE
         return smokeAnswer(to: argument) ?? (-1, "Administrator execution is disabled in synthetic test builds.")
         #else
+        guard toolIsTrusted(tool) else {
+            return (0, PrivilegedTool.output(.refused(String(localized: "The privileged tool didn't pass its signature check, so nothing was run. Install MyMole again."))))
+        }
         // Removal of a large cache can take a while; a stuck run is stopped.
         return CommandRunner.processes(timeLimit: 30 * 60).run(
             "/usr/bin/osascript", ["-e", script(tool: tool, argument: argument, prompt: prompt)])

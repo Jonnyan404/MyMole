@@ -5,10 +5,18 @@ import Foundation
 public struct TrashRecord: Sendable, Hashable, Codable {
     public let original: URL
     public let trashed: URL
+    /// It was locked in Finder and unlocked to move; Undo locks it again.
+    /// Nil in records saved before this was kept.
+    public var locked: Bool?
+    /// Finder's Date Added before the move, in nanoseconds since 1970, which
+    /// Undo puts back. Nil when the disk doesn't keep it, and in older records.
+    public var added: Int64?
 
-    public init(original: URL, trashed: URL) {
+    public init(original: URL, trashed: URL, locked: Bool? = nil, added: Int64? = nil) {
         self.original = original
         self.trashed = trashed
+        self.locked = locked
+        self.added = added
     }
 }
 
@@ -68,9 +76,10 @@ public struct TrashBackend: Sendable {
         #if SMOKE
         return TrashOutcome(moved: [], failed: [(source.path, "System Trash is disabled in synthetic test builds.")])
         #else
+        let added = DateAdded.read(source.path)
         switch trash.move(source) {
         case .success(let trashed):
-            return TrashOutcome(moved: [TrashRecord(original: source, trashed: trashed)], failed: [])
+            return TrashOutcome(moved: [TrashRecord(original: source, trashed: trashed, added: added)], failed: [])
         case .failure(let failure):
             return TrashOutcome(moved: [], failed: [(source.path, failure.reason)],
                                 failureInfo: failure.error.map { [source.path: .init($0, area: area)] } ?? [:])
@@ -208,6 +217,18 @@ public struct TrashOutcome: Sendable {
 
 /// Moves items to the Trash (never deletes outright) and can undo it.
 public enum Trasher {
+    /// Swaps what two names on one volume hold, in one step: neither name is
+    /// ever missing. Sharing storage puts a clone in a copy's place this way.
+    /// Returns 0, or the error number.
+    static func swapNames(_ a: String, _ b: String) -> Int32 {
+        renamex_np(a, b, UInt32(RENAME_SWAP)) == 0 ? 0 : errno
+    }
+
+    /// Renames only if nothing has the new name yet.
+    static func renameIfFree(_ from: String, to: String) -> Bool {
+        renamex_np(from, to, UInt32(RENAME_EXCL)) == 0
+    }
+
     /// A full path with no empty, "." or ".." parts, written exactly as
     /// it's checked. Unlike `standardizingPath`, which drops a leading
     /// "/private" and so changes paths under /private/var, nothing is
@@ -469,9 +490,13 @@ public enum Trasher {
                 failed.append((path, Refusal.protectedLocation.text))
                 continue
             }
+            let locked = Locks.isLocked(path)
+            let added = DateAdded.read(path)
             let r = backend.moveOne(path)
             if let to = r.trashed {
-                moved.append(TrashRecord(original: URL(fileURLWithPath: path), trashed: to))
+                // A lock cleared for the move is said, so Undo puts it back.
+                moved.append(TrashRecord(original: URL(fileURLWithPath: path), trashed: to,
+                                         locked: locked && !Locks.isLocked(to.path) ? true : nil, added: added))
             } else {
                 failed.append((path, r.error ?? notMoved))
             }
@@ -494,10 +519,22 @@ public enum Trasher {
         let name = (original as NSString).lastPathComponent
         guard let dir = openFolder((original as NSString).deletingLastPathComponent, creating: true) else { return false }
         defer { close(dir) }
-        if renameatx_np(AT_FDCWD, r.trashed.path, dir, name, UInt32(RENAME_EXCL)) == 0 { return true }
+        var back = renameatx_np(AT_FDCWD, r.trashed.path, dir, name, UInt32(RENAME_EXCL)) == 0
         // exFAT has no exclusive rename.
-        guard errno == ENOTSUP || errno == EINVAL else { return false }
-        return renameClaimingName(r.trashed.path, into: dir, name)
+        if !back, errno == ENOTSUP || errno == EINVAL { back = renameClaimingName(r.trashed.path, into: dir, name) }
+        guard back else { return false }
+        // Before the lock, which would refuse it.
+        if let added = r.added { DateAdded.set(added, on: name, in: dir) }
+        if r.locked == true {
+            // Opened in the folder already open, never through a link.
+            let fd = openat(dir, name, O_RDONLY | O_SYMLINK | O_CLOEXEC)
+            if fd >= 0 {
+                var st = stat()
+                if fstat(fd, &st) == 0 { _ = fchflags(fd, st.st_flags | UInt32(UF_IMMUTABLE)) }
+                close(fd)
+            }
+        }
+        return true
     }
 
     /// Moves `source` to `name` in `dir` on a disk without exclusive

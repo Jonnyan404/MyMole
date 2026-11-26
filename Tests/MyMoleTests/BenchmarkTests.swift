@@ -280,12 +280,12 @@ struct BenchmarkTests {
         }
         _ = Self.time("sort 50,000 rows by size") { FileTable.sorted(rows, by: .size, ascending: false) }
         _ = Self.time("sort 50,000 rows by name") { FileTable.sorted(rows, by: .name, ascending: true) }
-        _ = Self.time("filter 50,000 rows") { rows.filter { DSFilterField.matches("file1 folder2", $0.name, $0.location ?? "") } }
+        _ = Self.time("filter 50,000 rows") { rows.filter { TextQuery("file1 folder2").matches($0.name, $0.location ?? "") } }
         let query = TextQuery("file1 folder2")
         for count in [50, 50_000] {
             let list = Array(rows.prefix(count))
             Self.repeated("per-row query \(count) rows") {
-                let found = list.filter { DSFilterField.matches("file1 folder2", $0.name, $0.location ?? "") }
+                let found = list.filter { TextQuery("file1 folder2").matches($0.name, $0.location ?? "") }
                 withExtendedLifetime(found) {}
             }
             Self.repeated("prepared filter \(count) rows") {

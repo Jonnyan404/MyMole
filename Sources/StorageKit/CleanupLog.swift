@@ -107,7 +107,24 @@ public enum CleanupLog {
     /// Queues `record`; returns at once.
     public static func submit(_ record: CleanupRecord, to url: URL = defaultURL) {
         guard record.items > 0 || record.failed > 0 || record.deleted > 0 else { return }
-        queue.async { locked(url) { write(Array(([record] + read(url)).prefix(keep)), to: url) } }
+        queue.async {
+            locked(url) {
+                switch contents(url) {
+                case .records(let earlier): write(Array(([record] + earlier).prefix(keep)), to: url)
+                case .damaged(let data):
+                    // The new record starts the log over; what was there is kept beside it.
+                    try? data.write(to: setAside(for: url), options: .atomic)
+                    write([record], to: url)
+                // A log that's there but can't be read is left as it is.
+                case .unreadable: break
+                }
+            }
+        }
+    }
+
+    /// Where a log that didn't read as records is kept when a new one is started.
+    public static func setAside(for url: URL) -> URL {
+        url.deletingPathExtension().appendingPathExtension("unreadable.json")
     }
 
     /// Queues what an Undo of run `id` put back and couldn't.
@@ -142,8 +159,30 @@ public enum CleanupLog {
     }
 
     private static func read(_ url: URL) -> [CleanupRecord] {
-        guard let d = try? Data(contentsOf: url) else { return [] }
-        return (try? JSONDecoder().decode([CleanupRecord].self, from: d)) ?? []
+        if case .records(let all) = contents(url) { return all }
+        return []
+    }
+
+    private enum Contents {
+        /// The log's records; none when there's no log yet.
+        case records([CleanupRecord])
+        /// A file that doesn't read as records, with what it holds.
+        case damaged(Data)
+        /// A file that's there but couldn't be read at all.
+        case unreadable
+    }
+
+    private static func contents(_ url: URL) -> Contents {
+        let data: Data
+        do {
+            data = try Data(contentsOf: url)
+        } catch CocoaError.fileReadNoSuchFile {
+            return .records([])
+        } catch {
+            return .unreadable
+        }
+        if let records = try? JSONDecoder().decode([CleanupRecord].self, from: data) { return .records(records) }
+        return data.isEmpty ? .records([]) : .damaged(data)
     }
 
     private static func write(_ records: [CleanupRecord], to url: URL) {

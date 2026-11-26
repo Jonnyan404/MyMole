@@ -273,15 +273,91 @@ final class MainToolbar: NSObject, NSToolbarDelegate, NSMenuDelegate {
         stack.spacing = 1
         stack.edgeInsets = NSEdgeInsets(top: 0, left: 6, bottom: 0, right: 6)
         stack.widthAnchor.constraint(lessThanOrEqualToConstant: 420).isActive = true
-        // The toolbar can lay an item out at its smallest size after a
-        // resize; the title then must not shrink to a letter. The subtitle
-        // gives way first, and keeps a few words.
+        // The toolbar gives an item the width its view asks for when it
+        // happens to measure it: left to the labels, a subtitle was cut at
+        // the smallest width in a toolbar with room, or grew with its text
+        // and pushed tools into the overflow menu. The width is set here
+        // instead (`fitTitle`). The title itself never shrinks to a letter.
         titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        let readable = stack.widthAnchor.constraint(greaterThanOrEqualToConstant: 180)
-        readable.priority = .defaultHigh - 1
-        readable.isActive = true
+        titleWidth = stack.widthAnchor.constraint(equalToConstant: Self.compactTitleWidth)
+        titleWidth?.priority = .defaultHigh - 1
+        titleWidth?.isActive = true
         return stack
     }()
+
+    // MARK: Title width
+
+    /// A few words of subtitle: what the title keeps in a crowded toolbar.
+    static let compactTitleWidth: CGFloat = 180
+    private var titleWidth: NSLayoutConstraint?
+    private var titleFitScheduled = false
+    /// What the title was last fitted to, so an unchanged toolbar isn't laid out again.
+    private var titleFit: (width: CGFloat, items: [NSToolbarItem.Identifier], window: CGFloat)?
+    private var resizeObservers: [NSObjectProtocol] = []
+
+    /// What the title and subtitle take to show whole, in steps, so a
+    /// number changing in the subtitle doesn't move the toolbar.
+    private var fullTitleWidth: CGFloat {
+        let needed = max(titleLabel.intrinsicContentSize.width, subtitleLabel.intrinsicContentSize.width) + 12
+        return min(max((needed / 16).rounded(.up) * 16, Self.compactTitleWidth), 420)
+    }
+
+    private func setTitleWidth(_ width: CGFloat) {
+        guard let titleWidth, titleWidth.constant != width else { return }
+        titleWidth.constant = width
+        titleView.invalidateIntrinsicContentSize()
+    }
+
+    /// Fits the title once the current update is done: laying the window
+    /// out from inside a view update isn't allowed.
+    private func scheduleTitleFit() {
+        guard !titleFitScheduled else { return }
+        titleFitScheduled = true
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            titleFitScheduled = false
+            fitTitle()
+        }
+    }
+
+    /// The whole subtitle where that costs no tool its place, else a few
+    /// words of it. Both widths are laid out before anything is drawn, so
+    /// the one that doesn't fit is never seen.
+    private func fitTitle() {
+        guard let window, !window.inLiveResize else { return }
+        let full = fullTitleWidth
+        let items = toolbar.items.map(\.itemIdentifier)
+        if let titleFit, titleFit.width == full, titleFit.items == items, titleFit.window == window.frame.width { return }
+        titleFit = (full, items, window.frame.width)
+        setTitleWidth(Self.compactTitleWidth)
+        guard full > Self.compactTitleWidth else { return }
+        window.layoutIfNeeded()
+        let fitting = toolbar.visibleItems?.count ?? 0
+        setTitleWidth(full)
+        window.layoutIfNeeded()
+        if (toolbar.visibleItems?.count ?? 0) < fitting { setTitleWidth(Self.compactTitleWidth) }
+    }
+
+    /// While the window is dragged the title stays small and the tools in
+    /// place; it's fitted again when the drag ends, and after any other resize.
+    private func observeResizes(of window: NSWindow) {
+        resizeObservers.forEach(NotificationCenter.default.removeObserver)
+        let center = NotificationCenter.default
+        resizeObservers = [
+            center.addObserver(forName: NSWindow.willStartLiveResizeNotification, object: window, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated {
+                    self?.titleFit = nil
+                    self?.setTitleWidth(Self.compactTitleWidth)
+                }
+            },
+            center.addObserver(forName: NSWindow.didEndLiveResizeNotification, object: window, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated { self?.scheduleTitleFit() }
+            },
+            center.addObserver(forName: NSWindow.didResizeNotification, object: window, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated { self?.scheduleTitleFit() }
+            },
+        ]
+    }
 
     override init() {
         super.init()
@@ -305,6 +381,7 @@ final class MainToolbar: NSObject, NSToolbarDelegate, NSMenuDelegate {
         window.toolbarStyle = .unified
         window.contentMinSize = Self.minimumSize
         window.toolbar = toolbar
+        observeResizes(of: window)
     }
 
     // MARK: Chrome
@@ -359,6 +436,7 @@ final class MainToolbar: NSObject, NSToolbarDelegate, NSMenuDelegate {
             }
         }
         for tool in chrome.tools { update(Self.identifier(tool), with: tool) }
+        scheduleTitleFit()
     }
 
     private static func identifier(_ tool: PaneTool) -> NSToolbarItem.Identifier { .init("tool.\(tool.id)") }

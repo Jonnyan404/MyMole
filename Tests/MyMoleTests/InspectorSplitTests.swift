@@ -48,7 +48,7 @@ import Testing
         try await Task.sleep(for: .milliseconds(30))
         controller.view.layoutSubtreeIfNeeded()
         let hosts = controller.children.map(ObjectIdentifier.init)
-        for width in stride(from: 340, through: 520, by: 3) {
+        for width in stride(from: 340, through: 819, by: 7) {
             controller.splitView.setPosition(controller.splitView.bounds.width - controller.splitView.dividerThickness - CGFloat(width), ofDividerAt: 0)
             controller.splitView.adjustSubviews()
             controller.view.layoutSubtreeIfNeeded()
@@ -61,7 +61,7 @@ import Testing
         controller.inspector.rootView = AnyView(Text("Changed synthetic selection"))
         controller.view.layoutSubtreeIfNeeded()
         #expect(controller.children.map(ObjectIdentifier.init) == hosts)
-        #expect(controller.inspector.view.frame.width >= 340 && controller.inspector.view.frame.width <= 520)
+        #expect(controller.inspector.view.frame.width >= 340 && controller.content.view.frame.width >= 380)
         let chosenWidth = controller.inspector.view.frame.width
         controller.splitView.setFrameSize(NSSize(width: 721, height: 600))
         controller.splitView.adjustSubviews()

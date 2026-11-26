@@ -2,8 +2,8 @@ import Darwin
 import Foundation
 
 /// One directory entry with exactly the metadata the scanner needs.
-struct Entry {
-    enum Kind { case file, folder, symlink, other }
+struct Entry: Sendable {
+    enum Kind: Sendable { case file, folder, symlink, other }
     let name: String
     let kind: Kind
     /// Bytes actually allocated on disk (not the logical length), so sparse
@@ -39,30 +39,49 @@ enum ReadOutcome { case ok, denied, failed, cancelled }
 enum DirectoryReader {
     // attr.h bit values, spelled out as UInt32 (the macros don't all import
     // with a usable type).
-    private static let cmnReturned: UInt32 = 0x8000_0000
-    private static let cmnName: UInt32 = 0x0000_0001
-    private static let cmnDevID: UInt32 = 0x0000_0002
-    private static let cmnObjType: UInt32 = 0x0000_0008
-    private static let cmnModTime: UInt32 = 0x0000_0400
-    private static let cmnFileID: UInt32 = 0x0200_0000
+    static let cmnReturned: UInt32 = 0x8000_0000
+    static let cmnName: UInt32 = 0x0000_0001
+    static let cmnDevID: UInt32 = 0x0000_0002
+    static let cmnObjType: UInt32 = 0x0000_0008
+    static let cmnModTime: UInt32 = 0x0000_0400
+    static let cmnFileID: UInt32 = 0x0200_0000
     private static let cmnError: UInt32 = 0x2000_0000
-    private static let dirMountStatus: UInt32 = 0x0000_0004
+    static let dirMountStatus: UInt32 = 0x0000_0004
     private static let dirIsMountPoint: UInt32 = 0x0000_0001
-    private static let fileLinkCount: UInt32 = 0x0000_0001
-    private static let fileAllocSize: UInt32 = 0x0000_0004
-    private static let fileDataLength: UInt32 = 0x0000_0200
+    static let fileLinkCount: UInt32 = 0x0000_0001
+    static let fileAllocSize: UInt32 = 0x0000_0004
+    static let fileDataLength: UInt32 = 0x0000_0200
     /// FSOPT_PACK_INVAL_ATTRS: every requested attribute gets its slot even
     /// when invalid, so each record has a fixed layout to walk.
-    private static let packInvalid: UInt64 = 0x0000_0008
+    static let packInvalid: UInt64 = 0x0000_0008
     /// FSOPT_ATTR_CMN_EXTENDED: `forkattr` asks for extended common
     /// attributes; the walk asks only for the flags that say a file may
     /// share blocks. Private size and clone count cost the kernel far more
     /// per file, so they are read only for the files flagged.
-    private static let commonExtended: UInt64 = 0x0000_0020
-    private static let cmnExtFlags = attrgroup_t(ATTR_CMNEXT_EXT_FLAGS)
+    static let commonExtended: UInt64 = 0x0000_0020
+    static let cmnExtFlags = attrgroup_t(ATTR_CMNEXT_EXT_FLAGS)
     private static let bufferSize = 256 * 1024
 
-    static func read(_ path: String, isCancelled: () -> Bool = { false }, _ body: (Entry) -> Void) -> ReadOutcome {
+    /// When a folder is worth reading with several threads: it has many
+    /// entries left and the bulk read is slow per entry, as in a large folder
+    /// whose records aren't in memory. A fast bulk read always stays: there,
+    /// reading names first and then each entry costs more than it saves.
+    struct Split: Sendable {
+        /// Entries read in bulk before the rate is judged.
+        var after = 4_096
+        /// Bulk time per entry that makes a switch worth it.
+        var slowerThan: TimeInterval = 5e-6
+        /// Entries that must still be unread.
+        var remaining = 16_384
+        static let standard = Split()
+    }
+
+    /// `readers` above 1 lets a large, slow folder be read by that many
+    /// threads (`Split`); the entries come to `body` on this thread either way.
+    static func read(
+        _ path: String, readers: Int = 1, split: Split = .standard, isCancelled: () -> Bool = { false },
+        _ body: (Entry) -> Void
+    ) -> ReadOutcome {
         guard !isCancelled() else { return .cancelled }
         let fd = open(path, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
         guard fd >= 0 else { return errno == EACCES || errno == EPERM ? .denied : .failed }
@@ -79,8 +98,19 @@ enum DirectoryReader {
         defer { buffer.deallocate() }
 
         var outcome = ReadOutcome.ok
+        let started = readers > 1 ? Date() : nil
+        var delivered: [String] = []
         while true {
             guard !isCancelled() else { return .cancelled }
+            if let started, delivered.count >= split.after,
+               Date().timeIntervalSince(started) > split.slowerThan * Double(delivered.count),
+               let total = entryCount(fd), total - delivered.count >= split.remaining
+            {
+                let rest = ParallelRead.rest(fd: fd, skipping: delivered, readers: readers, isCancelled: isCancelled)
+                guard let rest else { return .cancelled }
+                for e in rest.entries { body(e) }
+                return outcome == .ok ? rest.outcome : outcome
+            }
             var count = getattrlistbulk(fd, &list, buffer, bufferSize, packInvalid | commonExtended)
             if count < 0, errno == EINVAL || errno == ENOTSUP, list.forkattr != 0 {
                 // A file system that won't say how files share blocks is read without it.
@@ -99,8 +129,11 @@ enum DirectoryReader {
                 if var e = parse(record + 4, flags: list.forkattr != 0) {
                     if e.sharing != nil { e.sharing = FileSpace.sharing(at: fd, e.name) }
                     if e.needsBlocks, let blocks = blocks(at: fd, e.name) { e.allocated = blocks }
+                    if started != nil { delivered.append(e.name) }
                     body(e)
                 } else {
+                    // A record without a usable name can't be told apart in a later switch.
+                    if started != nil { delivered.append("") }
                     outcome = .failed
                 }
                 record += length
@@ -115,12 +148,16 @@ enum DirectoryReader {
     /// folder's mount status or a file's attributes and extended flags.
     /// Neither kind gets slots for the other's attributes. A file flagged
     /// as maybe sharing blocks comes back with an empty `sharing`, to be read.
-    private static func parse(_ start: UnsafeMutableRawPointer, flags requested: Bool) -> Entry? {
+    /// `hasError`: the record has the error slot, which only the bulk read gives.
+    static func parse(_ start: UnsafeMutableRawPointer, flags requested: Bool, hasError: Bool = true) -> Entry? {
         var p = start
         let returned = p.loadUnaligned(as: attribute_set_t.self)
         p += MemoryLayout<attribute_set_t>.size
-        let error = p.loadUnaligned(as: UInt32.self)
-        p += 4
+        var error: UInt32 = 0
+        if hasError {
+            error = p.loadUnaligned(as: UInt32.self)
+            p += 4
+        }
         let required = cmnName | cmnDevID | cmnObjType | cmnModTime | cmnFileID
         guard error == 0, returned.commonattr & required == required else { return nil }
 
@@ -169,8 +206,18 @@ enum DirectoryReader {
             sharing: sharing, needsBlocks: kind == .file && (!hasAlloc || alloc == 0) && (!hasLength || length > 0))
     }
 
+    /// How many entries the open folder holds, without reading them.
+    static func entryCount(_ fd: Int32) -> Int? {
+        var list = attrlist()
+        list.bitmapcount = u_short(ATTR_BIT_MAP_COUNT)
+        list.dirattr = attrgroup_t(ATTR_DIR_ENTRYCOUNT)
+        var reply = (UInt32(0), UInt32(0))
+        let ok = withUnsafeMutableBytes(of: &reply) { fgetattrlist(fd, &list, $0.baseAddress, $0.count, 0) == 0 }
+        return ok ? Int(reply.1) : nil
+    }
+
     /// What `name` in the open folder `dir` has allocated, as `stat` says.
-    private static func blocks(at dir: Int32, _ name: String) -> Int64? {
+    static func blocks(at dir: Int32, _ name: String) -> Int64? {
         var st = stat()
         guard fstatat(dir, name, &st, AT_SYMLINK_NOFOLLOW) == 0, st.st_mode & S_IFMT == S_IFREG else { return nil }
         return allocated(st)

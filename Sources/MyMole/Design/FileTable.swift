@@ -199,23 +199,42 @@ struct FileTable: NSViewRepresentable {
     /// The column's values are read out once and positions are sorted, so
     /// the rows themselves, which are large, move only once.
     nonisolated static func sorted(_ rows: [FileRow], by col: FileColumn, ascending asc: Bool) -> [FileRow] {
-        func byName(_ i: Int, _ j: Int) -> Bool { rows[i].name.localizedStandardCompare(rows[j].name) == .orderedAscending }
+        // Read out once: a sort compares a row many times, and each read of
+        // the large row would copy it.
+        let pins = rows.map(\.pinned)
+        let names = rows.map(\.name)
+        func byName(_ i: Int, _ j: Int) -> Bool { names[i].localizedStandardCompare(names[j]) == .orderedAscending }
+        /// By the column's values alone, then each run of equal values by
+        /// name: the same order as one sort with the name as a tie-break, with
+        /// the costly name comparisons only where values are equal.
         func order<T: Comparable>(_ keys: [T]) -> [Int] {
-            rows.indices.sorted { i, j in
-                if rows[i].pinned != rows[j].pinned { return rows[i].pinned }
-                return keys[i] == keys[j] ? byName(i, j) : (asc ? keys[i] < keys[j] : keys[i] > keys[j])
+            // Value and position side by side, so the sort reads them in place
+            // rather than looking each value up; pinned rows are a group of their own.
+            var pairs = rows.indices.map { (pinned: pins[$0], key: keys[$0], at: $0) }
+            pairs.sort { a, b in
+                if a.pinned != b.pinned { return a.pinned }
+                return asc ? a.key < b.key : a.key > b.key
             }
+            var positions = pairs.map(\.at)
+            var start = 0
+            while start < pairs.count {
+                var end = start + 1
+                while end < pairs.count, pairs[end].pinned == pairs[start].pinned, pairs[end].key == pairs[start].key { end += 1 }
+                if end - start > 1 { positions[start..<end].sort(by: byName) }
+                start = end
+            }
+            return positions
         }
         func text(_ keys: [String], tieByName: Bool) -> [Int] {
             rows.indices.sorted { i, j in
-                if rows[i].pinned != rows[j].pinned { return rows[i].pinned }
+                if pins[i] != pins[j] { return pins[i] }
                 let r = keys[i].localizedStandardCompare(keys[j])
                 if r == .orderedSame { return tieByName && byName(i, j) }
                 return asc ? r == .orderedAscending : r == .orderedDescending
             }
         }
         let positions: [Int] = switch col {
-        case .name: text(rows.map(\.name), tieByName: false)
+        case .name: text(names, tieByName: false)
         case .size: order(rows.map { $0.size ?? -1 })
         case .freeable: order(rows.map { $0.freeable ?? -1 })
         case .change: order(rows.map { $0.change ?? 0 })
@@ -657,6 +676,7 @@ final class FileTableView: NSTableView, LinedTable, UserColumnTable {
 
     var defaultHiddenColumns = Set<String>()
     var columnViewport: ColumnViewport?
+    var sizeOutOfView = false
     weak var coordinator: FileTable.Coordinator?
     var lines = TableLines.none
     var lineColor = NSColor.separatorColor
@@ -806,6 +826,12 @@ final class FileNameCell: NSTableCellView, ColumnWidthProviding {
     private var longestNamePart: CGFloat = 0
     private var nameWidth: CGFloat = 0
     private var subtitleWidth: CGFloat = 0
+    private var subtitle: String?
+    private var sizeText: String?
+    /// The table's Size column is out of view, so the size leads the second line.
+    var sizeInSubtitle = false {
+        didSet { if sizeInSubtitle != oldValue { showSubtitle() } }
+    }
     private var badgeWidth: CGFloat = 0
     private var wrapsName: Bool?
     private var measuredTextSize: NSSize?
@@ -876,12 +902,9 @@ final class FileNameCell: NSTableCellView, ColumnWidthProviding {
                 .map { FileCellResources.namePartWidth(String($0)) }.max() ?? 0
             wrapsName = nil
         }
-        sub.stringValue = r.subtitle ?? ""
-        subtitleWidth = (sub.stringValue as NSString).size(withAttributes: [.font: sub.font as Any]).width
-        sub.hoverHelp = r.subtitle
-        hoverHelp = [r.name, r.subtitle].compactMap { $0 }.joined(separator: "\n")
-        sub.isHidden = r.subtitle == nil
-        setNameWrapping(sub.isHidden && (wrapsName ?? true))
+        subtitle = r.subtitle
+        sizeText = r.size.map { FileCellResources.byteCount.string(fromByteCount: $0) }
+        showSubtitle()
         measuredTextSize = nil
         label.textColor = dimUnmeasured && r.size == nil ? .secondaryLabelColor : .labelColor
         label.hoverHelp = r.name
@@ -894,6 +917,30 @@ final class FileNameCell: NSTableCellView, ColumnWidthProviding {
         lock.isHidden = !r.locked
         lock.hoverHelp = r.locked ? String(localized: "MyMole couldn't read inside this folder") : nil
         needsLayout = true
+    }
+
+    private func showSubtitle() {
+        let size = sizeInSubtitle ? sizeText : nil
+        let line = size.map { size in subtitle.map { String(localized: "\(size) · \($0)") } ?? size } ?? subtitle
+        sub.stringValue = line ?? ""
+        subtitleWidth = (sub.stringValue as NSString).size(withAttributes: [.font: sub.font as Any]).width
+        sub.hoverHelp = line
+        hoverHelp = [name, line].compactMap { $0 }.joined(separator: "\n")
+        sub.isHidden = line == nil
+        setNameWrapping(sub.isHidden && (wrapsName ?? true))
+        measuredTextSize = nil
+        needsLayout = true
+    }
+
+    override func viewDidMoveToSuperview() {
+        super.viewDidMoveToSuperview()
+        sizeInSubtitle = (enclosingTable as? any UserColumnTable)?.sizeOutOfView ?? false
+    }
+
+    private var enclosingTable: NSTableView? {
+        var view = superview
+        while let v = view, !(v is NSTableView) { view = v.superview }
+        return view as? NSTableView
     }
 
     var preferredColumnWidth: CGFloat {

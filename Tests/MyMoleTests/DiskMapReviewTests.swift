@@ -77,7 +77,8 @@ import Testing
             return result
         }
         defer { held.signal() }
-        model.rescan()
+        // A whole-map read; a rescan would read only what changed.
+        model.scan(path: box.home)
         try await wait { read.load(ordering: .relaxed) }
         let item = Marked(path: box.home + "/build", name: "Build", size: 1, isFolder: true)
         model.mark([item])

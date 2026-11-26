@@ -3,37 +3,6 @@ import PrivilegedKit
 import StorageKit
 import SwiftUI
 
-/// `NSWorkspace.icon(forFile:)` hits Launch Services each call; grid cells
-/// re-render on every search keystroke, so icons are fetched once per path.
-@MainActor
-enum AppIcons {
-    private static var cache: [String: NSImage] = [:]
-    /// In the order they were fetched, so the oldest go first.
-    private static var order: [String] = []
-    /// More icons than any app list shows at once; Settings → Responsiveness sets it.
-    static var limit = 300
-
-    static func icon(_ path: String) -> NSImage {
-        if let i = cache[path] { return i }
-        let i = NSWorkspace.shared.icon(forFile: path)
-        cache[path] = i
-        order.append(path)
-        if order.count > limit {
-            for old in order.prefix(order.count - limit) { cache[old] = nil }
-            order.removeFirst(order.count - limit)
-        }
-        return i
-    }
-
-    static var count: Int { cache.count }
-
-    /// Lets the icons go under memory pressure; each is fetched again when shown.
-    static func release() {
-        cache = [:]
-        order = []
-    }
-}
-
 /// The apps on the Mac, as cards. Click one to uninstall it; ⌘-click,
 /// or click once some are chosen, to choose several and uninstall them
 /// together. Apps dropped on the pane or on MyMole's icon open the same
@@ -48,8 +17,8 @@ struct UninstallView: View {
     @Bindable var model: AppsModel
     let orphans: OrphansModel
     var selfRemoval: SelfRemovalModel?
-    /// Kept while you go to other panes and back, as the window's own state.
-    @SceneStorage("uninstall.filter") private var query = ""
+    /// Kept between panes and launches.
+    @AppStorage("uninstall.filter") private var query = ""
     @State private var selected: AppBundle?
     @State private var showOrphans = false
     @State private var showCopies = false
@@ -68,6 +37,12 @@ struct UninstallView: View {
     @State private var projected = OffMain<AppPresentation>(AppPresentation())
     @State private var pins = PinnedItems.shared
     @State private var presentedFilter: FilterKey?
+    /// Tall enough for the panel to repeat the toolbar's two searches.
+    @State private var roomy = true
+
+    /// Below this pane height the panel leaves Left by Removed Apps and App
+    /// Copies & Integrations to the toolbar, so the grid keeps its rows.
+    static let roomyHeight: CGFloat = 700
 
     static let showMacOSKey = "uninstall.showMacOS"
 
@@ -125,9 +100,9 @@ struct UninstallView: View {
             if model.apps.isEmpty && model.loading {
                 DSMetric("—", "apps · finding the first results…")
             } else if projected.value.measuring {
-                DSMetric(filtered.count.formatted(), "apps · measuring sizes…")
+                DSMetric(filtered.count.formatted(), "\(filtered.count) apps · measuring sizes…")
             } else {
-                DSMetric(filtered.count.formatted(), "apps · \(ByteSize.format(projected.value.totalBytes)) on disk")
+                DSMetric(filtered.count.formatted(), "\(filtered.count) apps · \(ByteSize.format(projected.value.totalBytes)) on disk")
             }
         } actions: {
             DSControlField("Filter apps") {
@@ -155,13 +130,15 @@ struct UninstallView: View {
                     .fixedSize()
                     .help("macOS apps stay installed; only resetting their caches and settings is offered.")
             }
-            DSControlField("Removed apps") {
-                Button("Left by Removed Apps…", systemImage: "folder.badge.questionmark") { showOrphans = true }
-                    .help("Find caches, settings and data left after an app was deleted in Finder")
-            }
-            DSControlField("Copies and test builds") {
-                Button("App Copies & Integrations…", systemImage: "square.on.square") { showCopies = true }
-                    .help("Find other versions, test builds and apps that declare menu integrations")
+            if roomy {
+                DSControlField("Removed apps") {
+                    Button("Left by Removed Apps…", systemImage: "folder.badge.questionmark") { showOrphans = true }
+                        .help("Find caches, settings and data left after an app was deleted in Finder")
+                }
+                DSControlField("Copies and test builds") {
+                    Button("App Copies & Integrations…", systemImage: "square.on.square") { showCopies = true }
+                        .help("Find other versions, test builds and apps that declare menu integrations")
+                }
             }
         } strip: {
             if model.loading {
@@ -241,6 +218,7 @@ struct UninstallView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .onGeometryChange(for: Bool.self) { [tall = Self.roomyHeight] in $0.size.height >= tall } action: { roomy = $0 }
         .overlay {
             if dropTargeted {
                 RoundedRectangle(cornerRadius: Theme.radius, style: .continuous)
@@ -258,6 +236,8 @@ struct UninstallView: View {
         .paneToolbar("Uninstall", subtitle: "\(filtered.count) apps · leftovers go to the Trash too") {
             PaneTool.button("uninstall.orphans", "Left by Removed Apps…", symbol: "folder.badge.questionmark",
                             help: "Caches, settings and data of apps that aren't on this Mac any more") { showOrphans = true }
+            PaneTool.button("uninstall.copies", "App Copies & Integrations…", symbol: "square.on.square",
+                            help: "Find other versions, test builds and apps that declare menu integrations") { showCopies = true }
             PaneTool.button("uninstall.packages", "Installed Packages…", symbol: "shippingbox",
                             help: "What Homebrew and installer packages put on the Mac, to look at") { showPackages = true }
             PaneTool.button("uninstall.reload", "Reload", symbol: "arrow.clockwise", help: "Reload the app list",
@@ -451,9 +431,7 @@ struct UninstallView: View {
     private func card(_ app: AppBundle) -> some View {
         let isPicked = picked.contains(app.path)
         return VStack(spacing: DS.Space.sm) {
-            Image(nsImage: AppIcons.icon(app.path))
-                .resizable()
-                .frame(width: DS.Size.appTileIcon, height: DS.Size.appTileIcon)
+            InstalledAppIcon(path: app.path, side: DS.Size.appTileIcon)
             DSName(app.name, .lead, lines: 2, reservesSpace: true)
                 .multilineTextAlignment(.center)
             if app.isProtected {
@@ -496,7 +474,7 @@ struct UninstallView: View {
                     .foregroundStyle(.secondary)
                     .padding(8)
                     .help("Open: quit it before uninstalling")
-                    .accessibilityLabel("Open")
+                    .accessibilityLabel(AppPresentation.openMark)
             }
         }
         .opacity(app.isProtected ? 0.6 : 1)
@@ -506,8 +484,10 @@ struct UninstallView: View {
 
 /// Lists the app and everything it left in the Library and system-wide,
 /// then moves what's chosen to the Trash on confirmation; the privileged
-/// tool deletes explicitly chosen system-wide items. Only identity-linked
-/// caches and logs start chosen; all other data needs an explicit choice.
+/// tool deletes explicitly chosen system-wide items. What is certainly the
+/// app's starts chosen (`Leftover.review`); name matches, what the maker's
+/// apps share, temporary data and what looks like the user's own work need
+/// an explicit choice.
 /// A running app is refused until it's quit.
 struct UninstallSheet: View {
     let model: AppsModel
@@ -569,8 +549,7 @@ struct UninstallSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.md) {
                     HStack(spacing: 14) {
-                        Image(nsImage: AppIcons.icon(app.path))
-                            .resizable().frame(width: 64, height: 64)
+                        InstalledAppIcon(path: app.path, side: 64)
                         VStack(alignment: .leading, spacing: 3) {
                             Text(app.name).font(.title2.bold())
                             DSPath(app.path, .mono)
@@ -597,7 +576,7 @@ struct UninstallSheet: View {
                         )
                     }
                     if removed != nil {
-                        DSNotice(.info, "This app is already in the Trash. Only the chosen leftovers move; shared identities still used by installed apps stay. Settings and personal data stay unless you choose them.")
+                        DSNotice(.info, "This app is already in the Trash. Only the chosen leftovers move; shared identities still used by installed apps stay. What certainly belongs to the app starts chosen.")
                     }
                     if running {
                         DSNotice(
@@ -665,7 +644,7 @@ struct UninstallSheet: View {
                                 DSText("Uninstall now moves only the app. Related files can be chosen when the search finishes.", .metadata)
                             }
                         }
-                        DSText("Each folder row includes its contents. Your data stays unless you choose it.", .metadata)
+                        DSText("Each folder row includes its contents.", .metadata)
                         if RelatedComponents.isChrome(app) {
                             DSText("Chrome profile folders can contain bookmarks, history and extensions. Custom profile locations outside the searched folders aren't discovered automatically.", .metadata)
                         }
@@ -675,7 +654,7 @@ struct UninstallSheet: View {
                                     ? String(localized: "No verified leftovers in the inspected locations.")
                                     : String(
                                         localized:
-                                            "Each leftover shows how it's tied to the app. Only caches and logs tied by identity start chosen. Settings, website data, saved state, scripts, launch configuration and name matches stay unless you choose them."
+                                            "Each leftover shows how it's tied to the app. What certainly belongs to it starts chosen. Name matches, what the maker's other apps may use, temporary data and folders that look like documents or projects are marked Review and stay unless you choose them."
                                     ), .metadata)
                         }
                         FileTable(
@@ -706,7 +685,7 @@ struct UninstallSheet: View {
                         .frame(height: system.isEmpty ? 240 : 170)
                         UninstallRowDetails(item: inspectedLeftover, canChoose: inspectedLeftover.map(canChoose) ?? false)
                         DisclosureGroup("Search details") {
-                            DSText("Hidden settings and deeper name matches are searched automatically. The direct edition also checks exact app IDs in per-user temporary/cache folders. These results start unchosen; temporary data may contain unsaved work.", .metadata)
+                            DSText("Hidden settings and deeper name matches are searched automatically. The direct edition also checks exact app IDs in per-user temporary/cache folders. Name matches and temporary data start unchosen; temporary data may contain unsaved work.", .metadata)
                         }.font(.caption).foregroundStyle(.secondary)
                         if !system.isEmpty { systemSection }
                         relatedSection
@@ -852,11 +831,15 @@ struct UninstallSheet: View {
         }
         .actionConfirmation(
             String(localized: "Uninstall \(app.name)?"), isPresented: $confirm,
-            action: .uninstall, always: pendingUninstall?.needsExplicitConfirmation == true, message: pendingMessage
+            action: pendingUninstall?.needsExplicitConfirmation == true ? .uninstallSystem : .uninstall,
+            big: ConfirmationSettings.isBig(bytes: app.bytes + chosenLeftoverBytes, count: 1 + chosen.count),
+            warning: pendingUninstall?.leftovers.contains { !$0.canRemove } == true ? .unverifiedMatches : nil, message: pendingMessage
         ) { uninstall() }
         .actionConfirmation(
             removed == nil ? String(localized: "Reset \(app.name)?") : String(localized: "Move leftovers of \(app.name) to the Trash?"), isPresented: $confirmReset,
-            action: removed == nil ? .reset : .orphans, always: hasManualSelection, button: removed == nil ? String(localized: "Reset") : String(localized: "Move to Trash"),
+            action: removed == nil ? .reset : .orphans,
+            big: ConfirmationSettings.isBig(bytes: chosenLeftoverBytes, count: chosen.count),
+            warning: hasManualSelection ? .unverifiedMatches : nil, button: removed == nil ? String(localized: "Reset") : String(localized: "Move to Trash"),
             message: (removed == nil ? String(
                 localized:
                     "\(app.name) stays. The \(chosen.count) chosen leftovers (\(fmt(chosenLeftoverBytes))) go to the Trash, so it starts over as on its first launch. You can undo right after."
@@ -1101,11 +1084,13 @@ struct UninstallSheet: View {
                     FileRow(
                         id: $0.path, name: $0.name, size: $0.bytes, kind: "\($0.kind.title) · \($0.place)",
                         location: ($0.path as NSString).deletingLastPathComponent,
-                        symbol: "folder", subtitle: $0.canRemove ? String(localized: "Found \($0.evidence.title)") : String(localized: "Ownership not verified"),
-                        badge: $0.canRemove ? nil : (canChoose($0) ? String(localized: "Unverified") : String(localized: "Inspection only")),
+                        symbol: "folder", subtitle: $0.canRemove ? $0.evidence.title : String(localized: "Ownership not verified"),
+                        badge: $0.canRemove ? ($0.chosenByDefault ? nil : String(localized: "Review"))
+                            : (canChoose($0) ? String(localized: "Unverified") : String(localized: "Inspection only")),
+                        badgeHelp: $0.canRemove ? $0.review?.title : nil,
                         badgeTint: canChoose($0) && !$0.canRemove ? .systemOrange : .secondaryLabelColor,
                         canChoose: canChoose($0) && self.leftovers != nil && checking == nil && !model.uninstalling,
-                        choiceHelp: $0.canRemove ? nil : (canChoose($0)
+                        choiceHelp: $0.canRemove ? $0.choiceTitle : (canChoose($0)
                             ? String(localized: "Unverified match. Review its path; removal always asks for confirmation.")
                             : String(localized: "This match couldn't pass the review's ownership, path or protection checks. Refresh the review or inspect it in Finder."))))
             }

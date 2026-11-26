@@ -10,7 +10,7 @@ struct SettingsView: View {
     @AppStorage(PerformanceLevel.defaultsKey) private var performance = PerformanceLevel.standard.rawValue
     @AppStorage(ResultSize.defaultsKey) private var results = ResultSize.byDefault.rawValue
     @AppStorage(Responsiveness.defaultsKey) private var responsiveness = Responsiveness.byDefault.rawValue
-    @AppStorage(MemoryRelief.defaultsKey) private var memoryRelief = false
+    @AppStorage(MemoryRelief.defaultsKey) private var memoryRelief: Bool?
     @AppStorage(Density.key) private var density = Density.standard.rawValue
     @AppStorage(AppearanceMode.key) private var mode = AppearanceMode.system.rawValue
     @AppStorage(ThemeFamily.key) private var theme = ThemeFamily.standard.rawValue
@@ -111,7 +111,9 @@ struct SettingsView: View {
         case .folderAccess: folderAccessSection
         case .systemTasks: systemTasksSection
         case .keep: keepSection
+        case .temporary: TemporaryDaysSection()
         case .systemKeep: systemKeepSection
+        case .privacy: PrivacySection()
         case .about: aboutSection
         case .uninstall: selfUninstallSection
         }
@@ -309,8 +311,10 @@ struct SettingsView: View {
                         Text(PerformanceSummary.responsiveness(Responsiveness(rawValue: responsiveness) ?? Responsiveness.byDefault))
                     }
                 }
-                DSFormRow("Memory", checkbox: true, help: "When macOS warns that memory is short, scans started ahead of time stop and icon and chart caches empty; when it's critical, a disk map that isn't on screen goes too. Nothing you're looking at, have chosen or can undo is touched.") {
-                    Toggle("Free memory when macOS runs low", isOn: $memoryRelief)
+                DSFormRow("Memory", checkbox: true, help: "When macOS warns that memory is short, scans started ahead of time stop and icon and chart caches empty; when it's critical, a disk map that isn't on screen goes too. Nothing you're looking at, have chosen or can undo is touched. Until you choose, it follows Large results: on up to Fast, off at Maximum and Hyperspeed.") {
+                    Toggle("Free memory when macOS runs low", isOn: Binding(
+                        get: { memoryRelief ?? MemoryRelief.byDefault(ResultSize(saved: results)) },
+                        set: { memoryRelief = MemoryRelief.saved($0, for: ResultSize(saved: results)) }))
                         .accessibilityIdentifier("settings.memory-relief")
                 }
             }
@@ -720,5 +724,28 @@ private struct SavedResultsList: View {
 
     private func reload() async {
         parts = await Task.detached(priority: .utility) { SavedResults.parts() }.value
+    }
+}
+
+/// How long something in the temporary folders is left alone before Deep
+/// Clean offers it.
+private struct TemporaryDaysSection: View {
+    @AppStorage(CleanRules.temporaryDaysKey) private var days = CleanRules.temporaryDaysStandard
+
+    var body: some View {
+        DSSection("Temporary Folders", footer: "Deep Clean offers what programs left in the temporary folders once nothing in it has changed for this long. None of it is ever chosen for you. A change counts from the next scan.", rows: false) {
+            DSFormGrid {
+                DSFormRow("Left alone for", help: "Fewer days offers more, including what a program started recently and may still come back to.") {
+                    Stepper(value: Binding(
+                        get: { CleanRules.temporaryDays() },
+                        set: { days = min(max($0, CleanRules.temporaryDaysRange.lowerBound), CleanRules.temporaryDaysRange.upperBound) }),
+                        in: CleanRules.temporaryDaysRange
+                    ) {
+                        Text(CleanRules.temporaryDaysText(CleanRules.temporaryDays())).monospacedDigit()
+                    }
+                    .fixedSize()
+                }
+            }
+        }
     }
 }

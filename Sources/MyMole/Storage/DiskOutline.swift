@@ -372,7 +372,7 @@ struct DiskOutline: NSViewRepresentable {
             var nodes = (large ? Array(sorted.prefix(Self.partRows)) : sorted).map(make)
             let summary: Node? = small.0 > 0
                 ? Node(entry: nil, folder: nil, path: node.path,
-                       summary: FileRow(id: "small:" + node.path, name: String(localized: "\(small.0.formatted()) smaller files"), size: small.1,
+                       summary: FileRow(id: "small:" + node.path, name: String(localized: "\(small.0) smaller files"), size: small.1,
                                         symbol: "doc.on.doc", subtitle: String(localized: "Under 1 MB each · open to list")), smallFiles: true)
                 : nil
             if !large, let summary { nodes.append(summary) }
@@ -770,6 +770,7 @@ final class DiskOutlineView: NSOutlineView, LinedTable, UserColumnTable {
 
     var defaultHiddenColumns = Set<String>()
     var columnViewport: ColumnViewport?
+    var sizeOutOfView = false
     weak var coordinator: DiskOutline.Coordinator?
     var lines = TableLines.none
     var lineColor = NSColor.separatorColor

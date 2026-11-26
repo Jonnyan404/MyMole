@@ -7,7 +7,10 @@ import Testing
     @Test func freeSpaceIsShortEnoughForAMenuBar() {
         // Whole gigabytes from ten up, one decimal below, the smaller units as everywhere else.
         #expect(MenuBarText.free(103_120_000_000).filter(\.isNumber) == "103")
-        #expect(MenuBarText.free(103_120_000_000).hasSuffix(" GB"))
+        let english = Locale(identifier: "en_US"), french = Locale(identifier: "fr_FR")
+        #expect(MenuBarText.free(103_120_000_000, locale: english) == "103 GB" && MenuBarText.free(8_440_000_000, locale: english) == "8.4 GB")
+        // The unit is the language's own, as in the sizes everywhere else.
+        #expect(MenuBarText.free(103_120_000_000, locale: french).hasSuffix("Go") && MenuBarText.free(8_440_000_000, locale: french).hasPrefix("8,4"))
         #expect(MenuBarText.free(8_440_000_000).filter(\.isNumber) == "84")
         #expect(MenuBarText.free(1_000_000_000).filter(\.isNumber) == "10")
         #expect(MenuBarText.free(512_000_000).contains("MB"))

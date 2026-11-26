@@ -24,6 +24,9 @@ struct FinderAppTrash {
 
     var authorize: @MainActor () async -> Int32
     var move: @MainActor (Request) async -> Int32
+    /// Several confirmed apps in one request, so Finder asks for approval
+    /// once for all of them. Each is checked again right before it's sent.
+    var moveAll: (@MainActor ([Request]) async -> Int32)? = nil
     var restore: (@MainActor (RestoreRequest) async -> RestoreReply)? = nil
 
     static let changed: Int32 = 2400
@@ -35,6 +38,7 @@ struct FinderAppTrash {
     @MainActor static var live: Self {
         Self(authorize: { await Task.detached(priority: .userInitiated) { permission() }.value },
              move: { request in await Task.detached(priority: .userInitiated) { send(request) }.value },
+             moveAll: { requests in await Task.detached(priority: .userInitiated) { send(requests) }.value },
              restore: { request in await Task.detached(priority: .userInitiated) { putBack(request) }.value })
     }
 
@@ -51,6 +55,23 @@ struct FinderAppTrash {
               request.stillCurrent() else { return changed }
         let event = event(kAEDelete)
         event.setParam(file, forKeyword: AEKeyword(keyDirectObject))
+        return reply(to: event)
+    }
+
+    /// One delete event with every app as a list, so Finder's own approval
+    /// covers them all. Nothing is sent unless every app is still the one
+    /// confirmed: one that changed would otherwise go along with the rest.
+    nonisolated static func send(_ requests: [Request]) -> Int32 {
+        let list = NSAppleEventDescriptor.list()
+        for (i, request) in requests.enumerated() {
+            guard request.source.isFileURL, request.source.query == nil, request.source.fragment == nil,
+                  request.source.pathExtension.lowercased() == "app", request.stillCurrent(),
+                  let file = alias(request.source), request.stillCurrent() else { return changed }
+            list.insert(file, at: i + 1)
+        }
+        guard list.numberOfItems > 0 else { return changed }
+        let event = event(kAEDelete)
+        event.setParam(list, forKeyword: AEKeyword(keyDirectObject))
         return reply(to: event)
     }
 

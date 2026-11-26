@@ -823,7 +823,8 @@
     "cancellingNativeResizeRestoresPreferences": "resize.escape-cancels-without-saving",
     "uninstallConfirmationMovesOnlyOwnedFixtureAndUndoRestoresBytes": "uninstall.confirm-cancel-owned-trash-restore",
     "scanSpeedAccessibilityResetAndPersistence": "settings.scan-speed.accessibility-reset-persistence",
-    "resizeReturningToOriginDoesNotClickAndShortDragsDoNotLeakState": "resize.return-and-short-drag-state"
+    "resizeReturningToOriginDoesNotClickAndShortDragsDoNotLeakState": "resize.return-and-short-drag-state",
+    "paneFilterFieldsFilterAndKeepTheirText": "pane.filter.type-filter-keep"
   },
   "sourcePatterns": {
     "drag": "\\bDragGesture\\s*\\(",
@@ -833,11 +834,15 @@
     "slider": "\\bSlider\\s*\\(",
     "nativeTracking": "\\b(?:trackEvents|mouseDown)\\s*\\(",
     "split": "\\bNSSplitView\\s*\\(",
-    "columnResize": "allowsColumn(?:Resizing|Reordering)\\s*="
+    "columnResize": "allowsColumn(?:Resizing|Reordering)\\s*=",
+    "filterField": "\\bDSFilterField\\s*\\("
   },
   "adjustmentSources": {
     "Sources/MyMole/Access/AppMoveAccessNotice.swift": {
       "dragSource": 1
+    },
+    "Sources/MyMole/DeepClean/DeepCleanView.swift": {
+      "filterField": 1
     },
     "Sources/MyMole/Design/FileTable.swift": {
       "columnResize": 2
@@ -857,8 +862,26 @@
     "Sources/MyMole/Design/TableSizing.swift": {
       "columnResize": 2
     },
+    "Sources/MyMole/Duplicates/DuplicatesView.swift": {
+      "filterField": 1
+    },
+    "Sources/MyMole/Duplicates/SimilarView.swift": {
+      "filterField": 1
+    },
+    "Sources/MyMole/Installers/InstallersView.swift": {
+      "filterField": 1
+    },
+    "Sources/MyMole/Projects/ProjectsView.swift": {
+      "filterField": 1
+    },
     "Sources/MyMole/ScanSpeedControl.swift": {
       "slider": 1
+    },
+    "Sources/MyMole/SettingsView.swift": {
+      "filterField": 1
+    },
+    "Sources/MyMole/Startup/StartupView.swift": {
+      "filterField": 1
     },
     "Sources/MyMole/StatusCardDrag.swift": {
       "drop": 1
@@ -869,9 +892,22 @@
     "Sources/MyMole/StatusView.swift": {
       "drop": 1
     },
+    "Sources/MyMole/Storage/InspectorList.swift": {
+      "filterField": 1
+    },
+    "Sources/MyMole/Storage/LargeFilesView.swift": {
+      "filterField": 1
+    },
+    "Sources/MyMole/Uninstall/AppCopiesSheet.swift": {
+      "filterField": 1
+    },
+    "Sources/MyMole/Uninstall/OrphansSheet.swift": {
+      "filterField": 1
+    },
     "Sources/MyMole/UninstallView.swift": {
       "drag": 1,
-      "drop": 1
+      "drop": 1,
+      "filterField": 1
     }
   }
 }

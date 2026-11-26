@@ -42,7 +42,7 @@ extension DuplicatesShow {
 struct SimilarView: View {
     @Bindable var model: SimilarModel
     @State private var confirming = false
-    @SceneStorage("similar.filter") private var query = ""
+    @AppStorage("similar.filter") private var query = ""
     @State private var filtered = OffMain<[SimilarGroup]>([])
 
     private struct FilterKey: Equatable {
@@ -53,7 +53,9 @@ struct SimilarView: View {
     nonisolated static func matching(_ groups: [SimilarGroup], query: String) -> [SimilarGroup] {
         let search = TextQuery(query)
         return search.isEmpty ? groups : groups.filter { group in
-            group.images.contains { search.matches($0.name, $0.folder) }
+            group.images.contains {
+                search.matches(texts: [$0.name, $0.folder], facts: SearchQuery.facts(path: $0.path, size: $0.bytes, modified: $0.modified, kind: .media, isFolder: false))
+            }
         }
     }
 
@@ -107,7 +109,8 @@ struct SimilarView: View {
         }
         .actionConfirmation(
             String(localized: "Move \(model.chosen.count) pictures to the Trash?"),
-            isPresented: $confirming,
+            isPresented: $confirming, action: .similar,
+            big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosen.count),
             message: String(
                 localized:
                     "\(ByteSize.format(model.chosenBytes)). One picture of each group stays where it is. Look at them first: pictures that look alike aren't always copies. You can undo right after."
@@ -126,7 +129,7 @@ struct SimilarView: View {
                 "in \(model.groups.count) groups of pictures that look alike")
         } actions: {
             DSControlField("Filter photo groups") {
-                DSFilterField(String(localized: "Filter by name or folder"), text: $query).frame(minWidth: 180, idealWidth: 280, maxWidth: .infinity)
+                DSFilterField(String(localized: "Filter by name or folder"), text: $query, conditions: true).frame(minWidth: 180, idealWidth: 280, maxWidth: .infinity)
             }
             DSControlField("Choose pictures for removal") {
                 Button("Choose All but the Best") {

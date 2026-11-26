@@ -345,7 +345,7 @@ final class AppsModel {
         firstAppsRecorded = !apps.isEmpty
         measuredCount = -1
         let folders = folders
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let workers = level.appWorkers(background: background)
         let budget = scanBudget
         let steps = LatestOnly<AppListingStep> { [weak self] step in self?.stepped(step, run: p) }
@@ -356,7 +356,7 @@ final class AppsModel {
                 await self?.loaded(inventory, run: p)
                 return
             }
-            let found = await budget.run(background: background, progress: p) {
+            let found = await budget.walk(background: background, progress: p) {
                 AppFinder.measure(inventory, progress: p, workers: workers, onStep: { steps.send($0) })
             }
             await self?.loaded(found, run: p)
@@ -550,7 +550,7 @@ final class AppsModel {
         let runtimeRoots = runtimeRoots
         return await withTaskCancellationHandler {
             let result = await Task.detached(priority: .userInitiated) {
-                await budget.run(background: false, progress: progress) {
+                await budget.walk(background: false, progress: progress) {
                     var report = AppLeftovers.list(for: app, home: home, installed: ownership.installed, identity: ownership.identity, deep: deep, progress: progress, runtimeRoots: runtimeRoots, onStep: { items in
                         let display = ownership.verified ? items : items.map { item in
                             var item = item; item.evidence = .unverified; return item
@@ -742,6 +742,26 @@ final class AppsModel {
             uninstalling = false
             startLoadAfterUninstall()
         }
+        // Moved by Finder with the rest of its batch, under one approval:
+        // checked as every app is before it went, verified in the Trash now.
+        // It's in the Trash already, so nothing may refuse before it's recorded.
+        if let pre = finderPreMoved.removeValue(forKey: app.path) {
+            let jobs = jobs
+            let job = await jobs.begin(.moveToTrash)
+            defer { jobs.end(job) }
+            guard let moved = await movedInFinder(pre.source), moved.app.path == pre.record.trashed.path else {
+                return .failed(String(localized: "\(app.name) was moved by Finder, but couldn't be found in the Trash as the same app. Its data stayed."))
+            }
+            job.record(.moveToTrash, done: [app.path], failed: [:], refused: [])
+            var named = Set<String>()
+            let leftovers = leftovers.filter { named.insert($0.path).inserted }
+            let approved = leftovers.isEmpty ? nil
+                : await selectionApproval(of: app, leftovers: leftovers, hasSystem: false, manualReview: manualReview, identityAt: moved.app)
+            return await completeUninstall(app, leftovers: leftovers, system: [], manualReview: manualReview, approved: approved,
+                                           appRecord: pre.record, administratorMove: nil,
+                                           finderMove: FinderMove(record: pre.record, source: pre.source, location: pre.record.trashed),
+                                           itself: false, job: job)
+        }
         if app.isProtected { return .refused(String(localized: "\(app.name) is part of macOS.")) }
         if !itself, isRunning(app) { return .refused(String(localized: "\(app.name) is open. Quit it first.")) }
         if await ownUninstaller(of: app) != nil { return .refused(String(localized: "\(app.name) comes with its own uninstaller. Use that instead.")) }
@@ -910,6 +930,17 @@ final class AppsModel {
                 appOutcome.failed.first.map { String(localized: "\(app.name) wasn't moved: \($0.reason)") }
                     ?? String(localized: "\(app.name) wasn't moved."))
         }
+        return await completeUninstall(app, leftovers: leftovers, system: chosenSystem, manualReview: manualReview, approved: approved,
+                                       appRecord: appRecord, administratorMove: administratorMove, finderMove: finderMove, itself: itself, job: job)
+    }
+
+    /// The app has gone to the Trash: its leftovers follow, each checked
+    /// again, then the system part, the history record and the notice.
+    private func completeUninstall(
+        _ app: AppBundle, leftovers: [Leftover], system chosenSystem: [SystemLeftover], manualReview: ManualLeftoverReview?,
+        approved: Ownership?, appRecord: TrashRecord, administratorMove: ApplicationTrash.Receipt?, finderMove: FinderMove?,
+        itself: Bool, job: TrashJob
+    ) async -> Result {
         let home = home
         let backend = trash.unlockingLocked()
         let runtimeRoots = runtimeRoots
@@ -1139,7 +1170,7 @@ final class AppsModel {
                 job.record(.putBack, done: [finderMove.record.original.path], failed: [:], refused: [])
             } else {
                 failed.append(finderMove.record)
-                job.record(.putBack, done: [], failed: [finderMove.record.original.path: "Couldn't be put back"], refused: [])
+                job.record(.putBack, done: [], failed: [finderMove.record.original.path: String(localized: "Couldn't be put back")], refused: [])
             }
         }
         if let receipt = administratorMove, failed.contains(receipt.record), let restore = system.restoreApp {
@@ -1367,6 +1398,78 @@ final class AppsModel {
     /// The history records of the last batch, which the notice's Undo puts back together.
     private var lastBatch: [UUID] = []
 
+    /// Apps of a batch Finder moved together, by where they were, until each one's leftovers follow.
+    private struct PreMoved {
+        let record: TrashRecord
+        let source: RemovedApp.Source
+    }
+    private var finderPreMoved: [String: PreMoved] = [:]
+    /// Whether only Finder (or the helper) can move an app; tests decide it themselves.
+    var needsApprovalToMove: @Sendable (String) -> Bool = AppsModel.needsApproval(toMove:)
+
+    /// Whether moving `path` needs more than the user's own rights: the
+    /// folder holding it, or the app itself, can't be written.
+    nonisolated static func needsApproval(toMove path: String) -> Bool {
+        Darwin.access((path as NSString).deletingLastPathComponent, W_OK) != 0 || Darwin.access(path, W_OK) != 0
+    }
+
+    /// The apps of a batch that only Finder can move, sent to it in one
+    /// request so it asks for approval once instead of once per app. Each is
+    /// checked first as it would be alone: closed, not kept, no uninstaller
+    /// of its own, leftovers it's verified to own, and still the same app.
+    /// What Finder doesn't move goes the usual way, one at a time.
+    private func moveTogetherInFinder(_ batch: [BatchItem]) async {
+        finderPreMoved = [:]
+        guard let finderTrash, let moveAll = finderTrash.moveAll, batch.count > 1, !uninstalling else { return }
+        // Nothing else uninstalls meanwhile; each app's own turn comes after.
+        uninstalling = true
+        defer { uninstalling = false }
+        var ready: [(app: AppBundle, source: RemovedApp.Source)] = []
+        for item in batch {
+            let app = item.app
+            guard !isSelf(app), !app.isProtected, !isRunning(app), !Locks.isLocked(app.path),
+                  item.leftovers.allSatisfy(\.canRemove),
+                  await Task.detached(priority: .userInitiated, operation: { [needs = needsApprovalToMove] in needs(app.path) }).value,
+                  await ownUninstaller(of: app) == nil, await refusal(for: app) == nil,
+                  let source = await appMoveSource(for: app), await sourceIsCurrent(source)
+            else { continue }
+            // The helper moves an app it may take without asking; Finder is for the rest.
+            if system.trashApp != nil, system.isReady(), system.blocker() == nil,
+               await Task.detached(priority: .userInitiated, operation: { ApplicationTrash.Request.isEligible(app, source: source) }).value {
+                continue
+            }
+            if !item.leftovers.isEmpty,
+               await selectionApproval(of: app, leftovers: item.leftovers, hasSystem: false, manualReview: nil) == nil { continue }
+            ready.append((app, source))
+        }
+        guard ready.count > 1 else { return }
+        let jobs = jobs
+        let job = await jobs.begin(.moveToTrash)
+        defer { jobs.end(job) }
+        guard !job.isStopped else { return }
+        authorizingApp = ready[0].app.path
+        defer { authorizingApp = nil }
+        guard await finderTrash.authorize() == noErr else { return }
+        // Its turn may have come later: each is cleared again right before it's sent.
+        var going: [(app: AppBundle, source: RemovedApp.Source)] = []
+        for r in ready where !job.isStopped && !isRunning(r.app) {
+            if await refusal(for: r.app) == nil, await sourceIsCurrent(r.source) { going.append(r) }
+        }
+        guard !going.isEmpty else { return }
+        let protections = protections
+        _ = await moveAll(going.map { r in
+            FinderAppTrash.Request(source: URL(fileURLWithPath: r.app.path), stillCurrent: {
+                guard !job.isStopped, r.source.isAtOriginalPath, let kept = try? protections.read() else { return false }
+                return !kept(r.app.path)
+            })
+        })
+        for r in going {
+            guard let moved = await movedInFinder(r.source) else { continue }
+            finderPreMoved[r.app.path] = PreMoved(
+                record: TrashRecord(original: URL(fileURLWithPath: r.app.path), trashed: URL(fileURLWithPath: moved.app.path)), source: r.source)
+        }
+    }
+
     /// Uninstalls each app in turn, as one at a time would, each with its
     /// own history record. What one can't (open, its own uninstaller, kept)
     /// stays, and the reasons are returned by app name.
@@ -1375,6 +1478,8 @@ final class AppsModel {
         var runs: [UUID] = []
         var apps = 0, items = 0
         var bytes: Int64 = 0
+        await moveTogetherInFinder(batch)
+        defer { finderPreMoved = [:] }
         for item in batch {
             if isSelf(item.app) {
                 problems.append((item.app.name, String(localized: "Uninstall MyMole on its own from Settings.")))

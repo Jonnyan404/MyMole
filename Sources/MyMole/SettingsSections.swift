@@ -3,7 +3,7 @@ import Foundation
 /// Search describes controls, rather than indexing private paths in their values.
 enum SettingsSection: String, CaseIterable, Identifiable {
     case appearance, menuBar, background, performance, loading, diskMap, confirmations
-    case diskAccess, appManagement, timings, folderAccess, systemTasks, keep, systemKeep, about, uninstall
+    case diskAccess, appManagement, timings, folderAccess, systemTasks, keep, temporary, systemKeep, privacy, about, uninstall
 
     var id: String { rawValue }
 
@@ -23,6 +23,8 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         case .systemTasks: String(localized: "System Tasks")
         case .keep: String(localized: "Deep Clean Keep List")
         case .systemKeep: String(localized: "System Clean Keep List")
+        case .temporary: String(localized: "Temporary Folders")
+        case .privacy: String(localized: "Privacy")
         case .about: String(localized: "About")
         case .uninstall: String(localized: "Uninstall MyMole")
         }
@@ -44,6 +46,8 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         case .folderAccess: String(localized: "Your home folder Applications The startup disk Give Access Take Back permissions bookmarks sandbox")
         case .systemTasks: String(localized: "administrator password root helper privileged enable disable approval Login Items Extensions")
         case .keep, .systemKeep: String(localized: "Always Keep Remove Try Again Discard Change protected files folders never remove safety rules")
+        case .temporary: String(localized: "tmp temp temporary folders days untouched left alone age Deep Clean offered")
+        case .privacy: String(localized: "network connections internet data stored kept saved scans history fingerprints permissions sandbox")
         case .about: String(localized: "MyMole License Support website source available")
         case .uninstall: String(localized: "remove MyMole itself self uninstall quit leftovers settings caches data")
         }
@@ -54,6 +58,8 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         return allCases.filter { section in
             if section == .folderAccess, !sandboxed { return false }
             if section == .systemTasks, sandboxed { return false }
+            // Only the direct edition looks in the temporary folders.
+            if section == .temporary, sandboxed { return false }
             if section == .systemKeep, !systemTasks { return false }
             let actions = section == .confirmations ? ConfirmationAction.allCases.map(\.title).joined(separator: " ") : ""
             return search.matches(section.title, section.terms, actions)

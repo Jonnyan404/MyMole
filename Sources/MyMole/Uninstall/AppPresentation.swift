@@ -11,6 +11,10 @@ struct AppPresentation: Sendable {
     let totalBytes: Int64
     let measuring: Bool
 
+    /// The mark on an app that is open, its own phrase since many languages
+    /// say it otherwise than the button that opens something.
+    static var openMark: String { String(localized: "app.open", defaultValue: "Open", comment: "An app that is open now; not the action") }
+
     init() {
         apps = []; byPath = [:]; rows = []
         hiddenMacOS = 0; totalBytes = 0; measuring = false
@@ -36,7 +40,7 @@ struct AppPresentation: Sendable {
                 row.badge = String(localized: "This app")
                 row.badgeHelp = String(localized: "Review this copy and its data before it goes to the Trash.")
             } else if running.contains(app.path) {
-                row.badge = String(localized: "Open")
+                row.badge = Self.openMark
                 row.badgeTint = .systemOrange
                 row.badgeHelp = String(localized: "Quit it before uninstalling")
             } else if app.fromAppStore {

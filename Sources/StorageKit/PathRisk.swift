@@ -1,3 +1,4 @@
+import Darwin
 import Foundation
 
 /// A warning for something picked by hand, such as a folder marked in the
@@ -15,53 +16,80 @@ public struct PathRisk: Sendable, Hashable {
     public let level: Level
     public let reason: String
 
-    /// The folder or file itself, or anything inside it.
-    static func within(_ p: String, _ parts: [String]) -> Bool {
-        parts.contains { p.contains($0 + "/") || p.hasSuffix($0) }
+    /// What one rule looks for in a path. Every pattern is ASCII, so the
+    /// path is searched as bytes: the walk asks for every folder it reads.
+    struct Pattern: Sendable {
+        let anywhere: [[UInt8]]
+        let atEnd: [[UInt8]]
+
+        init(anywhere: [String] = [], atEnd: [String] = []) {
+            self.anywhere = anywhere.map { Array($0.utf8) }
+            self.atEnd = atEnd.map { Array($0.utf8) }
+        }
+
+        /// The folder or file itself, or anything inside it.
+        static func within(_ parts: [String]) -> Pattern {
+            Pattern(anywhere: parts.map { $0 + "/" }, atEnd: parts)
+        }
+
+        func matches(_ path: UnsafeRawBufferPointer) -> Bool {
+            guard let base = path.baseAddress else { return false }
+            for needle in anywhere where needle.count <= path.count && memmem(base, path.count, needle, needle.count) != nil { return true }
+            for needle in atEnd where needle.count <= path.count && memcmp(base + (path.count - needle.count), needle, needle.count) == 0 {
+                return true
+            }
+            return false
+        }
     }
 
-    static let rules: [(match: @Sendable (String) -> Bool, risk: PathRisk)] = [
-        ({ within($0, ["/.aws", "/.kube", "/.azure", "/.docker/config.json", "/.netrc", "/.npmrc", "/.config/gh", "/.config/gcloud"]) },
+    static let rules: [(pattern: Pattern, risk: PathRisk)] = [
+        (.within(["/.aws", "/.kube", "/.azure", "/.docker/config.json", "/.netrc", "/.npmrc", "/.config/gh", "/.config/gcloud"]),
          PathRisk(level: .caution, reason: String(localized: "Sign-in keys or tokens. Tools that use them sign you out."))),
-        ({ within($0, [
+        (.within([
             "/Library/Safari", "/Application Support/Google/Chrome", "/Application Support/Firefox/Profiles",
             "/Application Support/BraveSoftware", "/Application Support/Microsoft Edge", "/Application Support/Arc",
-        ]) },
+        ]),
          PathRisk(level: .caution, reason: String(localized: "A browser profile: history, bookmarks, saved passwords and sign-ins."))),
-        ({ $0.contains("/.Trash/") || $0.hasSuffix("/.Trash") },
+        (.within(["/.Trash"]),
          PathRisk(level: .caution, reason: String(localized: "Already in the Trash."))),
-        ({ $0.contains("/MobileSync/Backup") },
-         PathRisk(level: .caution, reason: "iPhone/iPad backup. Can't be recreated.")),
-        ({ $0.contains("/Mobile Documents/") },
-         PathRisk(level: .caution, reason: "iCloud Drive files. Removing them here removes them on your other devices too.")),
+        (Pattern(anywhere: ["/MobileSync/Backup"]),
+         PathRisk(level: .caution, reason: String(localized: "iPhone/iPad backup. Can't be recreated."))),
+        (Pattern(anywhere: ["/Mobile Documents/"]),
+         PathRisk(level: .caution, reason: String(localized: "iCloud Drive files. Removing them here removes them on your other devices too."))),
         // Dropbox, Google Drive, OneDrive, Box and other File Provider services.
-        ({ $0.contains("/Library/CloudStorage/") },
+        (Pattern(anywhere: ["/Library/CloudStorage/"]),
          PathRisk(level: .caution, reason: String(localized: "Synced with a cloud service. Removing it here removes it in the cloud and on your other devices too."))),
-        ({ within($0, [".photoslibrary"]) },
+        (.within([".photoslibrary"]),
          PathRisk(level: .caution, reason: String(localized: "A Photos library: every photo, video and edit in it."))),
-        ({ ["/Downloads/", "/Documents/", "/Desktop/", "/Pictures/", "/Movies/", "/Music/"].contains(where: $0.contains) },
+        (Pattern(anywhere: ["/Downloads/", "/Documents/", "/Desktop/", "/Pictures/", "/Movies/", "/Music/"]),
          PathRisk(level: .caution, reason: String(localized: "Your own files."))),
-        ({ $0.contains("/Library/Mail/") || $0.contains("/Library/Messages/") },
+        (Pattern(anywhere: ["/Library/Mail/", "/Library/Messages/"]),
          PathRisk(level: .caution, reason: String(localized: "Mail or Messages data."))),
-        ({ $0.hasSuffix("/Docker.raw") || $0.contains("/com.docker.docker/Data/vms/") },
+        (Pattern(anywhere: ["/com.docker.docker/Data/vms/"], atEnd: ["/Docker.raw"]),
          PathRisk(level: .caution, reason: String(localized: "Docker's virtual disk. Holds every image, container and volume."))),
-        ({ p in [".vmwarevm", ".pvm", ".utm", "/VirtualBox VMs/", "/Parallels/", ".vdi", ".vmdk", ".qcow2"].contains(where: p.contains) },
+        (Pattern(anywhere: [".vmwarevm", ".pvm", ".utm", "/VirtualBox VMs/", "/Parallels/", ".vdi", ".vmdk", ".qcow2"]),
          PathRisk(level: .caution, reason: String(localized: "A virtual machine and everything installed in it."))),
-        ({ $0.contains("/Xcode/Archives") },
+        (Pattern(anywhere: ["/Xcode/Archives"]),
          PathRisk(level: .caution, reason: String(localized: "Xcode archives. Needed to symbolicate crash reports of shipped builds."))),
-        ({ $0.contains("/Group Containers/") },
+        (Pattern(anywhere: ["/Group Containers/"]),
          PathRisk(level: .review, reason: String(localized: "Data shared between apps. May include settings."))),
-        ({ $0.contains("/CoreSimulator/Devices") },
+        (Pattern(anywhere: ["/CoreSimulator/Devices"]),
          PathRisk(level: .review, reason: String(localized: "Simulator apps and their data."))),
     ]
 
+    private static func withBytes<R>(_ text: String, _ body: (UnsafeRawBufferPointer) -> R) -> R {
+        var text = text
+        return text.withUTF8 { body(UnsafeRawBufferPointer($0)) }
+    }
+
     /// The first rule that matches, if any.
     public static func of(_ path: String) -> PathRisk? {
-        rules.first(where: { $0.match(path) })?.risk
+        let code = code(of: path)
+        return code >= 0 ? rules[Int(code)].risk : nil
     }
 
     static func code(of path: String) -> Int8 {
-        rules.firstIndex(where: { $0.match(path) }).map(Int8.init) ?? -1
+        withBytes(path) { bytes in rules.firstIndex(where: { $0.pattern.matches(bytes) }).map(Int8.init) ?? -1 }
     }
 
     static func merging(_ a: Int8, _ b: Int8) -> Int8 {
@@ -84,10 +112,10 @@ public struct PathRisk: Sendable, Hashable {
         "Safari", "Chrome", "Profiles", "BraveSoftware", "Microsoft Edge", "Arc", ".Trash",
         "Backup", "Docker.raw", "Archives", "Devices",
     ]
-    private static let specificSuffixes = [".photoslibrary", ".vmwarevm", ".pvm", ".utm", ".vdi", ".vmdk", ".qcow2"]
+    private static let specificSuffixes = Pattern(anywhere: [".photoslibrary", ".vmwarevm", ".pvm", ".utm", ".vdi", ".vmdk", ".qcow2"])
 
     static func childCode(_ name: String, in parent: String) -> Int8 {
-        guard specificNames.contains(name) || specificSuffixes.contains(where: name.contains) else { return -1 }
+        guard specificNames.contains(name) || withBytes(name, specificSuffixes.matches) else { return -1 }
         return code(of: (parent == "/" ? "" : parent) + "/" + name)
     }
 

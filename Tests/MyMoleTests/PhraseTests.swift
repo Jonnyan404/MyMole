@@ -36,7 +36,7 @@ import Testing
         for key in ["Move to Trash", "Moved %@ to the Trash", "Restored %lld; %lld couldn't be put back. Undo tries those again.",
                     "Wait for the scan to finish.", "Copy Error Code",
                     // Captions of the design components, and text built outside a view.
-                    "found in %@ items", "kept", "Go to %@", "%@ is open. Quit it first.", "%lld of %lld put back"] {
+                    "found in %lld items", "kept", "Go to %@", "%@ is open. Quit it first.", "%lld of %lld put back"] {
             #expect(strings[key] != nil, "\(key)")
         }
         let stale = strings.filter { ($0.value as? [String: Any])?["extractionState"] as? String == "stale" }

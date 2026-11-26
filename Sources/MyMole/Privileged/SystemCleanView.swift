@@ -31,6 +31,7 @@ struct SystemCleanView: View {
                             enabled: model.privileged.isAvailable && !model.scanning && !model.removing) { model.scan() }
         }
         .actionConfirmation(String(localized: "Permanently delete \(fmt(model.chosenBytes))?"), isPresented: $confirming,
+                            action: .systemClean, big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosen.count),
                             button: String(localized: "Delete for Good"),
                             message: String(localized: "\(model.chosen.count) system items are deleted for good; they can't go to the Trash. The services that made them rebuild what they need. macOS asks for an administrator's password first.")) { model.removeChosen() }
         .onAppear { model.scanIfNeeded() }
@@ -38,7 +39,7 @@ struct SystemCleanView: View {
 
     private var header: some View {
         DSPaneHeader {
-            DSMetric(fmt(model.totalBytes), "found in \(model.candidates.count.formatted()) items")
+            DSMetric(fmt(model.totalBytes), "found in \(model.candidates.count) items")
         } actions: {
             DSControlField("Choose for permanent deletion") {
                 Button("Choose Safe Items") { model.chooseSafe() }

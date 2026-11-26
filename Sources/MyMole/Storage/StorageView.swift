@@ -7,10 +7,21 @@ struct StorageView: View {
     @AppStorage("diskMap.listWidth") private var listWidth = 0.0
     @AppStorage("diskMap.chartHidden") private var chartHidden = false
     @Bindable var model: StorageModel
+    /// Without Full Disk Access, on a folder the user chose.
+    var limited = false
+    /// Opens another pane, where a place in System Data can be cleaned.
+    var open: (Pane) -> Void = { _ in }
     @State private var places = PlacesModel()
 
     var body: some View {
         VStack(spacing: 0) {
+            if limited {
+                DSNotice(.info, "Without Full Disk Access, folders macOS protects stay closed. They're listed under Skipped, and the map counts them as unread.") {
+                    Button("Open System Settings") { FullDiskAccess.openSettings() }
+                }
+                .padding(.horizontal, DS.Space.lg)
+                .padding(.top, DS.Space.sm)
+            }
             PathBar(model: model)
             Group {
                 switch model.tab {
@@ -28,6 +39,8 @@ struct StorageView: View {
             NoticeToast(model: model)
         }
         .sheet(isPresented: $model.showReview) { ReviewSheet(model: model) }
+        .sheet(isPresented: $model.showReport) { ReportExportSheet(model: model) }
+        .sheet(isPresented: $model.showSystemData) { SystemDataSheet(space: model.diskSpace, open: open) }
         .task(id: model.removalHintKey) { await model.warmRemovalHints() }
         .liveRefresh(every: .seconds(2), events: [.applications, .protections]) { await model.warmRemovalHints() }
         .onReceive(NotificationCenter.default.publisher(for: KeepChanges.name)) { _ in model.invalidateRemovalHints() }
@@ -47,11 +60,11 @@ struct StorageView: View {
             return String(localized: "Saved scan \(opened.file), made \(opened.date.formatted(date: .abbreviated, time: .shortened)) · only to look at")
         }
         if model.scanning {
-            return String(localized: "Scanning… \(model.liveFiles.formatted()) files · \(ByteCountFormatter.string(fromByteCount: model.liveBytes, countStyle: .file))")
+            return String(localized: "Scanning… \(model.liveFiles) files · \(ByteCountFormatter.string(fromByteCount: model.liveBytes, countStyle: .file))")
         }
         guard let r = model.root else { return String(localized: "Where your space went") }
         let size = ByteCountFormatter.string(fromByteCount: r.size, countStyle: .file)
-        let files = r.fileCount.formatted()
+        let files = r.fileCount
         if model.incomplete { return String(localized: "Partial map · \(size) in \(files) files") }
         return model.lastDuration.map { String(localized: "\(size) in \(files) files in \(Int($0.rounded())) s") }
             ?? String(localized: "\(size) in \(files) files")
@@ -128,7 +141,7 @@ struct StorageView: View {
     private var chart: some View {
         ZStack {
             if model.root == nil {
-                CenterCard(symbol: nil, title: "Scanning…", subtitle: "\(model.liveFiles.formatted()) files so far") {}
+                CenterCard(symbol: nil, title: "Scanning…", subtitle: "\(model.liveFiles) files so far") {}
             } else if model.currentIsEmpty {
                 ContentUnavailableView("No Mapped Contents", systemImage: "folder",
                     description: Text("This folder has no files or folders in the current map."))
@@ -255,7 +268,7 @@ struct PathBar: View {
                 }
             }
             if let space = model.diskSpace, let root = model.root, !model.scanning {
-                OutsideTheMap(space: space, mapped: root.size)
+                OutsideTheMap(space: space, mapped: root.size) { model.showSystemData = true }
                     .fixedSize()
             }
         }
@@ -282,6 +295,7 @@ struct PathBar: View {
 struct OutsideTheMap: View {
     let space: DiskSpace
     let mapped: Int64
+    var showSystemData: () -> Void = {}
     @State private var open = false
 
     var body: some View {
@@ -305,6 +319,11 @@ struct OutsideTheMap: View {
                 Divider()
                 row(String(localized: "Purgeable"), space.purgeable)
                 DSText(purgeableText, .metadata)
+                Divider()
+                Button("What's in System Data…") {
+                    open = false
+                    showSystemData()
+                }
             }
             .padding(DS.Space.lg)
             .frame(width: 340)
@@ -406,7 +425,7 @@ struct BasketBar: View {
                         .help("Stops before the next item. Anything already moved can be undone.")
                 }
             } else {
-            Button("Clear") { model.marked.removeAll() }
+            Button(DS.clearChoice) { model.marked.removeAll() }
                 .accessibilityLabel("Clear the choice")
                 .controlSize(.large)
                 .disabled(model.trashing)

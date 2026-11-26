@@ -86,5 +86,9 @@ Only the latest release of each edition gets security fixes.
 ### Both editions
 
 - MyMole uses no network and sends no data.
-- What MyMole removes is listed in its history, and items moved to the Trash
-  can be put back with Undo.
+- MyMole's history lists each cleanup run: how many items it moved to the
+  Trash or deleted for good, and their size. It keeps no file paths.
+- While MyMole is open, the last ten moves to the Trash in each pane can be
+  put back with Undo. After a relaunch, use Finder's Put Back. Items deleted
+  for good, Optimize's moves and anything in an emptied Trash can't be undone
+  from MyMole.

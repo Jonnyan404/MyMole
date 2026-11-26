@@ -8,6 +8,8 @@
 #           the container is privileged; its tools are Alpine's nfs-utils,
 #           added to the Samba image once, as image mymole-nfs-test.
 #   webdav  this Mac's own Apache serving a folder of a temporary directory.
+#   slow    the same, sending at most 16 KiB a second, as a slow NAS does;
+#           mounted twice, to see the share is known again when it's back.
 #   images  disk images standing in for USB sticks and external disks:
 #           exFAT, FAT32, APFS, Mac OS Extended and its case-sensitive form, one attached
 #           read-only, and one ejected while it's being scanned.
@@ -16,7 +18,7 @@
 # A server is never paused or stopped while mounted: every call on the share
 # then waits until it answers again, and the client's connection to that
 # server name can stay stuck afterwards.
-# Usage: scripts/volume-tests.sh [smb|fruit|nfs|webdav|images]...   (all without arguments)
+# Usage: scripts/volume-tests.sh [smb|fruit|nfs|webdav|slow|images]...   (all without arguments)
 set -euo pipefail
 
 fail() { printf '%s\n' "$*" >&2; exit 1; }
@@ -201,6 +203,60 @@ EOF
   /usr/sbin/httpd -f "$httpd_conf" -k stop; httpd_conf=
 }
 
+slow() {
+  local root="$work/dav/root" port=${MYMOLE_SLOW_PORT:-8090} log="$work/slow.log"
+  mkdir -p "$root" "$work/dav/logs" "$work/dav/lock"
+  # Enough folders that a scan is still reading them when it's stopped.
+  (cd "$root" && for i in $(seq 1 600); do mkdir -p "d$i" && head -c 2000 /dev/urandom > "d$i/f.bin"; done)
+  httpd_conf="$work/dav/httpd.conf"
+  cat > "$httpd_conf" <<EOF
+ServerRoot "/usr"
+ServerName localhost
+Listen 127.0.0.1:$port
+PidFile "$work/dav/logs/httpd.pid"
+LoadModule mpm_prefork_module libexec/apache2/mod_mpm_prefork.so
+LoadModule authz_core_module libexec/apache2/mod_authz_core.so
+LoadModule unixd_module libexec/apache2/mod_unixd.so
+LoadModule dav_module libexec/apache2/mod_dav.so
+LoadModule dav_fs_module libexec/apache2/mod_dav_fs.so
+LoadModule dir_module libexec/apache2/mod_dir.so
+LoadModule mime_module libexec/apache2/mod_mime.so
+LoadModule filter_module libexec/apache2/mod_filter.so
+LoadModule env_module libexec/apache2/mod_env.so
+LoadModule ratelimit_module libexec/apache2/mod_ratelimit.so
+TypesConfig /private/etc/apache2/mime.types
+ErrorLog "$work/dav/logs/error.log"
+DavLockDB "$work/dav/lock/DavLock"
+DocumentRoot "$root"
+<Directory "$root">
+  Dav On
+  Require all granted
+  SetOutputFilter RATE_LIMIT
+  SetEnv rate-limit 16
+</Directory>
+EOF
+  /usr/sbin/httpd -f "$httpd_conf" -k start
+  mount_point slow-mount; local share=$made; mounts+=("$share")
+  local key1 key2
+  for pass in 1 2; do
+    for _ in $(seq 1 20); do mount_webdav -S -v MyMoleSlow "http://127.0.0.1:$port/" "$share" 2>/dev/null && break; sleep 0.5; done
+    mount | grep -q " on $share " || fail "The slow WebDAV share didn't mount."
+    if [ "$pass" = 1 ]; then
+      filter='SlowShareTests' run_tests MYMOLE_SLOW_SHARE="$share" | tee "$log"
+      key1=$(grep '^share-history-key ' "$log" | tail -1)
+    else
+      filter='SlowShareTests/theShareIsKnownByItsAddress' run_tests MYMOLE_SLOW_SHARE="$share" | tee "$log"
+      key2=$(grep '^share-history-key ' "$log" | tail -1)
+    fi
+    umount "$share"
+  done
+  rm -f "$log"
+  [ -n "$key1" ] && [ "$key1" = "$key2" ] || fail "The share wasn't known again after it was mounted again: '$key1', '$key2'."
+  echo "The share keeps its history key when it's mounted again: ${key1#share-history-key }"
+  /usr/sbin/httpd -f "$httpd_conf" -k stop; httpd_conf=
+  rm -rf "$work/dav"
+}
+
 # A new disk image of `name` and `fs`, attached at the mount point in `made`.
 attach() {
   local name=$1 fs=$2
@@ -230,13 +286,14 @@ disk_images() {
     MYMOLE_DISK_READ_ONLY="$ro" MYMOLE_DISK_EJECT="$eject"
 }
 
-[ "$#" -gt 0 ] || set -- smb fruit nfs webdav images
+[ "$#" -gt 0 ] || set -- smb fruit nfs webdav slow images
 for kind in "$@"; do
   case "$kind" in
     smb) smb "" ;;
     fruit) smb "; vfs objects = catia fruit streams_xattr; fruit:metadata = stream" ;;
     nfs) nfs ;;
     webdav) webdav ;;
+    slow) slow ;;
     images) disk_images ;;
     *) fail "Unknown kind: $kind" ;;
   esac

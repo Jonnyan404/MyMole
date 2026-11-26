@@ -1,14 +1,24 @@
 import Dispatch
 import Foundation
+import StorageKit
 
-/// Whether MyMole gives memory back when macOS runs short, chosen in
-/// Settings → Performance. Off by default, so nothing is let go unless the
-/// user asks for it on a Mac that gets sluggish.
+/// Whether MyMole gives memory back when macOS runs short, in Settings →
+/// Performance. Until the user chooses, it follows Large results: on at the
+/// steps that keep little in memory (Gentle to Fast), off at Maximum, the
+/// default, and at Hyperspeed, which keeps everything in memory.
 enum MemoryRelief {
     static let defaultsKey = "performance.memoryRelief"
 
     static func isOn(in defaults: UserDefaults = .standard) -> Bool {
-        defaults.bool(forKey: defaultsKey)
+        (defaults.object(forKey: defaultsKey) as? Bool) ?? byDefault(ResultSize.current(in: defaults))
+    }
+
+    static func byDefault(_ size: ResultSize) -> Bool { size <= .fast }
+
+    /// What the user chose for `size`: a choice equal to what the step gives
+    /// is no choice, so relief follows the step again.
+    static func saved(_ on: Bool, for size: ResultSize) -> Bool? {
+        on == byDefault(size) ? nil : on
     }
 }
 

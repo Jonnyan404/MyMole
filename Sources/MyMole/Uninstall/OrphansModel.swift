@@ -136,7 +136,7 @@ final class OrphansModel {
             }
             let owners = current
             let listing = await Task.detached(priority: .userInitiated) {
-                await budget.run(background: false, progress: p) {
+                await budget.walk(background: false, progress: p) {
                     Orphans.list(home: home, installed: owners, known: known, running: running, progress: p, readers: readers)
                 }
             }.value

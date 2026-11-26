@@ -271,6 +271,58 @@ import Testing
         #expect(partly.partlyUndone && partly.restoreFailed == 3 && partly.freedBytes == 300)
     }
 
+    /// A log that doesn't read as records isn't written over as if it were
+    /// empty: what it holds is kept beside the log the next record starts.
+    @Test func aDamagedLogIsKeptBesideTheNewOne() throws {
+        let box = try Sandbox()
+        let url = box.url.appending(path: "history.json")
+        let damaged = Data(#"[{"id":"not a record""#.utf8)
+        try damaged.write(to: url)
+        #expect(CleanupLog.load(from: url).isEmpty)
+        let r = CleanupRecord(source: "Deep Clean", items: 1, bytes: 10, failed: 0)
+        CleanupLog.submit(r, to: url)
+        #expect(CleanupLog.load(from: url).map(\.id) == [r.id])
+        #expect(try Data(contentsOf: CleanupLog.setAside(for: url)) == damaged)
+        #expect(CleanupLog.setAside(for: url).lastPathComponent == "history.unreadable.json")
+        // An Undo of a run the damaged log held finds nothing to change, and writes nothing.
+        CleanupLog.submitRestore(UUID(), restored: 1, bytes: 10, failed: 0, in: url)
+        #expect(CleanupLog.load(from: url).map(\.id) == [r.id])
+    }
+
+    /// An empty file is a log with nothing in it, and sets nothing aside.
+    @Test func anEmptyLogStartsOver() throws {
+        let box = try Sandbox()
+        let url = box.url.appending(path: "history.json")
+        try Data().write(to: url)
+        let r = CleanupRecord(source: "Installers", items: 2, bytes: 20, failed: 0)
+        CleanupLog.submit(r, to: url)
+        #expect(CleanupLog.load(from: url).map(\.id) == [r.id])
+        #expect(!FileManager.default.fileExists(atPath: CleanupLog.setAside(for: url).path))
+    }
+
+    /// A quit waits for saved results only so long: a write still under
+    /// way is said to be, and goes on to finish.
+    @Test func waitingForSavedResultsIsBounded() {
+        let started = DispatchSemaphore(value: 0), release = DispatchSemaphore(value: 0)
+        let written = Written()
+        StoreWrites.submit {
+            started.signal()
+            release.wait()
+            written.done.store(true, ordering: .relaxed)
+        }
+        started.wait()
+        #expect(!StoreWrites.flush(within: 0.05))
+        #expect(!written.isDone)
+        release.signal()
+        #expect(StoreWrites.flush(within: 30))
+        #expect(written.isDone)
+    }
+
+    private final class Written: Sendable {
+        let done = Atomic<Bool>(false)
+        var isDone: Bool { done.load(ordering: .relaxed) }
+    }
+
     @Test func oldRecordsStillRead() throws {
         let box = try Sandbox()
         let url = box.url.appending(path: "history.json")

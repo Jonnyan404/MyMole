@@ -8,8 +8,8 @@ import SwiftUI
 struct InstallersView: View {
     @Bindable var model: InstallersModel
     @State private var confirming = false
-    /// Kept while you go to other panes and back, as the window's own state.
-    @SceneStorage("installers.filter") private var query = ""
+    /// Kept between panes and launches.
+    @AppStorage("installers.filter") private var query = ""
 
     var body: some View {
         VStack(spacing: 0) {
@@ -28,6 +28,7 @@ struct InstallersView: View {
         .actionConfirmation(
             String(localized: "Move \(model.chosen.count) installers to the Trash?"),
             isPresented: $confirming, action: .installers,
+            big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosen.count),
             message: String(localized: "\(fmt(model.chosenBytes)). You can undo right after, or put them back from the Trash later.")
         ) { model.trashChosen() }
         .onAppear { model.scanIfNeeded() }
@@ -73,7 +74,7 @@ struct InstallersView: View {
             DSMetric(fmt(model.totalBytes), "in \(model.files.count) installers")
         } actions: {
             DSControlField("Filter installers") {
-                DSFilterField(String(localized: "Filter by name or folder"), text: $query)
+                DSFilterField(String(localized: "Filter by name or folder"), text: $query, conditions: true)
                     .frame(minWidth: 180, idealWidth: 280, maxWidth: .infinity)
                     .disabled(model.files.isEmpty)
             }
@@ -156,7 +157,9 @@ struct InstallersView: View {
             let (files, query) = (model.files, query)
             let search = TextQuery(query)
             await filtered.update(count: files.count) {
-                search.isEmpty ? files : files.filter { search.matches($0.name, $0.path) }
+                search.isEmpty ? files : files.filter {
+                    search.matches(texts: [$0.name, $0.path], facts: SearchQuery.facts(path: $0.path, size: $0.bytes, modified: $0.modified, isFolder: $0.isFolder))
+                }
             }
         }
         .dsEmptyOverlay(showing: shown.isEmpty || model.files.isEmpty) {
@@ -218,14 +221,14 @@ struct InstallersView: View {
         DSActionBar {
             VStack(alignment: .leading, spacing: DS.Space.xxs) {
                 HStack(spacing: DS.Space.sm) {
-                    DSText("\(model.chosen.count.formatted()) chosen · \(fmt(model.chosenBytes))"
+                    DSText(String(localized: "\(model.chosen.count.formatted()) chosen · \(fmt(model.chosenBytes))")
                         + DSFilterField.hiddenNote(chosen: model.chosen, shown: Set(shown.map(\.path))), .lead)
                         .keepWhole()
-                    Button("Clear") { model.chosen = [] }
+                    Button(DS.clearChoice) { model.chosen = [] }
                 .accessibilityLabel("Clear the choice")
                         .controlSize(.small)
                 }
-                Label("Moved to the Trash — you can undo.", systemImage: "trash")
+                Label("Chosen items go to the Trash, and you can undo.", systemImage: "trash")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .labelStyle(.titleAndIcon)

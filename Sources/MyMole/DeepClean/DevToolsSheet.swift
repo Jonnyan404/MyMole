@@ -17,8 +17,8 @@ struct DevToolsSheet: View {
             Text("Developer Tools").font(.title2.bold())
             DSText(
                 Edition.current.isSandboxed
-                    ? "Virtual machines and Android's files, with their sizes, to look at. The App Store edition can't run Docker, Xcode's or Android's tools, so it removes nothing here; the direct edition removes what you choose with each tool's own command."
-                    : "As each tool lists them. Only what the tool builds or downloads again starts chosen. What may hold your work is chosen only by you, and what's in use or holds data is only shown. Each item goes through the tool's own command and is deleted for good.",
+                    ? "Virtual machines, AI models and Android's files, with their sizes, to look at. The App Store edition can't run Docker, Xcode's or Android's tools, so it removes nothing here; the direct edition removes what you choose with each tool's own command, and moves AI models to the Trash."
+                    : "As each tool lists them. Only what the tool builds or downloads again starts chosen. What may hold your work is chosen only by you, and what's in use or holds data is only shown. Each item goes through the tool's own command and is deleted for good; AI models go to the Trash.",
                 .metadata)
             if let listing = model.listing {
                 ForEach(listing.notes, id: \.self) { DSNotice(.info, $0) }
@@ -56,11 +56,23 @@ struct DevToolsSheet: View {
         .dialogControls()
         .dialogKeyboard()
         .actionConfirmation(
-            String(localized: "Remove \(model.chosenItems.count) items for good?"), isPresented: $confirming, always: true,
+            String(localized: "Remove \(model.chosenItems.count) items for good?"), isPresented: $confirming, action: .devTools,
+            big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosenItems.count),
             button: String(localized: "Remove"),
-            message: String(localized: "Each goes through its tool's own command and can't be undone. Each tool's list is read again first; anything that started or changed since is left alone.")
+            message: confirmText
         ) { Task { await model.removeChosen() } }
         .task { await model.load() }
+    }
+
+    private var confirmText: String {
+        let trash = model.chosenToTrash, all = model.chosenItems.count
+        if trash == all {
+            return String(localized: "AI models go to the Trash, with every file that's only theirs; layers other models use stay. Each list is read again first; anything that started or changed since is left alone.")
+        }
+        if trash == 0 {
+            return String(localized: "Each goes through its tool's own command and can't be undone. Each tool's list is read again first; anything that started or changed since is left alone.")
+        }
+        return String(localized: "AI models go to the Trash; the rest go through each tool's own command and can't be undone. Each list is read again first; anything that started or changed since is left alone.")
     }
 
     private func row(_ item: DevTools.Item) -> FileRow {
@@ -83,6 +95,7 @@ struct DevToolsSheet: View {
         case .simulator: "iphone"
         case .android: "apps.iphone"
         case .virtualMachine: "desktopcomputer"
+        case .aiModels: "cpu"
         }
     }
 

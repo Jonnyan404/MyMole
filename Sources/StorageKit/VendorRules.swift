@@ -6,7 +6,7 @@ import Foundation
 /// ones. A part is offered only when its app, or the last app of the family
 /// that shares it, is the one going; a part macOS protects, or one every
 /// user of the Mac shares, is only shown with what to do about it.
-/// Nothing here is ever chosen for the user.
+/// Only a part in the home folder that's the app's alone starts chosen.
 public enum VendorRules {
     public enum Handling: String, Sendable, Codable {
         /// Can go, after the user chooses it.
@@ -20,7 +20,7 @@ public enum VendorRules {
     }
 
     public struct Part: Sendable, Equatable {
-        /// Absolute; "~/" is the user's home folder.
+        /// Absolute; "~/" is the user's home folder, and "@app/" is inside the app itself.
         public let path: String
         public let handling: Handling
         public let kind: Kind
@@ -32,16 +32,22 @@ public enum VendorRules {
         public let bundleID: String?
         /// What to do instead, for a part that is only shown.
         public let note: String?
+        /// The name a shown part goes by, when its file's own name says little ("uninstall").
+        public let title: String?
 
         init(_ path: String, _ handling: Handling = .offer, _ kind: Kind = .data, sharedWith: [String] = [],
-             bundleID: String? = nil, note: String? = nil) {
+             bundleID: String? = nil, note: String? = nil, title: String? = nil) {
             self.path = path
             self.handling = handling
             self.kind = kind
             self.sharedWith = sharedWith
             self.bundleID = bundleID
             self.note = note
+            self.title = title
         }
+
+        /// Inside the app's own bundle: only ever shown, as a pointer.
+        public var inApp: Bool { path.hasPrefix("@app/") }
 
         /// Whether `path` here is in the home folder.
         public var inHome: Bool { path.hasPrefix("~/") }
@@ -157,11 +163,55 @@ public enum VendorRules {
             Part("~/Library/Application Support/DropboxElectron", .offer, .data),
         ]),
         Rule("Docker", apps: ["com.docker.docker"], parts: [
+            // Docker's documented uninstaller, run from the app; pointed to, never run, and it doesn't stop a move.
+            Part("@app/Contents/MacOS/uninstall", .show, .appPart,
+                 note: String(localized: "Docker's documentation recommends it: in Docker Desktop choose Troubleshoot, then Uninstall. It also removes Docker's virtual machine data and network helpers."),
+                 title: String(localized: "Docker Desktop's own uninstaller")),
             Part("~/Library/Application Support/Docker Desktop", .offer, .data),
             Part("~/Library/Caches/Docker Desktop", .offer, .rebuildable),
             Part("~/Library/Logs/Docker Desktop", .offer, .rebuildable),
+            Part("~/Library/Application Support/docker-secrets-engine", .offer, .data),
+            Part("~/Library/Caches/docker-secrets-engine", .offer, .rebuildable),
+            // Docker Desktop's window is an Electron app with IDs of its own.
+            Part("~/Library/Preferences/com.electron.dockerdesktop.plist", .offer, .settings),
+            Part("~/Library/Preferences/com.electron.docker-frontend.plist", .offer, .settings),
+            Part("~/Library/Saved Application State/com.electron.dockerdesktop.savedState", .offer, .settings),
+            Part("~/Library/Saved Application State/com.electron.docker-frontend.savedState", .offer, .settings),
             Part("~/.docker", .show, .settings,
                  note: String(localized: "The docker command's own settings, contexts and sign-ins. Docker installed another way uses it too.")),
+        ]),
+        // The SDK and emulators other Android tools use too: offered only without a JetBrains IDE, never chosen.
+        Rule("Android Studio", apps: ["com.google.android.studio"], parts: [
+            Part("~/Library/Android/sdk", .offer, .data, sharedWith: ["com.jetbrains."]),
+            Part("~/.android", .offer, .data, sharedWith: ["com.jetbrains."]),
+        ]),
+        Rule("Avast", apps: ["com.avast."], parts: [
+            Part("@app/Contents/Backend/hub/uninstall.sh", .show, .appPart,
+                 note: String(localized: "Avast's support says to use it: in Avast Security's menu choose Uninstall Avast Security. It also removes its protection, which runs as a system extension."),
+                 title: String(localized: "Avast's own uninstaller")),
+        ]),
+        Rule("AVG", apps: ["com.avg."], parts: [
+            Part("@app/Contents/Backend/hub/uninstall.sh", .show, .appPart,
+                 note: String(localized: "AVG's own uninstaller, from the AVG AntiVirus menu. It also removes its protection, which runs as a system extension."),
+                 title: String(localized: "AVG's own uninstaller")),
+        ]),
+        Rule("ESET", apps: ["com.eset."], parts: [
+            Part("@app/Contents/Helpers/Uninstaller.app", .show, .appPart,
+                 note: String(localized: "ESET's support says to open it, in the app's Contents/Helpers folder, and choose Uninstall. It also removes ESET's protection."),
+                 title: String(localized: "ESET's own uninstaller")),
+        ]),
+        Rule("Karabiner-Elements", apps: ["org.pqrs."], parts: [
+            Part("/Library/Application Support/org.pqrs", .show, .appPart,
+                 note: String(localized: "Karabiner-Elements' keyboard driver and its uninstaller. In Karabiner-Elements' settings, open Uninstall and choose Launch uninstaller.")),
+            Part("~/.config/karabiner", .offer, .settings, sharedWith: ["org.pqrs."]),
+        ]),
+        Rule("Box Drive", apps: ["com.box.desktop"], parts: [
+            Part("/Library/Application Support/Box/uninstall_box_drive", .show, .appPart,
+                 note: String(localized: "Box's support says to remove Box Drive with it or with the Box Reset Tool. Files not yet uploaded to Box are deleted, so let Box finish first."),
+                 title: String(localized: "Box Drive's own uninstaller")),
+        ]),
+        Rule("SteelSeries GG", apps: ["com.steelseries."], uninstallers: [
+            "/Applications/SteelSeries GG/SteelSeries GG Uninstaller.app",
         ]),
         Rule("Jabra", apps: ["com.jabra.directonline"], parts: [
             Part("~/Library/Application Support/Jabra Direct", .offer, .data),
@@ -244,6 +294,22 @@ public enum VendorRules {
             Part("/Library/Application Support/MainStage", .offer, .data),
             Part("/Library/Audio/Apple Loops/Apple", .offer, .data, sharedWith: appleMusicApps),
         ]),
+        // Firefox and Thunderbird share Mozilla's folders; their own are found by name.
+        Rule("Mozilla", apps: ["org.mozilla."], parts: [
+            Part("~/Library/Caches/Mozilla", .offer, .rebuildable, sharedWith: ["org.mozilla."]),
+            Part("~/Library/Application Support/Mozilla", .show, .data,
+                 note: String(localized: "Mozilla's shared folder. Other apps put their browser connections here too, so it stays.")),
+        ]),
+        Rule("Steam", apps: ["com.valvesoftware.steam"], parts: [
+            Part("~/Library/Application Support/Steam", .show, .data,
+                 note: String(localized: "Holds the games Steam installed, in steamapps. Remove games in Steam first, or keep this folder to keep them.")),
+        ]),
+        Rule("Battle.net", apps: ["net.battle.", "com.blizzard."], parts: [
+            Part("/Users/Shared/Battle.net", .show, .data,
+                 note: String(localized: "Battle.net's shared agent and setup files, which Blizzard's support says to remove after quitting Battle.net.")),
+            Part("/Users/Shared/Blizzard", .show, .data,
+                 note: String(localized: "May hold games and their data. Remove games in Battle.net first.")),
+        ]),
         Rule("HP", apps: ["com.hp."], parts: [Part("/Library/Printers/hp", .show, .appPart, note: printerNote)]),
         Rule("Canon", apps: ["jp.co.canon."], parts: [Part("/Library/Printers/Canon", .show, .appPart, note: printerNote)]),
         Rule("Epson", apps: ["com.epson."], parts: [Part("/Library/Printers/EPSON", .show, .appPart, note: printerNote)]),
@@ -258,6 +324,9 @@ public enum VendorRules {
         "~/VirtualBox VMs", "~/Virtual Machines.localized", "~/.tart/vms",
         "/Users/Shared", "/Library/Extensions", "/Library/SystemExtensions", "/Library/StagedExtensions",
         "/Library/Audio/Plug-Ins/Components", "/Library/Audio/Plug-Ins/VST", "/Library/Audio/Plug-Ins/VST3",
+        // Adobe's shared licensing, color profiles and fonts serve every Adobe app.
+        "/Library/Application Support/Adobe/SLStore", "/Library/Application Support/Adobe/Color Profiles",
+        "/Library/Application Support/Adobe/Fonts",
         "/System", "/usr", "/bin", "/sbin",
     ]
 

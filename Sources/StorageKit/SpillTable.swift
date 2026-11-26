@@ -47,8 +47,17 @@ public final class SpillTable: @unchecked Sendable {
     private let records: FileHandle
     private let strings: FileHandle
     private let pageLimit: Int
+    /// A page as it is on disk, its records and their paths' bytes, checked
+    /// when read. A row is made from it when asked for: scrolling to a row
+    /// makes that one, not the page's 256.
+    private struct Page: Sendable {
+        let records: Data
+        let text: Data
+        let start: UInt64
+        let count: Int
+    }
     private struct Pages {
-        var rows: [Int: [Row]] = [:]
+        var rows: [Int: Page] = [:]
         var order: [Int] = []
     }
     private let pages = Mutex(Pages())
@@ -137,52 +146,74 @@ public final class SpillTable: @unchecked Sendable {
     public func row(at index: Int) -> Row? {
         guard index >= 0, index < count, !removed.load(ordering: .relaxed) else { return nil }
         let page = index / Self.pageRows
-        if let rows = pages.withLock({ p -> [Row]? in
-            guard let rows = p.rows[page] else { return nil }
-            p.order.removeAll { $0 == page }
-            p.order.append(page)
-            return rows
+        if let held = pages.withLock({ p -> Page? in
+            guard let held = p.rows[page] else { return nil }
+            if p.order.last != page {
+                p.order.removeAll { $0 == page }
+                p.order.append(page)
+            }
+            return held
         }) {
-            return rows[index % Self.pageRows]
+            return Self.row(index % Self.pageRows, of: held)
         }
-        guard let rows = try? read(page: page) else { return nil }
+        guard let loaded = try? load(page: page) else { return nil }
         pages.withLock { p in
-            p.rows[page] = rows
+            p.rows[page] = loaded
             p.order.removeAll { $0 == page }
             p.order.append(page)
             while p.order.count > pageLimit { p.rows[p.order.removeFirst()] = nil }
         }
-        return rows[index % Self.pageRows]
+        return Self.row(index % Self.pageRows, of: loaded)
     }
 
     /// Pages held in memory now, for tests and measurements.
     public var hotPages: Int { pages.withLock { $0.rows.count } }
 
+    /// Every row of a page, for a read through the whole table.
     private func read(page: Int) throws -> [Row] {
+        let loaded = try load(page: page)
+        return (0..<loaded.count).compactMap { Self.row($0, of: loaded) }
+    }
+
+    /// A page's records and the bytes of their paths, each record checked
+    /// against them: a table that doesn't read back as written is damaged.
+    private func load(page: Int) throws -> Page {
         let first = page * Self.pageRows
         let n = min(Self.pageRows, count - first)
         let data = try pread(records, offset: UInt64(first * Self.recordSize), length: n * Self.recordSize)
-        guard data.count == n * Self.recordSize else { throw Failure.damaged }
-        var spans: [(offset: UInt64, length: Int, size: Int64, modified: Double, kind: UInt8, folder: Bool)] = []
-        spans.reserveCapacity(n)
-        data.withUnsafeBytes { raw in
-            for i in 0..<n {
+        guard data.count == n * Self.recordSize, n > 0 else { throw Failure.damaged }
+        let (start, end) = data.withUnsafeBytes { raw in
+            (raw.loadUnaligned(fromByteOffset: 16, as: UInt64.self),
+             raw.loadUnaligned(fromByteOffset: (n - 1) * Self.recordSize + 16, as: UInt64.self)
+                + UInt64(raw.loadUnaligned(fromByteOffset: (n - 1) * Self.recordSize + 24, as: UInt32.self)))
+        }
+        guard end >= start else { throw Failure.damaged }
+        let text = try pread(strings, offset: start, length: Int(end - start))
+        guard text.count == Int(end - start) else { throw Failure.damaged }
+        let valid = data.withUnsafeBytes { raw in
+            (0..<n).allSatisfy { i in
                 let base = i * Self.recordSize
-                spans.append((raw.loadUnaligned(fromByteOffset: base + 16, as: UInt64.self),
-                              Int(raw.loadUnaligned(fromByteOffset: base + 24, as: UInt32.self)),
-                              raw.loadUnaligned(fromByteOffset: base, as: Int64.self),
-                              Double(bitPattern: raw.loadUnaligned(fromByteOffset: base + 8, as: UInt64.self)),
-                              raw[base + 28], raw[base + 29] == 1))
+                let offset = raw.loadUnaligned(fromByteOffset: base + 16, as: UInt64.self)
+                let length = UInt64(raw.loadUnaligned(fromByteOffset: base + 24, as: UInt32.self))
+                return offset >= start && offset + length <= end && FileKind(rawValue: Int(raw[base + 28])) != nil
             }
         }
-        guard let start = spans.first?.offset, let last = spans.last else { return [] }
-        let text = try pread(strings, offset: start, length: Int(last.offset - start) + last.length)
-        guard text.count == Int(last.offset - start) + last.length else { throw Failure.damaged }
-        return try spans.map { s in
-            let from = Int(s.offset - start)
-            guard from >= 0, from + s.length <= text.count, let kind = FileKind(rawValue: Int(s.kind)) else { throw Failure.damaged }
-            let path = String(decoding: text[text.startIndex + from ..< text.startIndex + from + s.length], as: UTF8.self)
-            return Row(path: path, size: s.size, modified: Date(timeIntervalSinceReferenceDate: s.modified), kind: kind, isFolder: s.folder)
+        guard valid else { throw Failure.damaged }
+        return Page(records: data, text: text, start: start, count: n)
+    }
+
+    /// Row `i` of a page, made from its bytes.
+    private static func row(_ i: Int, of page: Page) -> Row? {
+        guard i >= 0, i < page.count else { return nil }
+        return page.records.withUnsafeBytes { raw -> Row? in
+            let base = i * recordSize
+            let from = Int(raw.loadUnaligned(fromByteOffset: base + 16, as: UInt64.self) - page.start)
+            let length = Int(raw.loadUnaligned(fromByteOffset: base + 24, as: UInt32.self))
+            guard let kind = FileKind(rawValue: Int(raw[base + 28])) else { return nil }
+            let path = page.text.withUnsafeBytes { String(decoding: $0[from ..< from + length], as: UTF8.self) }
+            return Row(path: path, size: raw.loadUnaligned(fromByteOffset: base, as: Int64.self),
+                       modified: Date(timeIntervalSinceReferenceDate: Double(bitPattern: raw.loadUnaligned(fromByteOffset: base + 8, as: UInt64.self))),
+                       kind: kind, isFolder: raw[base + 29] == 1)
         }
     }
 
@@ -198,9 +229,10 @@ public final class SpillTable: @unchecked Sendable {
     /// every word of `query` (lower-cased, as the app's filters match) and
     /// that pass `keep`. Reads the table through once, a page at a time,
     /// without filling the hot pages; nil if stopped or damaged.
-    public func ordered(by order: Order, ascending: Bool, query: String = "", keep: (Row) -> Bool = { _ in true },
+    public func ordered(by order: Order, ascending: Bool, query: String = "", home: String? = Home.path, keep: (Row) -> Bool = { _ in true },
                         stop: () -> Bool = { false }) -> [UInt32]? {
-        let words = query.lowercased().split(separator: " ").map(String.init)
+        let search = WordSearch(query, home: home)
+        var scratch: [UInt8] = []
         var picked: [UInt32] = []
         var numbers: [Double] = []
         var texts: [String] = []
@@ -208,10 +240,7 @@ public final class SpillTable: @unchecked Sendable {
             if stop() { return nil }
             guard let rows = try? read(page: page) else { return nil }
             for (i, row) in rows.enumerated() {
-                if !words.isEmpty {
-                    let path = row.path.lowercased()
-                    guard words.allSatisfy({ path.contains($0) }) else { continue }
-                }
+                guard search.matches(row.path, scratch: &scratch) else { continue }
                 guard keep(row) else { continue }
                 picked.append(UInt32(page * Self.pageRows + i))
                 switch order {

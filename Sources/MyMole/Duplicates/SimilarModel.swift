@@ -84,7 +84,7 @@ final class SimilarModel {
         startedAt = .now
         step = nil
         let (roots, minimum, cacheURL) = (roots, minimum, cacheURL)
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let updates = DuplicateScanUpdates()
         scanJob = Task { [self] in
             // Progress arrives from the search's threads; the views get the
@@ -97,7 +97,7 @@ final class SimilarModel {
                 }
             }
             let found = await Task.detached(priority: level.priority(background: background)) {
-                await ScanBudget.shared.run(background: background, progress: p) {
+                await ScanBudget.shared.walk(background: background, progress: p) {
                     let cache = cacheURL.map { SharedFingerprints(FingerprintCache.load(from: $0)) }
                     let found = SimilarImages.find(in: roots, minimum: minimum, progress: p, workers: level.workers(background: background), cache: cache) { s in
                         updates.update(s)

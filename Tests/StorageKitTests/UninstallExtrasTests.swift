@@ -33,7 +33,7 @@ import Testing
             "Application Scripts/ABCDE12345.com.vendor.Editor", "Application Scripts/group.com.vendor.Editor",
         ])
         #expect(found.filter { $0.place == "Logs/DiagnosticReports" }.allSatisfy { $0.kind == .rebuildable && !$0.chosenByDefault })
-        #expect(found.filter { $0.place == AppLeftovers.recentDocuments || $0.place == "Application Scripts" }.allSatisfy { !$0.chosenByDefault })
+        #expect(found.filter { $0.place == AppLeftovers.recentDocuments || $0.place == "Application Scripts" }.allSatisfy { $0.chosenByDefault })
         for l in found { #expect(AppLeftovers.isStillLeftover(l.path, of: editor, home: box.path, installed: [editor], identity: identity)) }
     }
 
@@ -154,12 +154,14 @@ import Testing
         let by = Dictionary(uniqueKeysWithValues: found.map { (String($0.path.dropFirst(box.path.count + "/Library/".count)), $0) })
         // The profile: Chrome's own, in Google's folder; data, so not chosen. Its cache is.
         #expect(by["Application Support/Google/Chrome"]?.evidence == .vendorFolder && by["Application Support/Google/Chrome"]?.chosenByDefault == false)
-        #expect(by["Caches/Google/Chrome"]?.chosenByDefault == false)
+        #expect(by["Caches/Google/Chrome"]?.chosenByDefault == true)
+        #expect(by["Application Support/Google/Chrome"]?.review == .nameInMakerFolder)
         // Another Google product's folder is never Chrome's.
         #expect(by["Application Support/Google/Earth"] == nil)
         // Google's updater, for the last Google app: offered, never chosen.
         #expect(by["LaunchAgents/com.google.keystone.agent.plist"]?.evidence == .vendor)
         #expect(by["LaunchAgents/com.google.keystone.agent.plist"]?.chosenByDefault == false)
+        #expect(by["LaunchAgents/com.google.keystone.agent.plist"]?.review == .maker)
         #expect(by["Google"]?.evidence == .vendor && by["Caches/com.google.SoftwareUpdate"] != nil)
         #expect(by["Preferences/com.google.Chrome.plist"]?.evidence == .bundleID)
         for l in found { #expect(AppLeftovers.isStillLeftover(l.path, of: chrome, home: box.path, installed: [chrome])) }

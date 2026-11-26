@@ -36,13 +36,22 @@ final class DevToolsModel {
 
     var tools: DevTools.Tools { DevTools.Tools.find(home: home, exists: runner.exists) }
 
+    /// Whether this edition moves AI models to the Trash; the App Store edition only lists them.
+    nonisolated static var movesModels: Bool {
+        #if APPSTORE
+        false
+        #else
+        true
+        #endif
+    }
+
     func load() async {
         guard !loading, !removing else { return }
         loading = true
         defer { loading = false }
         let (home, runner, running, tools) = (home, runner, running, tools)
         let fresh = await Task.detached(priority: .userInitiated) {
-            DevTools.inventory(home: home, tools: tools, runner: runner, running: running())
+            DevTools.inventory(home: home, tools: tools, runner: runner, running: running(), trash: Self.movesModels)
         }.value
         listing = fresh
         chosen = Set(fresh.items.filter { $0.handling == .recommend }.map(\.id))
@@ -57,14 +66,16 @@ final class DevToolsModel {
 
     var chosenItems: [DevTools.Item] { (listing?.items ?? []).filter { chosen.contains($0.id) && canChoose($0) } }
     var chosenBytes: Int64 { chosenItems.compactMap(\.bytes).reduce(0, +) }
+    /// How many of the chosen go to the Trash rather than through a tool's command.
+    var chosenToTrash: Int { chosenItems.filter { if case .trash = $0.removal { true } else { false } }.count }
 
     func removeChosen() async {
         let items = chosenItems
         guard !items.isEmpty, !removing else { return }
         removing = true
-        let (home, runner, tools) = (home, runner, tools)
+        let (home, runner, tools, running) = (home, runner, tools, running)
         report = await Task.detached(priority: .userInitiated) {
-            DevTools.remove(items, tools: tools, home: home, runner: runner)
+            DevTools.remove(items, tools: tools, home: home, runner: runner, running: running, trash: Self.movesModels)
         }.value
         removing = false
         await load()

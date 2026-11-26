@@ -8,8 +8,8 @@ import SwiftUI
 struct StartupView: View {
     @Bindable var model: StartupModel
     @State private var confirming = false
-    /// Kept while you go to other panes and back, as the window's own state.
-    @SceneStorage("startup.filter") private var query = ""
+    /// Kept between panes and launches.
+    @AppStorage("startup.filter") private var query = ""
     @AppStorage("startup.show") private var show: Show = .jobs
 
     enum Show: String, CaseIterable, Identifiable {
@@ -45,7 +45,7 @@ struct StartupView: View {
         }
         .actionConfirmation(
             String(localized: "Move \(model.chosen.count) startup items to the Trash?"),
-            isPresented: $confirming,
+            isPresented: $confirming, action: .startup,
             message: String(localized: "\(model.chosenItems.map(\.label).sorted().joined(separator: ", ")). They stop starting from the next login; one that's running now keeps running until then, or until you quit its app. You can undo right after, or put them back from the Trash later.")
         ) { model.trashChosen() }
         .onAppear { model.load() }
@@ -120,7 +120,8 @@ struct StartupView: View {
 
     private var shown: [StartupItem] {
         let list = show == .jobs ? jobs : plugins
-        return query.isEmpty ? list : list.filter { DSFilterField.matches(query, $0.label, $0.program ?? "") }
+        let search = TextQuery(query)
+        return search.isEmpty ? list : list.filter { search.matches($0.label, $0.program ?? "") }
     }
 
     private var table: some View {

@@ -390,7 +390,7 @@ public enum DuplicateFinder {
         }
         let searched = Set(candidates.map(\.path))
         let room = CloneOverlaps.compareLimit - holders.values.reduce(0) { $0 + $1.count }
-        for h in SameSizeFiles.holders(lengths: lengths, skip: searched.contains, limit: room) where !progress.isCancelled {
+        for h in SameSizeFiles.holders(lengths: lengths, skip: searched.contains, limit: room, stop: { progress.isCancelled }) where !progress.isCancelled {
             holders[h.device, default: []].append(h.path)
         }
         for (device, paths) in holders where !progress.isCancelled {

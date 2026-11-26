@@ -97,7 +97,7 @@ extension RelatedComponents {
     }
 
     public static let systemExtensionsTool = "/usr/bin/systemextensionsctl"
-    static let kernelNote = "A kernel extension. macOS protects it: remove it with the vendor's uninstaller, then restart."
+    static let kernelNote = String(localized: "A kernel extension. macOS protects it: remove it with the vendor's uninstaller, then restart.")
 
     /// The app's protected and shared parts, by the vendor's list, by the
     /// bundle ID of each kernel extension, and by the system extensions
@@ -111,11 +111,17 @@ extension RelatedComponents {
         }
         var out: [Shown] = []
         for part in VendorRules.parts(for: id) where part.handling == .show {
-            let path = part.resolved(home: home, base: systemBase)
+            let path = part.inApp ? app.path + part.path.dropFirst("@app".count) : part.resolved(home: home, base: systemBase)
             var st = stat()
             guard lstat(path, &st) == 0, st.st_mode & S_IFMT == S_IFDIR || st.st_mode & S_IFMT == S_IFREG else { continue }
-            out.append(Shown(path: path, name: (path as NSString).lastPathComponent, note: part.note ?? VendorRules.protectedNote,
+            out.append(Shown(path: path, name: part.title ?? (path as NSString).lastPathComponent, note: part.note ?? VendorRules.protectedNote,
                              bytes: AppLeftovers.measure(path)))
+        }
+        for (folder, names) in AppLeftovers.sharedCommandLinks(of: app, base: systemBase) {
+            let shown = names.prefix(6).joined(separator: ", ") + (names.count > 6 ? " …" : "")
+            out.append(Shown(path: folder, name: String(localized: "Command links in \(folder)"),
+                             note: String(localized: "\(shown) point into the app and stop working once it's gone. They take no space. The app's own settings may remove them; otherwise an administrator can, in Terminal."),
+                             bytes: nil))
         }
         let kexts = systemBase + "/Library/Extensions"
         for name in (DirectoryListing.names(kexts) ?? []).sorted() where name.lowercased().hasSuffix(".kext") {

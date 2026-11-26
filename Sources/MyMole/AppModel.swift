@@ -186,7 +186,9 @@ final class AppModel {
     let storage = StorageModel()
     let projects = ProjectsModel()
     let installers = InstallersModel()
-    let deepClean = DeepCleanModel()
+    /// The App Store edition stays in what the user opened to it; the direct
+    /// edition also looks in the temporary folders outside the home folder.
+    let deepClean = DeepCleanModel(temporary: Edition.current.isSandboxed ? [] : CleanRules.temporaryRoots())
     let apps: AppsModel
     let trash = TrashModel()
     #if SMOKE
@@ -205,6 +207,28 @@ final class AppModel {
     /// Scans may start: the home folder is open to MyMole, and Full Disk
     /// Access keeps macOS from asking about every protected folder.
     var canScan: Bool { !leaving && access.has(.home) && fullDiskAccess }
+
+    /// Disk Map opened on one folder the user chose, without Full Disk
+    /// Access: nothing else scans, and nothing runs in the background.
+    private(set) var limitedMap = false
+
+    /// Whether Disk Map shows in the limited way: chosen, and still without access.
+    var mapsLimited: Bool { limitedMap && !fullDiskAccess }
+
+    /// Maps the one folder the user picks, before Full Disk Access is given.
+    /// Folders macOS protects inside it stay closed and are listed as skipped.
+    func mapOneFolder() {
+        let panel = NSOpenPanel()
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.directoryURL = URL(fileURLWithPath: Home.path)
+        panel.message = String(localized: "Choose one folder to map without Full Disk Access")
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        limitedMap = true
+        storage.mapsOnOpen = url.path
+        pane = .diskMap
+        storage.scan(path: url.path)
+    }
 
     /// What a pane is waiting for before it can work, if anything.
     func gate(for pane: Pane) -> FolderAccess.Place? {
@@ -537,7 +561,7 @@ final class AppModel {
         if !background { smartScanStarted = requestedAt }
         prefetchChain?.cancel()
         let allowed = stepsAllowed()
-        let together = PerformanceLevel.current().runsScansTogether
+        let together = PerformanceLevel.inEffect().runsScansTogether
         let id = UUID()
         scanChainID = id
         smartScanning = true

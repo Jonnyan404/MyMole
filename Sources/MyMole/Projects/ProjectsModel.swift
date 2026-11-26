@@ -29,6 +29,8 @@ final class ProjectsModel {
     struct Notice: Equatable {
         let text: String
         let canUndo: Bool
+        /// Shown until it's closed, so what it says can be read.
+        var stays = false
     }
 
     /// An entry with what it belongs to, for totals and undo. A part is a
@@ -119,6 +121,10 @@ final class ProjectsModel {
     /// Counts part sizes measured after they were chosen, so totals redraw.
     var partSizes = 0
     @ObservationIgnored var choiceIndex: ChoiceIndex?
+    /// Folder → its small files, as read when their row was ticked.
+    @ObservationIgnored var smallFiles: [String: Set<String>] = [:]
+    @ObservationIgnored var readingSmallFiles = Set<String>()
+    @ObservationIgnored var readSmallFiles: @Sendable (String) -> [FootprintEntry]? = { SmallFileList.read(in: $0) }
     /// What's inside entries the user opened, measured on demand; the most
     /// recent few are kept.
     var contents: [String: Folder] = [:]
@@ -301,22 +307,24 @@ final class ProjectsModel {
         measuredCount = 0
         let roots = roots
         let rules = rules
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let workers = level.workers(background: background)
         // Projects walks every project folder, so even a scan someone waits
         // on stays a step below the other panes.
         let list = listProjects
-        let model = WeakReference(self)
-        scanJob = Task.detached(priority: level.priority(background: true)) {
-            let all = list(
-                roots, rules, p, workers,
-                { found in
-                    DispatchQueue.main.async { MainActor.assumeIsolated { model.value?.found(found, run: p) } }
-                },
-                { done in
-                    DispatchQueue.main.async { MainActor.assumeIsolated { model.value?.measured(done, run: p) } }
-                })
-            DispatchQueue.main.async { MainActor.assumeIsolated { model.value?.finished(all, run: p) } }
+        scanJob = Task.detached(priority: level.priority(background: true)) { [weak self] in
+            // The walk blocks until it's done: on a thread of its own, not one of the shared task threads.
+            let all = await ScanBudget.onOwnThread {
+                list(
+                    roots, rules, p, workers,
+                    { found in
+                        DispatchQueue.main.async { MainActor.assumeIsolated { self?.found(found, run: p) } }
+                    },
+                    { done in
+                        DispatchQueue.main.async { MainActor.assumeIsolated { self?.measured(done, run: p) } }
+                    })
+            }
+            DispatchQueue.main.async { MainActor.assumeIsolated { self?.finished(all, run: p) } }
         }
     }
 
@@ -373,12 +381,12 @@ final class ProjectsModel {
         contentsRefreshProgress = p
         contentsRefreshOwner = run
         let read = scanContentsForRefresh
-        let level = PerformanceLevel.current()
+        let level = PerformanceLevel.inEffect()
         let workers = level.workers(background: false)
         let kind = previous?.find(path: focus.path)?.inheritedKind
         contentsRefreshJob = Task { [weak self] in
             let measured = await Task.detached(priority: level.priority(background: false)) {
-                await ScanBudget.shared.run(background: false, progress: p) {
+                await ScanBudget.shared.walk(background: false, progress: p) {
                     let result = read(focus.path, p, workers, kind)
                     guard !p.isCancelled, !result.cancelled, !result.root.unreadable, result.deniedPaths.isEmpty else { return nil as Folder? }
                     if focus.path == focus.entry { return result.root }
@@ -535,9 +543,11 @@ final class ProjectsModel {
     /// chosen one, sized without what's left out of it.
     var chosenEntries: [Chosen] {
         guard !chosen.isEmpty else { return [] }
-        _ = partSizes
+        // Asked for several times a redraw: worked out once per choice.
+        _ = (partSizes, excluded.isEmpty, footprints.isEmpty)
+        if let known = index.entries { return known }
         let ix = index
-        return chosen.sorted().compactMap { p in
+        let entries: [Chosen] = chosen.sorted().compactMap { p in
             guard let o = owner(of: p), marker(above: p, top: o.entry.path)?.chosen != true else { return nil }
             let base = p == o.entry.path ? o.entry : partInfo[p] ?? FootprintEntry(path: p, bytes: 0, modified: .distantPast)
             let left = ix.leftOut[p] ?? 0
@@ -548,6 +558,8 @@ final class ProjectsModel {
             let entry = FootprintEntry(path: p, bytes: max(0, base.bytes - left), modified: base.modified, isDirectory: base.isDirectory, reclaim: reclaim)
             return Chosen(project: o.project, item: o.item, entry: entry, part: true)
         }
+        choiceIndex?.entries = entries
+        return entries
     }
 
     /// Paths left out of `path` when it goes.
@@ -643,7 +655,7 @@ final class ProjectsModel {
         if recent > 0 { left.append(String(localized: "\(recent) items changed in the last week")) }
         if byName > 0 { left.append(String(localized: "\(byName) groups matched by name only")) }
         if !left.isEmpty {
-            show(Notice(text: String(localized: "Left unchosen: \(left.joined(separator: " and ")); tick them yourself if they can go"), canUndo: false))
+            show(Notice(text: String(localized: "Left unchosen: \(left.formatted(.list(type: .and))); tick them yourself if they can go"), canUndo: false))
         }
     }
 
@@ -684,9 +696,12 @@ final class ProjectsModel {
         let current = rules
         // What the user left out of a chosen folder stays, like a kept path.
         let picks = picked.map {
-            (path: $0.entry.path, project: $0.project, worktree: $0.item.category == .worktrees, leftOut: excluded(inside: $0.entry.path))
+            (path: $0.entry.path, project: $0.project, worktree: $0.item.category == .worktrees,
+             file: $0.entry.isDirectory == false, leftOut: excluded.isEmpty ? [] : excluded(inside: $0.entry.path))
         }
         let backend = trashBackend
+        let guardPath = guardPath
+        let guardFiles = guardFiles
         Task {
             let job = await jobs.begin(.moveToTrash)
             defer { jobs.end(job) }
@@ -718,8 +733,13 @@ final class ProjectsModel {
                 // something the outer one leaves out.
                 var plan: [String: [String]] = [:]
                 var held: [String: String] = [:]
+                // Files are checked together, folders one by one.
+                for (project, files) in Dictionary(grouping: picks.filter { $0.file && !$0.worktree }, by: \.project) {
+                    held.merge(guardFiles(files.map(\.path), project)) { a, _ in a }
+                }
                 for p in picks {
-                    if let why = ProjectGuard.reason(for: p.path, project: p.project, worktree: p.worktree) {
+                    if held[p.path] != nil { continue }
+                    if !p.file || p.worktree, let why = guardPath(p.path, p.project, p.worktree) {
                         held[p.path] = why
                     } else {
                         var rules = guarding
@@ -752,7 +772,7 @@ final class ProjectsModel {
         let moved = Set(outcome.moved.map(\.original.path))
         // Gone whole: moved itself, not just around something kept.
         let whole = Set(plan.filter { top, paths in paths == [top] && moved.contains(top) }.keys)
-        let gone = picked.filter { e in whole.contains { e.entry.path == $0 || e.entry.path.hasPrefix($0 + "/") } }
+        let gone = picked.filter { Self.lies($0.entry.path, in: whole) }
         let wholeGone = gone.filter { whole.contains($0.entry.path) }
         let freed = Self.frees(wholeGone)
         let movedBytes = wholeGone.reduce(0) { $0 + $1.entry.bytes }
@@ -762,7 +782,8 @@ final class ProjectsModel {
             if let g = goneByProject[footprints[i].id] { footprints[i].remove(paths: Set(g.filter { !$0.part }.map(\.entry.path))) }
         }
         chosen.subtract(gone.map(\.entry.path))
-        chosen = chosen.filter { p in !partly.union(held.keys).contains { p == $0 || p.hasPrefix($0 + "/") } }
+        let stayed = partly.union(held.keys)
+        if !stayed.isEmpty { chosen = chosen.filter { !Self.lies($0, in: stayed) } }
         tidyExcluded()
         dropContents(touching: moved)
         // Parts went from inside entries, which are measured again; so is a
@@ -777,17 +798,37 @@ final class ProjectsModel {
             shelf.add(Run(id: record.id, records: outcome.moved, entries: gone, needsScan: !partly.isEmpty))
         }
         CleanupLog.submit(record, to: logURL)
-        var text = outcome.moved.isEmpty && !outcome.failed.isEmpty
+        var text = outcome.moved.isEmpty
             ? nothingMoved(outcome.failed)
             : String(localized: "Moved \(outcome.moved.count) items (\(Freeing.phrase(movedBytes, frees: freed))) to the Trash")
         if !outcome.moved.isEmpty && !outcome.failed.isEmpty { text += String(localized: " · \(outcome.failed.count) couldn't be moved") }
+        // More follows on the same line: no full stop before it.
+        if !partly.isEmpty || !held.isEmpty, let end = text.last, ".。।".contains(end) { text.removeLast() }
         if !partly.isEmpty { text += String(localized: " · \(partly.count) kept in part") }
         if let why = held.values.sorted().first {
-            text += String(localized: " · \(held.count) protected (\(why.trimmingCharacters(in: CharacterSet(charactersIn: "."))))")
+            text += String(localized: " · \(held.count) protected (\(withoutFullStop(why)))")
         }
-        show(Notice(text: text, canUndo: !outcome.moved.isEmpty))
+        show(Notice(text: text, canUndo: !outcome.moved.isEmpty, stays: outcome.moved.isEmpty || !held.isEmpty))
         // Folders emptied around kept items are measured again.
         if !partly.isEmpty || scanAfterTrash { scanAfterTrash = false; scan() }
+    }
+
+    /// Whether `path` is one of `folders` or lies inside one.
+    nonisolated static func lies(_ path: String, in folders: Set<String>) -> Bool {
+        var p = path
+        while p.count > 1 {
+            if folders.contains(p) { return true }
+            p = (p as NSString).deletingLastPathComponent
+        }
+        return false
+    }
+
+    /// Why a path, or any of a folder's files, must stay; tests answer for Git.
+    @ObservationIgnored var guardPath: @Sendable (String, String, Bool) -> String? = {
+        ProjectGuard.reason(for: $0, project: $1, worktree: $2)
+    }
+    @ObservationIgnored var guardFiles: @Sendable ([String], String) -> [String: String] = {
+        ProjectGuard.reasons(forFiles: $0, project: $1)
     }
 
     /// Where moved items go; tests use a folder of their own.
@@ -854,6 +895,7 @@ final class ProjectsModel {
             undoNotice = n
             return
         }
+        if n.stays { return }
         Task {
             try? await Task.sleep(for: .seconds(4))
             guard notice == n else { return }
@@ -904,23 +946,22 @@ final class ProjectsModel {
         let all = footprints.map(\.project)
         let measure = measureProject
         rescanTasks[project]?.cancel()
-        let model = WeakReference(self)
-        rescanTasks[project] = Task.detached(priority: .userInitiated) {
-            let fresh = await ScanBudget.shared.run(background: false) { measure(f.project, all, rules) }
+        rescanTasks[project] = Task.detached(priority: .userInitiated) { [weak self] in
+            let fresh = await ScanBudget.shared.walk(background: false) { measure(f.project, all, rules) }
             guard !Task.isCancelled, let fresh else { return }
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
                     // Only the newest measure of the project lands, and only
                     // it ends the project's measuring; a full scan since
                     // owns every project.
-                    guard let model = model.value, model.rescanJobs[project] == job else { return }
-                    model.rescanJobs[project] = nil
-                    model.rescanTasks[project] = nil
-                    model.rescanning.remove(project)
-                    guard let i = model.footprints.firstIndex(where: { $0.id == project }) else { return }
-                    model.dropContents(touching: f.items.flatMap(\.entries).map(\.path))
-                    model.footprints[i] = fresh
-                    model.prune()
+                    guard let self, self.rescanJobs[project] == job else { return }
+                    self.rescanJobs[project] = nil
+                    self.rescanTasks[project] = nil
+                    self.rescanning.remove(project)
+                    guard let i = self.footprints.firstIndex(where: { $0.id == project }) else { return }
+                    self.dropContents(touching: f.items.flatMap(\.entries).map(\.path))
+                    self.footprints[i] = fresh
+                    self.prune()
                 }
             }
         }

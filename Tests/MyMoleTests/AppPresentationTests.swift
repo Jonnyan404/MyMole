@@ -17,7 +17,7 @@ import Testing
             #expect(presentation.totalBytes == 1010)
             if asList {
                 #expect(presentation.rows.first?.pinned == true)
-                #expect(presentation.rows.first?.badge == String(localized: "Open"))
+                #expect(presentation.rows.first?.badge == AppPresentation.openMark)
             }
         }
     }
@@ -32,7 +32,7 @@ import Testing
         #expect(table.apps == [apps[0]] && table.rows.map(\.id) == [apps[0].path])
         #expect(table.hiddenMacOS == 1 && table.totalBytes == 40 && !table.measuring)
         #expect(table.byPath[apps[1].path] == apps[1])
-        #expect(table.rows.first?.badge == String(localized: "Open"))
+        #expect(table.rows.first?.badge == AppPresentation.openMark)
         let grid = AppPresentation(apps, query: "", sort: .size, showMacOS: true, asList: false, running: [], ownPath: nil)
         #expect(grid.apps.count == 3 && grid.hiddenMacOS == 0 && grid.rows.isEmpty)
     }

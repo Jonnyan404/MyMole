@@ -137,16 +137,18 @@ import Testing
         let found = try #require(await model.leftovers(for: proof, deep: false))
         #expect(Set(found.map(\.place)) == ["Caches", "Containers", "Preferences"])
         #expect(!found.contains { $0.path.contains(box.group) })
+        // Everything tied by the app's own IDs is certainly its: all of it starts chosen.
         let picked = found.filter(\.chosenByDefault)
-        #expect(picked.count == 1 && picked.first?.place == "Caches")
+        #expect(picked.count == found.count)
         #expect(await model.cleanRemovedApp(proof, leftovers: picked) == .done)
         #expect(box.exists(".Trash/Editor.app/Contents/Info.plist"))
         #expect(!box.exists("Library/Caches/com.example.Editor.Worker"))
-        #expect(box.exists("Library/Containers/com.example.Editor/data") && box.exists("Library/Preferences/com.example.Editor.plist"))
+        #expect(!box.exists("Library/Containers/com.example.Editor") && !box.exists("Library/Preferences/com.example.Editor.plist"))
         #expect(box.exists("Library/Group Containers/" + box.group + "/data"))
         model.undoUninstall()
         await model.undoJob?.value
         #expect(box.exists("Library/Caches/com.example.Editor.Worker/cache"))
+        #expect(box.exists("Library/Containers/com.example.Editor/data") && box.exists("Library/Preferences/com.example.Editor.plist"))
         #expect(proof.isCurrent(home: box.home))
         #expect(CleanupLog.load(from: box.root.appending(path: "history.json")).contains { $0.source == OrphansModel.source })
     }

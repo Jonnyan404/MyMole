@@ -63,9 +63,11 @@ import UniformTypeIdentifiers
         model.setListedCopies([small], checked: false)
         #expect(model.chosen.isEmpty)
         model.chooseAllButBest()
+        let before = try TreeFingerprint(box.home)
 
         model.trashChosen()
         await model.trashJob?.value
+        try expectOnlyMoved([small], in: box.home, since: before)
         #expect(!FileManager.default.fileExists(atPath: small) && FileManager.default.fileExists(atPath: big))
         #expect(model.groups.isEmpty && model.canUndo)
 
@@ -73,5 +75,6 @@ import UniformTypeIdentifiers
         await model.trashJob?.value
         await model.scanJob?.value
         #expect(FileManager.default.fileExists(atPath: small) && model.groups.count == 1)
+        try expectOnlyMoved([], in: box.home, since: before)
     }
 }

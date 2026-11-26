@@ -53,6 +53,10 @@ extension EnvironmentValues {
 }
 
 enum DS {
+    /// Empties the choice beside a removal. Its own phrase: next to chosen
+    /// files, "clear" as a filter field says it reads as delete in many languages.
+    static var clearChoice: String { String(localized: "choice.clear", defaultValue: "Clear", comment: "Unchoose everything chosen for a removal; nothing is deleted") }
+
     @MainActor enum Space {
         static var xxs: CGFloat { Density.pick(2, 3) }
         static var xs: CGFloat { Density.pick(4, 5) }
@@ -407,12 +411,6 @@ extension View {
 /// clear button once there's text. Looks like the system search field.
 struct DSFilterField: View {
     @Environment(\.closeDialog) private var closeDialog
-    /// Whether a row with these texts (name, folder…) passes `query`: every
-    /// word typed appears in one of them, in any case.
-    nonisolated static func matches(_ query: String, _ texts: String...) -> Bool {
-        TextQuery(query).matches(texts: texts)
-    }
-
     /// "· 3 chosen hidden by the filter", so a choice the filter hides is never a surprise.
     static func hiddenNote(chosen: Set<String>, shown: Set<String>) -> String {
         let hidden = chosen.subtracting(shown).count
@@ -421,16 +419,37 @@ struct DSFilterField: View {
 
     let prompt: String
     @Binding var text: String
+    /// Whether the list checks conditions such as size: and kind: itself.
+    let conditions: Bool
     @Environment(\.palette) private var palette
     @Environment(\.findRequest) private var findRequest
     @FocusState private var focused: Bool
 
-    init(_ prompt: String, text: Binding<String>) {
+    init(_ prompt: String, text: Binding<String>, conditions: Bool = false) {
         self.prompt = prompt
         _text = text
+        self.conditions = conditions
     }
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            field
+            // How the text was read, once it's more than plain words.
+            if let line = QueryExplanation.line(for: text, conditions: conditions) {
+                Label {
+                    Text(line.text).fixedSize(horizontal: false, vertical: true)
+                } icon: {
+                    Image(systemName: line.isProblem ? "exclamationmark.triangle.fill" : "line.3.horizontal.decrease")
+                        .foregroundStyle(line.isProblem ? palette.warning : .secondary)
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .accessibilityIdentifier("filter.explanation")
+            }
+        }
+    }
+
+    private var field: some View {
         HStack(spacing: DS.Space.xs) {
             Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
             TextField(prompt, text: $text, prompt: Text(prompt))
@@ -444,6 +463,7 @@ struct DSFilterField: View {
                 }
                 .onChange(of: findRequest) { focused = true }
                 .accessibilityLabel(prompt)
+                .help(conditions ? QueryExplanation.help : "")
             if !text.isEmpty {
                 Button {
                     text = ""
@@ -466,10 +486,16 @@ struct DSFilterField: View {
     }
 }
 
+/// A reason to set inside another sentence, without the full stop its
+/// language ends it with.
+func withoutFullStop(_ reason: String) -> String {
+    reason.trimmingCharacters(in: CharacterSet(charactersIn: ".。।"))
+}
+
 /// The notice for a move where nothing reached the Trash, with the first
 /// reason, so it never reads as "Moved Zero KB".
 func nothingMoved(_ failed: [(path: String, reason: String)]) -> String {
-    guard let reason = failed.first?.reason.trimmingCharacters(in: CharacterSet(charactersIn: ".")) else {
+    guard let reason = failed.first.map({ withoutFullStop($0.reason) }) else {
         return String(localized: "Nothing was moved to the Trash.")
     }
     return failed.count == 1

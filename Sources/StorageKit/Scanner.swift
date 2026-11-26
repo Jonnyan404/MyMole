@@ -116,13 +116,13 @@ public struct ScanResult: Sendable {
 /// moment its last folder is read, its totals are finalized and it's handed
 /// to `onSubtree`, which lets the UI fill in while the walk continues.
 public enum StorageScanner {
-    /// Walkers for a scan someone is waiting on: twice the cores, as reading
-    /// directories mostly waits on the disk. The app picks its own through
-    /// `PerformanceLevel`; these are the library's defaults.
-    public static let defaultWorkers = min(max(ProcessInfo.processInfo.activeProcessorCount * 2, 4), 24)
+    /// Walkers for a scan someone is waiting on: one per core, which is as
+    /// many as `concurrentPerform` runs at once. The app picks its own
+    /// through `PerformanceLevel`; these are the library's defaults.
+    public static let defaultWorkers = max(ProcessInfo.processInfo.activeProcessorCount, 1)
     /// Walkers for a scan started ahead of need, so it leaves room for the
     /// app and for other scans running at the same time.
-    public static let backgroundWorkers = max(ProcessInfo.processInfo.activeProcessorCount / 2, 2)
+    public static let backgroundWorkers = min(max(ProcessInfo.processInfo.activeProcessorCount / 2, 2), defaultWorkers)
 
     /// Runs on the calling thread until done; call from a background task.
     ///
@@ -141,7 +141,7 @@ public enum StorageScanner {
         let start = Date()
         let root = Folder(name: (path as NSString).lastPathComponent, parent: nil, rootPath: path, inheritedKind: inheritedKind)
         let walk = Walk(rootDevice: DirectoryReader.device(of: path) ?? 0, progress: progress, skip: skip,
-                        loops: FolderLoops.apply(to: path) ? FolderLoops.Seen() : nil)
+                        loops: FolderLoops.apply(to: path) ? FolderLoops.Seen() : nil, readers: max(workers, 1))
 
         // The root goes first, on this thread, so its top-level folders exist
         // (and can be shown as placeholders) before the parallel walk starts.
@@ -209,17 +209,22 @@ private final class Walk: @unchecked Sendable {
     /// that the server follows itself; nil on a local disk.
     let loops: FolderLoops.Seen?
 
-    init(rootDevice: Int32, progress: ScanProgress, skip: Set<String> = [], loops: FolderLoops.Seen? = nil) {
+    /// Threads one large, slow folder may be read with: the scan's own
+    /// walkers, so the performance level sets it as it sets the walk.
+    let readers: Int
+
+    init(rootDevice: Int32, progress: ScanProgress, skip: Set<String> = [], loops: FolderLoops.Seen? = nil, readers: Int = 1) {
         self.rootDevice = rootDevice
         self.progress = progress
         self.skip = skip
         self.loops = loops
+        self.readers = readers
     }
 
     /// Reads one folder: tallies its files, creates (and returns) its subfolders.
     func read(_ folder: Folder, path: String) -> [Folder] {
         var entries: [Entry] = []
-        let outcome = DirectoryReader.read(path, isCancelled: { progress.isCancelled }) { entries.append($0) }
+        let outcome = DirectoryReader.read(path, readers: readers, isCancelled: { progress.isCancelled }) { entries.append($0) }
         if outcome == .cancelled { return [] }
         folder.riskListed = outcome == .ok
         folder.ownRiskCode = PathRisk.merging(PathRisk.code(of: path), PathRisk.code(of: path + "/"))

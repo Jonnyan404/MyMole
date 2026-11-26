@@ -82,7 +82,7 @@ struct SunburstChart: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } else if case .folder(let f)? = seg {
-                Text("\(f.fileCount.formatted()) files").font(.caption).foregroundStyle(.secondary)
+                Text("\(f.fileCount) files").font(.caption).foregroundStyle(.secondary)
             }
         }
         .frame(width: g.hole * 1.6)

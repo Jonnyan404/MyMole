@@ -16,7 +16,10 @@ struct BarsChart: View {
             let total = Double(max(parts.reduce(0) { $0 + $1.size }, 1))
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: DS.Space.sm) {
-                    ForEach(Array(parts.prefix(Self.limit).enumerated()), id: \.element) { i, p in
+                    // The ranked rows stay in place when a folder opens. Their
+                    // contents and actions follow the segment now at that rank.
+                    ForEach(0..<min(parts.count, Self.limit), id: \.self) { i in
+                        let p = parts[i]
                         bar(p, color: ChartColors.color(for: p, branch: i, depth: 1, byKind: model.colorByKind),
                             fraction: Double(p.size) / biggest, share: Double(p.size) / total)
                     }
@@ -46,9 +49,13 @@ struct BarsChart: View {
         .padding(DS.Space.sm)
         .background(hot ? palette.accent.color.opacity(0.08) : .clear, in: .rect(cornerRadius: DS.Radius.control))
         .contentShape(Rectangle())
-        .onHover { inside in
-            let next = inside ? p : (model.hovered == p ? nil : model.hovered)
-            if model.hovered != next { model.hovered = next }
+        .onContinuousHover { phase in
+            switch phase {
+            case .active:
+                if model.hovered != p { model.hovered = p }
+            case .ended:
+                if model.hovered == p { model.hovered = nil }
+            }
         }
         .onTapGesture { if case .folder(let f) = p { model.open(f) } }
         .accessibilityElement(children: .combine)

@@ -19,7 +19,9 @@ struct UninstallRowDetails: View {
                          : "This match can't pass the ownership or protection checks. You can inspect it in Finder.")
                         .font(.caption).foregroundStyle(.secondary)
                 } else {
-                    Text("Matched by \(item.evidence.title)").font(.callout.weight(.medium))
+                    Text(verbatim: item.evidence.title).font(.callout.weight(.medium))
+                    Text(verbatim: item.choiceTitle).font(.caption.weight(.medium))
+                        .foregroundStyle(item.chosenByDefault ? Color.secondary : Color.orange)
                     Text(item.kind == .rebuildable
                          ? "The app may rebuild or download this data again."
                          : "Removing this item can reset settings or remove local app data.")

@@ -77,6 +77,16 @@ struct Staging {
     }
 }
 
+extension Staging {
+    /// Takes away files the tool made for itself in a folder of its own,
+    /// and then the folders, innermost first, if nothing else is in them:
+    /// each path as given, never what a path might hold.
+    static func removeOwn(files: [String], emptyFolders: [String]) {
+        files.forEach { unlink($0) }
+        emptyFolders.forEach { rmdir($0) }
+    }
+}
+
 enum StagingError: Error {
     case message(String)
 

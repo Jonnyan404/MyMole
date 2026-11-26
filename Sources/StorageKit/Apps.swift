@@ -112,65 +112,142 @@ public struct Leftover: Sendable, Hashable, Codable, Identifiable {
         /// Exact app/helper identity in a scoped runtime root; temporary data needs review.
         case runtimeID
         /// On the vendor's own list of what its app installs, at that exact
-        /// path. Never chosen for the user.
+        /// path. Chosen when it's the app's alone, not shared by the maker's apps.
         case knownPart
+        /// Its own file names a program inside the app: a launch job
+        /// launchd starts, or a browser's native messaging host.
+        case pointsIntoApp
+        /// A folder the app names as its own, in its bundle (VS Code's
+        /// product.json names "Code" and ".vscode").
+        case declared
         /// Discovery can continue with partial owner information. These
         /// rows require separate manual review, never automatic selection.
         case unverified
 
+        /// The tie as a phrase of its own, shown as it is: a translation
+        /// can't put a fragment into another sentence.
         public var title: String {
             switch self {
-            case .bundleID: "by its bundle ID"
-            case .group: "an app group its signature names"
-            case .helper: "by a part it carries"
-            case .name: "by its name only"
-            case .vendorFolder: "in its maker's folder, by its name"
-            case .vendor: "its maker's, and no other app of the maker is left"
-            case .loose: "by a looser match of its name; look before choosing"
-            case .runtimeID: "by an app or helper ID in a per-user runtime folder; review its contents"
-            case .knownPart: "on the vendor's own list of what the app installs"
-            case .unverified: "a possible app match; ownership couldn't be verified"
+            case .bundleID: String(localized: "Found by its bundle ID")
+            case .group: String(localized: "In an app group its signature names")
+            case .helper: String(localized: "Found by a part the app carries")
+            case .name: String(localized: "Found by its name only")
+            case .vendorFolder: String(localized: "In its maker's folder, by its name")
+            case .vendor: String(localized: "Its maker's, and no other app of the maker is left")
+            case .loose: String(localized: "A looser match of its name; look before choosing")
+            case .runtimeID: String(localized: "An app or helper ID in a per-user runtime folder; review its contents")
+            case .knownPart: String(localized: "On the vendor's own list of what the app installs")
+            case .pointsIntoApp: String(localized: "Its own file names a program inside the app")
+            case .declared: String(localized: "The app names this folder as its own")
+            case .unverified: String(localized: "A possible app match; ownership couldn't be verified")
             }
         }
     }
 
-    /// Only rebuildable caches/logs with identity evidence start chosen.
     public var canRemove: Bool { evidence != .unverified }
-    public var chosenByDefault: Bool { canRemove && kind.chosenByDefault && ![.name, .vendorFolder, .vendor, .loose, .runtimeID, .knownPart].contains(evidence) }
 
-    /// What a leftover holds, which decides whether it starts chosen.
+    /// Set by the search when what's inside calls for a look first,
+    /// whatever ties it to the app.
+    public var caution: Review? = nil
+    /// Which of macOS's per-user runtime roots it's in, if any.
+    public var runtimeRoot: RuntimeLeftovers.Root.Kind? = nil
+
+    /// Why it starts unchosen; nil when it's certainly the app's and starts
+    /// chosen. Exact ties (the app's bundle ID, a part it carries, an app
+    /// group its signature names, the vendor's list of the app's own parts)
+    /// are certain wherever they are. Ties by name, what the maker's apps
+    /// share, temporary data and what looks like the user's own work are not.
+    public var review: Review? {
+        guard canRemove else { return .unverified }
+        switch evidence {
+        case .name: return .nameOnly
+        case .vendor: return .maker
+        case .loose: return .looseMatch
+        case .vendorFolder where kind != .rebuildable: return .nameInMakerFolder
+        case .runtimeID where runtimeRoot != .caches: return .temporary
+        default: return caution
+        }
+    }
+
+    public var chosenByDefault: Bool { review == nil }
+
+    /// Why a leftover starts unchosen.
+    public enum Review: String, Sendable, Codable, CaseIterable {
+        /// Ownership couldn't be verified.
+        case unverified
+        /// Tied by the app's name only.
+        case nameOnly
+        /// The app's name inside its maker's folder, for more than a cache or log.
+        case nameInMakerFolder
+        /// Shared by the maker's apps.
+        case maker
+        /// A looser match of the app's name.
+        case looseMatch
+        /// Temporary data, which may hold unsaved work.
+        case temporary
+        /// Holds what looks like documents or projects.
+        case userWork
+        /// Settings or a part of an app that's part of macOS.
+        case macOSApp
+
+        public var title: String {
+            switch self {
+            case .unverified: String(localized: "Starts unchosen: ownership couldn't be verified")
+            case .nameOnly: String(localized: "Starts unchosen: tied by its name only")
+            case .nameInMakerFolder: String(localized: "Starts unchosen: tied by its name in its maker's folder")
+            case .maker: String(localized: "Starts unchosen: the maker's other apps may use it")
+            case .looseMatch: String(localized: "Starts unchosen: a looser match of its name")
+            case .temporary: String(localized: "Starts unchosen: temporary data may hold unsaved work")
+            case .userWork: String(localized: "Starts unchosen: it holds what looks like documents or projects")
+            case .macOSApp: String(localized: "Starts unchosen: macOS's own apps keep their settings unless you choose them")
+            }
+        }
+    }
+
+    /// Why it starts chosen or not, as one phrase.
+    public var choiceTitle: String { review?.title ?? String(localized: "Starts chosen: it certainly belongs to the app") }
+
+    /// What a leftover holds.
     public enum Kind: Int, Sendable, Comparable {
-        /// Caches and logs the app rebuilds. Chosen with identity evidence.
+        /// Caches and logs the app rebuilds.
         case rebuildable
-        /// Parts of the app, such as launch configuration. Reviewed explicitly.
+        /// Parts of the app, such as launch configuration.
         case appPart
-        /// Settings. Kept unless chosen: a reinstall would start over.
+        /// Settings: a reinstall would start over without them.
         case settings
-        /// Documents and data the app made. Kept unless chosen.
+        /// Documents and data the app made.
         case data
-        /// Data shared with the developer's other apps. Kept unless chosen.
+        /// Data the developer's apps can share: an app group.
         case shared
 
         public static func < (a: Self, b: Self) -> Bool { a.rawValue < b.rawValue }
 
+        /// For what no app's identity ties (a removed app's, a system-wide
+        /// item): only what's rebuilt.
         public var chosenByDefault: Bool { self == .rebuildable }
 
         public var title: String {
             switch self {
-            case .rebuildable: "Rebuilt"
+            case .rebuildable: String(localized: "Rebuilt")
             case .appPart: String(localized: "App part")
-            case .settings: "Settings"
+            case .settings: String(localized: "Settings")
             case .data: String(localized: "Your data")
-            case .shared: "Shared"
+            case .shared: String(localized: "Shared")
             }
         }
     }
 
     public var kind: Kind {
-        switch place {
+        if let runtimeRoot { return runtimeRoot == .caches ? .rebuildable : .data }
+        return switch place {
         case "Caches", "Logs", "Logs/DiagnosticReports", "Application Support/CrashReporter":
             .rebuildable
+        case _ where place.hasPrefix("Caches/") || AppLeftovers.crashReporterPlaces.contains(place): .rebuildable
         case "LaunchAgents": .appPart
+        case _ where place.hasSuffix("/" + AppLeftovers.messagingHosts): .appPart
+        case "SyncedPreferences": .settings
+        case "~/.local/bin", "~/bin": .appPart
+        case _ where AppLeftovers.bundlePlaces.contains(place): .appPart
         case "Preferences", "Preferences/ByHost", AppLeftovers.recentDocuments: .settings
         case "Group Containers": .shared
         case "~/.cache": .rebuildable
@@ -421,7 +498,7 @@ public enum AppFinder {
 
 public enum AppLeftovers {
     /// Library folders searched, and how an entry there is tied to an app.
-    enum Match { case exactID, idPrefix, idPlist, name, groupContainer, report, recentList }
+    enum Match { case exactID, idPrefix, idPlist, shipIt, name, updaterCache, groupContainer, report, recentList }
 
     /// Where macOS keeps each app's list of recent documents.
     static let recentDocuments =
@@ -431,7 +508,8 @@ public enum AppLeftovers {
 
     static let places: [(folder: String, matches: [Match])] = [
         ("Application Support", [.exactID, .name]),
-        ("Caches", [.exactID, .name]),
+        // "<id>.ShipIt": the updater Electron apps carry keeps its downloads by the app's ID.
+        ("Caches", [.exactID, .shipIt, .name, .updaterCache]),
         ("Containers", [.exactID]),
         ("Group Containers", [.groupContainer]),
         ("Preferences", [.idPlist]),
@@ -446,6 +524,26 @@ public enum AppLeftovers {
         ("Logs/DiagnosticReports", [.report]),
         ("Application Support/CrashReporter", [.report]),
         (recentDocuments, [.recentList]),
+        // Where crash reporters that many apps embed keep each app's reports, by its ID or name.
+        ("Caches/com.plausiblelabs.crashreporter.data", [.exactID]),
+        ("Caches/com.crashlytics.data", [.exactID]),
+        ("Caches/io.fabric.sdk.mac.data", [.exactID]),
+        ("Caches/SentryCrash", [.exactID, .name]),
+        ("Caches/KSCrashReports", [.exactID, .name]),
+        ("Application Support/com.bugsnag.Bugsnag", [.exactID]),
+        // What macOS keeps for an app by its ID: background downloads, iCloud's
+        // cache, a file provider's database, autosave and synced settings records.
+        ("Caches/com.apple.nsurlsessiond/Downloads", [.exactID]),
+        ("Caches/CloudKit", [.exactID]),
+        ("Application Support/FileProvider", [.idPrefix]),
+        ("Autosave Information", [.idPlist]),
+        ("SyncedPreferences", [.idPlist]),
+    ]
+
+    /// Crash reports a crash reporter the app embeds keeps for it.
+    static let crashReporterPlaces: Set<String> = [
+        "Caches/com.plausiblelabs.crashreporter.data", "Caches/com.crashlytics.data", "Caches/io.fabric.sdk.mac.data",
+        "Caches/SentryCrash", "Caches/KSCrashReports", "Application Support/com.bugsnag.Bugsnag",
     ]
 
     /// Names too generic to tie a folder to one app.
@@ -518,8 +616,15 @@ public enum AppLeftovers {
         if !app.isProtected && !scan.shouldStop && Trasher.noLinksBetween(home, and: lib) {
             out += vendorFolders(of: app, lib: lib, installed: installed, scan: scan)
             out += vendorShared(of: app, lib: lib, installed: installed, scan: scan)
-            let known = Set(out.map(\.path))
+            var known = Set(out.map(\.path))
             out += knownParts(of: app, home: home, installed: installed, identity: identity, scan: scan).filter { !known.contains($0.path) }
+            known.formUnion(out.map(\.path))
+            out += bundled(of: app, lib: lib, identity: identity, installed: installed, scan: scan).filter { !known.contains($0.path) }
+            known.formUnion(out.map(\.path))
+            out += pointing(of: app, lib: lib, installed: installed, scan: scan).filter { !known.contains($0.path) }
+            out += commandLinks(of: app, home: home, scan: scan)
+            known.formUnion(out.map(\.path))
+            out += declared(of: app, home: home, identity: identity, scan: scan).filter { !known.contains($0.path) }
         }
         if deep && !app.isProtected && !scan.shouldStop {
             var known = Set(out.map(\.path))
@@ -529,9 +634,19 @@ public enum AppLeftovers {
                 .filter { !known.contains($0.path) }
         }
         out.removeAll { claimedByOtherApp($0.path, of: app, home: home, identity: identity) }
+        // What the vendor's own list only shows, with what to do instead, isn't offered too.
+        let shown = shownOnly(for: app, home: home)
+        out.removeAll { shown.contains($0.path) }
         // One leftover inside another goes with it.
         let paths = Set(out.map(\.path))
         out.removeAll { l in paths.contains { l.path.hasPrefix($0 + "/") } }
+        for i in out.indices where out[i].caution == nil && out[i].kind != .rebuildable {
+            if scan.userWork.contains(out[i].path) {
+                out[i].caution = .userWork
+            } else if app.isProtected {
+                out[i].caution = .macOSApp
+            }
+        }
         return out.sorted { $0.bytes != $1.bytes ? $0.bytes > $1.bytes : $0.path < $1.path }
     }
 
@@ -575,6 +690,7 @@ public enum AppLeftovers {
                   let m = scan.measure(path) else { continue }
             var l = Leftover(path: path, bytes: m, place: knownPlace(path, home: home))
             l.evidence = .knownPart
+            if !part.sharedWith.isEmpty { l.caution = .maker }
             out.append(l)
         }
         return out
@@ -609,10 +725,20 @@ public enum AppLeftovers {
     /// and its name without the maker's ("Chrome" of "Google Chrome").
     static func productNames(_ app: AppBundle, inVendorFolder vendor: String) -> Set<String> {
         var names: Set<String> = [app.name.lowercased()]
+        if let id = app.bundleID?.lowercased() { names.formUnion((folderNames[id] ?? []).map { $0.lowercased() }) }
         let prefix = vendor.lowercased() + " "
         if app.name.lowercased().hasPrefix(prefix) { names.insert(String(app.name.lowercased().dropFirst(prefix.count))) }
         return names.filter { $0.count >= 3 && !genericNames.contains($0) }
     }
+
+    /// What a maker calls an app's folder when it isn't the app's name, by
+    /// its documentation: IntelliJ IDEA Community keeps "IdeaIC2026.2".
+    static let folderNames: [String: [String]] = [
+        "com.jetbrains.intellij.ce": ["IdeaIC"],
+        "com.jetbrains.intellij": ["IntelliJIdea"],
+        // Google Drive keeps its accounts and file cache in Google's folder.
+        "com.google.drivefs": ["DriveFS"],
+    ]
 
     /// Whether `entry` in `vendor` folder is `app`'s, and no other installed app's.
     static func isAppsVendorEntry(_ entry: String, vendor: String, of app: AppBundle, installed: [AppBundle]) -> Bool {
@@ -753,11 +879,11 @@ public enum AppLeftovers {
         guard let id = app.bundleID, isWellFormed(id) else { return nil }
         let others = installed.filter { $0.path != app.path }
         let name = app.name
-        let nameUsable = name.count >= 3 && !genericNames.contains(name.lowercased()) && !others.contains { $0.name.caseInsensitiveCompare(name) == .orderedSame }
+        let nameUsable = name.count >= 3 && !genericNames.contains(name.lowercased()) && !others.contains { nameKey($0.name) == nameKey(name) }
         // An app group is matched exactly, by the name the signature gives it.
         if rules.contains(.groupContainer), identity.groups.contains(where: { $0.caseInsensitiveCompare(entry) == .orderedSame }) { return .group }
         // The app's own ID and name, then each helper's ID by the same rules.
-        let idRules = rules.filter { $0 != .name && $0 != .report }
+        let idRules = rules.filter { $0 != .name && $0 != .report && $0 != .updaterCache }
         var matched: [String] = []
         var why: Leftover.Evidence?
         if matches(entry, id: id, name: nil, rules: rules) {
@@ -782,13 +908,37 @@ public enum AppLeftovers {
         return claimed ? nil : why
     }
 
+    /// The forms of an app's name its folders are found by, in lower case:
+    /// as it is, and as Electron and other tools write it, with its spaces
+    /// as hyphens or underscores or left out ("beekeeper-studio" for
+    /// Beekeeper Studio).
+    static func nameForms(_ name: String) -> Set<String> {
+        let lower = name.lowercased()
+        return [lower, lower.replacingOccurrences(of: " ", with: "-"), lower.replacingOccurrences(of: " ", with: "_"),
+                lower.replacingOccurrences(of: " ", with: "")]
+    }
+
+    /// Two names whose folders could be the same: equal without case, spaces, hyphens and underscores.
+    static func nameKey(_ name: String) -> String {
+        name.lowercased().filter { $0 != " " && $0 != "-" && $0 != "_" }
+    }
+
     static func matches(_ entry: String, id: String, name: String?, rules: [Match]) -> Bool {
         rules.contains { rule in
             switch rule {
             case .exactID: entry == id
             case .idPrefix: entry == id || entry.hasPrefix(id + ".")
             case .idPlist: entry == id + ".plist"
-            case .name: name.map { entry == $0 } ?? false
+            case .shipIt: entry.lowercased() == id.lowercased() + ".shipit"
+            case .name:
+                // The folder, or the log a log folder keeps by the name.
+                name.map { n in
+                    let e = entry.lowercased()
+                    return nameForms(n).contains { e == $0 || e == $0 + ".log" }
+                } ?? false
+            case .updaterCache:
+                // "<name>-updater": where electron-updater keeps the updates it downloads.
+                name.map { n in nameForms(n).contains { entry.lowercased() == $0 + "-updater" } } ?? false
             case .report:
                 // "<Name>-2026-11-06-101112.ips", "<Name>_<UUID>.plist": by the
                 // app's name, which must be one only it has.
@@ -837,7 +987,11 @@ public enum AppLeftovers {
         // What the deeper search offered, checked again by its own rules.
         if isStillKnownPart(path, of: app, home: home, installed: installed, identity: identity) { return true }
         if deep { return DeepLeftovers.isStill(path, of: app, home: home, installed: installed) }
-        guard path.hasPrefix(lib), Trasher.noLinksBetween(home, and: path) else { return false }
+        if !app.isProtected, isStillDeclared(path, of: app, home: home, identity: identity) { return true }
+        if !app.isProtected, isStillCommandLink(path, of: app, home: home) { return true }
+        guard path.hasPrefix(lib), Trasher.noLinksBetween(home, and: path), !shownOnly(for: app, home: home).contains(path) else { return false }
+        if isStillBundled(path, of: app, lib: home + "/Library", identity: identity, installed: installed) { return true }
+        if !app.isProtected, isStillPointing(path, of: app, lib: home + "/Library", installed: installed) { return true }
         let folder = (String(path.dropFirst(lib.count)) as NSString).deletingLastPathComponent
         let entry = (path as NSString).lastPathComponent
         if isStillVendorLeftover(folder: folder, entry: entry, of: app, installed: installed) {

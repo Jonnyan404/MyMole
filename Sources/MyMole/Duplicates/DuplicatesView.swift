@@ -8,8 +8,9 @@ import SwiftUI
 struct DuplicatesView: View {
     @Bindable var model: DuplicatesModel
     @State private var confirming = false
-    /// Kept while you go to other panes and back, as the window's own state.
-    @SceneStorage("duplicates.filter") private var query = ""
+    @State private var sharing = false
+    /// Kept between panes and launches.
+    @AppStorage("duplicates.filter") private var query = ""
 
     var body: some View {
         VStack(spacing: 0) {
@@ -37,6 +38,9 @@ struct DuplicatesView: View {
                 DSText("\(model.chosen.count.formatted()) chosen · \(fmt(model.chosenBytes))", .lead)
             } trailing: {
                 Button("Unchoose All") { model.chosen = [] }
+                Button("Share Storage…") { sharing = true }
+                    .disabled(model.trashBlocker != nil)
+                    .help(model.trashBlocker ?? String(localized: "Keep every file, and let the chosen copies take no space of their own: each becomes a clone of the copy that stays"))
                 Button("Move to Trash…") { confirming = true }
                     .primaryAction()
                     .disabled(model.trashBlocker != nil)
@@ -51,8 +55,10 @@ struct DuplicatesView: View {
         .actionConfirmation(
             String(localized: "Move \(model.chosen.count) copies to the Trash?"),
             isPresented: $confirming, action: .duplicates,
+            big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosen.count),
             message: confirmationMessage
         ) { model.trashChosen() }
+        .sheet(isPresented: $sharing) { ShareStorageSheet(model: model) }
     }
 
     private var confirmationMessage: String {
@@ -95,7 +101,7 @@ struct DuplicatesView: View {
                 fmt(model.spareBytes), "in spare copies of \(model.displayGroups.count) files")
         } actions: {
             DSControlField("Filter duplicate groups") {
-                DSFilterField(String(localized: "Filter by name or folder"), text: $query)
+                DSFilterField(String(localized: "Filter by name or folder"), text: $query, conditions: true)
                     .frame(minWidth: 180, idealWidth: 280, maxWidth: .infinity)
                     .disabled(model.displayGroups.isEmpty)
             }
@@ -219,7 +225,11 @@ struct DuplicatesView: View {
             let (groups, query) = (model.displayGroups, query)
             let search = TextQuery(query)
             await filtered.update(count: groups.count) {
-                search.isEmpty ? groups : groups.filter { g in g.files.contains { search.matches($0.name, $0.path) } }
+                search.isEmpty ? groups : groups.filter { g in
+                    g.files.contains {
+                        search.matches(texts: [$0.name, $0.path], facts: SearchQuery.facts(path: $0.path, size: g.length, modified: $0.modified, isFolder: false))
+                    }
+                }
             }
         }
         .dsEmptyOverlay(showing: shown.isEmpty || model.displayGroups.isEmpty) {

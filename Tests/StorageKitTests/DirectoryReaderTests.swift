@@ -87,4 +87,65 @@ import Testing
         #expect(entries.first { $0.name == "file" }?.kind == .file)
         #expect(entries.first { $0.name == "link" }?.kind == .symlink)
     }
+
+    /// A large folder read by several threads comes out entry for entry as
+    /// one bulk read gives it: files, clones, folders, links and a hard link.
+    @Test func splitReadMatchesOneBulkRead() throws {
+        let box = try Sandbox()
+        for i in 0..<6_000 { try box.file("big/f\(i).txt", bytes: i % 9 * 700 + 1) }
+        try box.file("big/whole.bin", bytes: 300_000)
+        #expect(clonefile(box.path + "/big/whole.bin", box.path + "/big/whole clone.bin", 0) == 0)
+        for i in 0..<20 { try box.folder("big/sub\(i)") }
+        #expect(symlink("f1.txt", box.path + "/big/link") == 0)
+        #expect(link(box.path + "/big/f2.txt", box.path + "/big/f2 again.txt") == 0)
+
+        func entries(readers: Int) -> (ReadOutcome, [String: Entry]) {
+            var seen: [String: Entry] = [:]
+            let split = DirectoryReader.Split(after: 100, slowerThan: 0, remaining: 0)
+            let outcome = DirectoryReader.read(box.path + "/big", readers: readers, split: split) { seen[$0.name] = $0 }
+            return (outcome, seen)
+        }
+        let (bulkOutcome, bulk) = entries(readers: 1)
+        let (splitOutcome, switched) = entries(readers: 4)
+        // Read by the threads alone, from the first entry, too.
+        let fd = open(box.path + "/big", O_RDONLY | O_DIRECTORY | O_CLOEXEC)
+        #expect(fd >= 0)
+        defer { close(fd) }
+        let rest = try #require(ParallelRead.rest(fd: fd, skipping: [], readers: 4, isCancelled: { false }))
+        let threads = Dictionary(rest.entries.map { ($0.name, $0) }, uniquingKeysWith: { a, _ in a })
+        #expect(bulkOutcome == .ok && splitOutcome == .ok && rest.outcome == .ok)
+        #expect(bulk.count == 6_024 && switched.count == bulk.count && rest.entries.count == bulk.count)
+        for split in [switched, threads] {
+            for (name, a) in bulk {
+                let b = try #require(split[name])
+            #expect(a.kind == b.kind && a.allocated == b.allocated && a.length == b.length, "\(name)")
+            #expect(a.fileID == b.fileID && a.linkCount == b.linkCount && a.device == b.device, "\(name)")
+            #expect(a.modified == b.modified && a.sharing == b.sharing && a.isMountPoint == b.isMountPoint, "\(name)")
+          }
+          #expect(split["whole clone.bin"]?.sharing?.sharesAllBlocks == true && split["link"]?.kind == .symlink)
+        }
+    }
+
+    @Test func splitReadStops() throws {
+        let box = try Sandbox()
+        for i in 0..<8_000 { try box.file("big/f\(i)", bytes: 1) }
+        let fd = open(box.path + "/big", O_RDONLY | O_DIRECTORY | O_CLOEXEC)
+        #expect(fd >= 0)
+        defer { close(fd) }
+        // Stopped before the names are listed, and again while the threads read.
+        #expect(ParallelRead.rest(fd: fd, skipping: [], readers: 4, isCancelled: { true }) == nil)
+        var asked = 0
+        #expect(ParallelRead.rest(fd: fd, skipping: [], readers: 4, isCancelled: { asked += 1; return asked > 2 }) == nil)
+        #expect(asked > 2)
+    }
+
+    /// A fast folder stays with the bulk read, however many threads may read it.
+    @Test func fastFolderStaysWithTheBulkRead() throws {
+        let box = try Sandbox()
+        for i in 0..<300 { try box.file("small/f\(i)", bytes: 1) }
+        var read = 0
+        let split = DirectoryReader.Split(after: 100, slowerThan: 0, remaining: 1_000)
+        #expect(DirectoryReader.read(box.path + "/small", readers: 4, split: split) { _ in read += 1 } == .ok)
+        #expect(read == 300)
+    }
 }

@@ -43,7 +43,7 @@ struct InspectorList: View {
                     tree(cur)
                 } else {
                     let all = entries(cur)
-                    let rows = all.filter(model.browseFilter.matches)
+                    let rows = all.filter(model.browseFilter.matcher())
                     table(rows)
                         .dsEmptyOverlay(showing: rows.isEmpty && !model.scanning || model.currentIsEmpty) {
                             if rows.isEmpty, !all.isEmpty, !model.scanning {
@@ -106,7 +106,7 @@ struct InspectorList: View {
             DSText(
                 model.showingLive && cur.parent == nil
                     ? "\(ByteCountFormatter.string(fromByteCount: model.chartedSize(cur), countStyle: .file)) so far"
-                    : "\(ByteCountFormatter.string(fromByteCount: cur.size, countStyle: .file)) · \(cur.fileCount.formatted()) files",
+                    : "\(ByteCountFormatter.string(fromByteCount: cur.size, countStyle: .file)) · \(cur.fileCount) files",
                 .metadata)
             if !rebuildable.isEmpty {
                 Button {
@@ -139,7 +139,7 @@ struct InspectorList: View {
     private var filterBar: some View {
         VStack(alignment: .leading, spacing: DS.Space.sm) {
             HStack(spacing: DS.Space.sm) {
-                DSFilterField(String(localized: "Filter files and folders by name"), text: $model.browseFilter.query)
+                DSFilterField(String(localized: "Filter files and folders by name"), text: $model.browseFilter.query, conditions: true)
                     .frame(minWidth: 100, maxWidth: .infinity)
                 DSFilterButton("Filter files and folders", detail: "Narrow the results below. The disk map and your removal choices stay the same.",
                                count: model.browseFilter.criteriaCount, clear: { model.browseFilter.clearCriteria() }) {
@@ -313,7 +313,7 @@ struct InspectorList: View {
             kind: e.kindTitle, items: e.pending ? nil : e.items,
             location: (e.path as NSString).deletingLastPathComponent,
             symbol: f == nil ? e.kind.symbol : (f?.inheritedKind?.symbol ?? "folder.fill"),
-            subtitle: modified.map { f == nil ? $0.listText : "\($0.listText) · \(e.items.formatted()) files" },
+            subtitle: modified.map { f == nil ? $0.listText : String(localized: "\($0.listText) · \(e.items) files") },
             tint: f == nil ? NSColor(ChartColors.kind(e.kind)) : palette.accentText.ns,
             badge: f?.rebuildable == nil ? nil : String(localized: "Rebuildable"),
             badgeHelp: f?.rebuildable.map { "\($0.label): \($0.reason)" },
@@ -394,7 +394,7 @@ struct InspectorList: View {
                 if cur.smallFileCount > 0 {
                     HStack(spacing: DS.Space.xs) {
                         DSText(
-                            "+ \(cur.smallFileCount.formatted()) smaller files · \(ByteCountFormatter.string(fromByteCount: cur.smallFileBytes, countStyle: .file))",
+                            "+ \(cur.smallFileCount) smaller files · \(ByteCountFormatter.string(fromByteCount: cur.smallFileBytes, countStyle: .file))",
                             .metadata)
                         Button("List") { smallFilesOf = cur.path }
                             .buttonStyle(.link)
@@ -554,8 +554,11 @@ private struct WholeScanSearch: View {
             await result.update(count: index.entries.count) {
                 // Every match, however many; only what's still in the map
                 // after a move, checked here rather than on every redraw.
-                let r = index.search(filter.query, limit: .max) { e in
+                let search = TextQuery(filter.query)
+                let r = index.search(search.words, limit: .max) { e, hidden in
                     (filter.kind == nil || e.kind == filter.kind) && filter.date.matches(e.modified)
+                        && search.passes(SearchQuery.Facts(name: e.name, size: e.size, modified: e.modified, kind: e.kind,
+                                                           isFolder: e.isFolder, hidden: hidden))
                 }
                 let hits = r.found.compactMap { i -> ScanHit? in
                     let e = index.entries[i]

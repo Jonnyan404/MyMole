@@ -4,6 +4,9 @@ import SwiftUI
 @MainActor protocol UserColumnTable: AnyObject {
     var defaultHiddenColumns: Set<String> { get set }
     var columnViewport: ColumnViewport? { get set }
+    /// The Size column doesn't fit beside the others without scrolling,
+    /// so the name cells show the size on their second line (`FileNameCell`).
+    var sizeOutOfView: Bool { get set }
 }
 
 extension NSTableView {

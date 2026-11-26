@@ -46,7 +46,8 @@ struct ProjectsView: View {
         .actionConfirmation(
             String(localized: "Move \(model.chosenEntries.count) items to the Trash?"),
             isPresented: $confirming, action: .projects,
-            message: String(localized: "\(Freeing.phrase(model.chosenBytes, frees: model.chosenFrees)) from \(Set(model.chosenEntries.map(\.project)).count) project(s):\n\(reviewList)\n\nAnything holding a Git repository, key files, files Git tracks or uncommitted work stays. You can undo right after, or put things back from the Trash later.")
+            big: ConfirmationSettings.isBig(bytes: model.chosenBytes, count: model.chosenEntries.count),
+            message: String(localized: "\(Freeing.phrase(model.chosenBytes, frees: model.chosenFrees)) from \(Set(model.chosenEntries.map(\.project)).count) project(s):\n\(reviewList)\n\nAnything holding a Git repository (other than unchanged package checkouts), key files, files Git tracks or uncommitted work stays. You can undo right after, or put things back from the Trash later.")
         ) { model.trashChosen() }
         .onAppear { model.pins.refresh(); model.scanIfNeeded() }
     }
@@ -162,7 +163,7 @@ struct ProjectsView: View {
             if model.scanning { PulseDot() }
             VStack(alignment: .trailing, spacing: DS.Space.xxs) {
                 DSValue(bytes: model.freeableBytes, .heading, weight: .semibold)
-                DSText(full ? "could go · \(fmt(model.outsideBytes)) outside project folders" : "could go", .metadata).keepWhole()
+                DSText(full && model.outsideBytes > 0 ? "could go · \(fmt(model.outsideBytes)) outside project folders" : "could go", .metadata).keepWhole()
             }
         }
         .help("\(fmt(model.outsideBytes)) of it is outside the project folders")
@@ -175,7 +176,8 @@ struct ProjectsView: View {
         let search = TextQuery(query)
         return model.footprints.filter { f in
             active.matches(f.lastActivity, now: now)
-                && search.matches(f.project.name, f.project.kind, f.id)
+                && search.matches(texts: [f.project.name, f.project.kind, f.id],
+                                  facts: SearchQuery.facts(path: f.id, size: f.bytes, modified: f.lastActivity, kind: .developer, isFolder: true))
         }
     }
 
@@ -203,7 +205,7 @@ struct ProjectsView: View {
     }
 
     private var projectSearch: some View {
-        DSFilterField(String(localized: "Filter by name, type or folder"), text: $query).frame(minWidth: 140, maxWidth: .infinity)
+        DSFilterField(String(localized: "Filter by name, type or folder"), text: $query, conditions: true).frame(minWidth: 140, maxWidth: .infinity)
     }
 
     private var projectFilterActions: some View {
@@ -328,7 +330,7 @@ struct ProjectsView: View {
         DSActionBar {
             DSText("\(model.chosenEntries.count) items chosen · \(Freeing.phrase(model.chosenBytes, frees: model.chosenFrees))", .lead)
                 .keepWhole()
-            Button("Clear") { model.chosen = [] }
+            Button(DS.clearChoice) { model.chosen = [] }
                 .accessibilityLabel("Clear the choice")
                 .controlSize(.small)
         } trailing: {

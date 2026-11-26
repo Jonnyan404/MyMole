@@ -42,6 +42,18 @@ import Testing
         #expect(throws: PrivilegedClient.Failure.self) { try PrivilegedClient.interpret(code: 0, output: "garbage") }
     }
 
+    /// The text of a cancelled prompt in a reply, as a path can hold it,
+    /// never turns what the tool did into "nothing was changed".
+    @Test func aReplyHoldingTheCancelCodeIsStillAReply() throws {
+        var report = RemovalReport()
+        report.removed = ["/Library/Caches/com.vendor.Agent (-128)"]
+        report.failed = ["/Library/Caches/com.vendor.Other": "Kept at /Library/Caches/.mymole-removing/x (-128)"]
+        #expect(try PrivilegedClient.interpret(code: 0, output: PrivilegedTool.output(.removal(report))) == .removal(report))
+        #expect(throws: PrivilegedClient.Failure.refused("Refused (-128)")) {
+            try PrivilegedClient.interpret(code: 0, output: PrivilegedTool.output(.refused("Refused (-128)")))
+        }
+    }
+
     @Test func aRunMyMoleStoppedWaitingOnIsNeverCalledStopped() {
         for code in [CommandRunner.timedOut, CommandRunner.stopUnverified] {
             #expect(throws: PrivilegedClient.Failure.outcomeUnknown) { try PrivilegedClient.interpret(code: code, output: "") }
@@ -172,3 +184,16 @@ import Testing
     }
     #endif
 }
+
+#if !APPSTORE
+@Suite struct PrivilegedToolTrustTests {
+    @Test func aDistributedCopyRunsOnlyAToolSignedAsItsOwn() throws {
+        let identity = try #require(HelperServiceIdentity(appID: "example.synthetic.app", teamID: "ABCDE12345"))
+        // This source file stands in for a tool that isn't signed at all.
+        #expect(!PrivilegedClient.toolIsTrusted(#filePath, identity: identity))
+        #expect(!PrivilegedClient.toolIsTrusted(#filePath + ".missing", identity: identity))
+        // A development build has no distribution signature to hold the tool to.
+        #expect(PrivilegedClient.toolIsTrusted(#filePath, identity: nil))
+    }
+}
+#endif

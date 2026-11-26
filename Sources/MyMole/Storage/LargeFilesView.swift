@@ -6,8 +6,8 @@ import SwiftUI
 /// many as you like. Files appear while the scan is still running.
 struct LargeFilesView: View {
     @Bindable var model: StorageModel
-    /// Kept while you go to other panes and back, as the window's own state.
-    @SceneStorage("largeFiles.filter") private var query = ""
+    /// Kept between panes and launches.
+    @AppStorage("largeFiles.filter") private var query = ""
     @State private var kind: FileKind?
     @State private var date = DateFilter()
     @State private var place: Place = .anywhere
@@ -69,7 +69,7 @@ struct LargeFilesView: View {
                 (kind == nil || f.kind == kind)
                     && place.contains(f)
                     && date.matches(f.modified)
-                    && search.matches(f.name, f.folder)
+                    && search.matches(texts: [f.name, f.folder], facts: Self.facts(name: f.name, folder: f.folder, size: f.size, modified: f.modified, kind: f.kind))
             }
         }
     }
@@ -81,7 +81,7 @@ struct LargeFilesView: View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: DS.Space.sm) {
                 HStack(spacing: DS.Space.sm) {
-                    DSFilterField(String(localized: "Filter by name or folder"), text: $query)
+                    DSFilterField(String(localized: "Filter by name or folder"), text: $query, conditions: true)
                         .frame(minWidth: 140, maxWidth: .infinity)
                     DSFilterButton("Filter large files", detail: "Narrow this list of files of 1 MB or more. The disk map and your removal choices stay the same.",
                                    count: filterCount, clear: clearFilters) { criteria }
@@ -163,7 +163,8 @@ struct LargeFilesView: View {
         let home = Home.path
         let keep: @Sendable (SpillTable.Row) -> Bool = { r in
             inMap(r) && (kind == nil || r.kind == kind) && place.contains(folder: r.folder, home: home)
-                && date.matches(r.modified) && search.matches(r.name, r.folder)
+                && date.matches(r.modified)
+                && search.matches(texts: [r.name, r.folder], facts: Self.facts(name: r.name, folder: r.folder, size: r.size, modified: r.modified, kind: r.kind))
         }
         PagedFileTable(
             table: spill, columns: [.name, .size, .modified, .kind, .location], hiddenByDefault: [.kind],
@@ -236,6 +237,11 @@ struct LargeFilesView: View {
             }
     }
 
+    nonisolated static func facts(name: String, folder: String, size: Int64, modified: Date, kind: FileKind) -> SearchQuery.Facts {
+        SearchQuery.Facts(name: name, size: size, modified: modified, kind: kind, isFolder: false,
+                          hidden: SearchQuery.isHidden(name: name, folder: folder))
+    }
+
     private var filterCount: Int { (query.isEmpty ? 0 : 1) + (kind == nil ? 0 : 1) + (place == .anywhere ? 0 : 1) + (date.isActive ? 1 : 0) }
     private func clearFilters() { query = ""; kind = nil; place = .anywhere; date = DateFilter() }
 
@@ -282,7 +288,7 @@ struct LargeFilesView: View {
             return String(localized: "\(picked.count.formatted()) of \(all) selected · \(size(picked))")
         }
         return model.scanning
-            ? String(localized: "\(all) files · \(size(shown)) so far") : String(localized: "\(all) files · \(size(shown))")
+            ? String(localized: "\(shown.count) files · \(size(shown)) so far") : String(localized: "\(shown.count) files · \(size(shown))")
     }
 
     private func menu(_ chosen: [LargeFile], rows: [LargeFile]) -> [TableMenuEntry] {

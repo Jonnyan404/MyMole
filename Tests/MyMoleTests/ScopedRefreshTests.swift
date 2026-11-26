@@ -81,6 +81,7 @@ import Testing
         #expect(!model.scanning && !model.refreshing)
 
         model.rescan()
+        await model.rescanJob?.value
         await model.scanJob?.value
         #expect(model.root?.find(path: sibling.path)?.listedFiles.count == 2)
         #expect(model.current?.path == folder.path)
@@ -107,7 +108,8 @@ import Testing
         try await wait { entered.withLock { $0 } }
         model.cancelScan()
         try files.add("Map/Folder/newer.bin")
-        model.rescan()
+        // A newer whole-map read, which the old folder read must not overwrite.
+        model.scan(path: files.path("Map"))
         await model.scanJob?.value
         let newest = try #require(model.root)
         release.signal()
@@ -177,6 +179,8 @@ import Testing
         model.tab = .largeFiles
         #expect(model.refreshTitle == "Rescan Entire Map")
         model.refreshCurrent()
+        // A change a moment old may need the second look before the folder is read.
+        await model.rescanJob?.value
         await model.scanJob?.value
         #expect(model.largeFiles.contains { $0.path == files.path("Map/Other/added.bin") })
         #expect(model.current?.path == files.path("Map/Folder"))
